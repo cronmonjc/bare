@@ -17,17 +17,18 @@ public class FunctionSelect : MonoBehaviour, IPointerClickHandler {
             foreach(LightHead alpha in cam.OnlyCamSelected) {
                 if(alpha.CapableFunctions.Contains(myFunction) && !alpha.selectedFunctions.Contains(myFunction)) {
                     alpha.selectedFunctions.Add(myFunction);
+                    isOn = true;
                 }
             }
         } else {
             foreach(LightHead alpha in cam.OnlyCamSelected) {
                 if(alpha.selectedFunctions.Contains(myFunction)) {
                     alpha.selectedFunctions.Remove(myFunction);
+                    isOn = false;
                 }
             }
         }
 
-        isOn = !isOn;
         ToggleImg.gameObject.SetActive(isOn);
 
         cam.os.Refresh();

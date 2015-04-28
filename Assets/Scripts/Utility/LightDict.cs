@@ -65,56 +65,7 @@ public class LightDict : MonoBehaviour {
                 foreach(NbtTag patt in pattstag) {
                     NbtCompound pattCmpd = patt as NbtCompound;
 
-                    Function f = Function.NONE;
-                    switch(pattCmpd["fn"].StringValue) {
-                        case "lv1":
-                            f = Function.LEVEL1;
-                            break;
-                        case "lv2":
-                            f = Function.LEVEL2;
-                            break;
-                        case "lv3":
-                            f = Function.LEVEL3;
-                            break;
-                        case "lv4":
-                            f = Function.LEVEL4;
-                            break;
-                        case "lv5":
-                            f = Function.LEVEL5;
-                            break;
-                        case "icl":
-                            f = Function.ICL;
-                            break;
-                        case "tdp":
-                            f = Function.TAKEDOWN;
-                            break;
-                        case "all":
-                            f = Function.ALLEY;
-                            break;
-                        case "t13":
-                            f = Function.T13;
-                            break;
-                        case "emi":
-                            f = Function.EMITTER;
-                            break;
-                        case "stt":
-                            f = Function.STT_AND_TAIL;
-                            break;
-                        case "dim":
-                            f = Function.DIM;
-                            break;
-                        case "cru":
-                            f = Function.CRUISE;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    patts[f] = new List<Pattern>();
-                    NbtList innerList = pattCmpd["patt"] as NbtList;
-                    foreach(NbtTag innerTag in innerList) {
-                        patts[f].Add(new Pattern(innerTag as NbtCompound));
-                    }
+                    
                 }
 
 
@@ -194,9 +145,7 @@ public class LightDict : MonoBehaviour {
 public class Pattern {
     public string name;
 
-    public Pattern(NbtCompound defTag) {
-        name = defTag["name"].StringValue;
-    }
+    
 
 }
 

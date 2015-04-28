@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 public class CollapsingMenuControl : MonoBehaviour, ILayoutElement {
 
+    public static Camera cam;
     public bool display = false;
 
     void Start() {
@@ -11,6 +13,15 @@ public class CollapsingMenuControl : MonoBehaviour, ILayoutElement {
     }
 
     void Update() {
+        if(cam == null) {
+            cam = GameObject.Find("UI").GetComponent<Camera>();
+        }
+        if(display && Input.GetMouseButtonUp(0)) {
+            if(!RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Input.mousePosition, cam) && !RectTransformUtility.RectangleContainsScreenPoint(transform.parent as RectTransform, Input.mousePosition, cam)) {
+                display = false;
+            }
+        }
+
         float height = transform.localScale.y;
         if((display && height < 1) || (!display && height > 0)) {
             height = Mathf.Lerp(height, display ? 1 : 0, Time.deltaTime * 10.0f); // Tween towards desired result
