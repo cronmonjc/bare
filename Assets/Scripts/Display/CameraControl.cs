@@ -22,8 +22,6 @@ public class CameraControl : MonoBehaviour {
 
     public GameObject LabelPrefab;
     public Transform LabelParent;
-    public GameObject PushpinPrefab;
-    public Transform PushpinParent;
 
     public GameObject FuncSelectRoot;
 
@@ -63,8 +61,10 @@ public class CameraControl : MonoBehaviour {
 
             Vector2 mousePos = Input.mousePosition;
             if(Input.GetMouseButtonDown(0)) { // LMB pressed
-                if(Selected.Count == 0 || mousePos.y > 0.45f * Screen.height)
+                if(Selected.Count == 0 || mousePos.y > 0.45f * Screen.height) {
                     dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
+                    os.Clear();
+                }
             } else if(Input.GetMouseButtonUp(0)) { // LMB released
                 if(dragging && (OnlyCamSelected.Count == 0 || mousePos.y > 0.45f * Screen.height)) {
                     if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {

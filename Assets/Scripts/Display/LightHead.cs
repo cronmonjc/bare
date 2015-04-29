@@ -59,13 +59,11 @@ public class LightHead : MonoBehaviour {
         myLabel.target = transform;
         myLabel.transform.SetParent(cam.LabelParent);
 
-        go = GameObject.Instantiate(cam.PushpinPrefab) as GameObject;
-        go.GetComponent<Pushpin>().target = transform;
-        go.GetComponent<Pushpin>().transform.SetParent(cam.PushpinParent);
-
         myLights = GetComponentsInChildren<Light>(true);
 
-        transparent = new Color(1f, 1f, 1f, 0.5f);
+        transparent = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+
+        Single.gameObject.SetActive(true);
     }
 
     void Update() {
@@ -164,6 +162,22 @@ public class LightHead : MonoBehaviour {
             } else {
                 SetStyle(null);
             }
+            if(new List<StyleNode>(lhd.optic.styles.Values)[0].isDualColor) {
+                DualL.gameObject.SetActive(true);
+                DualR.gameObject.SetActive(true);
+                Single.gameObject.SetActive(false);
+                Single.Selected = false;
+                DualL.Selected = true;
+                DualR.Selected = true;
+            } else {
+                DualL.gameObject.SetActive(false);
+                DualR.gameObject.SetActive(false);
+                Single.gameObject.SetActive(true);
+                Single.Selected = true;
+                DualL.Selected = false;
+                DualR.Selected = false;
+            }
+
         } else {
             lhd.optic = null;
             SetStyle(null);
@@ -175,24 +189,14 @@ public class LightHead : MonoBehaviour {
     public void SetStyle(StyleNode newStyle) {
         if(newStyle == null) {
             lhd.style = null;
-            DualL.gameObject.SetActive(false);
-            DualR.gameObject.SetActive(false);
-            Single.gameObject.SetActive(true);
-            Single.Color = new Color(1f, 1f, 1f, 0.5f);
+            Single.Color = transparent;
+            DualL.Color = transparent;
+            DualR.Color = transparent;
         } else {
             lhd.style = lhd.optic.styles[newStyle.name];
-            if(lhd.style.isDualColor) {
-                DualL.gameObject.SetActive(true);
-                DualL.Color = lhd.style.color;
-                DualR.gameObject.SetActive(true);
-                DualR.Color = lhd.style.color2;
-                Single.gameObject.SetActive(false);
-            } else {
-                DualL.gameObject.SetActive(false);
-                DualR.gameObject.SetActive(false);
-                Single.gameObject.SetActive(true);
-                Single.Color = lhd.style.color;
-            }
+            Single.Color = lhd.style.color;
+            DualL.Color = lhd.style.color;
+            DualR.Color = lhd.style.color2;
         }
     }
 }

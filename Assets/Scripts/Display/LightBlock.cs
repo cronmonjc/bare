@@ -55,7 +55,7 @@ public class LightBlock : MonoBehaviour {
 
         mr = GetComponent<MeshRenderer>();
 
-        c = new Color(1f, 1f, 1f, 0.5f);
+        c = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         RenderColor = c;
     }
 

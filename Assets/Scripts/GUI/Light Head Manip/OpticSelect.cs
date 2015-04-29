@@ -31,11 +31,12 @@ public class OpticSelect : MonoBehaviour {
         foreach(Transform alpha in temp) {
             DestroyImmediate(alpha.gameObject);
         }
+        styleSelect.Clear();
+        styleSelect.gameObject.SetActive(false);
     }
 
     public void Refresh() {
         Clear();
-        styleSelect.gameObject.SetActive(false);
 
         List<Location> locs = new List<Location>();
         bool showLong = true, showShort = true;
