@@ -41,14 +41,14 @@ public class SplitMerge : MonoBehaviour {
             }
 
             soc.ShowLong = merge;
-            cam.Selected.Remove(lh);
+            lh.Selected = false;
             foreach(LightHead alpha in soc.transform.GetComponentsInChildren<LightHead>(false)) {
-                if(!cam.Selected.Contains(alpha)) {
-                    cam.Selected.Add(alpha);
-                    alpha.selectedFunctions.Clear();
-                    foreach(Function f in lh.selectedFunctions) {
-                        if(alpha.CapableFunctions.Contains(f) && !alpha.selectedFunctions.Contains(f)) {
-                            alpha.selectedFunctions.Add(f);
+                if(!alpha.Selected) {
+                    alpha.Selected = true;
+                    alpha.patterns.Clear();
+                    foreach(Function f in lh.patterns.Keys) {
+                        if(alpha.CapableFunctions.Contains(f)) {
+                            alpha.patterns[f] = lh.patterns[f];
                         }
                     }
                     if(lh.lhd.optic != null) {
@@ -68,8 +68,5 @@ public class SplitMerge : MonoBehaviour {
             }
         }
         cam.os.Refresh();
-        foreach(FunctionSelect alpha in cam.FuncSelectRoot.GetComponentsInChildren<FunctionSelect>(true)) {
-            alpha.Refresh();
-        }
     }
 }

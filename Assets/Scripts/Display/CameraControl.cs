@@ -95,9 +95,6 @@ public class CameraControl : MonoBehaviour {
                         if(selected.Count > 0) {
                             os.Refresh();
                         }
-                        foreach(FunctionSelect alpha in FuncSelectRoot.GetComponentsInChildren<FunctionSelect>(true)) {
-                            alpha.Refresh();
-                        }
                     }
                 }
             } else if(dragging) { // LMB held
