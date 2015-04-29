@@ -55,22 +55,24 @@ public class StyleSelect : MonoBehaviour {
     private bool IsRecommended(StyleNode sn) {
         bool rtn = true;
 
-        foreach(LightHead alpha in cam.OnlyCamSelected) {
-            foreach(Function f in alpha.selectedFunctions) {
-                switch(f) {
-                    case Function.TAKEDOWN:
-                    case Function.ICL:
-                    case Function.ALLEY:
-                        rtn &= sn.partSuffix.Contains("C");
-                        break;
-                    case Function.T13:
-                    case Function.STT_AND_TAIL:
-                        rtn &= sn.partSuffix.Contains("R");
-                        break;
-                    case Function.TRAFFIC:
-                        rtn &= sn.partSuffix.Contains("A");
-                        break;
-                    default: break;
+        foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
+            if(alpha.Selected) {
+                foreach(Function f in alpha.patterns.Keys) {
+                    switch(f) {
+                        case Function.TAKEDOWN:
+                        case Function.ICL:
+                        case Function.ALLEY:
+                            rtn &= sn.partSuffix.Contains("C");
+                            break;
+                        case Function.T13:
+                        case Function.STT_AND_TAIL:
+                            rtn &= sn.partSuffix.Contains("R");
+                            break;
+                        case Function.TRAFFIC:
+                            rtn &= sn.partSuffix.Contains("A");
+                            break;
+                        default: break;
+                    }
                 }
             }
         }
@@ -86,8 +88,9 @@ public class StyleSelect : MonoBehaviour {
     }
 
     public void SetSelection(StyleNode node) {
-        foreach(LightHead lh in new List<LightHead>(cam.OnlyCamSelected)) {
-            lh.SetStyle(node);
+        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+            if(lh.Selected)
+                lh.SetStyle(node);
         }
     }
 }

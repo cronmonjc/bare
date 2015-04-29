@@ -39,14 +39,18 @@ public class OpticSelect : MonoBehaviour {
 
         List<Location> locs = new List<Location>();
         bool showLong = true, showShort = true;
-        foreach(LightHead alpha in cam.OnlyCamSelected) {
-            showLong &= !alpha.isSmall;
-            showShort &= alpha.isSmall;
+        List<LightHead> selected = new List<LightHead>();
+        foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
+            if(alpha.Selected) {
+                selected.Add(alpha);
+                showLong &= !alpha.isSmall;
+                showShort &= alpha.isSmall;
 
-            if(locs.Contains(alpha.loc)) {
-                continue;
-            } else {
-                locs.Add(alpha.loc);
+                if(locs.Contains(alpha.loc)) {
+                    continue;
+                } else {
+                    locs.Add(alpha.loc);
+                }
             }
         }
 
@@ -72,10 +76,10 @@ public class OpticSelect : MonoBehaviour {
         nohead.GetComponent<LightOptionElement>().os = this;
 
         OpticNode on = null;
-        for(int i = 0; i < cam.OnlyCamSelected.Count; i++) {
+        for(int i = 0; i < selected.Count; i++) {
             if(i == 0) {
-                on = cam.OnlyCamSelected[i].lhd.optic;
-            } else if(on != cam.OnlyCamSelected[i].lhd.optic) {
+                on = selected[i].lhd.optic;
+            } else if(on != selected[i].lhd.optic) {
                 on = null;
             }
         }
@@ -92,8 +96,8 @@ public class OpticSelect : MonoBehaviour {
         styleSelect.selectedType = node;
         styleSelect.gameObject.SetActive(node != null);
         bool change = false;
-        foreach(LightHead lh in new List<LightHead>(cam.OnlyCamSelected)) {
-            if(lh.lhd.optic != node) {
+        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+            if(lh.Selected && lh.lhd.optic != node) {
                 lh.SetOptic(node);
                 change = true;
             }

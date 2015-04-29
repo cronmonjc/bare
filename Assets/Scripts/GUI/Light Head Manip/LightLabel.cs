@@ -40,7 +40,7 @@ public class LightLabel : MonoBehaviour {
 
         if(lh == null) lh = target.GetComponent<LightHead>();
         else {
-            if(lh.lhd.style != null && cam.Selected.Contains(lh)) {
+            if(lh.lhd.style != null && lh.Selected) {
                 background.gameObject.SetActive(true);
                 label.text = lh.lhd.style.name + " " + lh.lhd.optic.name;
                 c.sortingOrder = Mathf.RoundToInt(Vector3.Distance(cam.transform.position, transform.position)) * -1;

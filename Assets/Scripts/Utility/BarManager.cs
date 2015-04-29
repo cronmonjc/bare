@@ -25,13 +25,9 @@ public class BarManager : MonoBehaviour {
                 lightCmpd.Add(new NbtString("optc", lh.lhd.optic.partNumber));
                 lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
             }
-            int functions = 0;
 
-            foreach(Function f in lh.selectedFunctions) {
-                functions = functions | (int)f;
-            }
+            // something about saving the selected patterns
 
-            lightCmpd.Add(new NbtInt("fn", functions));
             lightList.Add(lightCmpd);
         }
         root.Add(lightList);
@@ -91,13 +87,8 @@ public class BarManager : MonoBehaviour {
                     }
                 }
             }
-            int functions = lightCmpd["fn"].IntValue;
 
-            foreach(Function f in lh.CapableFunctions) {
-                if((functions & ((int)f)) != 0) {
-                    lh.selectedFunctions.Add(f);
-                }
-            }
+            //something about loading selected patterns
         }
         foreach(NbtTag alpha in socList) {
             NbtCompound socCmpd = alpha as NbtCompound;
@@ -109,7 +100,7 @@ public class BarManager : MonoBehaviour {
     public void Clear() {
         foreach(LightHead lh in transform.GetComponentsInChildren<LightHead>(true)) {
             lh.SetOptic("");
-            lh.selectedFunctions.Clear();
+            lh.patterns.Clear();
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
             soc.ShowLong = true;

@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public class SelBoxCollider : MonoBehaviour {
 
-    public List<LightHead> Selected;
+    public List<LightBlock> Selected;
 
     void Start() {
-        Selected = new List<LightHead>();
+        Selected = new List<LightBlock>();
     }
 
     void Update() {
@@ -20,14 +20,14 @@ public class SelBoxCollider : MonoBehaviour {
     }
 
     void OnCollisionEnter(Collision coll) {
-        LightHead lh = coll.gameObject.GetComponent<LightHead>();
+        LightBlock lh = coll.gameObject.GetComponent<LightBlock>();
         if(lh != null) {
             Selected.Add(lh);
         }
     }
 
     void OnCollisionExit(Collision coll) {
-        LightHead lh = coll.gameObject.GetComponent<LightHead>();
+        LightBlock lh = coll.gameObject.GetComponent<LightBlock>();
         if(lh != null && Selected.Contains(lh)) {
             Selected.Remove(lh);
         }

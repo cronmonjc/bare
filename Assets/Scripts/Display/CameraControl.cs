@@ -29,9 +29,9 @@ public class CameraControl : MonoBehaviour {
 
     public GameObject FBrowser;
 
-    private List<LightHead> selected;
+    private List<LightBlock> selected;
 
-    public List<LightHead> Selected {
+    public List<LightBlock> Selected {
         get {
             if(dragging) {
                 return sbc.Selected;
@@ -41,7 +41,7 @@ public class CameraControl : MonoBehaviour {
         }
     }
 
-    public List<LightHead> OnlyCamSelected {
+    public List<LightBlock> OnlyCamSelected {
         get {
             return this.selected;
         }
@@ -50,7 +50,7 @@ public class CameraControl : MonoBehaviour {
     void Start() {
         Application.targetFrameRate = 120;
 
-        selected = new List<LightHead>();
+        selected = new List<LightBlock>();
         sbc = SelBox.GetComponent<SelBoxCollider>();
 
         myCam = GetComponent<Camera>();
@@ -75,13 +75,13 @@ public class CameraControl : MonoBehaviour {
                         if(Selected.Count == 0) { // There isn't anything in the selection box.  Test if there was a light under the cursor?
                             RaycastHit hit;
                             if(Physics.Raycast(myCam.ScreenPointToRay(Input.mousePosition), out hit)) { // There WAS something!
-                                LightHead head = hit.transform.GetComponent<LightHead>();
+                                LightBlock head = hit.transform.GetComponent<LightBlock>();
                                 if(head != null) {
                                     selected.Add(head);
                                 }
                             }
                         } else {
-                            foreach(LightHead alpha in sbc.Selected) {
+                            foreach(LightBlock alpha in sbc.Selected) {
                                 if(!selected.Contains(alpha)) {
                                     selected.Add(alpha);
                                 }

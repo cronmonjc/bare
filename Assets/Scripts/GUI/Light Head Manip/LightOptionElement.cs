@@ -53,8 +53,8 @@ public class LightOptionElement : MonoBehaviour {
     void Update() {
         if(os != null) {
             bool on = true;
-            foreach(LightHead lh in os.cam.OnlyCamSelected) {
-                if(lh.lhd.optic != optNode) {
+            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+                if(lh.Selected && lh.lhd.optic != optNode) {
                     on = false;
                 }
             }
@@ -69,8 +69,8 @@ public class LightOptionElement : MonoBehaviour {
             }
         } else if(ss != null) {
             bool on = true;
-            foreach(LightHead lh in ss.cam.OnlyCamSelected) {
-                if(lh.lhd.style != sn) {
+            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+                if(lh.Selected && lh.lhd.style != sn) {
                     on = false;
                 }
             }

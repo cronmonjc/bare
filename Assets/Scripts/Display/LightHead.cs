@@ -3,16 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class LightHead : MonoBehaviour {
+    public LightBlock Single, DualL, DualR;
+
     public Location loc;
 
     private static CameraControl cam;
     private static SelBoxCollider sbc;
-    public Material selected, idle;
+
+    private Color transparent;
 
     public bool isSmall;
     public LightHeadDefinition lhd;
-    [System.NonSerialized]
-    public List<Function> selectedFunctions;
+    public bool leftSelect, rightSelect;
+
+    public Dictionary<Function, Pattern> patterns;
 
     public List<Function> CapableFunctions {
         get { return LightDict.inst.capableFunctions[loc]; }
@@ -22,10 +26,27 @@ public class LightHead : MonoBehaviour {
 
     public Light[] myLights;
 
+    public bool Selected {
+        get {
+            return Single.Selected || DualL.Selected || DualR.Selected;
+        }
+        set {
+            if(lhd.style == null || !lhd.style.isDualColor) {
+                Single.Selected = value;
+                DualL.Selected = false;
+                DualR.Selected = false;
+            } else if(lhd.style != null && lhd.style.isDualColor) {
+                Single.Selected = false;
+                DualL.Selected = value;
+                DualR.Selected = value;
+            }
+        }
+    }
+
     void Awake() {
         lhd = new LightHeadDefinition();
 
-        selectedFunctions = new List<Function>();
+        patterns = new Dictionary<Function, Pattern>();
     }
 
     void Start() {
@@ -43,6 +64,8 @@ public class LightHead : MonoBehaviour {
         go.GetComponent<Pushpin>().transform.SetParent(cam.PushpinParent);
 
         myLights = GetComponentsInChildren<Light>(true);
+
+        transparent = new Color(1f, 1f, 1f, 0.5f);
     }
 
     void Update() {
@@ -51,12 +74,6 @@ public class LightHead : MonoBehaviour {
         }
         if(sbc == null) {
             sbc = cam.SelBox.GetComponent<SelBoxCollider>();
-        }
-
-        if(cam.Selected.Contains(this)) {
-            GetComponent<MeshRenderer>().material = selected;
-        } else {
-            GetComponent<MeshRenderer>().material = idle;
         }
 
         if(!myLabel.gameObject.activeInHierarchy) {
@@ -72,9 +89,9 @@ public class LightHead : MonoBehaviour {
     public void SetOptic(string newOptic, bool doDefault = true) {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
-            if(doDefault && selectedFunctions.Count > 0) {
+            if(doDefault && patterns.Count > 0) {
                 Function highFunction = Function.LEVEL1;
-                foreach(Function f in selectedFunctions) {
+                foreach(Function f in patterns.Keys) {
                     switch(f) {
                         case Function.ALLEY:
                         case Function.TAKEDOWN:
@@ -156,7 +173,26 @@ public class LightHead : MonoBehaviour {
     }
 
     public void SetStyle(StyleNode newStyle) {
-        if(newStyle == null) lhd.style = null;
-        else lhd.style = lhd.optic.styles[newStyle.name];
+        if(newStyle == null) {
+            lhd.style = null;
+            DualL.gameObject.SetActive(false);
+            DualR.gameObject.SetActive(false);
+            Single.gameObject.SetActive(true);
+            Single.Color = new Color(1f, 1f, 1f, 0.5f);
+        } else {
+            lhd.style = lhd.optic.styles[newStyle.name];
+            if(lhd.style.isDualColor) {
+                DualL.gameObject.SetActive(true);
+                DualL.Color = lhd.style.color;
+                DualR.gameObject.SetActive(true);
+                DualR.Color = lhd.style.color2;
+                Single.gameObject.SetActive(false);
+            } else {
+                DualL.gameObject.SetActive(false);
+                DualR.gameObject.SetActive(false);
+                Single.gameObject.SetActive(true);
+                Single.Color = lhd.style.color;
+            }
+        }
     }
 }
