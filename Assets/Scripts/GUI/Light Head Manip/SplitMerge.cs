@@ -13,7 +13,7 @@ public class SplitMerge : MonoBehaviour {
         foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
             if(!lh.Selected) continue;
             SizeOptionControl soc = null;
-            for(Transform t = transform; soc == null && t != null; t = t.parent) {
+            for(Transform t = lh.transform; soc == null && t != null; t = t.parent) {
                 soc = t.GetComponent<SizeOptionControl>();
             }
             if(soc == null) {
@@ -33,7 +33,7 @@ public class SplitMerge : MonoBehaviour {
         foreach(LightHead lh in temp) {
             if(!lh.Selected) continue;
             SizeOptionControl soc = null;
-            for(Transform t = transform; soc == null && t != null; t = t.parent) {
+            for(Transform t = lh.transform; soc == null && t != null; t = t.parent) {
                 soc = t.GetComponent<SizeOptionControl>();
             }
             if(soc == null) {
