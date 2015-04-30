@@ -1,11 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class LightBlock : MonoBehaviour {
     private static CameraControl cam;
     private MeshRenderer mr;
     private LightHead myHead;
     private Color c;
+
+    public Dictionary<Function, Pattern> patterns;
+
     public Color Color {
         get {
             return c;
@@ -49,6 +53,8 @@ public class LightBlock : MonoBehaviour {
     }
 
     void Start() {
+        patterns = new Dictionary<Function, Pattern>();
+
         for(Transform t = transform; myHead == null && t != null; t = t.parent) {
             myHead = t.GetComponent<LightHead>();
         }
@@ -61,9 +67,8 @@ public class LightBlock : MonoBehaviour {
 
     void Update() {
         RenderColor = c + (Color.white * (Selected ? 0.25f : 0.0f));
-    }
-
-    public void Select() {
-
+        if(CameraControl.funcBeingTested != Function.NONE) {
+            // todo: flashy
+        }
     }
 }

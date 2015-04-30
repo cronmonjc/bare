@@ -60,12 +60,12 @@ public class CameraControl : MonoBehaviour {
             GetComponent<Light>().enabled = (funcBeingTested == Function.NONE);
 
             Vector2 mousePos = Input.mousePosition;
-            if(Input.GetMouseButtonDown(0)) { // LMB pressed
+            if(Input.GetMouseButtonDown(0) && (funcBeingTested == Function.NONE)) { // LMB pressed
                 if(Selected.Count == 0 || mousePos.y > 0.45f * Screen.height) {
                     dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
                     os.Clear();
                 }
-            } else if(Input.GetMouseButtonUp(0)) { // LMB released
+            } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == Function.NONE)) { // LMB released
                 if(dragging && (OnlyCamSelected.Count == 0 || mousePos.y > 0.45f * Screen.height)) {
                     if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
                         selected.Clear();

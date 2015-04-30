@@ -60,13 +60,10 @@ public class LightDict : MonoBehaviour {
                     }
                 }
 
-                NbtList pattstag = (NbtList)(cat.RootTag["patts"]);
+                NbtCompound pattstag = (NbtCompound)(cat.RootTag["patts"]);
 
-                foreach(NbtTag patt in pattstag) {
-                    NbtCompound pattCmpd = patt as NbtCompound;
+                
 
-                    
-                }
 
 
             } catch(NbtFormatException ex) {

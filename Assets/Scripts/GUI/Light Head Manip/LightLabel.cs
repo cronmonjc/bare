@@ -21,6 +21,7 @@ public class LightLabel : MonoBehaviour {
     }
 
     void Update() {
+        if(CameraControl.funcBeingTested != Function.NONE) return;
         if(cam == null) cam = FindObjectOfType<CameraControl>();
         else {
             transform.forward = cam.transform.forward;

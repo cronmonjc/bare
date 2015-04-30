@@ -67,6 +67,13 @@ public class LightHead : MonoBehaviour {
     }
 
     void Update() {
+        if(CameraControl.funcBeingTested != Function.NONE) {
+            if(myLabel.gameObject.activeInHierarchy) {
+                myLabel.gameObject.SetActive(false);
+            }
+            return;
+        }
+
         if(cam == null) {
             cam = FindObjectOfType<CameraControl>();
         }
@@ -79,6 +86,30 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    public bool IsUsingFunction(Function f) {
+        return lhd.style != null && (lhd.style.isDualColor ? (DualL.patterns.ContainsKey(f) || DualR.patterns.ContainsKey(f)) : (Single.patterns.ContainsKey(f)));
+    }
+
+    public void CopyPatterns(LightHead dest) {
+        dest.DualL.patterns.Clear();
+        dest.DualR.patterns.Clear();
+        dest.Single.patterns.Clear();
+
+        foreach(Function f in CapableFunctions) {
+            if(IsUsingFunction(f) && dest.CapableFunctions.Contains(f)) {
+                if(DualL.patterns.ContainsKey(f)) {
+                    dest.DualL.patterns[f] = DualL.patterns[f];
+                }
+                if(DualR.patterns.ContainsKey(f)) {
+                    dest.DualR.patterns[f] = DualR.patterns[f];
+                }
+                if(Single.patterns.ContainsKey(f)) {
+                    dest.Single.patterns[f] = Single.patterns[f];
+                }
+            }
+        }
+    }
+
     public void SetOptic(OpticNode newOptic) {
         if(newOptic == null) SetOptic("");
         else SetOptic(newOptic.name);
@@ -87,9 +118,10 @@ public class LightHead : MonoBehaviour {
     public void SetOptic(string newOptic, bool doDefault = true) {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
-            if(doDefault && patterns.Count > 0) {
+            if(doDefault) {
                 Function highFunction = Function.LEVEL1;
-                foreach(Function f in patterns.Keys) {
+                foreach(Function f in CapableFunctions) {
+                    if(!IsUsingFunction(f)) continue;
                     switch(f) {
                         case Function.ALLEY:
                         case Function.TAKEDOWN:
@@ -181,6 +213,12 @@ public class LightHead : MonoBehaviour {
         } else {
             lhd.optic = null;
             SetStyle(null);
+            DualL.gameObject.SetActive(false);
+            DualR.gameObject.SetActive(false);
+            Single.gameObject.SetActive(true);
+            Single.Selected = true;
+            DualL.Selected = false;
+            DualR.Selected = false;
         }
 
 

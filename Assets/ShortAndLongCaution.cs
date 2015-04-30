@@ -3,6 +3,8 @@ using System.Collections;
 
 public class ShortAndLongCaution : MonoBehaviour {
     void Update() {
+        if(CameraControl.funcBeingTested != Function.NONE) return;
+
         bool Short = true, Long = true;
 
         foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {

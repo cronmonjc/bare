@@ -10,6 +10,7 @@ public class FarTest : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if(CameraControl.funcBeingTested != Function.NONE) return;
         if(bm == null) bm = FindObjectOfType<BarManager>();
         if(lh == null) lh = GetComponent<LightHead>();
         lh.loc = bm.BarSize >= FarMin ? Location.FAR_REAR : Location.REAR;

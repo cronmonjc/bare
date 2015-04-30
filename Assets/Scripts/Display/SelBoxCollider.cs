@@ -11,6 +11,7 @@ public class SelBoxCollider : MonoBehaviour {
     }
 
     void Update() {
+        if(CameraControl.funcBeingTested != Function.NONE) return;
         RectTransform rt = (RectTransform)transform;
         BoxCollider c = GetComponent<BoxCollider>();
 

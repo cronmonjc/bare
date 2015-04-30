@@ -10,6 +10,7 @@ public class SplitMerge : MonoBehaviour {
 
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
+        if(CameraControl.funcBeingTested != Function.NONE) return;
         foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
             if(!lh.Selected) continue;
             SizeOptionControl soc = null;
@@ -29,6 +30,7 @@ public class SplitMerge : MonoBehaviour {
     }
 
     public void Act(bool merge) {
+        if(CameraControl.funcBeingTested != Function.NONE) return;
         List<LightHead> temp = new List<LightHead>(FindObjectsOfType<LightHead>());
         foreach(LightHead lh in temp) {
             if(!lh.Selected) continue;
@@ -45,12 +47,7 @@ public class SplitMerge : MonoBehaviour {
             foreach(LightHead alpha in soc.transform.GetComponentsInChildren<LightHead>(false)) {
                 if(!alpha.Selected) {
                     alpha.Selected = true;
-                    alpha.patterns.Clear();
-                    foreach(Function f in lh.patterns.Keys) {
-                        if(alpha.CapableFunctions.Contains(f)) {
-                            alpha.patterns[f] = lh.patterns[f];
-                        }
-                    }
+                    lh.CopyPatterns(alpha);
                     if(lh.lhd.optic != null) {
                         if(merge) {
                             if(lh.lhd.optic.lgEquivalent.Length > 0) {
