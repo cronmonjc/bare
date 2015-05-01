@@ -6,6 +6,37 @@ using System.Collections.Generic;
 public class BarManager : MonoBehaviour {
     public int BarSize = 3;
 
+    public NbtCompound patts;
+
+    void Start() {
+        patts = new NbtCompound("pats");
+
+        foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
+            patts.Add(new NbtCompound(alpha));
+        }
+
+        patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] { new NbtShort("enr1", 0), new NbtShort("enr2", 0) });
+
+        foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim" }) {
+            patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("enf1", 0), new NbtShort("enf2", 0), new NbtShort("enr1", 0), new NbtShort("enr2", 0) });
+        }
+
+        patts.Get<NbtCompound>("dim").Add(new NbtShort("dimp", 0));
+
+        foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw" }) {
+            patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("phf1", 0), new NbtShort("phf2", 0), new NbtShort("phr1", 0), new NbtShort("phr2", 0) });
+        }
+
+        patts.Get<NbtCompound>("traf").Add(new NbtCompound("patt", new NbtTag[] { new NbtShort("left", 0), new NbtShort("rite", 0), new NbtShort("cntr", 0) }));
+
+        foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl" }) {
+            patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat1", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
+                                                                                     new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
+            patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat2", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
+                                                                                     new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
+        }
+    }
+
     public void SetBarSize(int to) {
         if(to < 4 && to > -1) {
             BarSize = to;
@@ -26,11 +57,11 @@ public class BarManager : MonoBehaviour {
                 lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
             }
 
-            // something about saving the selected patterns
-
             lightList.Add(lightCmpd);
         }
         root.Add(lightList);
+
+        root.Add(patts);
 
         NbtList socList = new NbtList("soc");
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
@@ -87,9 +118,10 @@ public class BarManager : MonoBehaviour {
                     }
                 }
             }
-
-            //something about loading selected patterns
         }
+
+        patts = root.Get<NbtCompound>("pats");
+
         foreach(NbtTag alpha in socList) {
             NbtCompound socCmpd = alpha as NbtCompound;
             SizeOptionControl soc = socs[socCmpd["path"].StringValue];

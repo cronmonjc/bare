@@ -94,6 +94,7 @@ public class CameraControl : MonoBehaviour {
 
                         if(selected.Count > 0) {
                             os.Refresh();
+                            FnSelManager.inst.Refresh();
                         }
                     }
                 }

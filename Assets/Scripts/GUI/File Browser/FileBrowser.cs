@@ -26,11 +26,9 @@ public class FileBrowser : MonoBehaviour {
     public FileEvent OnSave;
     public FileEvent OnOpen;
 
-    void Start() {
+    void Awake() {
         drives = Directory.GetLogicalDrives();
         Navigate(Directory.GetCurrentDirectory());
-
-        gameObject.SetActive(false);
     }
 
     public void BeginSaveAs() {
