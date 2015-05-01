@@ -66,7 +66,7 @@ public class LightDict : MonoBehaviour {
 
                 NbtCompound pattstag = (NbtCompound)(cat.RootTag["patts"]);
 
-                
+                // todo: load patterns
 
 
 

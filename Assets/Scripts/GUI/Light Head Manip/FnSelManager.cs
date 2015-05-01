@@ -30,11 +30,12 @@ public class FnSelManager : MonoBehaviour {
             foreach(Function f in lh.CapableFunctions) {
                 string name = "Nothing";
                 if(lh.IsUsingFunction(f)) {
-
+                    // todo: give func name
                 }
 
                 foreach(PatternFunc fn in funcs) {
                     if(fn.fn == f) {
+                        fn.DispPattern = name;
                         fn.gameObject.SetActive(true);
                         break;
                     }
