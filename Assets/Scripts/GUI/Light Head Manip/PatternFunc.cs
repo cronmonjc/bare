@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PatternFunc : MonoBehaviour, IPointerClickHandler {
     public FnSelManager fsl;
+    public Text t;
     public Function fn;
 
     public string DispPattern {
@@ -56,7 +57,7 @@ public class PatternFunc : MonoBehaviour, IPointerClickHandler {
                 default:
                     break;
             }
-            GetComponentInChildren<Text>().text = func + value;
+            t.text = func + value;
         }
     }
 

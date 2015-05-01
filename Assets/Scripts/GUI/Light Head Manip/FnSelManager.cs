@@ -46,6 +46,7 @@ public class FnSelManager : MonoBehaviour {
 
     public void OnSelect(Function f) {
         foreach(PatternFunc fn in funcs) {
+            fn.GetComponent<Animator>().ResetTrigger(fn.fn == f ? "Normal" : "Chosen");
             fn.GetComponent<Animator>().SetTrigger(fn.fn == f ? "Chosen" : "Normal");
         }
     }
