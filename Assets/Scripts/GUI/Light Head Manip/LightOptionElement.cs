@@ -19,7 +19,7 @@ public class LightOptionElement : MonoBehaviour {
     /// </summary>
     public StyleSelect ss;
     /// <summary>
-    /// If this is for selecting a optic, this is the type that would be selected when this item is clicked.
+    /// If this is for selecting an optic, this is the type that would be selected when this item is clicked.
     /// </summary>
     public OpticNode optNode;
     /// <summary>

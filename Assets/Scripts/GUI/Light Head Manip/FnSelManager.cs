@@ -20,55 +20,113 @@ public class FnSelManager : MonoBehaviour {
 
     public void Refresh() {
         foreach(PatternFunc fn in funcs) {
+            fn.GetComponent<Animator>().ResetTrigger("Chosen");
             fn.GetComponent<Animator>().SetTrigger("Normal");
             fn.gameObject.SetActive(false);
-        }
 
-        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-            if(!lh.Selected || !lh.gameObject.activeInHierarchy) continue;
+            string name = "";
 
-            foreach(Function f in lh.CapableFunctions) {
-                string name = "Nothing";
-                if(lh.IsUsingFunction(f)) {
+            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+                if(!lh.CapableFunctions.Contains(fn.fn) || !lh.Selected || !lh.gameObject.activeInHierarchy) continue;
+
+                if(lh.IsUsingFunction(fn.fn)) {
                     if(lh.lhd.style.isDualColor) {
-                        if(lh.DualL.patterns.ContainsKey(f)) {
-                            if(name == "Nothing") {
-                                name = lh.DualL.patterns[f].name;
+                        if(lh.DualL.patterns.ContainsKey(fn.fn)) {
+                            if(name == "") {
+                                name = lh.DualL.patterns[fn.fn].name;
                             } else {
-                                if(name != "-- Multiple --" && name != lh.DualL.patterns[f].name) {
-                                    name = "-- Multiple --";
+                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualL.patterns[fn.fn].name) {
+                                    name = "<i>-- Multiple Values --</i>";
                                 }
                             }
                         }
-                        if(lh.DualR.patterns.ContainsKey(f)) {
-                            if(name == "Nothing") {
-                                name = lh.DualR.patterns[f].name;
+                        if(lh.DualR.patterns.ContainsKey(fn.fn)) {
+                            if(name == "") {
+                                name = lh.DualR.patterns[fn.fn].name;
                             } else {
-                                if(name != "-- Multiple --" && name != lh.DualR.patterns[f].name) {
-                                    name = "-- Multiple --";
+                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualR.patterns[fn.fn].name) {
+                                    name = "<i>-- Multiple Values --</i>";
                                 }
                             }
                         }
                     } else {
-                        if(lh.Single.patterns.ContainsKey(f)) {
-                            if(name == "Nothing") {
-                                name = lh.Single.patterns[f].name;
+                        if(lh.Single.patterns.ContainsKey(fn.fn)) {
+                            if(name == "") {
+                                name = lh.Single.patterns[fn.fn].name;
                             } else {
-                                if(name != "-- Multiple --" && name != lh.Single.patterns[f].name) {
-                                    name = "-- Multiple --";
+                                if(name != "<i>-- Multiple Values --</i>" && name != lh.Single.patterns[fn.fn].name) {
+                                    name = "<i>-- Multiple Values --</i>";
                                 }
                             }
                         }
                     }
-                }
-
-                foreach(PatternFunc fn in funcs) {
-                    if(fn.fn == f) {
-                        fn.DispPattern = name;
-                        fn.gameObject.SetActive(true);
-                        break;
+                } else {
+                    if(name != "") {
+                        name = "<i>-- Multiple Values --</i>";
                     }
                 }
+            }
+
+            if(name == "") {
+                fn.DispPattern = "<i>Nothing</i>";
+            } else {
+                fn.DispPattern = name;
+            }
+            fn.gameObject.SetActive(true);
+        }
+
+
+    }
+
+    public void RefreshLabels() {
+        foreach(PatternFunc fn in funcs) {
+            string name = "";
+
+            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+                if(!lh.CapableFunctions.Contains(fn.fn) || !lh.Selected || !lh.gameObject.activeInHierarchy) continue;
+
+                if(lh.IsUsingFunction(fn.fn)) {
+                    if(lh.lhd.style.isDualColor) {
+                        if(lh.DualL.patterns.ContainsKey(fn.fn)) {
+                            if(name == "") {
+                                name = lh.DualL.patterns[fn.fn].name;
+                            } else {
+                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualL.patterns[fn.fn].name) {
+                                    name = "<i>-- Multiple Values --</i>";
+                                }
+                            }
+                        }
+                        if(lh.DualR.patterns.ContainsKey(fn.fn)) {
+                            if(name == "") {
+                                name = lh.DualR.patterns[fn.fn].name;
+                            } else {
+                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualR.patterns[fn.fn].name) {
+                                    name = "<i>-- Multiple Values --</i>";
+                                }
+                            }
+                        }
+                    } else {
+                        if(lh.Single.patterns.ContainsKey(fn.fn)) {
+                            if(name == "") {
+                                name = lh.Single.patterns[fn.fn].name;
+                            } else {
+                                if(name != "<i>-- Multiple Values --</i>" && name != lh.Single.patterns[fn.fn].name) {
+                                    name = "<i>-- Multiple Values --</i>";
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if(name != "") {
+                        name = "<i>-- Multiple Values --</i>";
+                    }
+                }
+            }
+
+            if(name == "") {
+                fn.DispPattern = "<i>Nothing</i>";
+            } else {
+                fn.DispPattern = name;
             }
         }
     }
