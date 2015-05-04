@@ -18,9 +18,6 @@ public class LightDict : MonoBehaviour {
 
         lights = new Dictionary<Location, LocationNode>();
         steadyBurn = new List<Function>(new Function[] { Function.TAKEDOWN, Function.ALLEY, Function.STT_AND_TAIL, Function.T13, Function.EMITTER });
-        flashPatts = new List<Pattern>();
-        warnPatts = new List<Pattern>();
-        tdPatts = new List<Pattern>();
 
         if(File.Exists("lib.nbt")) {
             foreach(Location l in new Location[] { Location.FRONT, Location.FRONT_CORNER, Location.ALLEY, Location.REAR_CORNER, Location.FAR_REAR, Location.REAR }) {
@@ -64,7 +61,35 @@ public class LightDict : MonoBehaviour {
                     }
                 }
 
-                NbtCompound pattstag = (NbtCompound)(cat.RootTag["patts"]);
+                NbtCompound pattstag = cat.RootTag.Get<NbtCompound>("patts");
+
+                warnPatts = new List<Pattern>();
+                NbtList patlist = pattstag.Get<NbtList>("flash");
+                foreach(NbtTag alpha in patlist) {
+                    NbtCompound alphaCmpd = (NbtCompound)alpha;
+
+                    Pattern alphaPat = new Pattern() { id = (ushort)alphaCmpd["id"].ShortValue, name = alphaCmpd["name"].StringValue };
+                    warnPatts.Add(alphaPat);
+                }
+
+                flashPatts = new List<Pattern>();
+                patlist = pattstag.Get<NbtList>("sflsh");
+                foreach(NbtTag alpha in patlist) {
+                    NbtCompound alphaCmpd = (NbtCompound)alpha;
+
+                    Pattern alphaPat = new Pattern() { id = (ushort)alphaCmpd["id"].ShortValue, name = alphaCmpd["name"].StringValue };
+                    flashPatts.Add(alphaPat);
+                }
+
+                
+                tdPatts = new List<Pattern>();
+                patlist = pattstag.Get<NbtList>("traff");
+                foreach(NbtTag alpha in patlist) {
+                    NbtCompound alphaCmpd = (NbtCompound)alpha;
+
+                    Pattern alphaPat = new Pattern() { id = (ushort)alphaCmpd["id"].ShortValue, name = alphaCmpd["name"].StringValue };
+                    tdPatts.Add(alphaPat);
+                }
 
                 // todo: load patterns
 
