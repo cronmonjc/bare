@@ -610,8 +610,8 @@ GameObject:
   - 114: {fileID: 52453228}
   - 114: {fileID: 52453227}
   - 114: {fileID: 52453226}
-  - 95: {fileID: 52453224}
   - 114: {fileID: 52453225}
+  - 95: {fileID: 52453224}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -1682,8 +1682,8 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 118648367}
   m_HandleRect: {fileID: 118648366}
-  m_Direction: 3
-  m_Value: 1
+  m_Direction: 2
+  m_Value: .99999845
   m_Size: .564098954
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2070,8 +2070,8 @@ GameObject:
   - 114: {fileID: 163243506}
   - 114: {fileID: 163243505}
   - 114: {fileID: 163243504}
-  - 95: {fileID: 163243502}
   - 114: {fileID: 163243503}
+  - 95: {fileID: 163243502}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -4805,8 +4805,8 @@ GameObject:
   - 114: {fileID: 327318037}
   - 114: {fileID: 327318036}
   - 114: {fileID: 327318035}
-  - 95: {fileID: 327318033}
   - 114: {fileID: 327318034}
+  - 95: {fileID: 327318033}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -5116,7 +5116,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: .000244140625}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &364360290
@@ -5877,8 +5877,8 @@ GameObject:
   - 114: {fileID: 447606879}
   - 114: {fileID: 447606878}
   - 114: {fileID: 447606877}
-  - 95: {fileID: 447606875}
   - 114: {fileID: 447606876}
+  - 95: {fileID: 447606875}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -6502,8 +6502,8 @@ GameObject:
   - 114: {fileID: 483614890}
   - 114: {fileID: 483614889}
   - 114: {fileID: 483614888}
-  - 95: {fileID: 483614886}
   - 114: {fileID: 483614887}
+  - 95: {fileID: 483614886}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -9609,8 +9609,8 @@ GameObject:
   - 114: {fileID: 769393906}
   - 114: {fileID: 769393905}
   - 114: {fileID: 769393904}
-  - 95: {fileID: 769393902}
   - 114: {fileID: 769393903}
+  - 95: {fileID: 769393902}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -10773,9 +10773,9 @@ MonoBehaviour:
   m_Horizontal: 0
   m_Vertical: 1
   m_MovementType: 1
-  m_Elasticity: .5
+  m_Elasticity: .100000001
   m_Inertia: 1
-  m_DecelerationRate: .100000001
+  m_DecelerationRate: .135000005
   m_ScrollSensitivity: 20
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 130549621}
@@ -11887,8 +11887,8 @@ GameObject:
   - 114: {fileID: 935689352}
   - 114: {fileID: 935689351}
   - 114: {fileID: 935689350}
-  - 95: {fileID: 935689348}
   - 114: {fileID: 935689349}
+  - 95: {fileID: 935689348}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -14572,8 +14572,8 @@ GameObject:
   - 114: {fileID: 1133036827}
   - 114: {fileID: 1133036826}
   - 114: {fileID: 1133036825}
-  - 95: {fileID: 1133036823}
   - 114: {fileID: 1133036824}
+  - 95: {fileID: 1133036823}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -15322,8 +15322,8 @@ GameObject:
   - 114: {fileID: 1217639466}
   - 114: {fileID: 1217639465}
   - 114: {fileID: 1217639464}
-  - 95: {fileID: 1217639462}
   - 114: {fileID: 1217639463}
+  - 95: {fileID: 1217639462}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -19407,8 +19407,8 @@ GameObject:
   - 114: {fileID: 1569535998}
   - 114: {fileID: 1569535997}
   - 114: {fileID: 1569535996}
-  - 95: {fileID: 1569535994}
   - 114: {fileID: 1569535995}
+  - 95: {fileID: 1569535994}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -20738,9 +20738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   steadyBurn: 
-  flashPatts: []
-  warnPatts: []
-  tdPatts: []
 --- !u!4 &1652103867
 Transform:
   m_ObjectHideFlags: 0
@@ -22508,8 +22505,8 @@ GameObject:
   - 114: {fileID: 1851649919}
   - 114: {fileID: 1851649918}
   - 114: {fileID: 1851649917}
-  - 95: {fileID: 1851649915}
   - 114: {fileID: 1851649916}
+  - 95: {fileID: 1851649915}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -24392,8 +24389,8 @@ GameObject:
   - 114: {fileID: 2017282368}
   - 114: {fileID: 2017282367}
   - 114: {fileID: 2017282366}
-  - 95: {fileID: 2017282364}
   - 114: {fileID: 2017282365}
+  - 95: {fileID: 2017282364}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -25593,8 +25590,8 @@ GameObject:
   - 114: {fileID: 2066884629}
   - 114: {fileID: 2066884628}
   - 114: {fileID: 2066884627}
-  - 95: {fileID: 2066884625}
   - 114: {fileID: 2066884626}
+  - 95: {fileID: 2066884625}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -26214,8 +26211,8 @@ GameObject:
   - 114: {fileID: 2139740862}
   - 114: {fileID: 2139740861}
   - 114: {fileID: 2139740860}
-  - 95: {fileID: 2139740858}
   - 114: {fileID: 2139740859}
+  - 95: {fileID: 2139740858}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged

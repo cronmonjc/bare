@@ -66,32 +66,21 @@ public class LightDict : MonoBehaviour {
                 warnPatts = new List<Pattern>();
                 NbtList patlist = pattstag.Get<NbtList>("flash");
                 foreach(NbtTag alpha in patlist) {
-                    NbtCompound alphaCmpd = (NbtCompound)alpha;
-
-                    Pattern alphaPat = new Pattern() { id = (ushort)alphaCmpd["id"].ShortValue, name = alphaCmpd["name"].StringValue };
-                    warnPatts.Add(alphaPat);
+                    warnPatts.Add(new WarnPatt((NbtCompound)alpha));
                 }
 
                 flashPatts = new List<Pattern>();
                 patlist = pattstag.Get<NbtList>("sflsh");
                 foreach(NbtTag alpha in patlist) {
-                    NbtCompound alphaCmpd = (NbtCompound)alpha;
-
-                    Pattern alphaPat = new Pattern() { id = (ushort)alphaCmpd["id"].ShortValue, name = alphaCmpd["name"].StringValue };
-                    flashPatts.Add(alphaPat);
+                    flashPatts.Add(new FlashPatt((NbtCompound)alpha));
                 }
 
                 
                 tdPatts = new List<Pattern>();
                 patlist = pattstag.Get<NbtList>("traff");
                 foreach(NbtTag alpha in patlist) {
-                    NbtCompound alphaCmpd = (NbtCompound)alpha;
-
-                    Pattern alphaPat = new Pattern() { id = (ushort)alphaCmpd["id"].ShortValue, name = alphaCmpd["name"].StringValue };
-                    tdPatts.Add(alphaPat);
+                    tdPatts.Add(new TraffPatt((NbtCompound)alpha));
                 }
-
-                // todo: load patterns
 
 
 
@@ -167,11 +156,93 @@ public class LightDict : MonoBehaviour {
     }
 }
 
-[System.Serializable]
-public class Pattern {
+public abstract class Pattern {
     public string name;
 
     public ushort id;
+    public ushort t0, t1, t2, t3;
+}
+
+public class WarnPatt : Pattern {
+    public short[] definition;
+
+    public WarnPatt(NbtCompound cmpd) {
+        name = cmpd["name"].StringValue;
+        id = (ushort)cmpd["id"].ShortValue;
+        t0 = (ushort)cmpd["t0"].ShortValue;
+        t1 = (ushort)cmpd["t1"].ShortValue;
+        t2 = (ushort)cmpd["t2"].ShortValue;
+        t3 = (ushort)cmpd["t3"].ShortValue;
+
+        NbtIntArray patttag = cmpd.Get<NbtIntArray>("patt");
+        int[] vals = patttag.Value;
+
+        definition = new short[vals.Length];
+
+        for(int i = 0; i < vals.Length; i++) {
+            definition[i] = (short)(vals[i] & 0xFFFF);
+        }
+    }
+}
+
+public class FlashPatt : Pattern {
+    public byte[] definition;
+
+    public FlashPatt(NbtCompound cmpd) {
+        name = cmpd["name"].StringValue;
+        id = (ushort)cmpd["id"].ShortValue;
+        t0 = (ushort)cmpd["t0"].ShortValue;
+        t1 = (ushort)cmpd["t1"].ShortValue;
+        t2 = (ushort)cmpd["t2"].ShortValue;
+        t3 = (ushort)cmpd["t3"].ShortValue;
+
+        NbtByteArray patttag = cmpd.Get<NbtByteArray>("patt");
+        definition = patttag.Value;
+    }
+}
+
+public class TraffPatt : Pattern {
+    public short[] left6, right6, center6, left8, right8, center8;
+
+    public TraffPatt(NbtCompound cmpd) {
+        name = cmpd["name"].StringValue;
+        id = (ushort)cmpd["id"].ShortValue;
+        t0 = (ushort)cmpd["t0"].ShortValue;
+        t1 = (ushort)cmpd["t1"].ShortValue;
+        t2 = (ushort)cmpd["t2"].ShortValue;
+        t3 = (ushort)cmpd["t3"].ShortValue;
+
+        NbtIntArray patttag = cmpd.Get<NbtCompound>("6hed").Get<NbtIntArray>("cntr");
+        center6 = new short[patttag.Value.Length];
+        for(int i = 0; i < patttag.Value.Length; i++) {
+            center6[i] = (short)(patttag[i] & 0xFFFF);
+        }
+        patttag = cmpd.Get<NbtCompound>("6hed").Get<NbtIntArray>("left");
+        left6 = new short[patttag.Value.Length];
+        for(int i = 0; i < patttag.Value.Length; i++) {
+            left6[i] = (short)(patttag[i] & 0xFFFF);
+        }
+        patttag = cmpd.Get<NbtCompound>("6hed").Get<NbtIntArray>("rite");
+        right6 = new short[patttag.Value.Length];
+        for(int i = 0; i < patttag.Value.Length; i++) {
+            right6[i] = (short)(patttag[i] & 0xFFFF);
+        }
+        patttag = cmpd.Get<NbtCompound>("8hed").Get<NbtIntArray>("cntr");
+        center8 = new short[patttag.Value.Length];
+        for(int i = 0; i < patttag.Value.Length; i++) {
+            center8[i] = (short)(patttag[i] & 0xFFFF);
+        }
+        patttag = cmpd.Get<NbtCompound>("8hed").Get<NbtIntArray>("left");
+        left8 = new short[patttag.Value.Length];
+        for(int i = 0; i < patttag.Value.Length; i++) {
+            left8[i] = (short)(patttag[i] & 0xFFFF);
+        }
+        patttag = cmpd.Get<NbtCompound>("8hed").Get<NbtIntArray>("rite");
+        right8 = new short[patttag.Value.Length];
+        for(int i = 0; i < patttag.Value.Length; i++) {
+            right8[i] = (short)(patttag[i] & 0xFFFF);
+        }
+    }
 }
 
 public class LocationNode {

@@ -30,7 +30,36 @@ public class FnSelManager : MonoBehaviour {
             foreach(Function f in lh.CapableFunctions) {
                 string name = "Nothing";
                 if(lh.IsUsingFunction(f)) {
-                    // todo: give func name
+                    if(lh.lhd.style.isDualColor) {
+                        if(lh.DualL.patterns.ContainsKey(f)) {
+                            if(name == "Nothing") {
+                                name = lh.DualL.patterns[f].name;
+                            } else {
+                                if(name != "-- Multiple --" && name != lh.DualL.patterns[f].name) {
+                                    name = "-- Multiple --";
+                                }
+                            }
+                        }
+                        if(lh.DualR.patterns.ContainsKey(f)) {
+                            if(name == "Nothing") {
+                                name = lh.DualR.patterns[f].name;
+                            } else {
+                                if(name != "-- Multiple --" && name != lh.DualR.patterns[f].name) {
+                                    name = "-- Multiple --";
+                                }
+                            }
+                        }
+                    } else {
+                        if(lh.Single.patterns.ContainsKey(f)) {
+                            if(name == "Nothing") {
+                                name = lh.Single.patterns[f].name;
+                            } else {
+                                if(name != "-- Multiple --" && name != lh.Single.patterns[f].name) {
+                                    name = "-- Multiple --";
+                                }
+                            }
+                        }
+                    }
                 }
 
                 foreach(PatternFunc fn in funcs) {
