@@ -37,7 +37,7 @@ public class BarManager : MonoBehaviour {
         }
     }
 
-    public string GetFnString(LightHead lh, Function f) {
+    public static string GetFnString(LightHead lh, Function f) {
         switch(f) {
             case Function.ALLEY:
                 if(lh.transform.position.x < 0) {
