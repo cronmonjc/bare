@@ -37,6 +37,48 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    public string GetFnString(LightHead lh, Function f) {
+        switch(f) {
+            case Function.ALLEY:
+                if(lh.transform.position.x < 0) {
+                    return "lall";
+                } else {
+                    return "rall";
+                }
+            case Function.CRUISE:
+                return "cru";
+            case Function.DIM:
+                return "dim";
+            case Function.EMITTER:
+                return "emi";
+            case Function.ICL:
+                return "icl";
+            case Function.LEVEL1:
+                return "l1";
+            case Function.LEVEL2:
+                return "l2";
+            case Function.LEVEL3:
+                return "l3";
+            case Function.LEVEL4:
+                return "l4";
+            case Function.LEVEL5:
+                return "l5";
+            case Function.STT_AND_TAIL:
+                if(lh.transform.position.x < 0) {
+                    return "ltai";
+                } else {
+                    return "rtai";
+                }
+            case Function.TAKEDOWN:
+                return "td";
+            case Function.TRAFFIC:
+                return "traf";
+            case Function.T13:
+            default:
+                return null;
+        }
+    }
+
     public void SetBarSize(int to) {
         if(to < 4 && to > -1) {
             BarSize = to;
