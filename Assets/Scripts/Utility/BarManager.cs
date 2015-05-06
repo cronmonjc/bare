@@ -37,10 +37,10 @@ public class BarManager : MonoBehaviour {
         }
     }
 
-    public static string GetFnString(LightHead lh, Function f) {
+    public static string GetFnString(Transform t, Function f) {
         switch(f) {
             case Function.ALLEY:
-                if(lh.transform.position.x < 0) {
+                if(t.position.x < 0) {
                     return "lall";
                 } else {
                     return "rall";
@@ -64,7 +64,7 @@ public class BarManager : MonoBehaviour {
             case Function.LEVEL5:
                 return "l5";
             case Function.STT_AND_TAIL:
-                if(lh.transform.position.x < 0) {
+                if(t.position.x < 0) {
                     return "ltai";
                 } else {
                     return "rtai";
@@ -179,16 +179,5 @@ public class BarManager : MonoBehaviour {
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
             soc.ShowLong = true;
         }
-    }
-}
-
-public static class TransformExtensions {
-    public static string GetPath(this Transform t) {
-        if(t.parent == null) return "/" + t.name;
-        else return t.parent.GetPath() + "/" + t.name;
-    }
-
-    public static string GetPath(this Component c) {
-        return c.transform.GetPath() + ":" + c.GetType().ToString();
     }
 }

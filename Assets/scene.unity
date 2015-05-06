@@ -1772,8 +1772,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 118648367}
   m_HandleRect: {fileID: 118648366}
   m_Direction: 2
-  m_Value: 1
-  m_Size: .0534250624
+  m_Value: .99999845
+  m_Size: .564098954
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7906,6 +7906,7 @@ GameObject:
   - 114: {fileID: 599041647}
   - 114: {fileID: 599041646}
   - 114: {fileID: 599041645}
+  - 114: {fileID: 599041650}
   m_Layer: 5
   m_Name: PhaseB
   m_TagString: Untagged
@@ -7990,12 +7991,12 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
     m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_DisabledColor: {r: 1, g: .5, b: .5, a: .501960814}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -8043,6 +8044,19 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 599041643}
+--- !u!114 &599041650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 599041643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 327987f43f55c6647bc4c7b88f6135e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 0}
+  IsPhaseB: 0
 --- !u!1001 &601920011
 Prefab:
   m_ObjectHideFlags: 0
@@ -12924,7 +12938,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1829755757}
   m_Direction: 2
   m_Value: 1
-  m_Size: .711414576
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -16018,6 +16032,7 @@ GameObject:
   - 114: {fileID: 1202469518}
   - 114: {fileID: 1202469517}
   - 114: {fileID: 1202469516}
+  - 114: {fileID: 1202469521}
   m_Layer: 5
   m_Name: PhaseA
   m_TagString: Untagged
@@ -16102,12 +16117,12 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
     m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_DisabledColor: {r: 1, g: .5, b: .5, a: .501960814}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -16155,6 +16170,19 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1202469514}
+--- !u!114 &1202469521
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1202469514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 327987f43f55c6647bc4c7b88f6135e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  image: {fileID: 0}
+  IsPhaseB: 0
 --- !u!1 &1202533860
 GameObject:
   m_ObjectHideFlags: 0
@@ -16268,7 +16296,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f55b293ece26c040838b3ab38b9228f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsEnable: 0
+  image: {fileID: 0}
+  IsEnable: 1
 --- !u!114 &1203411158
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16326,12 +16355,12 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
     m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_DisabledColor: {r: 1, g: .5, b: .5, a: .501960814}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:
@@ -21382,19 +21411,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 128
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_SizeDelta.x
-      value: 256
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_SizeDelta.y
-      value: 32
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_AnchorMin.x
@@ -21402,7 +21431,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_AnchorMax.x
@@ -21410,7 +21439,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22420658, guid: 0f3000e081ab9684499399aa2fa46dd6, type: 2}
       propertyPath: m_Pivot.x
@@ -26529,6 +26558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f55b293ece26c040838b3ab38b9228f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  image: {fileID: 0}
   IsEnable: 0
 --- !u!114 &2026806009
 MonoBehaviour:
@@ -26587,12 +26617,12 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
     m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
-    m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
+    m_DisabledColor: {r: 1, g: .5, b: .5, a: .501960814}
     m_ColorMultiplier: 1
     m_FadeDuration: .100000001
   m_SpriteState:

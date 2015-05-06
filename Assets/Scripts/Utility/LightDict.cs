@@ -507,3 +507,22 @@ public enum Function {
     TAKEDOWN = 0x20, ICL = 0x40, ALLEY = 0x80, T13 = 0x100, CRUISE = 0x200,
     TRAFFIC = 0x400, DIM = 0x800, STT_AND_TAIL = 0x1000, EMITTER = 0x2000
 }
+
+public static class Extensions {
+    public static void DisableBit(this NbtShort value, byte bit) {
+        value.Value = (short)(value.Value & ~(0x1 << bit));
+    }
+
+    public static void EnableBit(this NbtShort value, byte bit) {
+        value.Value = (short)(value.Value | (short)(0x1 << bit));
+    }
+
+    public static string GetPath(this Transform t) {
+        if(t.parent == null) return "/" + t.name;
+        else return t.parent.GetPath() + "/" + t.name;
+    }
+
+    public static string GetPath(this Component c) {
+        return c.transform.GetPath() + ":" + c.GetType().ToString();
+    }
+}
