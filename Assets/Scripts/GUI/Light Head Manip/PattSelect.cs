@@ -116,7 +116,8 @@ public class PattSelect : MonoBehaviour {
 
             NbtShort en = func.Get<NbtShort>("en" + (lh.transform.position.z > 0 ? "f" : "r") + (lh.DualR == lb ? "2" : "1"));
 
-
+            string path = lh.transform.GetPath();
+            if(path.Contains("MidSection"))
         }
     }
 }
