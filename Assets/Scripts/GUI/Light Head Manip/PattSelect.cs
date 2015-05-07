@@ -1,13 +1,22 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using fNbt;
 
 public class PattSelect : MonoBehaviour {
+    public static PattSelect inst;
+
     public Function f = Function.NONE;
     public RectTransform menu;
     public GameObject prefab;
-    private CameraControl cam;
+
+    public DisableEnablePatt disableButton, enableButton;
+    public PhaseButton PhaseA, PhaseB;
+
+    void Awake() {
+        if(inst == null) inst = this;
+    }
 
     public void Clear() {
         List<Transform> temp = new List<Transform>();
@@ -25,15 +34,20 @@ public class PattSelect : MonoBehaviour {
         GameObject newbie;
         PattSelectElement newpse;
 
-        if(LightDict.inst.steadyBurn.Contains(f)) {
-            newbie = GameObject.Instantiate<GameObject>(prefab);
-            newbie.transform.SetParent(menu, false);
-            newbie.transform.localScale = Vector3.one;
-            newpse = newbie.GetComponent<PattSelectElement>();
-            newpse.selID = 0;
-            newpse.ps = this;
-            newpse.Function = "Enabled";
+        disableButton.Retest();
+        enableButton.Retest();
+
+        PhaseA.Retest();
+        PhaseB.Retest();
+
+        if(LightDict.inst.steadyBurn.Contains(f) || f == Function.DIM) {
+            enableButton.text = "Enable " + (f == Function.DIM ? "Light Dimming" : "Steady Burn");
+            enableButton.GetComponent<Button>().interactable = true;
+
+            PhaseA.GetComponent<Button>().interactable = false;
+            PhaseB.GetComponent<Button>().interactable = false;
         } else if(f == Function.TRAFFIC) {
+            short selID = -2;
             foreach(Pattern p in LightDict.inst.tdPatts) {
                 newbie = GameObject.Instantiate<GameObject>(prefab);
                 newbie.transform.SetParent(menu, false);
@@ -42,8 +56,42 @@ public class PattSelect : MonoBehaviour {
                 newpse.selID = (short)p.id;
                 newpse.ps = this;
                 newpse.Function = p.name;
+                newpse.Retest();
+                if(TestPatternAny((short)p.id)) {
+                    if(selID == -2) {
+                        selID = (short)p.id;
+                    } else if(selID != -1 && selID != p.id) {
+                        selID = -1;
+                    }
+                }
             }
+            if(selID == -2) {
+                enableButton.text = "Cannot Enable, No Pattern";
+                enableButton.GetComponent<Button>().interactable = false;
+            } else if(selID == -1) {
+                enableButton.text = "Enable: <i>Multiple Patterns</i>";
+                enableButton.GetComponent<Button>().interactable = true;
+            } else {
+                Pattern a = null;
+                foreach(Pattern p in LightDict.inst.tdPatts) {
+                    if(p.id == selID) {
+                        a = p;
+                        break;
+                    }
+                }
+                if(a == null) {
+                    enableButton.text = "Cannot Enable, No Pattern";
+                    enableButton.GetComponent<Button>().interactable = false;
+                } else {
+                    enableButton.text = "Enable: " + a.name;
+                    enableButton.GetComponent<Button>().interactable = true;
+                }
+            }
+
+            PhaseA.GetComponent<Button>().interactable = false;
+            PhaseB.GetComponent<Button>().interactable = false;
         } else {
+            short selID = -2;
             foreach(Pattern p in LightDict.inst.flashPatts) {
                 newbie = GameObject.Instantiate<GameObject>(prefab);
                 newbie.transform.SetParent(menu, false);
@@ -52,6 +100,14 @@ public class PattSelect : MonoBehaviour {
                 newpse.selID = (short)p.id;
                 newpse.ps = this;
                 newpse.Function = p.name;
+                newpse.Retest();
+                if(TestPatternAny((short)p.id)) {
+                    if(selID == -2) {
+                        selID = (short)p.id;
+                    } else if(selID != -1 && selID != p.id) {
+                        selID = -1;
+                    }
+                }
             }
             foreach(Pattern p in LightDict.inst.warnPatts) {
                 newbie = GameObject.Instantiate<GameObject>(prefab);
@@ -61,7 +117,201 @@ public class PattSelect : MonoBehaviour {
                 newpse.selID = (short)p.id;
                 newpse.ps = this;
                 newpse.Function = p.name;
+                newpse.Retest();
+                if(TestPatternAny((short)p.id)) {
+                    if(selID == -2) {
+                        selID = (short)p.id;
+                    } else if(selID != -1 && selID != p.id) {
+                        selID = -1;
+                    }
+                }
+            }
+            if(selID == -2) {
+                enableButton.text = "Cannot Enable, No Pattern";
+                enableButton.GetComponent<Button>().interactable = false;
+
+                PhaseA.GetComponent<Button>().interactable = false;
+                PhaseB.GetComponent<Button>().interactable = false;
+            } else if(selID == -1) {
+                enableButton.text = "Enable: <i>Multiple Patterns</i>";
+                enableButton.GetComponent<Button>().interactable = true;
+
+                PhaseA.GetComponent<Button>().interactable = false;
+                PhaseB.GetComponent<Button>().interactable = false;
+            } else {
+                Pattern a = null;
+                foreach(Pattern p in LightDict.inst.flashPatts) {
+                    if(p.id == selID) {
+                        a = p;
+
+                        PhaseA.GetComponent<Button>().interactable = true;
+                        PhaseB.GetComponent<Button>().interactable = true;
+
+                        break;
+                    }
+                }
+                if(a == null)
+                    foreach(Pattern p in LightDict.inst.warnPatts) {
+                        if(p.id == selID) {
+                            a = p;
+
+                            PhaseA.GetComponent<Button>().interactable = false;
+                            PhaseB.GetComponent<Button>().interactable = false;
+
+                            break;
+                        }
+                    }
+                if(a == null) {
+                    enableButton.text = "Cannot Enable, No Pattern";
+                    enableButton.GetComponent<Button>().interactable = false;
+                } else {
+                    enableButton.text = "Enable: " + a.name;
+                    enableButton.GetComponent<Button>().interactable = true;
+                }
             }
         }
+    }
+
+    public void RelabelEnable() {
+        if(LightDict.inst.steadyBurn.Contains(f) || f == Function.DIM) {
+            enableButton.text = "Enable " + (f == Function.DIM ? "Light Dimming" : "Steady Burn");
+            enableButton.GetComponent<Button>().interactable = true;
+        } else if(f == Function.TRAFFIC) {
+            NbtCompound patts = FindObjectOfType<BarManager>().patts;
+            short selID = patts.Get<NbtCompound>("traf").Get<NbtShort>("patt").ShortValue;
+
+            if(selID == -1) {
+                enableButton.text = "Cannot Enable, No Pattern";
+                enableButton.GetComponent<Button>().interactable = false;
+            } else {
+                Pattern a = null;
+                foreach(Pattern p in LightDict.inst.tdPatts) {
+                    if(p.id == selID) {
+                        a = p;
+                        break;
+                    }
+                }
+                if(a == null) {
+                    enableButton.text = "Cannot Enable, No Pattern";
+                    enableButton.GetComponent<Button>().interactable = false;
+                } else {
+                    enableButton.text = "Enable: " + a.name;
+                    enableButton.GetComponent<Button>().interactable = true;
+                }
+            }
+        } else {
+
+        }
+    }
+
+    public bool TestPatternAny(short id) {
+        return TestPatternAny(id, this.f);
+    }
+
+    public bool TestPatternAny(short id, Function f) {
+        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+        foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
+            if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
+            LightHead lh = null;
+            for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
+                lh = t.GetComponent<LightHead>();
+            }
+            if(lh == null) {
+                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
+                ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
+                continue;
+            }
+
+            if(f == Function.TRAFFIC) {
+                NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+                if(patCmpd["left"].ShortValue == id) return true;
+                if(patCmpd["rite"].ShortValue == id) return true;
+                if(patCmpd["cntr"].ShortValue == id) return true;
+            } else {
+                string cmpdName = BarManager.GetFnString(lb.transform, f);
+                if(cmpdName == null) {
+                    Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+                    ErrorText.inst.DispError(f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+                    return false;
+                }
+                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
+
+                string tagname = lb.transform.position.z < 0 ? "r" : "f";
+                string path = lh.transform.GetPath();
+
+                if(path.Contains("Corner")) {
+                    tagname = tagname + "cor";
+                } else if(path.Contains("Inboard")) {
+                    tagname = tagname + "inb";
+                } else if(path.Contains("Outboard")) {
+                    if(lh.loc == Location.FAR_REAR)
+                        tagname = tagname + "far";
+                    else
+                        tagname = tagname + "oub";
+                } else if(path.Contains("MidSection")) {
+                    tagname = tagname + "cen";
+                }
+
+                if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public bool TestPatternAll(short id) {
+        return TestPatternAll(id, this.f);
+    }
+
+    public bool TestPatternAll(short id, Function f) {
+        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+        foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
+            if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
+            LightHead lh = null;
+            for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
+                lh = t.GetComponent<LightHead>();
+            }
+            if(lh == null) {
+                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
+                ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
+                continue;
+            }
+
+            if(f == Function.TRAFFIC) {
+                NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+                if(patCmpd["left"].ShortValue != id) return false;
+                if(patCmpd["rite"].ShortValue != id) return false;
+                if(patCmpd["cntr"].ShortValue != id) return false;
+            } else {
+                string cmpdName = BarManager.GetFnString(lb.transform, f);
+                if(cmpdName == null) {
+                    Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+                    return false;
+                }
+                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
+
+                string tagname = lb.transform.position.z < 0 ? "r" : "f";
+                string path = lh.transform.GetPath();
+
+                if(path.Contains("Corner")) {
+                    tagname = tagname + "cor";
+                } else if(path.Contains("Inboard")) {
+                    tagname = tagname + "inb";
+                } else if(path.Contains("Outboard")) {
+                    if(lh.loc == Location.FAR_REAR)
+                        tagname = tagname + "far";
+                    else
+                        tagname = tagname + "oub";
+                } else if(path.Contains("MidSection")) {
+                    tagname = tagname + "cen";
+                }
+
+                if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

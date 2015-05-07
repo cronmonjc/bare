@@ -7,6 +7,7 @@ using fNbt;
 
 public class LightDict : MonoBehaviour {
     public static LightDict inst;
+    public static SteadyPattern stdy;
     public Dictionary<Location, LocationNode> lights;
     public List<Function> steadyBurn;
     public List<Pattern> flashPatts, warnPatts, tdPatts;
@@ -18,6 +19,7 @@ public class LightDict : MonoBehaviour {
 
         lights = new Dictionary<Location, LocationNode>();
         steadyBurn = new List<Function>(new Function[] { Function.TAKEDOWN, Function.ALLEY, Function.STT_AND_TAIL, Function.T13, Function.EMITTER });
+        stdy = new SteadyPattern();
 
         if(File.Exists("lib.nbt")) {
             foreach(Location l in new Location[] { Location.FRONT, Location.FRONT_CORNER, Location.ALLEY, Location.REAR_CORNER, Location.FAR_REAR, Location.REAR }) {
@@ -242,6 +244,12 @@ public class TraffPatt : Pattern {
         for(int i = 0; i < patttag.Value.Length; i++) {
             right8[i] = (short)(patttag[i] & 0xFFFF);
         }
+    }
+}
+
+public class SteadyPattern : Pattern {
+    public SteadyPattern() {
+        name = "Steady Burn";
     }
 }
 

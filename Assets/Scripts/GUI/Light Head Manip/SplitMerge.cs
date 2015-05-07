@@ -47,7 +47,6 @@ public class SplitMerge : MonoBehaviour {
             foreach(LightHead alpha in soc.transform.GetComponentsInChildren<LightHead>(false)) {
                 if(!alpha.Selected) {
                     alpha.Selected = true;
-                    lh.CopyPatterns(alpha);
                     if(lh.lhd.optic != null) {
                         if(merge) {
                             if(lh.lhd.optic.lgEquivalent.Length > 0) {

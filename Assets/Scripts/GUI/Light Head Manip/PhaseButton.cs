@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.EventSystems;
 using fNbt;
 
-public class PhaseButton : MonoBehaviour, IPointerClickHandler {
+public class PhaseButton : MonoBehaviour {
     public UnityEngine.UI.Image image;
     public bool IsPhaseB;
 
@@ -17,17 +15,22 @@ public class PhaseButton : MonoBehaviour, IPointerClickHandler {
     }
 
     public void Retest() {
-        NbtCompound patts = FindObjectOfType<BarManager>().patts;
         PattSelect ps = FindObjectOfType<PattSelect>();
+        if(LightDict.inst.steadyBurn.Contains(ps.f) || ps.f == Function.DIM) {
+            Active = false;
+            return;
+        }
+
+        NbtCompound patts = FindObjectOfType<BarManager>().patts;
         bool show = true;
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
             LightHead lh = null;
-            for(Transform t = lb.transform; lb == null && t != null; t = t.parent) {
+            for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
                 lh = t.GetComponent<LightHead>();
             }
             if(lh == null) {
-                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.");
+                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
                 ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
                 continue;
             }
@@ -40,7 +43,7 @@ public class PhaseButton : MonoBehaviour, IPointerClickHandler {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            NbtShort ph = func.Get<NbtShort>("ph" + (lb.transform.position.z > 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
+            NbtShort ph = func.Get<NbtShort>("ph" + (lb.transform.position.z < 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
 
             string path = lh.transform.GetPath();
             byte bit = 16;
@@ -94,17 +97,17 @@ public class PhaseButton : MonoBehaviour, IPointerClickHandler {
         Active = show;
     }
 
-    public void OnPointerClick(PointerEventData eventData) {
+    public void Clicked() {
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
         PattSelect ps = FindObjectOfType<PattSelect>();
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
             LightHead lh = null;
-            for(Transform t = lb.transform; lb == null && t != null; t = t.parent) {
+            for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
                 lh = t.GetComponent<LightHead>();
             }
             if(lh == null) {
-                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.");
+                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
                 ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
                 continue;
             }
@@ -117,7 +120,7 @@ public class PhaseButton : MonoBehaviour, IPointerClickHandler {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            NbtShort ph = func.Get<NbtShort>("ph" + (lb.transform.position.z > 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
+            NbtShort ph = func.Get<NbtShort>("ph" + (lb.transform.position.z < 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
 
             string path = lh.transform.GetPath();
             byte bit = 16;
@@ -169,8 +172,9 @@ public class PhaseButton : MonoBehaviour, IPointerClickHandler {
             }
         }
 
-        foreach(PhaseButton pb in transform.parent.GetComponentsInChildren<PhaseButton>(true)) {
-            Active = (pb == this);
-        }
+        ps.PhaseA.Retest();
+        ps.PhaseB.Retest();
+
+        FnSelManager.inst.RefreshLabels();
     }
 }

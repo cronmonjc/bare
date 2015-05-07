@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.EventSystems;
 using fNbt;
 
-public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
+public class DisableEnablePatt : MonoBehaviour {
     public UnityEngine.UI.Image image;
     public bool IsEnable;
 
@@ -16,6 +14,15 @@ public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
         }
     }
 
+    public string text {
+        get {
+            return GetComponentInChildren<UnityEngine.UI.Text>().text;
+        }
+        set {
+            GetComponentInChildren<UnityEngine.UI.Text>().text = value;
+        }
+    }
+
     public void Retest() {
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
         PattSelect ps = FindObjectOfType<PattSelect>();
@@ -23,11 +30,11 @@ public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
             LightHead lh = null;
-            for(Transform t = lb.transform; lb == null && t != null; t = t.parent) {
+            for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
                 lh = t.GetComponent<LightHead>();
             }
             if(lh == null) {
-                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.");
+                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
                 ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
                 continue;
             }
@@ -40,7 +47,7 @@ public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            NbtShort en = func.Get<NbtShort>("en" + (lb.transform.position.z > 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
+            NbtShort en = func.Get<NbtShort>("en" + (lb.transform.position.z < 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
 
             string path = lh.transform.GetPath();
             byte bit = 16;
@@ -94,17 +101,18 @@ public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
         Active = show;
     }
 
-    public void OnPointerClick(PointerEventData eventData) {
+    public void Clicked() {
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
         PattSelect ps = FindObjectOfType<PattSelect>();
+
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
             LightHead lh = null;
-            for(Transform t = lb.transform; lb == null && t != null; t = t.parent) {
+            for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
                 lh = t.GetComponent<LightHead>();
             }
             if(lh == null) {
-                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.");
+                Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
                 ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
                 continue;
             }
@@ -117,7 +125,7 @@ public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            NbtShort en = func.Get<NbtShort>("en" + (lh.transform.position.z > 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
+            NbtShort en = func.Get<NbtShort>("en" + (lh.transform.position.z < 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
 
             string path = lh.transform.GetPath();
             byte bit = 16;
@@ -169,8 +177,9 @@ public class DisableEnablePatt : MonoBehaviour, IPointerClickHandler {
             }
         }
 
-        foreach(DisableEnablePatt dep in transform.parent.GetComponentsInChildren<DisableEnablePatt>(true)) {
-            Active = (dep == this);
-        }
+        ps.enableButton.Retest();
+        ps.disableButton.Retest();
+
+        FnSelManager.inst.RefreshLabels();
     }
 }

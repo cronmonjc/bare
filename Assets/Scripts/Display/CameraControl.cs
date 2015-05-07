@@ -11,6 +11,7 @@ public class CameraControl : MonoBehaviour {
     private bool dragging;
 
     public OpticSelect os;
+    public FnSelManager fsm;
 
     private float height = 1.0f;
     public RectTransform cover;
@@ -94,7 +95,7 @@ public class CameraControl : MonoBehaviour {
 
                         if(selected.Count > 0) {
                             os.Refresh();
-                            FnSelManager.inst.Refresh();
+                            fsm.Refresh();
                         }
                     }
                 }

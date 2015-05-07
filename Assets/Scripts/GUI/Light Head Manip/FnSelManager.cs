@@ -3,22 +3,23 @@ using System.Collections;
 
 public class FnSelManager : MonoBehaviour {
     public static FnSelManager inst;
+    public PattSelect ps;
     private PatternFunc[] funcs;
-    private CameraControl cam;
 
-    private BarManager bm;
-
-    void Start() {
+    void Awake() {
         inst = this;
-        funcs = transform.GetComponentsInChildren<PatternFunc>(true);
-        foreach(PatternFunc fn in funcs) {
-            fn.fsl = this;
-        }
-        cam = FindObjectOfType<CameraControl>();
-        bm = FindObjectOfType<BarManager>();
     }
 
     public void Refresh() {
+        LightBlock[] blocks = FindObjectsOfType<LightBlock>();
+        ps.f = Function.NONE;
+        ps.gameObject.SetActive(false);
+        if(funcs == null) {
+            funcs = transform.GetComponentsInChildren<PatternFunc>(true);
+            foreach(PatternFunc fn in funcs) {
+                fn.fsl = this;
+            }
+        }
         foreach(PatternFunc fn in funcs) {
             fn.GetComponent<Animator>().ResetTrigger("Chosen");
             fn.GetComponent<Animator>().SetTrigger("Normal");
@@ -26,44 +27,40 @@ public class FnSelManager : MonoBehaviour {
 
             string name = "";
 
-            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-                if(!lh.CapableFunctions.Contains(fn.fn) || !lh.Selected || !lh.gameObject.activeInHierarchy) continue;
+            foreach(LightBlock lb in blocks) {
+                if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
+                LightHead lh = null;
+                for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
+                    lh = t.GetComponent<LightHead>();
+                }
+                if(lh == null) {
+                    Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
+                    ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
+                    continue;
+                }
+                if(lh.CapableFunctions.Contains(fn.fn)) {
 
-                if(lh.IsUsingFunction(fn.fn)) {
-                    if(lh.lhd.style.isDualColor) {
-                        if(lh.DualL.patterns.ContainsKey(fn.fn)) {
+                    if(lh.IsUsingFunction(fn.fn)) {
+                        Pattern p = lh.GetPattern(fn.fn, lh.DualR == lb);
+                        if(p != null) {
                             if(name == "") {
-                                name = lh.DualL.patterns[fn.fn].name;
+                                name = p.name;
                             } else {
-                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualL.patterns[fn.fn].name) {
+                                if(name != "<i>-- Multiple Values --</i>" && name != p.name) {
                                     name = "<i>-- Multiple Values --</i>";
                                 }
                             }
-                        }
-                        if(lh.DualR.patterns.ContainsKey(fn.fn)) {
-                            if(name == "") {
-                                name = lh.DualR.patterns[fn.fn].name;
-                            } else {
-                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualR.patterns[fn.fn].name) {
-                                    name = "<i>-- Multiple Values --</i>";
-                                }
+                        } else {
+                            if(name != "") {
+                                name = "<i>-- Multiple Values --</i>";
                             }
                         }
                     } else {
-                        if(lh.Single.patterns.ContainsKey(fn.fn)) {
-                            if(name == "") {
-                                name = lh.Single.patterns[fn.fn].name;
-                            } else {
-                                if(name != "<i>-- Multiple Values --</i>" && name != lh.Single.patterns[fn.fn].name) {
-                                    name = "<i>-- Multiple Values --</i>";
-                                }
-                            }
+                        if(name != "") {
+                            name = "<i>-- Multiple Values --</i>";
                         }
                     }
-                } else {
-                    if(name != "") {
-                        name = "<i>-- Multiple Values --</i>";
-                    }
+                    fn.gameObject.SetActive(true);
                 }
             }
 
@@ -72,48 +69,41 @@ public class FnSelManager : MonoBehaviour {
             } else {
                 fn.DispPattern = name;
             }
-            fn.gameObject.SetActive(true);
         }
 
 
     }
 
     public void RefreshLabels() {
+        LightBlock[] blocks = FindObjectsOfType<LightBlock>();
         foreach(PatternFunc fn in funcs) {
             string name = "";
 
-            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-                if(!lh.CapableFunctions.Contains(fn.fn) || !lh.Selected || !lh.gameObject.activeInHierarchy) continue;
+            foreach(LightBlock lb in blocks) {
+                if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
+                LightHead lh = null;
+                for(Transform t = lb.transform; lh == null && t != null; t = t.parent) {
+                    lh = t.GetComponent<LightHead>();
+                }
+                if(lh == null) {
+                    Debug.LogError("lolnope - " + lb.GetPath() + " can't find a LightHead.", lb);
+                    ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
+                    continue;
+                }
 
                 if(lh.IsUsingFunction(fn.fn)) {
-                    if(lh.lhd.style.isDualColor) {
-                        if(lh.DualL.patterns.ContainsKey(fn.fn)) {
-                            if(name == "") {
-                                name = lh.DualL.patterns[fn.fn].name;
-                            } else {
-                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualL.patterns[fn.fn].name) {
-                                    name = "<i>-- Multiple Values --</i>";
-                                }
-                            }
-                        }
-                        if(lh.DualR.patterns.ContainsKey(fn.fn)) {
-                            if(name == "") {
-                                name = lh.DualR.patterns[fn.fn].name;
-                            } else {
-                                if(name != "<i>-- Multiple Values --</i>" && name != lh.DualR.patterns[fn.fn].name) {
-                                    name = "<i>-- Multiple Values --</i>";
-                                }
+                    Pattern p = lh.GetPattern(fn.fn, lh.DualR == lb);
+                    if(p != null) {
+                        if(name == "") {
+                            name = p.name;
+                        } else {
+                            if(name != "<i>-- Multiple Values --</i>" && name != p.name) {
+                                name = "<i>-- Multiple Values --</i>";
                             }
                         }
                     } else {
-                        if(lh.Single.patterns.ContainsKey(fn.fn)) {
-                            if(name == "") {
-                                name = lh.Single.patterns[fn.fn].name;
-                            } else {
-                                if(name != "<i>-- Multiple Values --</i>" && name != lh.Single.patterns[fn.fn].name) {
-                                    name = "<i>-- Multiple Values --</i>";
-                                }
-                            }
+                        if(name != "") {
+                            name = "<i>-- Multiple Values --</i>";
                         }
                     }
                 } else {
@@ -136,5 +126,8 @@ public class FnSelManager : MonoBehaviour {
             fn.GetComponent<Animator>().ResetTrigger(fn.fn == f ? "Normal" : "Chosen");
             fn.GetComponent<Animator>().SetTrigger(fn.fn == f ? "Chosen" : "Normal");
         }
+        ps.f = f;
+        ps.gameObject.SetActive(true);
+        ps.Refresh();
     }
 }
