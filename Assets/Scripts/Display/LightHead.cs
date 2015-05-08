@@ -23,8 +23,17 @@ public class LightHead : MonoBehaviour {
     }
 
     private LightLabel myLabel;
+    private BitLabel bitLabel;
 
     public Light[] myLights;
+
+    public byte[] bits = new byte[4];
+
+    public byte Bit {
+        get {
+            return bits[FindObjectOfType<BarManager>().BarSize];
+        }
+    }
 
     public bool Selected {
         get {
@@ -54,10 +63,13 @@ public class LightHead : MonoBehaviour {
             cam = FindObjectOfType<CameraControl>();
         }
 
-        GameObject go = GameObject.Instantiate(cam.LabelPrefab) as GameObject;
-        myLabel = go.GetComponent<LightLabel>();
+        myLabel = GameObject.Instantiate<GameObject>(cam.LabelPrefab).GetComponent<LightLabel>();
         myLabel.target = transform;
         myLabel.transform.SetParent(cam.LabelParent);
+
+        bitLabel = GameObject.Instantiate<GameObject>(cam.BitLabelPrefab).GetComponent<BitLabel>();
+        bitLabel.target = transform;
+        bitLabel.transform.SetParent(cam.LabelParent);
 
         myLights = GetComponentsInChildren<Light>(true);
 
@@ -71,6 +83,9 @@ public class LightHead : MonoBehaviour {
             if(myLabel.gameObject.activeInHierarchy) {
                 myLabel.gameObject.SetActive(false);
             }
+            if(bitLabel.gameObject.activeInHierarchy) {
+                bitLabel.gameObject.SetActive(false);
+            }
             return;
         }
 
@@ -83,6 +98,9 @@ public class LightHead : MonoBehaviour {
 
         if(!myLabel.gameObject.activeInHierarchy) {
             myLabel.gameObject.SetActive(true);
+        }
+        if(!bitLabel.gameObject.activeInHierarchy) {
+            bitLabel.gameObject.SetActive(true);
         }
     }
 
@@ -102,53 +120,8 @@ public class LightHead : MonoBehaviour {
         if(lhd.style.isDualColor) {
             en = (short)(en | func.Get<NbtShort>("en" + (transform.position.z < 0 ? "r" : "f") + "2").ShortValue);
         }
-        string path = transform.GetPath();
-        byte bit = 16;
-        if(transform.position.x < 0) {
-            if(path.Contains("MidSection")) {
-                // Center L, bit 5
-                bit = 5;
-            } else if(path.Contains("Corner")) {
-                // Corner L, bit 0
-                bit = 0;
-            } else if(path.Contains("Outboard")) {
-                if(loc == Location.FAR_REAR) {
-                    // Outboard Far L, bit 1
-                    bit = 1;
-                } else {
-                    // Outboard Near L, bit 2
-                    bit = 2;
-                }
-            } else if(path.Contains("Alley")) {
-                // Left Alley, bit 12
-                bit = 12;
-            }
-        } else {
-            if(path.Contains("MidSection")) {
-                // Center R, bit 6
-                bit = 6;
-            } else if(path.Contains("Corner")) {
-                // Corner L, bit 11
-                bit = 11;
-            } else if(path.Contains("Outboard")) {
-                if(loc == Location.FAR_REAR) {
-                    // Outboard Far R, bit 2
-                    bit = 10;
-                } else {
-                    // Outboard Near R, bit 2
-                    bit = 9;
-                }
-            } else if(path.Contains("Alley")) {
-                // Right Alley, bit 12
-                bit = 13;
-            }
-        }
 
-        if(bit < 16) {
-            return ((en & (0x1 << bit)) > 0);
-        }
-
-        return false;
+        return ((en & (0x1 << Bit)) > 0);
     }
 
     public Pattern GetPattern(Function f, bool clr2 = false) {

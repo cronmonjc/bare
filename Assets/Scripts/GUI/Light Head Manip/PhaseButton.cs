@@ -45,54 +45,10 @@ public class PhaseButton : MonoBehaviour {
 
             NbtShort ph = func.Get<NbtShort>("ph" + (lb.transform.position.z < 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
 
-            string path = lh.transform.GetPath();
-            byte bit = 16;
-            if(lh.transform.position.x < 0) {
-                if(path.Contains("MidSection")) {
-                    // Center L, bit 5
-                    bit = 5;
-                } else if(path.Contains("Corner")) {
-                    // Corner L, bit 0
-                    bit = 0;
-                } else if(path.Contains("Outboard")) {
-                    if(lh.loc == Location.FAR_REAR) {
-                        // Outboard Far L, bit 1
-                        bit = 1;
-                    } else {
-                        // Outboard Near L, bit 2
-                        bit = 2;
-                    }
-                } else if(path.Contains("Alley")) {
-                    // Left Alley, bit 12
-                    bit = 12;
-                }
-            } else {
-                if(path.Contains("MidSection")) {
-                    // Center R, bit 6
-                    bit = 6;
-                } else if(path.Contains("Corner")) {
-                    // Corner L, bit 11
-                    bit = 11;
-                } else if(path.Contains("Outboard")) {
-                    if(lh.loc == Location.FAR_REAR) {
-                        // Outboard Far R, bit 2
-                        bit = 10;
-                    } else {
-                        // Outboard Near R, bit 2
-                        bit = 9;
-                    }
-                } else if(path.Contains("Alley")) {
-                    // Right Alley, bit 12
-                    bit = 13;
-                }
-            }
-
-            if(bit < 16) {
-                if(IsPhaseB)
-                    show = show && ((ph.Value & (0x1 << bit)) > 0);
-                else
-                    show = show && ((ph.Value & (0x1 << bit)) == 0);
-            }
+            if(IsPhaseB)
+                show = show && ((ph.Value & (0x1 << lh.Bit)) > 0);
+            else
+                show = show && ((ph.Value & (0x1 << lh.Bit)) == 0);
         }
         Active = show;
     }
@@ -122,54 +78,10 @@ public class PhaseButton : MonoBehaviour {
 
             NbtShort ph = func.Get<NbtShort>("ph" + (lb.transform.position.z < 0 ? "r" : "f") + (lh.DualR == lb ? "2" : "1"));
 
-            string path = lh.transform.GetPath();
-            byte bit = 16;
-            if(lh.transform.position.x < 0) {
-                if(path.Contains("MidSection")) {
-                    // Center L, bit 5
-                    bit = 5;
-                } else if(path.Contains("Corner")) {
-                    // Corner L, bit 0
-                    bit = 0;
-                } else if(path.Contains("Outboard")) {
-                    if(lh.loc == Location.FAR_REAR) {
-                        // Outboard Far L, bit 1
-                        bit = 1;
-                    } else {
-                        // Outboard Near L, bit 2
-                        bit = 2;
-                    }
-                } else if(path.Contains("Alley")) {
-                    // Left Alley, bit 12
-                    bit = 12;
-                }
-            } else {
-                if(path.Contains("MidSection")) {
-                    // Center R, bit 6
-                    bit = 6;
-                } else if(path.Contains("Corner")) {
-                    // Corner L, bit 11
-                    bit = 11;
-                } else if(path.Contains("Outboard")) {
-                    if(lh.loc == Location.FAR_REAR) {
-                        // Outboard Far R, bit 2
-                        bit = 10;
-                    } else {
-                        // Outboard Near R, bit 2
-                        bit = 9;
-                    }
-                } else if(path.Contains("Alley")) {
-                    // Right Alley, bit 12
-                    bit = 13;
-                }
-            }
-
-            if(bit < 16) {
-                if(IsPhaseB)
-                    ph.EnableBit(bit);
-                else
-                    ph.DisableBit(bit);
-            }
+            if(IsPhaseB)
+                ph.EnableBit(lh.Bit);
+            else
+                ph.DisableBit(lh.Bit);
         }
 
         ps.PhaseA.Retest();

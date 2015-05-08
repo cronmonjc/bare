@@ -8,7 +8,7 @@ public class PattSelectElement : MonoBehaviour {
     public short selID;
     public PattSelect ps;
 
-    public string Function {
+    public string FuncText {
         set {
             GetComponentInChildren<Text>().text = value;
         }
@@ -43,31 +43,38 @@ public class PattSelectElement : MonoBehaviour {
                 continue;
             }
 
-            string cmpdName = BarManager.GetFnString(lb.transform, ps.f);
-            if(cmpdName == null) {
-                Debug.LogWarning("lolnope - " + ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-                ErrorText.inst.DispError(ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-                return;
+            if(ps.f != Function.TRAFFIC && ps.f != Function.DIM) {
+                string cmpdName = BarManager.GetFnString(lb.transform, ps.f);
+                if(cmpdName == null) {
+                    Debug.LogWarning("lolnope - " + ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+                    ErrorText.inst.DispError(ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+                    return;
+                }
+                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
+
+                string tagname = lb.transform.position.z < 0 ? "r" : "f";
+                string path = lh.transform.GetPath();
+
+                if(path.Contains("Corner")) {
+                    tagname = tagname + "cor";
+                } else if(path.Contains("Inboard")) {
+                    tagname = tagname + "inb";
+                } else if(path.Contains("Outboard")) {
+                    if(lh.loc == Location.FAR_REAR)
+                        tagname = tagname + "far";
+                    else
+                        tagname = tagname + "oub";
+                } else if(path.Contains("MidSection")) {
+                    tagname = tagname + "cen";
+                }
+
+                patCmpd.Get<NbtShort>(tagname).Value = selID;
+            } else if(ps.f == Function.TRAFFIC) {
+                NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+                patts.Get<NbtShort>("left").Value = selID;
+                patts.Get<NbtShort>("rite").Value = selID;
+                patts.Get<NbtShort>("cntr").Value = selID;
             }
-            NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
-
-            string tagname = lb.transform.position.z < 0 ? "r" : "f";
-            string path = lh.transform.GetPath();
-
-            if(path.Contains("Corner")) {
-                tagname = tagname + "cor";
-            } else if(path.Contains("Inboard")) {
-                tagname = tagname + "inb";
-            } else if(path.Contains("Outboard")) {
-                if(lh.loc == Location.FAR_REAR)
-                    tagname = tagname + "far";
-                else
-                    tagname = tagname + "oub";
-            } else if(path.Contains("MidSection")) {
-                tagname = tagname + "cen";
-            }
-
-            patCmpd.Get<NbtShort>(tagname).Value = selID;
         }
 
         PattSelectElement[] allpse = ps.GetComponentsInChildren<PattSelectElement>();
@@ -77,5 +84,6 @@ public class PattSelectElement : MonoBehaviour {
         }
 
         FnSelManager.inst.RefreshLabels();
+        ps.RelabelEnable();
     }
 }

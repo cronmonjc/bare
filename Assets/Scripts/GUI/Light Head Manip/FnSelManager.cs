@@ -21,8 +21,10 @@ public class FnSelManager : MonoBehaviour {
             }
         }
         foreach(PatternFunc fn in funcs) {
-            fn.GetComponent<Animator>().ResetTrigger("Chosen");
-            fn.GetComponent<Animator>().SetTrigger("Normal");
+            if(fn.gameObject.activeInHierarchy) {
+                fn.GetComponent<Animator>().ResetTrigger("Chosen");
+                fn.GetComponent<Animator>().SetTrigger("Normal");
+            }
             fn.gameObject.SetActive(false);
 
             string name = "";
@@ -39,6 +41,7 @@ public class FnSelManager : MonoBehaviour {
                     continue;
                 }
                 if(lh.CapableFunctions.Contains(fn.fn)) {
+                    fn.gameObject.SetActive(true);
 
                     if(lh.IsUsingFunction(fn.fn)) {
                         Pattern p = lh.GetPattern(fn.fn, lh.DualR == lb);
@@ -60,7 +63,6 @@ public class FnSelManager : MonoBehaviour {
                             name = "<i>-- Multiple Values --</i>";
                         }
                     }
-                    fn.gameObject.SetActive(true);
                 }
             }
 

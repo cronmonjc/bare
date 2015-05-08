@@ -8,7 +8,7 @@ public class PattSelect : MonoBehaviour {
     public static PattSelect inst;
 
     public Function f = Function.NONE;
-    public RectTransform menu;
+    public RectTransform menu, dimSelect;
     public GameObject prefab;
 
     public DisableEnablePatt disableButton, enableButton;
@@ -40,8 +40,20 @@ public class PattSelect : MonoBehaviour {
         PhaseA.Retest();
         PhaseB.Retest();
 
-        if(LightDict.inst.steadyBurn.Contains(f) || f == Function.DIM) {
-            enableButton.text = "Enable " + (f == Function.DIM ? "Light Dimming" : "Steady Burn");
+        menu.gameObject.SetActive(true);
+        dimSelect.gameObject.SetActive(false);
+
+        if(LightDict.inst.steadyBurn.Contains(f)) {
+            enableButton.text = "Enable Steady Burn";
+            enableButton.GetComponent<Button>().interactable = true;
+
+            PhaseA.GetComponent<Button>().interactable = false;
+            PhaseB.GetComponent<Button>().interactable = false;
+        } else if(f == Function.DIM) {
+            menu.gameObject.SetActive(false);
+            dimSelect.gameObject.SetActive(true);
+
+            enableButton.text = "Enable Light Dimming";
             enableButton.GetComponent<Button>().interactable = true;
 
             PhaseA.GetComponent<Button>().interactable = false;
@@ -55,7 +67,7 @@ public class PattSelect : MonoBehaviour {
                 newpse = newbie.GetComponent<PattSelectElement>();
                 newpse.selID = (short)p.id;
                 newpse.ps = this;
-                newpse.Function = p.name;
+                newpse.FuncText = p.name;
                 newpse.Retest();
                 if(TestPatternAny((short)p.id)) {
                     if(selID == -2) {
@@ -99,7 +111,7 @@ public class PattSelect : MonoBehaviour {
                 newpse = newbie.GetComponent<PattSelectElement>();
                 newpse.selID = (short)p.id;
                 newpse.ps = this;
-                newpse.Function = p.name;
+                newpse.FuncText = p.name;
                 newpse.Retest();
                 if(TestPatternAny((short)p.id)) {
                     if(selID == -2) {
@@ -116,7 +128,7 @@ public class PattSelect : MonoBehaviour {
                 newpse = newbie.GetComponent<PattSelectElement>();
                 newpse.selID = (short)p.id;
                 newpse.ps = this;
-                newpse.Function = p.name;
+                newpse.FuncText = p.name;
                 newpse.Retest();
                 if(TestPatternAny((short)p.id)) {
                     if(selID == -2) {
@@ -177,9 +189,19 @@ public class PattSelect : MonoBehaviour {
             enableButton.text = "Enable " + (f == Function.DIM ? "Light Dimming" : "Steady Burn");
             enableButton.GetComponent<Button>().interactable = true;
         } else if(f == Function.TRAFFIC) {
-            NbtCompound patts = FindObjectOfType<BarManager>().patts;
-            short selID = patts.Get<NbtCompound>("traf").Get<NbtShort>("patt").ShortValue;
+            NbtCompound patts = FindObjectOfType<BarManager>().patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+            short selID = patts["left"].ShortValue;
+            if(selID != patts["rite"].ShortValue) {
+                selID = -2;
+            }
+            if(selID != patts["cntr"].ShortValue) {
+                selID = -2;
+            }
 
+            if(selID == -2) {
+                enableButton.text = "Enable: <i>Multiple Patterns</i>";
+                enableButton.GetComponent<Button>().interactable = true;
+            }
             if(selID == -1) {
                 enableButton.text = "Cannot Enable, No Pattern";
                 enableButton.GetComponent<Button>().interactable = false;
@@ -200,7 +222,39 @@ public class PattSelect : MonoBehaviour {
                 }
             }
         } else {
-
+            NbtCompound patts = FindObjectOfType<BarManager>().patts;
+            bool foundOne = false;
+            Pattern a = null;
+            foreach(Pattern p in LightDict.inst.flashPatts) {
+                if(TestPatternAny((short)p.id)) {
+                    if(!foundOne) {
+                        foundOne = true;
+                        a = p;
+                    } else {
+                        a = null;
+                    }
+                }
+            }
+            foreach(Pattern p in LightDict.inst.warnPatts) {
+                if(TestPatternAny((short)p.id)) {
+                    if(!foundOne) {
+                        foundOne = true;
+                        a = p;
+                    } else {
+                        a = null;
+                    }
+                }
+            }
+            if(!foundOne) {
+                enableButton.text = "Cannot Enable, No Pattern";
+                enableButton.GetComponent<Button>().interactable = false;
+            } else if(a == null) {
+                enableButton.text = "Enable: <i>Multiple Patterns</i>";
+                enableButton.GetComponent<Button>().interactable = true;
+            } else {
+                enableButton.text = "Enable: " + a.name;
+                enableButton.GetComponent<Button>().interactable = true;
+            }
         }
     }
 

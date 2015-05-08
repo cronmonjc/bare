@@ -8,7 +8,7 @@ public class BarManager : MonoBehaviour {
 
     public NbtCompound patts;
 
-    void Start() {
+    void Awake() {
         patts = new NbtCompound("pats");
 
         foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
@@ -83,6 +83,9 @@ public class BarManager : MonoBehaviour {
     public void SetBarSize(int to) {
         if(to < 4 && to > -1) {
             BarSize = to;
+            foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                soc.ShowLong = true;
+            }
         }
     }
 
@@ -92,7 +95,7 @@ public class BarManager : MonoBehaviour {
         root.Add(new NbtByte("size", (byte)BarSize));
 
         NbtList lightList = new NbtList("lite");
-        foreach(LightHead lh in transform.GetComponentsInChildren<LightHead>(true)) {
+        foreach(LightHead lh in GetComponentsInChildren<LightHead>(true)) {
             NbtCompound lightCmpd = new NbtCompound();
             lightCmpd.Add(new NbtString("path", lh.transform.GetPath()));
             if(lh.lhd.style != null) {

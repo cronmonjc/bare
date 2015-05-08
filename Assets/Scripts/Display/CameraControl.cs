@@ -21,7 +21,7 @@ public class CameraControl : MonoBehaviour {
 
     private Camera myCam, childCam;
 
-    public GameObject LabelPrefab;
+    public GameObject LabelPrefab, BitLabelPrefab;
     public Transform LabelParent;
 
     public GameObject FuncSelectRoot;
