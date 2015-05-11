@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class BarManager : MonoBehaviour {
     public int BarSize = 3;
+    public TDOption td;
 
     public NbtCompound patts;
 
@@ -87,6 +88,10 @@ public class BarManager : MonoBehaviour {
                 soc.ShowLong = true;
             }
         }
+    }
+
+    public void SetTDOption(int to) {
+        td = (TDOption)to;
     }
 
     public void Save(string filename) {

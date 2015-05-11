@@ -31,7 +31,11 @@ public class LightHead : MonoBehaviour {
 
     public byte Bit {
         get {
-            return bits[FindObjectOfType<BarManager>().BarSize];
+            TDBitChanger tbc = GetComponent<TDBitChanger>();
+            if(tbc != null)
+                return tbc.Bit;
+            else
+                return bits[FindObjectOfType<BarManager>().BarSize];
         }
     }
 

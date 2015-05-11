@@ -516,6 +516,10 @@ public enum Function {
     TRAFFIC = 0x400, DIM = 0x800, STT_AND_TAIL = 0x1000, EMITTER = 0x2000
 }
 
+public enum TDOption {
+    NONE = 0, LG_SEVEN = 1, SM_EIGHT = 2, SM_SIX = 3
+}
+
 public static class Extensions {
     public static void DisableBit(this NbtShort value, byte bit) {
         value.Value = (short)(value.Value & ~(0x1 << bit));

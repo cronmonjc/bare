@@ -15,7 +15,12 @@ public class DeviceManager : MonoBehaviour {
     }
 
     void Start() {
-        d = new Device();
+        try {
+            d = new Device();
+        } catch(DeviceErrorException ex) {
+            ErrorText.inst.DispError("Error connecting to bar: " + ex.errCode);
+            d = null;
+        }
     }
 
     void OnDrawGizmos() {
