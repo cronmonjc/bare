@@ -2,31 +2,32 @@
 using System.Collections;
 
 public class LightInteractionPanel : MonoBehaviour {
-    private static CameraControl cam;
-    private bool show;
-
-    void Start() {
-        show = false;
-        foreach(Transform alpha in transform) {
-            alpha.gameObject.SetActive(false);
-        }
+    private enum ShowState {
+        SUMMARY, OPTICS
     }
+    private static CameraControl cam;
+    private ShowState state = ShowState.SUMMARY;
+    public GameObject SummaryPane, OpticPane;
 
     // Update is called once per frame
     void Update() {
         if(cam == null) {
             cam = FindObjectOfType<CameraControl>();
+            SummaryPane.SetActive(true);
+            OpticPane.SetActive(false);
         }
 
-        if(show && cam.OnlyCamSelected.Count == 0) {
-            show = false;
-            foreach(Transform alpha in transform) {
-                alpha.gameObject.SetActive(false);
+        if(cam.OnlyCamSelected.Count == 0) {
+            if(state != ShowState.SUMMARY) {
+                state = ShowState.SUMMARY;
+                SummaryPane.SetActive(true);
+                OpticPane.SetActive(false);
             }
-        } else if(!show && cam.OnlyCamSelected.Count > 0) {
-            show = true;
-            foreach(Transform alpha in transform) {
-                alpha.gameObject.SetActive(true);
+        } else {
+            if(state != ShowState.OPTICS) {
+                state = ShowState.OPTICS;
+                SummaryPane.SetActive(false);
+                OpticPane.SetActive(true);
             }
         }
     }

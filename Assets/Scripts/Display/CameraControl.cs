@@ -13,13 +13,12 @@ public class CameraControl : MonoBehaviour {
     public OpticSelect os;
     public FnSelManager fsm;
 
-    private float height = 1.0f;
     public RectTransform cover;
 
     public RectTransform SelBox;
     private SelBoxCollider sbc;
 
-    private Camera myCam, childCam;
+    private Camera myCam;
 
     public GameObject LabelPrefab, BitLabelPrefab;
     public Transform LabelParent;
@@ -53,13 +52,11 @@ public class CameraControl : MonoBehaviour {
         sbc = SelBox.GetComponent<SelBoxCollider>();
 
         myCam = GetComponent<Camera>();
-        childCam = transform.FindChild("LabelCamera").GetComponent<Camera>();
+        myCam.pixelRect = new Rect(0, Screen.height * 0.45f, Screen.width, Screen.height * 0.55f - 32f);
     }
 
     void Update() {
         if(!FBrowser.activeInHierarchy) {
-            GetComponent<Light>().enabled = (funcBeingTested == Function.NONE);
-
             Vector2 mousePos = Input.mousePosition;
             if(Input.GetMouseButtonDown(0) && (funcBeingTested == Function.NONE)) { // LMB pressed
                 if(Selected.Count == 0 || mousePos.y > 0.45f * Screen.height) {
@@ -122,13 +119,8 @@ public class CameraControl : MonoBehaviour {
                         size.y = currMouse.y - dragStart.y;
                     }
 
-                    if(size.x < 800 && size.y < 600) {
-                        SelBox.localPosition = positioning;
-                        SelBox.sizeDelta = size;
-                    } else {
-                        sbc.Selected.Clear();
-                        SelBox.gameObject.SetActive(false);
-                    }
+                    SelBox.localPosition = positioning;
+                    SelBox.sizeDelta = size;
                 } else {
                     sbc.Selected.Clear();
                     SelBox.gameObject.SetActive(false);
@@ -163,25 +155,7 @@ public class CameraControl : MonoBehaviour {
 
             if((selected.Count == 0 || mousePos.y > 0.45f * Screen.height) && Mathf.Abs(Input.GetAxisRaw("Mouse ScrollWheel")) > 0) {
                 myCam.fieldOfView = Mathf.Clamp(myCam.fieldOfView + Input.GetAxisRaw("Mouse ScrollWheel") * 20f, 10, 90f);
-                childCam.fieldOfView = myCam.fieldOfView;
             }
-        }
-
-        float slideTo = 1.0f;
-        if(selected.Count > 0) {
-            slideTo = 0.55f;
-        }
-
-        if(height != slideTo) {
-            height = Mathf.Lerp(height, slideTo, Time.deltaTime * 5.0f);
-
-            if(Mathf.Abs(slideTo - height) < 0.002f) {
-                height = slideTo;
-            }
-
-            myCam.pixelRect = new Rect(0, Screen.height * (1f - height), Screen.width, Screen.height * height);
-            childCam.pixelRect = new Rect(0, Screen.height * (1f - height), Screen.width, Screen.height * height);
-            cover.anchorMax = new Vector2(1.0f, (1f - height));
         }
     }
 }
