@@ -163,7 +163,7 @@ public class LightHead : MonoBehaviour {
     public void SetOptic(string newOptic, bool doDefault = true) {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
-            if(doDefault) {
+            if(doDefault && lhd.optic != null) {
                 Function highFunction = Function.LEVEL1;
                 foreach(Function f in CapableFunctions) {
                     if(!IsUsingFunction(f)) continue;
@@ -249,7 +249,7 @@ public class LightHead : MonoBehaviour {
     }
 
     public void SetStyle(StyleNode newStyle) {
-        if(newStyle == null) {
+        if(newStyle == null || lhd.optic == null) {
             lhd.style = null;
         } else {
             lhd.style = lhd.optic.styles[newStyle.name];

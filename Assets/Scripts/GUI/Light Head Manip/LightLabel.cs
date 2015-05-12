@@ -33,7 +33,7 @@ public class LightLabel : MonoBehaviour {
         if(lh == null) lh = target.GetComponent<LightHead>();
         else {
             if(lh.isSmall) {
-                ((RectTransform)transform).sizeDelta = new Vector2(70, 48);
+                ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
             }
 
             if(lh.lhd.style != null) {
@@ -45,10 +45,15 @@ public class LightLabel : MonoBehaviour {
                 } else {
                     label.color = Color.black;
                 }
+                if(lh.lhd.style.isDualColor) {
+                    clr = lh.lhd.style.color2;
+                }
+                secondImage.color = clr;
             } else {
                 label.text = "(" + lh.Bit + ")\nEmpty";
                 label.color = Color.white;
                 background.color = new Color(0, 0, 0, 0.45f);
+                secondImage.color = new Color(0, 0, 0, 0.45f);
             }
 
             if(lh.Selected) {

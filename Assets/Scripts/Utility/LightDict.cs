@@ -77,7 +77,7 @@ public class LightDict : MonoBehaviour {
                     flashPatts.Add(new FlashPatt((NbtCompound)alpha));
                 }
 
-                
+
                 tdPatts = new List<Pattern>();
                 patlist = pattstag.Get<NbtList>("traff");
                 foreach(NbtTag alpha in patlist) {
@@ -154,7 +154,10 @@ public class LightDict : MonoBehaviour {
     }
 
     public OpticNode FetchOptic(Location loc, string optic) {
-        return lights[loc].optics[optic];
+        if(lights[loc].optics.ContainsKey(optic))
+            return lights[loc].optics[optic];
+        else
+            return null;
     }
 }
 
