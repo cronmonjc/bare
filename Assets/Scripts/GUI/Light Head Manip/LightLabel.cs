@@ -37,7 +37,7 @@ public class LightLabel : MonoBehaviour {
             }
 
             if(lh.lhd.style != null) {
-                label.text = "(" + lh.Bit + ") " + lh.lhd.style.name + " " + lh.lhd.optic.name;
+                label.text = "(" + lh.Bit + ")\n" + lh.lhd.style.name + " " + lh.lhd.optic.name;
                 Color clr = lh.lhd.style.color;
                 background.color = clr;
                 if(clr.r + clr.g < clr.b) {
@@ -46,7 +46,7 @@ public class LightLabel : MonoBehaviour {
                     label.color = Color.black;
                 }
             } else {
-                label.text = "(" + lh.Bit + ") Empty";
+                label.text = "(" + lh.Bit + ")\nEmpty";
                 label.color = Color.white;
                 background.color = new Color(0, 0, 0, 0.45f);
             }
