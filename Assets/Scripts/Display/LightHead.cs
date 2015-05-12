@@ -255,4 +255,7 @@ public class LightHead : MonoBehaviour {
             lhd.style = lhd.optic.styles[newStyle.name];
         }
     }
+    void OnDrawGizmos() {
+        Gizmos.DrawIcon(transform.position, "Head" + (isSmall ? "Sm" : "Lg") + ".png", true);
+    }
 }

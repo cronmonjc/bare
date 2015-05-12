@@ -22,7 +22,7 @@ public class SelBoxCollider : MonoBehaviour {
 
     void OnCollisionEnter(Collision coll) {
         LightHead lh = coll.gameObject.GetComponent<LightHead>();
-        if(lh != null) {
+        if(lh != null && !Selected.Contains(lh)) {
             Selected.Add(lh);
         }
     }

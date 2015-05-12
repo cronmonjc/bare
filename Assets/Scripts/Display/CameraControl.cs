@@ -16,7 +16,8 @@ public class CameraControl : MonoBehaviour {
     public RectTransform cover;
 
     public RectTransform SelBox;
-    private SelBoxCollider sbc;
+    private SelBoxCollider sbc, msbc;
+    private SymmMode sm;
 
     private Camera myCam;
 
@@ -53,6 +54,9 @@ public class CameraControl : MonoBehaviour {
         Application.targetFrameRate = 120;
 
         sbc = SelBox.GetComponent<SelBoxCollider>();
+        msbc = SelBox.transform.GetChild(0).GetComponent<SelBoxCollider>();
+
+        sm = FindObjectOfType<SymmMode>();
 
         myCam = GetComponent<Camera>();
         myCam.pixelRect = new Rect(0, Screen.height * 0.45f, Screen.width, Screen.height * 0.55f - 32f);
@@ -72,37 +76,47 @@ public class CameraControl : MonoBehaviour {
                         selected.Clear();
                     }
 
-                    if(dragging) {
-                        if(Selected.Count == 0) { // There isn't anything in the selection box.  Test if there was a light under the cursor?
-                            RaycastHit hit;
-                            if(Physics.Raycast(myCam.ScreenPointToRay(Input.mousePosition), out hit)) { // There WAS something!
-                                LightHead head = hit.transform.GetComponent<LightHead>();
-                                if(head != null) {
-                                    selected.Add(head);
-                                }
+                    if(Selected.Count == 0) { // There isn't anything in the selection box.  Test if there was a light under the cursor?
+                        RaycastHit hit;
+                        if(Physics.Raycast(myCam.ScreenPointToRay(Input.mousePosition), out hit)) { // There WAS something!
+                            LightHead head = hit.transform.GetComponent<LightHead>();
+                            if(head != null) {
+                                selected.Add(head);
                             }
-                        } else {
-                            foreach(LightHead alpha in sbc.Selected) {
+                        }
+                    } else {
+                        foreach(LightHead alpha in sbc.Selected) {
+                            if(!selected.Contains(alpha)) {
+                                selected.Add(alpha);
+                            }
+                        }
+                        if(sm.On) {
+                            foreach(LightHead alpha in msbc.Selected) {
                                 if(!selected.Contains(alpha)) {
                                     selected.Add(alpha);
                                 }
                             }
                         }
+                    }
 
-                        sbc.Selected.Clear();
-                        SelBox.gameObject.SetActive(false);
-                        dragging = false;
+                    sbc.Selected.Clear();
+                    msbc.Selected.Clear();
+                    sbc.gameObject.SetActive(false);
+                    msbc.gameObject.SetActive(false);
+                    dragging = false;
 
-                        if(selected.Count > 0) {
-                            os.Refresh();
-                            fsm.Refresh();
-                        }
+                    dragStart = Vector2.one * -1f;
+
+                    if(selected.Count > 0) {
+                        os.Refresh();
+                        fsm.Refresh();
                     }
                 }
             } else if(dragging) { // LMB held
                 bool hasHit = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out currMouse);
                 if(hasHit) {
-                    SelBox.gameObject.SetActive(true);
+                    sbc.gameObject.SetActive(true);
+                    msbc.gameObject.SetActive(sm.On);
 
                     Vector3 positioning = new Vector3(0, 0, -0.01f);
                     Vector2 size = new Vector2();
@@ -124,6 +138,15 @@ public class CameraControl : MonoBehaviour {
 
                     SelBox.localPosition = positioning;
                     SelBox.sizeDelta = size;
+
+                    if(sm) {
+                        positioning.x = positioning.x * -2f;
+                        positioning.y = 0f;
+                        positioning.z = 0f;
+
+                        msbc.transform.localPosition = positioning;
+                        ((RectTransform)msbc.transform).sizeDelta = size;
+                    }
                 } else {
                     sbc.Selected.Clear();
                     SelBox.gameObject.SetActive(false);
