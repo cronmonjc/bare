@@ -222,7 +222,6 @@ public class PattSelect : MonoBehaviour {
                 }
             }
         } else {
-            NbtCompound patts = FindObjectOfType<BarManager>().patts;
             bool foundOne = false;
             Pattern a = null;
             foreach(Pattern p in LightDict.inst.flashPatts) {
@@ -288,7 +287,7 @@ public class PattSelect : MonoBehaviour {
                     ErrorText.inst.DispError(f.ToString() + " has no similar setting in the data bytes.  Ask James.");
                     return false;
                 }
-                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
+                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
 
                 string tagname = lb.transform.position.z < 0 ? "r" : "f";
                 string path = lh.transform.GetPath();
@@ -305,6 +304,12 @@ public class PattSelect : MonoBehaviour {
                 } else if(path.Contains("MidSection")) {
                     tagname = tagname + "cen";
                 }
+
+                if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
+                    return true;
+                }
+
+                patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
 
                 if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
                     return true;
@@ -343,7 +348,7 @@ public class PattSelect : MonoBehaviour {
                     Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
                     return false;
                 }
-                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
+                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
 
                 string tagname = lb.transform.position.z < 0 ? "r" : "f";
                 string path = lh.transform.GetPath();
@@ -361,6 +366,10 @@ public class PattSelect : MonoBehaviour {
                     tagname = tagname + "cen";
                 }
 
+                if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
+                    return false;
+                }
+                patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
                 if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
                     return false;
                 }

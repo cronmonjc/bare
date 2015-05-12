@@ -17,7 +17,6 @@ public class BitLabel : MonoBehaviour {
             transform.localRotation = Quaternion.identity;
             if(target != null) {
                 transform.position = target.position;
-                transform.localPosition = transform.localPosition + new Vector3(0, 0, -0.75f);
 
                 if(!target.gameObject.activeInHierarchy) {
                     gameObject.SetActive(false);
@@ -27,7 +26,7 @@ public class BitLabel : MonoBehaviour {
 
         if(lh == null) lh = target.GetComponent<LightHead>();
         else {
-            label.text = lh.bits[FindObjectOfType<BarManager>().BarSize] + "";
+            label.text = lh.Bit + "";
         }
     }
 }

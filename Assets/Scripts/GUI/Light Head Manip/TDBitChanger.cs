@@ -2,17 +2,16 @@
 using System.Collections;
 
 public class TDBitChanger : MonoBehaviour {
-    public byte[] noTDBits = new byte[] { 0, 0, 0, 0 },
-        SvLgBits = new byte[] { 0, 0, 0, 0 },
-        EtSmBits = new byte[] { 0, 0, 0, 0 },
-        SxSmBits = new byte[] { 0, 0, 0, 0 };
+    public byte[] noTDBits = new byte[] { 0, 0, 0, 0, 0 },
+        SvLgBits = new byte[] { 0, 0, 0, 0, 0 },
+        EtSmBits = new byte[] { 0, 0, 0, 0, 0 },
+        SxSmBits = new byte[] { 0, 0, 0, 0, 0 };
 
     public byte Bit {
         get {
             BarManager bm = FindObjectOfType<BarManager>();
             int size = bm.BarSize;
-            TDOption td = bm.td;
-            switch(td) {
+            switch(bm.td) {
                 case TDOption.NONE:
                     return noTDBits[size];
                 case TDOption.LG_SEVEN:

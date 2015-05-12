@@ -4,6 +4,7 @@ using fNbt;
 using System.Collections.Generic;
 
 public class BarManager : MonoBehaviour {
+    [Range(0,4)]
     public int BarSize = 3;
     public TDOption td;
 
@@ -82,11 +83,12 @@ public class BarManager : MonoBehaviour {
     }
 
     public void SetBarSize(int to) {
-        if(to < 4 && to > -1) {
+        if(to < 5 && to > -1) {
             BarSize = to;
             foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                 soc.ShowLong = true;
             }
+            FindObjectOfType<CameraControl>().OnlyCamSelected.Clear();
         }
     }
 

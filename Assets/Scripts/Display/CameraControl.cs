@@ -20,16 +20,16 @@ public class CameraControl : MonoBehaviour {
 
     private Camera myCam;
 
-    public GameObject LabelPrefab, BitLabelPrefab;
+    public GameObject LabelPrefab;
     public Transform LabelParent;
 
     public GameObject FuncSelectRoot;
 
     public GameObject FBrowser;
 
-    private List<LightBlock> selected;
+    private List<LightHead> selected;
 
-    public List<LightBlock> Selected {
+    public List<LightHead> Selected {
         get {
             if(dragging) {
                 return sbc.Selected;
@@ -39,16 +39,19 @@ public class CameraControl : MonoBehaviour {
         }
     }
 
-    public List<LightBlock> OnlyCamSelected {
+    public List<LightHead> OnlyCamSelected {
         get {
             return this.selected;
         }
     }
 
+    void Awake() {
+        selected = new List<LightHead>();
+    }
+
     void Start() {
         Application.targetFrameRate = 120;
 
-        selected = new List<LightBlock>();
         sbc = SelBox.GetComponent<SelBoxCollider>();
 
         myCam = GetComponent<Camera>();
@@ -59,12 +62,12 @@ public class CameraControl : MonoBehaviour {
         if(!FBrowser.activeInHierarchy) {
             Vector2 mousePos = Input.mousePosition;
             if(Input.GetMouseButtonDown(0) && (funcBeingTested == Function.NONE)) { // LMB pressed
-                if(Selected.Count == 0 || mousePos.y > 0.45f * Screen.height) {
+                if(myCam.pixelRect.Contains(mousePos)) {
                     dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
                     os.Clear();
                 }
             } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == Function.NONE)) { // LMB released
-                if(dragging && (OnlyCamSelected.Count == 0 || mousePos.y > 0.45f * Screen.height)) {
+                if(dragging && myCam.pixelRect.Contains(mousePos)) {
                     if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
                         selected.Clear();
                     }
@@ -73,13 +76,13 @@ public class CameraControl : MonoBehaviour {
                         if(Selected.Count == 0) { // There isn't anything in the selection box.  Test if there was a light under the cursor?
                             RaycastHit hit;
                             if(Physics.Raycast(myCam.ScreenPointToRay(Input.mousePosition), out hit)) { // There WAS something!
-                                LightBlock head = hit.transform.GetComponent<LightBlock>();
+                                LightHead head = hit.transform.GetComponent<LightHead>();
                                 if(head != null) {
                                     selected.Add(head);
                                 }
                             }
                         } else {
-                            foreach(LightBlock alpha in sbc.Selected) {
+                            foreach(LightHead alpha in sbc.Selected) {
                                 if(!selected.Contains(alpha)) {
                                     selected.Add(alpha);
                                 }
@@ -127,33 +130,7 @@ public class CameraControl : MonoBehaviour {
                 }
             }
 
-            if(Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2)) {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-            if(Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(2)) {
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-
-            if(Input.GetMouseButton(1)) { // RMB Held
-                Vector3 euler = pivot.localEulerAngles;
-                euler.x = Mathf.Clamp(euler.x + (Input.GetAxisRaw("Mouse Y") * 5f), 280f, 350f);
-                euler.y = euler.y + (Input.GetAxisRaw("Mouse X") * 5f);
-                pivot.localEulerAngles = euler;
-            }
-
-            if(Input.GetMouseButton(2)) { // MMB Held
-                Vector3 newPos = pivot.position;
-
-                newPos += ((transform.right * -1f * Input.GetAxisRaw("Mouse X")) + (Vector3.Cross(Vector3.up, transform.right) * Input.GetAxisRaw("Mouse Y")));
-                newPos.x = Mathf.Clamp(newPos.x, -20f, 20f);
-                newPos.z = Mathf.Clamp(newPos.z, -20f, 20f);
-
-                pivot.position = newPos;
-            }
-
-            if((selected.Count == 0 || mousePos.y > 0.45f * Screen.height) && Mathf.Abs(Input.GetAxisRaw("Mouse ScrollWheel")) > 0) {
+            if((myCam.pixelRect.Contains(mousePos)) && Mathf.Abs(Input.GetAxisRaw("Mouse ScrollWheel")) > 0) {
                 myCam.fieldOfView = Mathf.Clamp(myCam.fieldOfView + Input.GetAxisRaw("Mouse ScrollWheel") * 20f, 10, 90f);
             }
         }

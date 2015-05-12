@@ -4,14 +4,10 @@ using System.Collections.Generic;
 using fNbt;
 
 public class LightHead : MonoBehaviour {
-    public LightBlock Single, DualL, DualR;
-
     public Location loc;
 
     private static CameraControl cam;
     private static SelBoxCollider sbc;
-
-    private Color transparent;
 
     public bool isSmall;
     public LightHeadDefinition lhd;
@@ -23,11 +19,10 @@ public class LightHead : MonoBehaviour {
     }
 
     private LightLabel myLabel;
-    private BitLabel bitLabel;
 
     public Light[] myLights;
 
-    public byte[] bits = new byte[4];
+    public byte[] bits = new byte[5];
 
     public byte Bit {
         get {
@@ -41,17 +36,16 @@ public class LightHead : MonoBehaviour {
 
     public bool Selected {
         get {
-            return Single.Selected || DualL.Selected || DualR.Selected;
+            if(cam == null) {
+                cam = FindObjectOfType<CameraControl>();
+            }
+            return cam.OnlyCamSelected.Contains(this);
         }
         set {
-            if(lhd.style == null || !lhd.style.isDualColor) {
-                Single.Selected = value;
-                DualL.Selected = false;
-                DualR.Selected = false;
-            } else if(lhd.style != null && lhd.style.isDualColor) {
-                Single.Selected = false;
-                DualL.Selected = value;
-                DualR.Selected = value;
+            if(value && !Selected) {
+                cam.OnlyCamSelected.Add(this);
+            } else if(!value && Selected) {
+                cam.OnlyCamSelected.Remove(this);
             }
         }
     }
@@ -70,25 +64,15 @@ public class LightHead : MonoBehaviour {
         myLabel = GameObject.Instantiate<GameObject>(cam.LabelPrefab).GetComponent<LightLabel>();
         myLabel.target = transform;
         myLabel.transform.SetParent(cam.LabelParent);
-
-        bitLabel = GameObject.Instantiate<GameObject>(cam.BitLabelPrefab).GetComponent<BitLabel>();
-        bitLabel.target = transform;
-        bitLabel.transform.SetParent(cam.LabelParent);
+        myLabel.transform.localScale = Vector3.one;
 
         myLights = GetComponentsInChildren<Light>(true);
-
-        transparent = new Color(0.5f, 0.5f, 0.5f, 0.5f);
-
-        Single.gameObject.SetActive(true);
     }
 
     void Update() {
         if(CameraControl.funcBeingTested != Function.NONE) {
             if(myLabel.gameObject.activeInHierarchy) {
                 myLabel.gameObject.SetActive(false);
-            }
-            if(bitLabel.gameObject.activeInHierarchy) {
-                bitLabel.gameObject.SetActive(false);
             }
             return;
         }
@@ -103,9 +87,6 @@ public class LightHead : MonoBehaviour {
         if(!myLabel.gameObject.activeInHierarchy) {
             myLabel.gameObject.SetActive(true);
         }
-        if(!bitLabel.gameObject.activeInHierarchy) {
-            bitLabel.gameObject.SetActive(true);
-        }
     }
 
     public bool IsUsingFunction(Function f) {
@@ -119,10 +100,10 @@ public class LightHead : MonoBehaviour {
         }
         NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-        short en = func.Get<NbtShort>("en" + (transform.position.z < 0 ? "r" : "f") + "1").ShortValue;
+        short en = func.Get<NbtShort>("en" + (transform.position.z > 0 ? "f" : "r") + "1").ShortValue;
 
         if(lhd.style.isDualColor) {
-            en = (short)(en | func.Get<NbtShort>("en" + (transform.position.z < 0 ? "r" : "f") + "2").ShortValue);
+            en = (short)(en | func.Get<NbtShort>("en" + (transform.position.z > 0 ? "f" : "r") + "2").ShortValue);
         }
 
         return ((en & (0x1 << Bit)) > 0);
@@ -258,31 +239,10 @@ public class LightHead : MonoBehaviour {
             } else {
                 SetStyle(null);
             }
-            if(new List<StyleNode>(lhd.optic.styles.Values)[0].isDualColor) {
-                DualL.gameObject.SetActive(true);
-                DualR.gameObject.SetActive(true);
-                Single.gameObject.SetActive(false);
-                Single.Selected = false;
-                DualL.Selected = true;
-                DualR.Selected = true;
-            } else {
-                DualL.gameObject.SetActive(false);
-                DualR.gameObject.SetActive(false);
-                Single.gameObject.SetActive(true);
-                Single.Selected = true;
-                DualL.Selected = false;
-                DualR.Selected = false;
-            }
 
         } else {
             lhd.optic = null;
             SetStyle(null);
-            DualL.gameObject.SetActive(false);
-            DualR.gameObject.SetActive(false);
-            Single.gameObject.SetActive(true);
-            Single.Selected = true;
-            DualL.Selected = false;
-            DualR.Selected = false;
         }
 
 
@@ -291,14 +251,8 @@ public class LightHead : MonoBehaviour {
     public void SetStyle(StyleNode newStyle) {
         if(newStyle == null) {
             lhd.style = null;
-            Single.Color = transparent;
-            DualL.Color = transparent;
-            DualR.Color = transparent;
         } else {
             lhd.style = lhd.optic.styles[newStyle.name];
-            Single.Color = lhd.style.color;
-            DualL.Color = lhd.style.color;
-            DualR.Color = lhd.style.color2;
         }
     }
 }

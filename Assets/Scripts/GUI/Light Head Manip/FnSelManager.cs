@@ -44,7 +44,21 @@ public class FnSelManager : MonoBehaviour {
                     fn.gameObject.SetActive(true);
 
                     if(lh.IsUsingFunction(fn.fn)) {
-                        Pattern p = lh.GetPattern(fn.fn, lh.DualR == lb);
+                        Pattern p = lh.GetPattern(fn.fn, false);
+                        if(p != null) {
+                            if(name == "") {
+                                name = p.name;
+                            } else {
+                                if(name != "<i>-- Multiple Values --</i>" && name != p.name) {
+                                    name = "<i>-- Multiple Values --</i>";
+                                }
+                            }
+                        } else {
+                            if(name != "") {
+                                name = "<i>-- Multiple Values --</i>";
+                            }
+                        }
+                        p = lh.GetPattern(fn.fn, true);
                         if(p != null) {
                             if(name == "") {
                                 name = p.name;
@@ -94,7 +108,21 @@ public class FnSelManager : MonoBehaviour {
                 }
 
                 if(lh.IsUsingFunction(fn.fn)) {
-                    Pattern p = lh.GetPattern(fn.fn, lh.DualR == lb);
+                    Pattern p = lh.GetPattern(fn.fn, false);
+                    if(p != null) {
+                        if(name == "") {
+                            name = p.name;
+                        } else {
+                            if(name != "<i>-- Multiple Values --</i>" && name != p.name) {
+                                name = "<i>-- Multiple Values --</i>";
+                            }
+                        }
+                    } else {
+                        if(name != "") {
+                            name = "<i>-- Multiple Values --</i>";
+                        }
+                    }
+                    p = lh.GetPattern(fn.fn, true);
                     if(p != null) {
                         if(name == "") {
                             name = p.name;

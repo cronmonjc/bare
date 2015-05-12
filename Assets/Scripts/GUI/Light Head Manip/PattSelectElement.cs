@@ -28,7 +28,6 @@ public class PattSelectElement : MonoBehaviour {
     }
 
     public void Clicked() {
-
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
         PattSelect ps = FindObjectOfType<PattSelect>();
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
@@ -50,7 +49,7 @@ public class PattSelectElement : MonoBehaviour {
                     ErrorText.inst.DispError(ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
                     return;
                 }
-                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (lh.DualR == lb ? "2" : "1"));
+                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
 
                 string tagname = lb.transform.position.z < 0 ? "r" : "f";
                 string path = lh.transform.GetPath();
@@ -69,11 +68,14 @@ public class PattSelectElement : MonoBehaviour {
                 }
 
                 patCmpd.Get<NbtShort>(tagname).Value = selID;
+
+                patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
+                patCmpd.Get<NbtShort>(tagname).Value = selID;
             } else if(ps.f == Function.TRAFFIC) {
                 NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
-                patts.Get<NbtShort>("left").Value = selID;
-                patts.Get<NbtShort>("rite").Value = selID;
-                patts.Get<NbtShort>("cntr").Value = selID;
+                patCmpd.Get<NbtShort>("left").Value = selID;
+                patCmpd.Get<NbtShort>("rite").Value = selID;
+                patCmpd.Get<NbtShort>("cntr").Value = selID;
             }
         }
 

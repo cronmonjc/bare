@@ -41,13 +41,13 @@ public class LightBlock : MonoBehaviour {
                 cam = FindObjectOfType<CameraControl>();
             }
 
-            return gameObject.activeInHierarchy && cam.Selected.Contains(this);
+            return gameObject.activeInHierarchy; //&& cam.Selected.Contains(this);
         }
         set {
             if(value && !Selected) {
-                cam.Selected.Add(this);
+                //cam.Selected.Add(this);
             } else if(!value && Selected) {
-                cam.Selected.Remove(this);
+                //cam.Selected.Remove(this);
             }
         }
     }

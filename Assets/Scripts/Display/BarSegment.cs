@@ -5,8 +5,8 @@ public class BarSegment : MonoBehaviour {
     private static BarManager man;
 
     public bool IsEnd;
-    public bool[] VisibleOn = new bool[] {false, false, false, true};
-    public float[] XPosOn = new float[] { 0f, 0f, 0f, 0f };
+    public bool[] VisibleOn = new bool[] {false, false, false, false, true};
+    public float[] XPosOn = new float[] { 0f, 0f, 0f, 0f, 0f };
 
     // Update is called once per frame
     void Update() {

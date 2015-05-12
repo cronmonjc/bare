@@ -30,7 +30,6 @@ public class SplitMerge : MonoBehaviour {
     }
 
     public void Act(bool merge) {
-        if(CameraControl.funcBeingTested != Function.NONE) return;
         List<LightHead> temp = new List<LightHead>(FindObjectsOfType<LightHead>());
         foreach(LightHead lh in temp) {
             if(!lh.Selected) continue;
@@ -43,25 +42,6 @@ public class SplitMerge : MonoBehaviour {
             }
 
             soc.ShowLong = merge;
-            lh.Selected = false;
-            foreach(LightHead alpha in soc.transform.GetComponentsInChildren<LightHead>(false)) {
-                if(!alpha.Selected) {
-                    alpha.Selected = true;
-                    if(lh.lhd.optic != null) {
-                        if(merge) {
-                            if(lh.lhd.optic.lgEquivalent.Length > 0) {
-                                alpha.SetOptic(lh.lhd.optic.lgEquivalent, false);
-                                alpha.SetStyle(lh.lhd.style);
-                            }
-                        } else {
-                            if(lh.lhd.optic.smEquivalent.Length > 0) {
-                                alpha.SetOptic(lh.lhd.optic.smEquivalent, false);
-                                alpha.SetStyle(lh.lhd.style);
-                            }
-                        }
-                    }
-                }
-            }
         }
         cam.os.Refresh();
     }

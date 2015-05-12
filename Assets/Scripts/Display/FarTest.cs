@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class FarTest : MonoBehaviour {
-    [Range(0, 3)]
+    [Range(0, 4)]
     public byte FarMin = 3;
 
     public static BarManager bm;
