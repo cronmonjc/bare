@@ -154,7 +154,7 @@ public class CameraControl : MonoBehaviour {
             }
 
             if((myCam.pixelRect.Contains(mousePos)) && Mathf.Abs(Input.GetAxisRaw("Mouse ScrollWheel")) > 0) {
-                myCam.fieldOfView = Mathf.Clamp(myCam.fieldOfView + Input.GetAxisRaw("Mouse ScrollWheel") * 20f, 10, 90f);
+                myCam.orthographicSize = Mathf.Clamp(myCam.orthographicSize + Input.GetAxisRaw("Mouse ScrollWheel") * 1f, 1f, 10f);
             }
         }
     }

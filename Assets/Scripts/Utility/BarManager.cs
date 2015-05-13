@@ -99,11 +99,17 @@ public class BarManager : MonoBehaviour {
                 soc.ShowLong = true;
             }
             FindObjectOfType<CameraControl>().OnlyCamSelected.Clear();
+            foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
+                ll.Refresh();
+            }
         }
     }
 
     public void SetTDOption(int to) {
         td = (TDOption)to;
+        foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
+            ll.Refresh();
+        }
     }
 
     public void Save(string filename) {
