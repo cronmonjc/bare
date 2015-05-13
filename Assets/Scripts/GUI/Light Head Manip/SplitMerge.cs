@@ -11,8 +11,8 @@ public class SplitMerge : MonoBehaviour {
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
         if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
-        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-            if(!lh.Selected) continue;
+        foreach(LightHead lh in BarManager.inst.allHeads) {
+            if(!lh.gameObject.activeInHierarchy || !lh.Selected) continue;
             SizeOptionControl soc = null;
             for(Transform t = lh.transform; soc == null && t != null; t = t.parent) {
                 soc = t.GetComponent<SizeOptionControl>();
@@ -30,9 +30,8 @@ public class SplitMerge : MonoBehaviour {
     }
 
     public void Act(bool merge) {
-        List<LightHead> temp = new List<LightHead>(FindObjectsOfType<LightHead>());
-        foreach(LightHead lh in temp) {
-            if(!lh.Selected) continue;
+        foreach(LightHead lh in BarManager.inst.allHeads) {
+            if(!lh.gameObject.activeInHierarchy || !lh.Selected) continue;
             SizeOptionControl soc = null;
             for(Transform t = lh.transform; soc == null && t != null; t = t.parent) {
                 soc = t.GetComponent<SizeOptionControl>();

@@ -45,8 +45,8 @@ public class OpticSelect : MonoBehaviour {
         List<Location> locs = new List<Location>();
         bool showLong = true, showShort = true;
         List<LightHead> selected = new List<LightHead>();
-        foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
-            if(alpha.Selected) {
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 selected.Add(alpha);
                 showLong &= !alpha.isSmall;
                 showShort &= alpha.isSmall;
@@ -101,8 +101,8 @@ public class OpticSelect : MonoBehaviour {
         styleSelect.selectedType = node;
         styleSelect.gameObject.SetActive(node != null);
         bool change = false;
-        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-            if(lh.Selected && lh.lhd.optic != node) {
+        foreach(LightHead lh in BarManager.inst.allHeads) {
+            if(lh.gameObject.activeInHierarchy && lh.lhd.optic != node) {
                 lh.SetOptic(node);
                 change = true;
             }

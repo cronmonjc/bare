@@ -51,7 +51,7 @@ public class CameraControl : MonoBehaviour {
     }
 
     void Start() {
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = 30;
 
         sbc = SelBox.GetComponent<SelBoxCollider>();
         msbc = SelBox.transform.GetChild(0).GetComponent<SelBoxCollider>();

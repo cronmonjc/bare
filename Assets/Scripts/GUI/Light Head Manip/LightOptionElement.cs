@@ -47,10 +47,10 @@ public class LightOptionElement : MonoBehaviour {
 
     void Start() {
         t.onValueChanged.AddListener(delegate(bool on) {
-            if(on) {
-                if(funcSel != null)
-                    funcSel.SetSelection(fn);
-                else if(optSel != null)
+            if(funcSel != null)
+                funcSel.SetSelection(fn, on);
+            else if(on) {
+                if(optSel != null)
                     optSel.SetSelection(optNode);
                 else if(stySel != null)
                     stySel.SetSelection(styNode);
@@ -62,13 +62,7 @@ public class LightOptionElement : MonoBehaviour {
 
     void Update() {
         if(funcSel != null) {
-            bool on = true;
-            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-                if(lh.Selected && !lh.lhd.funcs.Contains(fn)) {
-                    on = false;
-                }
-            }
-            t.isOn = on;
+            t.isOn = funcSel.opticSelect.fn.Contains(fn);
             t.image.color = Color.white;
             t.interactable = true;
             text.color = Color.black;
@@ -101,8 +95,8 @@ public class LightOptionElement : MonoBehaviour {
             text.text = name;
         } else if(optSel != null) {
             bool on = true;
-            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-                if(lh.Selected && lh.lhd.optic != optNode) {
+            foreach(LightHead lh in BarManager.inst.allHeads) {
+                if(lh.gameObject.activeInHierarchy && lh.Selected && lh.lhd.optic != optNode) {
                     on = false;
                 }
             }
@@ -117,8 +111,8 @@ public class LightOptionElement : MonoBehaviour {
             }
         } else if(stySel != null) {
             bool on = true;
-            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-                if(lh.Selected && lh.lhd.style != styNode) {
+            foreach(LightHead lh in BarManager.inst.allHeads) {
+                if(lh.gameObject.activeInHierarchy && lh.Selected && lh.lhd.style != styNode) {
                     on = false;
                 }
             }

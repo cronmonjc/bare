@@ -55,8 +55,8 @@ public class StyleSelect : MonoBehaviour {
     private bool IsRecommended(StyleNode sn) {
         bool rtn = true;
 
-        foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
-            if(alpha.Selected) {
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 foreach(AdvFunction f in alpha.patterns.Keys) {
                     switch(f) {
                         case AdvFunction.TAKEDOWN:
@@ -88,8 +88,8 @@ public class StyleSelect : MonoBehaviour {
     }
 
     public void SetSelection(StyleNode node) {
-        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-            if(lh.Selected)
+        foreach(LightHead lh in BarManager.inst.allHeads) {
+            if(lh.gameObject.activeInHierarchy && lh.Selected)
                 lh.SetStyle(node);
         }
     }

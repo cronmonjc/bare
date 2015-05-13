@@ -10,6 +10,9 @@ public class BarManager : MonoBehaviour {
 
     public NbtCompound patts;
 
+    public static BarManager inst;
+    public List<LightHead> allHeads;
+
     void Awake() {
         patts = new NbtCompound("pats");
 
@@ -37,6 +40,13 @@ public class BarManager : MonoBehaviour {
             patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat2", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
         }
+
+        allHeads = new List<LightHead>();
+        inst = this;
+    }
+
+    void Start() {
+        allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true));
     }
 
     public static string GetFnString(Transform t, AdvFunction f) {

@@ -41,8 +41,8 @@ public class FunctionSelect : MonoBehaviour {
         List<BasicFunction> potential = new List<BasicFunction>();
         potential.Add(BasicFunction.FLASHING);
         potential.Add(BasicFunction.FLASH_STEADY);
-        foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
-            if(alpha.Selected) {
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 switch(alpha.loc) {
                     case Location.FRONT:
                         if(potential.Contains(BasicFunction.EMITTER)) continue;
@@ -87,38 +87,32 @@ public class FunctionSelect : MonoBehaviour {
         LayoutRebuilder.MarkLayoutForRebuild(menu);
     }
 
-    public void SetSelection(BasicFunction fn) {
-        bool add = true;
-        if(!opticSelect.fn.Contains(fn))
+    public void SetSelection(BasicFunction fn, bool add) {
+        if(add && !opticSelect.fn.Contains(fn))
             opticSelect.fn.Add(fn);
-        else {
+        else if(!add && opticSelect.fn.Contains(fn))
             opticSelect.fn.Remove(fn);
-            add = false;
-        }
         opticSelect.gameObject.SetActive(opticSelect.fn.Count > 0);
         bool change = false;
-        foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-            if(lh.Selected) {
+        foreach(LightHead lh in BarManager.inst.allHeads) {
+            if(lh.gameObject.activeInHierarchy && lh.Selected) {
                 if(add && !lh.lhd.funcs.Contains(fn)) {
                     List<BasicFunction> potential = new List<BasicFunction>();
                     potential.Add(BasicFunction.FLASHING);
                     potential.Add(BasicFunction.FLASH_STEADY);
                     switch(lh.loc) {
                         case Location.FRONT:
-                            if(potential.Contains(BasicFunction.EMITTER)) continue;
                             potential.Add(BasicFunction.EMITTER);
                             potential.Add(BasicFunction.CAL_STEADY);
-                            continue;
+                            break;
                         case Location.REAR:
-                            if(potential.Contains(BasicFunction.STT)) continue;
                             potential.Add(BasicFunction.STT);
                             potential.Add(BasicFunction.TRAFFIC);
-                            continue;
+                            break;
                         case Location.FRONT_CORNER:
                         case Location.REAR_CORNER:
-                            if(potential.Contains(BasicFunction.CRUISE)) continue;
                             potential.Add(BasicFunction.CRUISE);
-                            continue;
+                            break;
                     }
                     if(potential.Contains(fn))
                         lh.lhd.funcs.Add(fn);
