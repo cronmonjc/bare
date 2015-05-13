@@ -71,7 +71,7 @@ public class CameraControl : MonoBehaviour {
                     fs.Clear();
                 }
             } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB released
-                if(dragging && myCam.pixelRect.Contains(mousePos)) {
+                if(dragging) {
                     if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
                         selected.Clear();
                     }
@@ -105,7 +105,14 @@ public class CameraControl : MonoBehaviour {
                     msbc.gameObject.SetActive(false);
                     dragging = false;
 
-                    dragStart = Vector2.one * -1f;
+                    BoxCollider bc = sbc.GetComponent<BoxCollider>();
+                    bc.size = Vector3.zero;
+                    bc.center = Vector3.zero;
+                    sbc.transform.position = Vector3.zero;
+                    bc = msbc.GetComponent<BoxCollider>();
+                    bc.size = Vector3.zero;
+                    bc.center = Vector3.zero;
+                    msbc.transform.position = Vector3.zero;
 
                     if(selected.Count > 0) {
                         fs.Refresh();
