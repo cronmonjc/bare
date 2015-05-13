@@ -9,16 +9,16 @@ public class LightDict : MonoBehaviour {
     public static LightDict inst;
     public static SteadyPattern stdy;
     public Dictionary<Location, LocationNode> lights;
-    public List<Function> steadyBurn;
+    public List<AdvFunction> steadyBurn;
     public List<Pattern> flashPatts, warnPatts, tdPatts;
 
-    public Dictionary<Location, List<Function>> capableFunctions;
+    public Dictionary<Location, List<AdvFunction>> capableFunctions;
 
     void Awake() {
         if(inst == null) inst = this;
 
         lights = new Dictionary<Location, LocationNode>();
-        steadyBurn = new List<Function>(new Function[] { Function.TAKEDOWN, Function.ALLEY, Function.STT_AND_TAIL, Function.T13, Function.EMITTER });
+        steadyBurn = new List<AdvFunction>(new AdvFunction[] { AdvFunction.TAKEDOWN, AdvFunction.ALLEY, AdvFunction.STT_AND_TAIL, AdvFunction.T13, AdvFunction.EMITTER });
         stdy = new SteadyPattern();
 
         if(File.Exists("lib.nbt")) {
@@ -103,17 +103,17 @@ public class LightDict : MonoBehaviour {
             ErrorText.inst.DispError("You seem to be missing the 'lib.nbt' file.  Make sure it's in the same directory as the executable.");
         }
 
-        capableFunctions = new Dictionary<Location, List<Function>>();
+        capableFunctions = new Dictionary<Location, List<AdvFunction>>();
 
-        capableFunctions[Location.FRONT] = new List<Function>(new Function[] { Function.TAKEDOWN, Function.T13, Function.DIM, Function.EMITTER });
-        capableFunctions[Location.FRONT_CORNER] = new List<Function>(new Function[] { Function.TAKEDOWN, Function.ICL, Function.DIM, Function.CRUISE });
-        capableFunctions[Location.REAR_CORNER] = new List<Function>(new Function[] { Function.TAKEDOWN, Function.DIM, Function.CRUISE });
-        capableFunctions[Location.ALLEY] = new List<Function>(new Function[] { Function.ALLEY, Function.DIM });
-        capableFunctions[Location.REAR] = new List<Function>(new Function[] { Function.TAKEDOWN, Function.TRAFFIC, Function.DIM });
-        capableFunctions[Location.FAR_REAR] = new List<Function>(new Function[] { Function.STT_AND_TAIL, Function.DIM });
+        capableFunctions[Location.FRONT] = new List<AdvFunction>(new AdvFunction[] { AdvFunction.TAKEDOWN, AdvFunction.T13, AdvFunction.DIM, AdvFunction.EMITTER });
+        capableFunctions[Location.FRONT_CORNER] = new List<AdvFunction>(new AdvFunction[] { AdvFunction.TAKEDOWN, AdvFunction.ICL, AdvFunction.DIM, AdvFunction.CRUISE });
+        capableFunctions[Location.REAR_CORNER] = new List<AdvFunction>(new AdvFunction[] { AdvFunction.TAKEDOWN, AdvFunction.DIM, AdvFunction.CRUISE });
+        capableFunctions[Location.ALLEY] = new List<AdvFunction>(new AdvFunction[] { AdvFunction.ALLEY, AdvFunction.DIM });
+        capableFunctions[Location.REAR] = new List<AdvFunction>(new AdvFunction[] { AdvFunction.TAKEDOWN, AdvFunction.TRAFFIC, AdvFunction.DIM });
+        capableFunctions[Location.FAR_REAR] = new List<AdvFunction>(new AdvFunction[] { AdvFunction.STT_AND_TAIL, AdvFunction.DIM });
 
         foreach(Location l in new Location[] { Location.FRONT, Location.FRONT_CORNER, Location.ALLEY, Location.REAR_CORNER, Location.FAR_REAR, Location.REAR }) {
-            capableFunctions[l].AddRange(new Function[] { Function.LEVEL1, Function.LEVEL2, Function.LEVEL3, Function.LEVEL4, Function.LEVEL5 });
+            capableFunctions[l].AddRange(new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5 });
         }
     }
 
@@ -512,7 +512,11 @@ public enum Location {
     FRONT, FRONT_CORNER, ALLEY, REAR_CORNER, REAR, FAR_REAR
 }
 
-public enum Function {
+public enum BasicFunction {
+    FLASHING, FLASH_STEADY, EMITTER, CAL_STEADY, CRUISE, STT, TRAFFIC
+}
+
+public enum AdvFunction {
     NONE = 0x0,
     LEVEL1 = 0x1, LEVEL2 = 0x2, LEVEL3 = 0x4, LEVEL4 = 0x8, LEVEL5 = 0x10,
     TAKEDOWN = 0x20, ICL = 0x40, ALLEY = 0x80, T13 = 0x100, CRUISE = 0x200,

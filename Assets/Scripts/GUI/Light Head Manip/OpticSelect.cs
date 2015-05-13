@@ -11,6 +11,10 @@ public class OpticSelect : MonoBehaviour {
     /// </summary>
     public StyleSelect styleSelect;
     /// <summary>
+    /// 
+    /// </summary>
+    public List<BasicFunction> fn;
+    /// <summary>
     /// The Transform that acts as the parent to the options.
     /// </summary>
     public RectTransform menu;
@@ -65,7 +69,7 @@ public class OpticSelect : MonoBehaviour {
                     newbie.transform.SetParent(menu, false);
                     newbie.transform.localScale = Vector3.one;
                     newbie.GetComponent<LightOptionElement>().optNode = ln.optics[keysArray[i]];
-                    newbie.GetComponent<LightOptionElement>().os = this;
+                    newbie.GetComponent<LightOptionElement>().optSel = this;
                 }
             }
         }
@@ -74,7 +78,7 @@ public class OpticSelect : MonoBehaviour {
         nohead.transform.SetParent(menu, false);
         nohead.transform.localScale = Vector3.one;
         nohead.GetComponent<LightOptionElement>().optNode = null;
-        nohead.GetComponent<LightOptionElement>().os = this;
+        nohead.GetComponent<LightOptionElement>().optSel = this;
 
         OpticNode on = null;
         for(int i = 0; i < selected.Count; i++) {

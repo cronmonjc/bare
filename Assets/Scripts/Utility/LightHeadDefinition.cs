@@ -6,9 +6,9 @@ public class LightHeadDefinition {
     public OpticNode optic;
     public StyleNode style;
 
-    public Dictionary<Function, Pattern> patterns;
+    public List<BasicFunction> funcs;
 
     public LightHeadDefinition() {
-        patterns = new Dictionary<Function, Pattern>();
+        funcs = new List<BasicFunction>();
     }
 }

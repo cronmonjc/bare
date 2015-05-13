@@ -12,7 +12,7 @@ public class FnSelManager : MonoBehaviour {
 
     public void Refresh() {
         LightBlock[] blocks = FindObjectsOfType<LightBlock>();
-        ps.f = Function.NONE;
+        ps.f = AdvFunction.NONE;
         ps.gameObject.SetActive(false);
         if(funcs == null) {
             funcs = transform.GetComponentsInChildren<PatternFunc>(true);
@@ -151,7 +151,7 @@ public class FnSelManager : MonoBehaviour {
         }
     }
 
-    public void OnSelect(Function f) {
+    public void OnSelect(AdvFunction f) {
         foreach(PatternFunc fn in funcs) {
             fn.GetComponent<Animator>().ResetTrigger(fn.fn == f ? "Normal" : "Chosen");
             fn.GetComponent<Animator>().SetTrigger(fn.fn == f ? "Chosen" : "Normal");

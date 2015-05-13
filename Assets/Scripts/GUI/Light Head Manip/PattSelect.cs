@@ -7,7 +7,7 @@ using fNbt;
 public class PattSelect : MonoBehaviour {
     public static PattSelect inst;
 
-    public Function f = Function.NONE;
+    public AdvFunction f = AdvFunction.NONE;
     public RectTransform menu, dimSelect;
     public GameObject prefab;
 
@@ -49,7 +49,7 @@ public class PattSelect : MonoBehaviour {
 
             PhaseA.GetComponent<Button>().interactable = false;
             PhaseB.GetComponent<Button>().interactable = false;
-        } else if(f == Function.DIM) {
+        } else if(f == AdvFunction.DIM) {
             menu.gameObject.SetActive(false);
             dimSelect.gameObject.SetActive(true);
 
@@ -58,7 +58,7 @@ public class PattSelect : MonoBehaviour {
 
             PhaseA.GetComponent<Button>().interactable = false;
             PhaseB.GetComponent<Button>().interactable = false;
-        } else if(f == Function.TRAFFIC) {
+        } else if(f == AdvFunction.TRAFFIC) {
             short selID = -2;
             foreach(Pattern p in LightDict.inst.tdPatts) {
                 newbie = GameObject.Instantiate<GameObject>(prefab);
@@ -185,10 +185,10 @@ public class PattSelect : MonoBehaviour {
     }
 
     public void RelabelEnable() {
-        if(LightDict.inst.steadyBurn.Contains(f) || f == Function.DIM) {
-            enableButton.text = "Enable " + (f == Function.DIM ? "Light Dimming" : "Steady Burn");
+        if(LightDict.inst.steadyBurn.Contains(f) || f == AdvFunction.DIM) {
+            enableButton.text = "Enable " + (f == AdvFunction.DIM ? "Light Dimming" : "Steady Burn");
             enableButton.GetComponent<Button>().interactable = true;
-        } else if(f == Function.TRAFFIC) {
+        } else if(f == AdvFunction.TRAFFIC) {
             NbtCompound patts = FindObjectOfType<BarManager>().patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
             short selID = patts["left"].ShortValue;
             if(selID != patts["rite"].ShortValue) {
@@ -261,7 +261,7 @@ public class PattSelect : MonoBehaviour {
         return TestPatternAny(id, this.f);
     }
 
-    public bool TestPatternAny(short id, Function f) {
+    public bool TestPatternAny(short id, AdvFunction f) {
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
@@ -275,7 +275,7 @@ public class PattSelect : MonoBehaviour {
                 continue;
             }
 
-            if(f == Function.TRAFFIC) {
+            if(f == AdvFunction.TRAFFIC) {
                 NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
                 if(patCmpd["left"].ShortValue == id) return true;
                 if(patCmpd["rite"].ShortValue == id) return true;
@@ -323,7 +323,7 @@ public class PattSelect : MonoBehaviour {
         return TestPatternAll(id, this.f);
     }
 
-    public bool TestPatternAll(short id, Function f) {
+    public bool TestPatternAll(short id, AdvFunction f) {
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
@@ -337,7 +337,7 @@ public class PattSelect : MonoBehaviour {
                 continue;
             }
 
-            if(f == Function.TRAFFIC) {
+            if(f == AdvFunction.TRAFFIC) {
                 NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
                 if(patCmpd["left"].ShortValue != id) return false;
                 if(patCmpd["rite"].ShortValue != id) return false;

@@ -16,7 +16,7 @@ public class PhaseButton : MonoBehaviour {
 
     public void Retest() {
         PattSelect ps = FindObjectOfType<PattSelect>();
-        if(LightDict.inst.steadyBurn.Contains(ps.f) || ps.f == Function.DIM) {
+        if(LightDict.inst.steadyBurn.Contains(ps.f) || ps.f == AdvFunction.DIM) {
             Active = false;
             return;
         }

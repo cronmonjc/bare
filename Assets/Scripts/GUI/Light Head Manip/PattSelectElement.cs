@@ -42,7 +42,7 @@ public class PattSelectElement : MonoBehaviour {
                 continue;
             }
 
-            if(ps.f != Function.TRAFFIC && ps.f != Function.DIM) {
+            if(ps.f != AdvFunction.TRAFFIC && ps.f != AdvFunction.DIM) {
                 string cmpdName = BarManager.GetFnString(lb.transform, ps.f);
                 if(cmpdName == null) {
                     Debug.LogWarning("lolnope - " + ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
@@ -71,7 +71,7 @@ public class PattSelectElement : MonoBehaviour {
 
                 patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
                 patCmpd.Get<NbtShort>(tagname).Value = selID;
-            } else if(ps.f == Function.TRAFFIC) {
+            } else if(ps.f == AdvFunction.TRAFFIC) {
                 NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
                 patCmpd.Get<NbtShort>("left").Value = selID;
                 patCmpd.Get<NbtShort>("rite").Value = selID;

@@ -4,13 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class CameraControl : MonoBehaviour {
-    public static Function funcBeingTested = Function.NONE;
+    public static AdvFunction funcBeingTested = AdvFunction.NONE;
 
     public Transform pivot;
     public Vector2 dragStart, currMouse;
     private bool dragging;
 
-    public OpticSelect os;
+    public FunctionSelect fs;
     public FnSelManager fsm;
 
     public RectTransform cover;
@@ -65,12 +65,12 @@ public class CameraControl : MonoBehaviour {
     void Update() {
         if(!FBrowser.activeInHierarchy) {
             Vector2 mousePos = Input.mousePosition;
-            if(Input.GetMouseButtonDown(0) && (funcBeingTested == Function.NONE)) { // LMB pressed
+            if(Input.GetMouseButtonDown(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB pressed
                 if(myCam.pixelRect.Contains(mousePos)) {
                     dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
-                    os.Clear();
+                    fs.Clear();
                 }
-            } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == Function.NONE)) { // LMB released
+            } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB released
                 if(dragging && myCam.pixelRect.Contains(mousePos)) {
                     if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
                         selected.Clear();
@@ -108,7 +108,7 @@ public class CameraControl : MonoBehaviour {
                     dragStart = Vector2.one * -1f;
 
                     if(selected.Count > 0) {
-                        os.Refresh();
+                        fs.Refresh();
                         fsm.Refresh();
                     }
                 }

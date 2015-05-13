@@ -39,43 +39,43 @@ public class BarManager : MonoBehaviour {
         }
     }
 
-    public static string GetFnString(Transform t, Function f) {
+    public static string GetFnString(Transform t, AdvFunction f) {
         switch(f) {
-            case Function.ALLEY:
+            case AdvFunction.ALLEY:
                 if(t.position.x < 0) {
                     return "lall";
                 } else {
                     return "rall";
                 }
-            case Function.CRUISE:
+            case AdvFunction.CRUISE:
                 return "cru";
-            case Function.DIM:
+            case AdvFunction.DIM:
                 return "dim";
-            case Function.EMITTER:
+            case AdvFunction.EMITTER:
                 return "emi";
-            case Function.ICL:
+            case AdvFunction.ICL:
                 return "icl";
-            case Function.LEVEL1:
+            case AdvFunction.LEVEL1:
                 return "l1";
-            case Function.LEVEL2:
+            case AdvFunction.LEVEL2:
                 return "l2";
-            case Function.LEVEL3:
+            case AdvFunction.LEVEL3:
                 return "l3";
-            case Function.LEVEL4:
+            case AdvFunction.LEVEL4:
                 return "l4";
-            case Function.LEVEL5:
+            case AdvFunction.LEVEL5:
                 return "l5";
-            case Function.STT_AND_TAIL:
+            case AdvFunction.STT_AND_TAIL:
                 if(t.position.x < 0) {
                     return "ltai";
                 } else {
                     return "rtai";
                 }
-            case Function.TAKEDOWN:
+            case AdvFunction.TAKEDOWN:
                 return "td";
-            case Function.TRAFFIC:
+            case AdvFunction.TRAFFIC:
                 return "traf";
-            case Function.T13:
+            case AdvFunction.T13:
                 return "cal";
             default:
                 return null;

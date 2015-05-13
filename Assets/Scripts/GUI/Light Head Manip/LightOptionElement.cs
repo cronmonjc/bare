@@ -11,13 +11,21 @@ public class LightOptionElement : MonoBehaviour {
     /// </summary>
     public Text text;
     /// <summary>
+    /// If this is for selecting a function, this is a reference to the Function Select.
+    /// </summary>
+    public FunctionSelect funcSel;
+    /// <summary>
     /// If this is for selecting an optic, this is a reference to the Optic Select.
     /// </summary>
-    public OpticSelect os;
+    public OpticSelect optSel;
     /// <summary>
     /// If this is for selecting a style, this is a reference to the Style Select.
     /// </summary>
-    public StyleSelect ss;
+    public StyleSelect stySel;
+    /// <summary>
+    /// If this is for selecting a function, this is the function that would be selected when this item is clicked.
+    /// </summary>
+    public BasicFunction fn;
     /// <summary>
     /// If this is for selecting an optic, this is the type that would be selected when this item is clicked.
     /// </summary>
@@ -25,7 +33,7 @@ public class LightOptionElement : MonoBehaviour {
     /// <summary>
     /// If this is for selecting a style, this is the style that would be selected when this item is clicked.
     /// </summary>
-    public StyleNode sn;
+    public StyleNode styNode;
     /// <summary>
     /// Reference to the Toggle to show this is selected.
     /// </summary>
@@ -40,10 +48,12 @@ public class LightOptionElement : MonoBehaviour {
     void Start() {
         t.onValueChanged.AddListener(delegate(bool on) {
             if(on) {
-                if(os != null)
-                    os.SetSelection(optNode);
-                else if(ss != null)
-                    ss.SetSelection(sn);
+                if(funcSel != null)
+                    funcSel.SetSelection(fn);
+                else if(optSel != null)
+                    optSel.SetSelection(optNode);
+                else if(stySel != null)
+                    stySel.SetSelection(styNode);
             }
         });
 
@@ -51,7 +61,45 @@ public class LightOptionElement : MonoBehaviour {
     }
 
     void Update() {
-        if(os != null) {
+        if(funcSel != null) {
+            bool on = true;
+            foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
+                if(lh.Selected && !lh.lhd.funcs.Contains(fn)) {
+                    on = false;
+                }
+            }
+            t.isOn = on;
+            t.image.color = Color.white;
+            t.interactable = true;
+            text.color = Color.black;
+            string name = "";
+            switch(fn) {
+                case BasicFunction.FLASHING:
+                    name = "Flashing";
+                    break;
+                case BasicFunction.FLASH_STEADY:
+                    name = "Flashing/Steady Burn";
+                    break;
+                case BasicFunction.EMITTER:
+                    name = "Emitter";
+                    break;
+                case BasicFunction.CAL_STEADY:
+                    name = "Cali Steady";
+                    break;
+                case BasicFunction.CRUISE:
+                    name = "Cruise";
+                    break;
+                case BasicFunction.STT:
+                    name = "Stop/Tail/Turn";
+                    break;
+                case BasicFunction.TRAFFIC:
+                    name = "Traffic Director";
+                    break;
+                default:
+                    throw new System.ArgumentException();
+            }
+            text.text = name;
+        } else if(optSel != null) {
             bool on = true;
             foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
                 if(lh.Selected && lh.lhd.optic != optNode) {
@@ -67,28 +115,28 @@ public class LightOptionElement : MonoBehaviour {
             } else {
                 text.text = "Empty Slot";
             }
-        } else if(ss != null) {
+        } else if(stySel != null) {
             bool on = true;
             foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
-                if(lh.Selected && lh.lhd.style != sn) {
+                if(lh.Selected && lh.lhd.style != styNode) {
                     on = false;
                 }
             }
             t.isOn = on;
-            if(sn.selectable && recommended) {
+            if(styNode.selectable && recommended) {
                 t.image.color = Color.white;
                 t.interactable = true;
                 text.color = Color.black;
-                text.text = sn.name;
-            } else if(sn.selectable) {
+                text.text = styNode.name;
+            } else if(styNode.selectable) {
                 t.image.color = nrColor;
                 t.interactable = true;
                 text.color = Color.black;
-                text.text = sn.name + " -- Not Recommended";
+                text.text = styNode.name + " -- Not Recommended";
             } else {
                 t.interactable = false;
                 text.color = new Color(0.0f, 0.0f, 0.0f, 0.5f);
-                text.text = sn.name + " -- Not an Option";
+                text.text = styNode.name + " -- Not an Option";
             }
         }
 

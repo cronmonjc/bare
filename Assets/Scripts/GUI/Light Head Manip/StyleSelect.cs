@@ -43,8 +43,8 @@ public class StyleSelect : MonoBehaviour {
                 newbie.transform.SetParent(menu, false);
                 newbie.transform.localScale = Vector3.one;
                 StyleNode sn = selectedType.styles[keysArray[i]];
-                newbie.GetComponent<LightOptionElement>().sn = sn;
-                newbie.GetComponent<LightOptionElement>().ss = this;
+                newbie.GetComponent<LightOptionElement>().styNode = sn;
+                newbie.GetComponent<LightOptionElement>().stySel = this;
                 newbie.GetComponent<LightOptionElement>().recommended = IsRecommended(sn);
             }
 
@@ -57,18 +57,18 @@ public class StyleSelect : MonoBehaviour {
 
         foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
             if(alpha.Selected) {
-                foreach(Function f in alpha.patterns.Keys) {
+                foreach(AdvFunction f in alpha.patterns.Keys) {
                     switch(f) {
-                        case Function.TAKEDOWN:
-                        case Function.ICL:
-                        case Function.ALLEY:
+                        case AdvFunction.TAKEDOWN:
+                        case AdvFunction.ICL:
+                        case AdvFunction.ALLEY:
                             rtn &= sn.partSuffix.Contains("C");
                             break;
-                        case Function.T13:
-                        case Function.STT_AND_TAIL:
+                        case AdvFunction.T13:
+                        case AdvFunction.STT_AND_TAIL:
                             rtn &= sn.partSuffix.Contains("R");
                             break;
-                        case Function.TRAFFIC:
+                        case AdvFunction.TRAFFIC:
                             rtn &= sn.partSuffix.Contains("A");
                             break;
                         default: break;

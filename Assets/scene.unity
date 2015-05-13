@@ -522,7 +522,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 24.0002098}
+  m_AnchoredPosition: {x: 0, y: 1.52587891e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &52049332
@@ -4486,7 +4486,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -8, y: 7.62939453e-06}
+  m_AnchoredPosition: {x: -8, y: -.000114440918}
   m_SizeDelta: {x: -16, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &303420587
@@ -11988,7 +11988,7 @@ MonoBehaviour:
   pivot: {fileID: 0}
   dragStart: {x: 0, y: 0}
   currMouse: {x: 0, y: 0}
-  os: {fileID: 1783409122}
+  fs: {fileID: 1042697554}
   fsm: {fileID: 816650181}
   cover: {fileID: 0}
   SelBox: {fileID: 2003725247}
@@ -14420,10 +14420,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1042697552}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea5322b21cc94dd469166967aacb6803, type: 3}
+  m_Script: {fileID: 11500000, guid: a67ad592c47de95408aeb9a8e4fecf4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  styleSelect: {fileID: 1076658634}
+  opticSelect: {fileID: 1783409122}
   menu: {fileID: 52049331}
   optionPrefab: {fileID: 110134, guid: b6fdd26b2ab7f2a4bb01908dbf9a9a50, type: 2}
   cam: {fileID: 830525226}
@@ -14621,7 +14621,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 24.0002098}
+  m_AnchoredPosition: {x: 0, y: 1.52587891e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &1053764426
@@ -15544,7 +15544,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 24.0002098}
+  m_AnchoredPosition: {x: 0, y: 1.52587891e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &1099662960
@@ -24714,6 +24714,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   styleSelect: {fileID: 1076658634}
+  fn: 
   menu: {fileID: 1099662959}
   optionPrefab: {fileID: 110134, guid: b6fdd26b2ab7f2a4bb01908dbf9a9a50, type: 2}
   cam: {fileID: 830525226}

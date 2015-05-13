@@ -11,7 +11,7 @@ public class BitLabel : MonoBehaviour {
     public static CameraControl cam;
 
     void Update() {
-        if(CameraControl.funcBeingTested != Function.NONE) return;
+        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
         if(cam == null) cam = FindObjectOfType<CameraControl>();
         else {
             transform.localRotation = Quaternion.identity;

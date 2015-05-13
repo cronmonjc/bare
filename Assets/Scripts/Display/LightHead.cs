@@ -12,9 +12,9 @@ public class LightHead : MonoBehaviour {
     public bool isSmall;
     public LightHeadDefinition lhd;
 
-    public Dictionary<Function, Pattern> patterns;
+    public Dictionary<AdvFunction, Pattern> patterns;
 
-    public List<Function> CapableFunctions {
+    public List<AdvFunction> CapableFunctions {
         get { return LightDict.inst.capableFunctions[loc]; }
     }
 
@@ -53,7 +53,7 @@ public class LightHead : MonoBehaviour {
     void Awake() {
         lhd = new LightHeadDefinition();
 
-        patterns = new Dictionary<Function, Pattern>();
+        patterns = new Dictionary<AdvFunction, Pattern>();
     }
 
     void Start() {
@@ -70,7 +70,7 @@ public class LightHead : MonoBehaviour {
     }
 
     void Update() {
-        if(CameraControl.funcBeingTested != Function.NONE) {
+        if(CameraControl.funcBeingTested != AdvFunction.NONE) {
             if(myLabel.gameObject.activeInHierarchy) {
                 myLabel.gameObject.SetActive(false);
             }
@@ -89,7 +89,7 @@ public class LightHead : MonoBehaviour {
         }
     }
 
-    public bool IsUsingFunction(Function f) {
+    public bool IsUsingFunction(AdvFunction f) {
         if(!CapableFunctions.Contains(f) || lhd.style == null) return false;
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
 
@@ -109,7 +109,7 @@ public class LightHead : MonoBehaviour {
         return ((en & (0x1 << Bit)) > 0);
     }
 
-    public Pattern GetPattern(Function f, bool clr2 = false) {
+    public Pattern GetPattern(AdvFunction f, bool clr2 = false) {
         if(lhd.style == null) return null;
         if(LightDict.inst.steadyBurn.Contains(f)) {
             return LightDict.stdy;
@@ -164,31 +164,31 @@ public class LightHead : MonoBehaviour {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
-                Function highFunction = Function.LEVEL1;
-                foreach(Function f in CapableFunctions) {
+                AdvFunction highFunction = AdvFunction.LEVEL1;
+                foreach(AdvFunction f in CapableFunctions) {
                     if(!IsUsingFunction(f)) continue;
                     switch(f) {
-                        case Function.ALLEY:
-                        case Function.TAKEDOWN:
+                        case AdvFunction.ALLEY:
+                        case AdvFunction.TAKEDOWN:
                             highFunction = f;
                             break;
-                        case Function.TRAFFIC:
-                            if(highFunction != Function.ALLEY || highFunction != Function.TAKEDOWN) {
+                        case AdvFunction.TRAFFIC:
+                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN) {
                                 highFunction = f;
                             }
                             break;
-                        case Function.STT_AND_TAIL:
-                            if(highFunction != Function.ALLEY || highFunction != Function.TAKEDOWN || highFunction != Function.TRAFFIC) {
+                        case AdvFunction.STT_AND_TAIL:
+                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC) {
                                 highFunction = f;
                             }
                             break;
-                        case Function.ICL:
-                            if(highFunction != Function.ALLEY || highFunction != Function.TAKEDOWN || highFunction != Function.TRAFFIC || highFunction != Function.STT_AND_TAIL) {
+                        case AdvFunction.ICL:
+                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL) {
                                 highFunction = f;
                             }
                             break;
-                        case Function.T13:
-                            if(highFunction != Function.ALLEY || highFunction != Function.TAKEDOWN || highFunction != Function.TRAFFIC || highFunction != Function.STT_AND_TAIL || highFunction != Function.ICL) {
+                        case AdvFunction.T13:
+                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL || highFunction != AdvFunction.ICL) {
                                 highFunction = f;
                             }
                             break;
@@ -198,7 +198,7 @@ public class LightHead : MonoBehaviour {
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
                 StyleNode styleToSet = null;
                 switch(highFunction) {
-                    case Function.T13:
+                    case AdvFunction.T13:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("rc", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
@@ -206,7 +206,7 @@ public class LightHead : MonoBehaviour {
                             }
                         }
                         break;
-                    case Function.TRAFFIC:
+                    case AdvFunction.TRAFFIC:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
@@ -214,7 +214,7 @@ public class LightHead : MonoBehaviour {
                             }
                         }
                         break;
-                    case Function.STT_AND_TAIL:
+                    case AdvFunction.STT_AND_TAIL:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
@@ -222,9 +222,9 @@ public class LightHead : MonoBehaviour {
                             }
                         }
                         break;
-                    case Function.ALLEY:
-                    case Function.TAKEDOWN:
-                    case Function.ICL:
+                    case AdvFunction.ALLEY:
+                    case AdvFunction.TAKEDOWN:
+                    case AdvFunction.ICL:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;

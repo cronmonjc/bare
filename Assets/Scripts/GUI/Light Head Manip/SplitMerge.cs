@@ -10,7 +10,7 @@ public class SplitMerge : MonoBehaviour {
 
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
-        if(CameraControl.funcBeingTested != Function.NONE) return;
+        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
         foreach(LightHead lh in FindObjectsOfType<LightHead>()) {
             if(!lh.Selected) continue;
             SizeOptionControl soc = null;
@@ -43,6 +43,6 @@ public class SplitMerge : MonoBehaviour {
 
             soc.ShowLong = merge;
         }
-        cam.os.Refresh();
+        cam.fs.Refresh();
     }
 }

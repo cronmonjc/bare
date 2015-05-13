@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ShortAndLongCaution : MonoBehaviour {
     void Update() {
-        if(CameraControl.funcBeingTested != Function.NONE) return;
+        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
 
         bool Short = true, Long = true;
 

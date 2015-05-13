@@ -6,52 +6,52 @@ using UnityEngine.UI;
 public class PatternFunc : MonoBehaviour, IPointerClickHandler {
     public FnSelManager fsl;
     public Text t;
-    public Function fn;
+    public AdvFunction fn;
 
     public string DispPattern {
         set {
             string func = "UnknownFn: ";
             switch(fn) {
-                case Function.ALLEY:
+                case AdvFunction.ALLEY:
                     func = "Alley: ";
                     break;
-                case Function.CRUISE:
+                case AdvFunction.CRUISE:
                     func = "Cruise: ";
                     break;
-                case Function.DIM:
+                case AdvFunction.DIM:
                     func = "DIM: ";
                     break;
-                case Function.EMITTER:
+                case AdvFunction.EMITTER:
                     func = "Emitter: ";
                     break;
-                case Function.ICL:
+                case AdvFunction.ICL:
                     func = "ICL: ";
                     break;
-                case Function.LEVEL1:
+                case AdvFunction.LEVEL1:
                     func = "Level 1: ";
                     break;
-                case Function.LEVEL2:
+                case AdvFunction.LEVEL2:
                     func = "Level 2: ";
                     break;
-                case Function.LEVEL3:
+                case AdvFunction.LEVEL3:
                     func = "Level 3: ";
                     break;
-                case Function.LEVEL4:
+                case AdvFunction.LEVEL4:
                     func = "Level 4: ";
                     break;
-                case Function.LEVEL5:
+                case AdvFunction.LEVEL5:
                     func = "Level 5: ";
                     break;
-                case Function.STT_AND_TAIL:
+                case AdvFunction.STT_AND_TAIL:
                     func = "STT&T: ";
                     break;
-                case Function.T13:
+                case AdvFunction.T13:
                     func = "Title 13: ";
                     break;
-                case Function.TAKEDOWN:
+                case AdvFunction.TAKEDOWN:
                     func = "Takedown: ";
                     break;
-                case Function.TRAFFIC:
+                case AdvFunction.TRAFFIC:
                     func = "Traffic: ";
                     break;
                 default:

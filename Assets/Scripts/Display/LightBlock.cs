@@ -8,7 +8,7 @@ public class LightBlock : MonoBehaviour {
     private LightHead myHead;
     private Color c;
 
-    public Dictionary<Function, Pattern> patterns;
+    public Dictionary<AdvFunction, Pattern> patterns;
 
     public Color Color {
         get {
@@ -53,7 +53,7 @@ public class LightBlock : MonoBehaviour {
     }
 
     void Start() {
-        patterns = new Dictionary<Function, Pattern>();
+        patterns = new Dictionary<AdvFunction, Pattern>();
 
         for(Transform t = transform; myHead == null && t != null; t = t.parent) {
             myHead = t.GetComponent<LightHead>();
@@ -67,7 +67,7 @@ public class LightBlock : MonoBehaviour {
 
     void Update() {
         RenderColor = c + (Color.white * (Selected ? 0.25f : 0.0f));
-        if(CameraControl.funcBeingTested != Function.NONE) {
+        if(CameraControl.funcBeingTested != AdvFunction.NONE) {
             // todo: flashy
         }
     }

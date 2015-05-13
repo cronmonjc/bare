@@ -47,7 +47,7 @@ public class LightLabel : MonoBehaviour {
     }
 
     void Update() {
-        if(CameraControl.funcBeingTested != Function.NONE) return;
+        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
         if(cam == null) cam = FindObjectOfType<CameraControl>();
         else {
             if(target != null) {
