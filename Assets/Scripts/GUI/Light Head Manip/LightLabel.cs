@@ -24,7 +24,7 @@ public class LightLabel : MonoBehaviour {
 
     public void Refresh() {
         if(lh.lhd.style != null) {
-            label.text = "(" + lh.Bit + ")\n" + lh.lhd.style.name + " " + lh.lhd.optic.name;
+            label.text = "(" + lh.Bit + ")\n" + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
             Color clr = lh.lhd.style.color;
             background.color = clr;
             if(clr.r + clr.g < clr.b) {

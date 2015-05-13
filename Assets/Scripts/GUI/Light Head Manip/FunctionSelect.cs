@@ -50,9 +50,12 @@ public class FunctionSelect : MonoBehaviour {
                         potential.Add(BasicFunction.CAL_STEADY);
                         continue;
                     case Location.REAR:
+                        if(potential.Contains(BasicFunction.TRAFFIC)) continue;
+                        potential.Add(BasicFunction.TRAFFIC);
+                        continue;
+                    case Location.FAR_REAR:
                         if(potential.Contains(BasicFunction.STT)) continue;
                         potential.Add(BasicFunction.STT);
-                        potential.Add(BasicFunction.TRAFFIC);
                         continue;
                     case Location.FRONT_CORNER:
                     case Location.REAR_CORNER:
@@ -72,10 +75,15 @@ public class FunctionSelect : MonoBehaviour {
         }
 
         opticSelect.fn.Clear();
-        for(int i = 0; i < cam.Selected.Count; i++) {
-            foreach(BasicFunction f in cam.Selected[i].lhd.funcs) {
-                if(!opticSelect.fn.Contains(f)) {
-                    opticSelect.fn.Add(f);
+        opticSelect.fn.AddRange(potential);
+        foreach(LightHead alpha in cam.OnlyCamSelected) {
+            if(alpha.lhd.funcs.Count == 0) {
+                opticSelect.fn.Clear();
+                break;
+            }
+            foreach(BasicFunction f in new List<BasicFunction>(opticSelect.fn)) {
+                if(!alpha.lhd.funcs.Contains(f)) {
+                    opticSelect.fn.Remove(f);
                 }
             }
         }
@@ -87,11 +95,13 @@ public class FunctionSelect : MonoBehaviour {
         LayoutRebuilder.MarkLayoutForRebuild(menu);
     }
 
-    public void SetSelection(BasicFunction fn, bool add) {
-        if(add && !opticSelect.fn.Contains(fn))
+    public void SetSelection(BasicFunction fn) {
+        bool add = !opticSelect.fn.Contains(fn);
+        if(add)
             opticSelect.fn.Add(fn);
-        else if(!add && opticSelect.fn.Contains(fn))
+        else
             opticSelect.fn.Remove(fn);
+
         opticSelect.gameObject.SetActive(opticSelect.fn.Count > 0);
         bool change = false;
         foreach(LightHead lh in BarManager.inst.allHeads) {
@@ -106,8 +116,10 @@ public class FunctionSelect : MonoBehaviour {
                             potential.Add(BasicFunction.CAL_STEADY);
                             break;
                         case Location.REAR:
-                            potential.Add(BasicFunction.STT);
                             potential.Add(BasicFunction.TRAFFIC);
+                            break;
+                        case Location.FAR_REAR:
+                            potential.Add(BasicFunction.STT);
                             break;
                         case Location.FRONT_CORNER:
                         case Location.REAR_CORNER:
@@ -136,7 +148,11 @@ public class FunctionSelect : MonoBehaviour {
             opticSelect.fn.RemoveAt(0);
         }
 
-        if(change)
+        if(change) {
+            foreach(LightHead lh in cam.OnlyCamSelected) {
+                lh.SetOptic("");
+            }
             opticSelect.Refresh();
+        }
     }
 }

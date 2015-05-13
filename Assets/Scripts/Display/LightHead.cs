@@ -164,41 +164,19 @@ public class LightHead : MonoBehaviour {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
-                AdvFunction highFunction = AdvFunction.LEVEL1;
-                foreach(AdvFunction f in CapableFunctions) {
-                    if(!IsUsingFunction(f)) continue;
-                    switch(f) {
-                        case AdvFunction.ALLEY:
-                        case AdvFunction.TAKEDOWN:
-                            highFunction = f;
-                            break;
-                        case AdvFunction.TRAFFIC:
-                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN) {
-                                highFunction = f;
-                            }
-                            break;
-                        case AdvFunction.STT_AND_TAIL:
-                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC) {
-                                highFunction = f;
-                            }
-                            break;
-                        case AdvFunction.ICL:
-                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL) {
-                                highFunction = f;
-                            }
-                            break;
-                        case AdvFunction.T13:
-                            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL || highFunction != AdvFunction.ICL) {
-                                highFunction = f;
-                            }
-                            break;
-                        default: break;
-                    }
-                }
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
                 StyleNode styleToSet = null;
-                switch(highFunction) {
-                    case AdvFunction.T13:
+
+                switch(FindObjectOfType<OpticSelect>().fn[0]) {
+                    case BasicFunction.FLASH_STEADY:
+                        foreach(StyleNode alpha in styles) {
+                            if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
+                                styleToSet = alpha;
+                                break;
+                            }
+                        }
+                        break;
+                    case BasicFunction.CAL_STEADY:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("rc", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
@@ -206,15 +184,7 @@ public class LightHead : MonoBehaviour {
                             }
                         }
                         break;
-                    case AdvFunction.TRAFFIC:
-                        foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
-                                styleToSet = alpha;
-                                break;
-                            }
-                        }
-                        break;
-                    case AdvFunction.STT_AND_TAIL:
+                    case BasicFunction.STT:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
@@ -222,11 +192,9 @@ public class LightHead : MonoBehaviour {
                             }
                         }
                         break;
-                    case AdvFunction.ALLEY:
-                    case AdvFunction.TAKEDOWN:
-                    case AdvFunction.ICL:
+                    case BasicFunction.TRAFFIC:
                         foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
+                            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
                                 break;
                             }
@@ -235,6 +203,81 @@ public class LightHead : MonoBehaviour {
                     default:
                         break;
                 }
+
+                if(styleToSet == null && styles.Count == 1) {
+                    styleToSet = styles[0];
+                }
+
+                //AdvFunction highFunction = AdvFunction.LEVEL1;
+                //foreach(AdvFunction f in CapableFunctions) {
+                //    if(!IsUsingFunction(f)) continue;
+                //    switch(f) {
+                //        case AdvFunction.ALLEY:
+                //        case AdvFunction.TAKEDOWN:
+                //            highFunction = f;
+                //            break;
+                //        case AdvFunction.TRAFFIC:
+                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN) {
+                //                highFunction = f;
+                //            }
+                //            break;
+                //        case AdvFunction.STT_AND_TAIL:
+                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC) {
+                //                highFunction = f;
+                //            }
+                //            break;
+                //        case AdvFunction.ICL:
+                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL) {
+                //                highFunction = f;
+                //            }
+                //            break;
+                //        case AdvFunction.T13:
+                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL || highFunction != AdvFunction.ICL) {
+                //                highFunction = f;
+                //            }
+                //            break;
+                //        default: break;
+                //    }
+                //}
+                
+                //switch(highFunction) {
+                //    case AdvFunction.T13:
+                //        foreach(StyleNode alpha in styles) {
+                //            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("rc", System.StringComparison.CurrentCultureIgnoreCase)) {
+                //                styleToSet = alpha;
+                //                break;
+                //            }
+                //        }
+                //        break;
+                //    case AdvFunction.TRAFFIC:
+                //        foreach(StyleNode alpha in styles) {
+                //            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
+                //                styleToSet = alpha;
+                //                break;
+                //            }
+                //        }
+                //        break;
+                //    case AdvFunction.STT_AND_TAIL:
+                //        foreach(StyleNode alpha in styles) {
+                //            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
+                //                styleToSet = alpha;
+                //                break;
+                //            }
+                //        }
+                //        break;
+                //    case AdvFunction.ALLEY:
+                //    case AdvFunction.TAKEDOWN:
+                //    case AdvFunction.ICL:
+                //        foreach(StyleNode alpha in styles) {
+                //            if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
+                //                styleToSet = alpha;
+                //                break;
+                //            }
+                //        }
+                //        break;
+                //    default:
+                //        break;
+                //}
                 SetStyle(styleToSet);
             } else {
                 SetStyle(null);

@@ -57,23 +57,40 @@ public class StyleSelect : MonoBehaviour {
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
-                foreach(AdvFunction f in alpha.patterns.Keys) {
+                foreach(BasicFunction f in alpha.lhd.funcs) {
                     switch(f) {
-                        case AdvFunction.TAKEDOWN:
-                        case AdvFunction.ICL:
-                        case AdvFunction.ALLEY:
+                        case BasicFunction.FLASH_STEADY:
                             rtn &= sn.partSuffix.Contains("C");
                             break;
-                        case AdvFunction.T13:
-                        case AdvFunction.STT_AND_TAIL:
+                        case BasicFunction.CAL_STEADY:
+                        case BasicFunction.STT:
                             rtn &= sn.partSuffix.Contains("R");
                             break;
-                        case AdvFunction.TRAFFIC:
+                        case BasicFunction.TRAFFIC:
                             rtn &= sn.partSuffix.Contains("A");
                             break;
-                        default: break;
+                        default:
+                            break;
                     }
                 }
+
+                //foreach(AdvFunction f in alpha.patterns.Keys) {
+                //    switch(f) {
+                //        case AdvFunction.TAKEDOWN:
+                //        case AdvFunction.ICL:
+                //        case AdvFunction.ALLEY:
+                //            rtn &= sn.partSuffix.Contains("C");
+                //            break;
+                //        case AdvFunction.T13:
+                //        case AdvFunction.STT_AND_TAIL:
+                //            rtn &= sn.partSuffix.Contains("R");
+                //            break;
+                //        case AdvFunction.TRAFFIC:
+                //            rtn &= sn.partSuffix.Contains("A");
+                //            break;
+                //        default: break;
+                //    }
+                //}
             }
         }
 

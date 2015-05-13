@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// GUI Item.  Used to display light choices and handle selection.
 /// </summary>
-public class LightOptionElement : MonoBehaviour {
+public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// <summary>
     /// Reference to this item's text component.
     /// </summary>
@@ -46,17 +47,6 @@ public class LightOptionElement : MonoBehaviour {
     public bool recommended;
 
     void Start() {
-        t.onValueChanged.AddListener(delegate(bool on) {
-            if(funcSel != null)
-                funcSel.SetSelection(fn, on);
-            else if(on) {
-                if(optSel != null)
-                    optSel.SetSelection(optNode);
-                else if(stySel != null)
-                    stySel.SetSelection(styNode);
-            }
-        });
-
         Update();
     }
 
@@ -136,4 +126,12 @@ public class LightOptionElement : MonoBehaviour {
 
     }
 
+    public void OnPointerClick(PointerEventData eventData) {
+        if(funcSel != null)
+            funcSel.SetSelection(fn);
+        else if(optSel != null)
+            optSel.SetSelection(optNode);
+        else if(stySel != null)
+            stySel.SetSelection(styNode);
+    }
 }
