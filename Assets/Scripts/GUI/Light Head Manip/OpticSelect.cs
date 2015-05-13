@@ -64,6 +64,12 @@ public class OpticSelect : MonoBehaviour {
         if(ln != null) {
             string[] keysArray = new List<string>(ln.optics.Keys).ToArray();
             for(int i = 0; i < keysArray.Length; i++) {
+                if(ln.optics[keysArray[i]].dual && fn.Count != 2) {
+                    continue;
+                } else if(!ln.optics[keysArray[i]].dual && fn.Count != 1) {
+                    continue;
+                }
+
                 if((showLong && ln.optics[keysArray[i]].fitsLg) || (showShort && ln.optics[keysArray[i]].fitsSm)) {
                     GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
                     newbie.transform.SetParent(menu, false);

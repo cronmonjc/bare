@@ -333,6 +333,8 @@ public class OpticNode {
     public bool fitsLg = false, fitsSm = false;
     public string smEquivalent, lgEquivalent;
 
+    public bool dual = false;
+
     public OpticNode() {
         styles = new Dictionary<string, StyleNode>();
         name = "";
@@ -341,6 +343,7 @@ public class OpticNode {
         lgEquivalent = "";
         fitsLg = false;
         fitsSm = false;
+        dual = false;
     }
 
     public OpticNode(fNbt.NbtCompound defTag) {
@@ -359,6 +362,7 @@ public class OpticNode {
         } else {
             lgEquivalent = "";
         }
+        dual = false;
 
         NbtList stylList = (NbtList)defTag["styl"];
         foreach(NbtTag style in stylList) {
@@ -371,6 +375,9 @@ public class OpticNode {
     /// </summary>
     public void Add(StyleNode t) {
         styles[t.name] = t;
+        if(t.isDualColor) {
+            dual = true;
+        }
     }
 
     /// <summary>

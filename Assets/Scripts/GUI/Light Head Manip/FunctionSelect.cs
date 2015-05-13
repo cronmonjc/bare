@@ -123,6 +123,19 @@ public class FunctionSelect : MonoBehaviour {
                 }
             }
         }
+        while(opticSelect.fn.Count > 2) {
+            fn = opticSelect.fn[0];
+            foreach(LightHead lh in BarManager.inst.allHeads) {
+                if(lh.gameObject.activeInHierarchy && lh.Selected) {
+                    if(lh.lhd.funcs.Contains(fn)) {
+                        lh.lhd.funcs.Remove(fn);
+                        change = true;
+                    }
+                }
+            }
+            opticSelect.fn.RemoveAt(0);
+        }
+
         if(change)
             opticSelect.Refresh();
     }
