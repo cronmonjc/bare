@@ -6,6 +6,8 @@ using System.Collections.Generic;
 public class CameraControl : MonoBehaviour {
     public static AdvFunction funcBeingTested = AdvFunction.NONE;
 
+    public static bool ShowPricing = false;
+
     public Transform pivot;
     public Vector2 dragStart, currMouse;
     private bool dragging;

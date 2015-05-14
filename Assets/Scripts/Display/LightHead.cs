@@ -301,4 +301,10 @@ public class LightHead : MonoBehaviour {
     void OnDrawGizmos() {
         Gizmos.DrawIcon(transform.position, "Head" + (isSmall ? "Sm" : "Lg") + ".png", true);
     }
+
+    public string PartNumber {
+        get {
+            return lhd.optic.partNumber + lhd.style.partSuffix;
+        }
+    }
 }

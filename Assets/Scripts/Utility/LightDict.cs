@@ -333,6 +333,8 @@ public class OpticNode {
     public bool fitsLg = false, fitsSm = false;
     public string smEquivalent, lgEquivalent;
 
+    public uint cost, amperage;
+
     public bool dual = false;
 
     public OpticNode() {
@@ -341,6 +343,7 @@ public class OpticNode {
         partNumber = "";
         smEquivalent = "";
         lgEquivalent = "";
+        cost = amperage = 0;
         fitsLg = false;
         fitsSm = false;
         dual = false;
@@ -363,6 +366,8 @@ public class OpticNode {
             lgEquivalent = "";
         }
         dual = false;
+
+        cost = amperage = 0;
 
         NbtList stylList = (NbtList)defTag["styl"];
         foreach(NbtTag style in stylList) {
@@ -415,6 +420,9 @@ public class OpticNode {
         rtn.fitsSm = fitsSm;
         rtn.lgEquivalent = lgEquivalent;
         rtn.smEquivalent = smEquivalent;
+        rtn.dual = dual;
+        rtn.cost = cost;
+        rtn.amperage = amperage;
 
         return rtn;
     }
