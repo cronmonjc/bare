@@ -11,7 +11,7 @@ public class BOMControl : MonoBehaviour {
     /// Describes the type of BOM section in use.
     /// </summary>
     public enum BOMType {
-        Lights
+        Lights, Lenses, Flashers
     }
 
     /// <summary>
