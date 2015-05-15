@@ -68,6 +68,8 @@ public class OpticSelect : MonoBehaviour {
                     continue;
                 } else if(!ln.optics[keysArray[i]].dual && fn.Count != 1) {
                     continue;
+                } else if(ln.optics[keysArray[i]].name == "Emitter" ^ (fn.Count == 1 && fn[0] == BasicFunction.EMITTER)) {
+                    continue;
                 }
 
                 if((showLong && ln.optics[keysArray[i]].fitsLg) || (showShort && ln.optics[keysArray[i]].fitsSm)) {
