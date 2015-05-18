@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using fNbt;
+using PdfSharp;
 using System.Collections.Generic;
 
 public class BarManager : MonoBehaviour {
+    private bool savePDF = false;
+
     [Range(0,4)]
     public int BarSize = 3;
     public TDOption td;
@@ -113,6 +116,8 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Save(string filename) {
+        if(savePDF) { SavePDF(filename); return; }
+        
         NbtCompound root = new NbtCompound("root");
 
         root.Add(new NbtByte("size", (byte)BarSize));
@@ -235,6 +240,16 @@ public class BarManager : MonoBehaviour {
             SizeOptionControl soc = socs[socCmpd["path"].StringValue];
             soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
         }
+    }
+
+    public void StartPDF() {
+        savePDF = true;
+    }
+
+    public void SavePDF(string filename) {
+        
+
+        savePDF = false;
     }
 
     public void Clear() {

@@ -13,7 +13,6 @@ public class DisappearingScrollbar : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         bool show = !(s.size > 0.98f);
-        GetComponent<Image>().enabled = show;
         foreach(Transform t in transform) {
             t.gameObject.SetActive(show);
         }
