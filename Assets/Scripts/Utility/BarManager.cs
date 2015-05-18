@@ -2,6 +2,9 @@
 using System.Collections;
 using fNbt;
 using PdfSharp;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
 using System.Collections.Generic;
 
 public class BarManager : MonoBehaviour {
@@ -116,7 +119,7 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Save(string filename) {
-        if(savePDF) { SavePDF(filename); return; }
+        if(savePDF) { StartCoroutine(SavePDF(filename)); return; }
         
         NbtCompound root = new NbtCompound("root");
 
@@ -246,10 +249,17 @@ public class BarManager : MonoBehaviour {
         savePDF = true;
     }
 
-    public void SavePDF(string filename) {
+    public IEnumerator SavePDF(string filename) {
+        PdfDocument doc = new PdfDocument();
+        doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
+        doc.Info.Creator = "1000 Lightbar Configurator";
+        doc.Info.Title = "1000 Lightbar Configuration";
+
+        PdfPage p = doc.AddPage();
         
 
         savePDF = false;
+        yield return null;
     }
 
     public void Clear() {
