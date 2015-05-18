@@ -148,11 +148,62 @@ public class FunctionSelect : MonoBehaviour {
                             potential.Add(BasicFunction.CRUISE);
                             break;
                     }
-                    if(potential.Contains(fn))
+                    if(potential.Contains(fn)) {
                         lh.lhd.funcs.Add(fn);
+
+                        if(lh.lhd.funcs.Count == 2) {
+                            if(lh.isSmall) {
+                                lh.SetOptic("Dual Small Lineum");
+                            } else {
+                                lh.SetOptic("Dual Lineum");
+                            }
+                        } else if(lh.lhd.funcs.Count == 1) {
+                            switch(fn) {
+                                case BasicFunction.FLASH_TAKEDOWN:
+                                case BasicFunction.FLASH_ALLEY:
+                                case BasicFunction.STT:
+                                    if(lh.isSmall) lh.SetOptic("Starburst");
+                                    else lh.SetOptic("");
+                                    break;
+                                case BasicFunction.FLASHING:
+                                case BasicFunction.CAL_STEADY:
+                                case BasicFunction.TRAFFIC:
+                                    if(lh.isSmall) lh.SetOptic("Small Lineum");
+                                    else lh.SetOptic("Lineum");
+                                    break;
+                                case BasicFunction.EMITTER:
+                                    if(!lh.isSmall) lh.SetOptic("Emitter");
+                                    else lh.SetOptic("");
+                                    break;
+                            }
+                        }
+                    }
                     change = true;
                 } else if(lh.lhd.funcs.Contains(fn)) {
                     lh.lhd.funcs.Remove(fn);
+                    
+                    if(lh.lhd.funcs.Count == 0) {
+                        lh.SetOptic("");
+                    } else if(lh.lhd.funcs.Count == 1) {
+                        switch(fn) {
+                            case BasicFunction.FLASH_TAKEDOWN:
+                            case BasicFunction.FLASH_ALLEY:
+                            case BasicFunction.STT:
+                                if(lh.isSmall) lh.SetOptic("Starburst");
+                                else lh.SetOptic("");
+                                break;
+                            case BasicFunction.FLASHING:
+                            case BasicFunction.CAL_STEADY:
+                            case BasicFunction.TRAFFIC:
+                                if(lh.isSmall) lh.SetOptic("Small Lineum");
+                                else lh.SetOptic("Lineum");
+                                break;
+                            case BasicFunction.EMITTER:
+                                if(!lh.isSmall) lh.SetOptic("Emitter");
+                                else lh.SetOptic("");
+                                break;
+                        }
+                    }
                     change = true;
                 }
             }
@@ -176,9 +227,6 @@ public class FunctionSelect : MonoBehaviour {
         }
 
         if(change) {
-            foreach(LightHead lh in cam.OnlyCamSelected) {
-                lh.SetOptic("");
-            }
             opticSelect.Refresh();
         }
     }
