@@ -40,25 +40,31 @@ public class FunctionSelect : MonoBehaviour {
 
         List<BasicFunction> potential = new List<BasicFunction>();
         potential.Add(BasicFunction.FLASHING);
-        potential.Add(BasicFunction.FLASH_STEADY);
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 switch(alpha.loc) {
+                    case Location.ALLEY:
+                        if(!potential.Contains(BasicFunction.FLASH_ALLEY)) potential.Add(BasicFunction.FLASH_ALLEY);
+                        continue;
                     case Location.FRONT:
+                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
                         if(potential.Contains(BasicFunction.EMITTER)) continue;
                         potential.Add(BasicFunction.EMITTER);
                         potential.Add(BasicFunction.CAL_STEADY);
                         continue;
                     case Location.REAR:
+                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
                         if(potential.Contains(BasicFunction.TRAFFIC)) continue;
                         potential.Add(BasicFunction.TRAFFIC);
                         continue;
                     case Location.FAR_REAR:
+                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
                         if(potential.Contains(BasicFunction.STT)) continue;
                         potential.Add(BasicFunction.STT);
                         continue;
                     case Location.FRONT_CORNER:
                     case Location.REAR_CORNER:
+                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
                         if(potential.Contains(BasicFunction.CRUISE)) continue;
                         potential.Add(BasicFunction.CRUISE);
                         continue;
@@ -67,10 +73,20 @@ public class FunctionSelect : MonoBehaviour {
         }
 
         for(int i = 0; i < potential.Count; i++) {
+            if(potential[i] == BasicFunction.CRUISE) continue;
+
             GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
             newbie.transform.SetParent(menu, false);
             newbie.transform.localScale = Vector3.one;
             newbie.GetComponent<LightOptionElement>().fn = potential[i];
+            newbie.GetComponent<LightOptionElement>().funcSel = this;
+        }
+
+        if(potential.Contains(BasicFunction.CRUISE)) {
+            GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
+            newbie.transform.SetParent(menu, false);
+            newbie.transform.localScale = Vector3.one;
+            newbie.GetComponent<LightOptionElement>().fn = BasicFunction.CRUISE;
             newbie.GetComponent<LightOptionElement>().funcSel = this;
         }
 
@@ -109,20 +125,26 @@ public class FunctionSelect : MonoBehaviour {
                 if(add && !lh.lhd.funcs.Contains(fn)) {
                     List<BasicFunction> potential = new List<BasicFunction>();
                     potential.Add(BasicFunction.FLASHING);
-                    potential.Add(BasicFunction.FLASH_STEADY);
                     switch(lh.loc) {
+                        case Location.ALLEY:
+                            potential.Add(BasicFunction.FLASH_ALLEY);
+                            break;
                         case Location.FRONT:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
                             potential.Add(BasicFunction.EMITTER);
                             potential.Add(BasicFunction.CAL_STEADY);
                             break;
                         case Location.REAR:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
                             potential.Add(BasicFunction.TRAFFIC);
                             break;
                         case Location.FAR_REAR:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
                             potential.Add(BasicFunction.STT);
                             break;
                         case Location.FRONT_CORNER:
                         case Location.REAR_CORNER:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
                             potential.Add(BasicFunction.CRUISE);
                             break;
                     }
@@ -136,7 +158,12 @@ public class FunctionSelect : MonoBehaviour {
             }
         }
         while(opticSelect.fn.Count > 2) {
+            if(opticSelect.fn.Contains(BasicFunction.CRUISE) && opticSelect.fn.Count == 3) break;
+
             fn = opticSelect.fn[0];
+            if(fn == BasicFunction.CRUISE) {
+                fn = opticSelect.fn[1];
+            }
             foreach(LightHead lh in BarManager.inst.allHeads) {
                 if(lh.gameObject.activeInHierarchy && lh.Selected) {
                     if(lh.lhd.funcs.Contains(fn)) {

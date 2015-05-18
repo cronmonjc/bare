@@ -168,7 +168,8 @@ public class LightHead : MonoBehaviour {
                 StyleNode styleToSet = null;
 
                 switch(FindObjectOfType<OpticSelect>().fn[0]) {
-                    case BasicFunction.FLASH_STEADY:
+                    case BasicFunction.FLASH_TAKEDOWN:
+                    case BasicFunction.FLASH_ALLEY:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
