@@ -40,12 +40,12 @@ public class SizeOptionControl : MonoBehaviour {
                         if(lh.lhd.optic != null) {
                             if(longGO.activeInHierarchy) {
                                 if(lh.lhd.optic.lgEquivalent.Length > 0) {
-                                    alpha.SetOptic(lh.lhd.optic.lgEquivalent, false);
+                                    alpha.SetOptic(lh.lhd.optic.lgEquivalent, BasicFunction.NULL, false);
                                     alpha.SetStyle(lh.lhd.style);
                                 }
                             } else {
                                 if(lh.lhd.optic.smEquivalent.Length > 0) {
-                                    alpha.SetOptic(lh.lhd.optic.smEquivalent, false);
+                                    alpha.SetOptic(lh.lhd.optic.smEquivalent, BasicFunction.NULL, false);
                                     alpha.SetStyle(lh.lhd.style);
                                 }
                             }
