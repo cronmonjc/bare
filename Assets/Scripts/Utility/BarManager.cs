@@ -126,6 +126,12 @@ public class BarManager : MonoBehaviour {
                 lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
             }
 
+            byte fn = 0;
+            foreach(BasicFunction bfn in lh.lhd.funcs) {
+                fn |= (byte)bfn;
+            }
+            lightCmpd.Add(new NbtByte("func", fn));
+
             lightList.Add(lightCmpd);
         }
         root.Add(lightList);
@@ -175,7 +181,7 @@ public class BarManager : MonoBehaviour {
 
                 foreach(OpticNode on in ln.optics.Values) {
                     if(on.partNumber == partNum) {
-                        lh.SetOptic(on.name, false);
+                        lh.SetOptic(on.name, BasicFunction.NULL, false);
                         string styleName = lightCmpd["styl"].StringValue;
                         foreach(StyleNode sn in on.styles.Values) {
                             if(sn.name == styleName) {
@@ -185,6 +191,39 @@ public class BarManager : MonoBehaviour {
                         }
                         break;
                     }
+                }
+            }
+
+            byte fn = lightCmpd["func"].ByteValue;
+            List<BasicFunction> potential = new List<BasicFunction>();
+            potential.Add(BasicFunction.FLASHING);
+            switch(lh.loc) {
+                case Location.ALLEY:
+                    potential.Add(BasicFunction.FLASH_ALLEY);
+                    break;
+                case Location.FRONT:
+                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.EMITTER);
+                    potential.Add(BasicFunction.CAL_STEADY);
+                    break;
+                case Location.REAR:
+                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.TRAFFIC);
+                    break;
+                case Location.FAR_REAR:
+                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.STT);
+                    break;
+                case Location.FRONT_CORNER:
+                case Location.REAR_CORNER:
+                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.CRUISE);
+                    break;
+            }
+            lh.lhd.funcs.Clear();
+            foreach(BasicFunction bfn in potential) {
+                if(((byte)bfn & fn) != 0) {
+                    lh.lhd.funcs.Add(bfn);
                 }
             }
         }

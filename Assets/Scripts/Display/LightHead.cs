@@ -160,14 +160,18 @@ public class LightHead : MonoBehaviour {
         else SetOptic(newOptic.name);
     }
 
-    public void SetOptic(string newOptic, bool doDefault = true) {
+    public void SetOptic(string newOptic, BasicFunction fn = BasicFunction.NULL, bool doDefault = true) {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
                 StyleNode styleToSet = null;
 
-                switch(FindObjectOfType<OpticSelect>().fn[0]) {
+                if(fn == BasicFunction.NULL) {
+                    fn = FindObjectOfType<OpticSelect>().fn[0];
+                }
+
+                switch(fn) {
                     case BasicFunction.FLASH_TAKEDOWN:
                     case BasicFunction.FLASH_ALLEY:
                         foreach(StyleNode alpha in styles) {

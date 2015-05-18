@@ -528,7 +528,7 @@ public enum Location {
 }
 
 public enum BasicFunction {
-    FLASHING, FLASH_TAKEDOWN, FLASH_ALLEY, EMITTER, CAL_STEADY, CRUISE, STT, TRAFFIC
+    NULL = 0x0, FLASHING = 0x1, FLASH_TAKEDOWN = 0x2, FLASH_ALLEY = 0x4, EMITTER = 0x8, CAL_STEADY = 0x10, CRUISE = 0x20, STT = 0x40, TRAFFIC = 0x80
 }
 
 public enum AdvFunction {

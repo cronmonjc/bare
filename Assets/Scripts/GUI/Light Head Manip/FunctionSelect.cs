@@ -162,17 +162,17 @@ public class FunctionSelect : MonoBehaviour {
                                 case BasicFunction.FLASH_TAKEDOWN:
                                 case BasicFunction.FLASH_ALLEY:
                                 case BasicFunction.STT:
-                                    if(lh.isSmall) lh.SetOptic("Starburst");
+                                    if(lh.isSmall) lh.SetOptic("Starburst", fn);
                                     else lh.SetOptic("");
                                     break;
                                 case BasicFunction.FLASHING:
                                 case BasicFunction.CAL_STEADY:
                                 case BasicFunction.TRAFFIC:
-                                    if(lh.isSmall) lh.SetOptic("Small Lineum");
-                                    else lh.SetOptic("Lineum");
+                                    if(lh.isSmall) lh.SetOptic("Small Lineum", fn);
+                                    else lh.SetOptic("Lineum", fn);
                                     break;
                                 case BasicFunction.EMITTER:
-                                    if(!lh.isSmall) lh.SetOptic("Emitter");
+                                    if(!lh.isSmall) lh.SetOptic("Emitter", fn);
                                     else lh.SetOptic("");
                                     break;
                             }
@@ -189,17 +189,17 @@ public class FunctionSelect : MonoBehaviour {
                             case BasicFunction.FLASH_TAKEDOWN:
                             case BasicFunction.FLASH_ALLEY:
                             case BasicFunction.STT:
-                                if(lh.isSmall) lh.SetOptic("Starburst");
+                                if(lh.isSmall) lh.SetOptic("Starburst", fn);
                                 else lh.SetOptic("");
                                 break;
                             case BasicFunction.FLASHING:
                             case BasicFunction.CAL_STEADY:
                             case BasicFunction.TRAFFIC:
-                                if(lh.isSmall) lh.SetOptic("Small Lineum");
-                                else lh.SetOptic("Lineum");
+                                if(lh.isSmall) lh.SetOptic("Small Lineum", fn);
+                                else lh.SetOptic("Lineum", fn);
                                 break;
                             case BasicFunction.EMITTER:
-                                if(!lh.isSmall) lh.SetOptic("Emitter");
+                                if(!lh.isSmall) lh.SetOptic("Emitter", fn);
                                 else lh.SetOptic("");
                                 break;
                         }
