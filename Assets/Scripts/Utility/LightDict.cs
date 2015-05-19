@@ -559,4 +559,16 @@ public static class Extensions {
     public static string GetPath(this Component c) {
         return c.transform.GetPath() + ":" + c.GetType().ToString();
     }
+
+    public static PdfSharp.Drawing.XColor ToXColor(this Color c) {
+        return PdfSharp.Drawing.XColor.FromArgb(Mathf.RoundToInt(c.a * 255), Mathf.RoundToInt(c.r * 255), Mathf.RoundToInt(c.g * 255), Mathf.RoundToInt(c.b * 255));
+    }
+
+    public static PdfSharp.Drawing.XColor ToXColor(this Color32 c) {
+        return PdfSharp.Drawing.XColor.FromArgb(c.a, c.r, c.g, c.b);
+    }
+
+    public static PdfSharp.Drawing.XPoint ToXPoint(this Vector2 v) {
+        return new PdfSharp.Drawing.XPoint(v.x, v.y);
+    }
 }

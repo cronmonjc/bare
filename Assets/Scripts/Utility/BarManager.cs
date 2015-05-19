@@ -255,11 +255,29 @@ public class BarManager : MonoBehaviour {
         doc.Info.Creator = "1000 Lightbar Configurator";
         doc.Info.Title = "1000 Lightbar Configuration";
 
-        PdfPage p = doc.AddPage();
-        
+        OverviewPage(doc.AddPage());
 
+
+
+        doc.Save(filename);
+        Application.OpenURL("file://"+filename);
         savePDF = false;
         yield return null;
+    }
+
+    public void OverviewPage(PdfPage p) {
+        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+
+        XFont f = new XFont("Courier New", 12);
+
+    }
+
+    public static XPoint[] XPointArray(params Vector2[] vecs) {
+        XPoint[] rtn = new XPoint[vecs.Length];
+        for(int i = 0; i < vecs.Length; i++) {
+            rtn[i] = vecs[i].ToXPoint();
+        }
+        return rtn;
     }
 
     public void Clear() {

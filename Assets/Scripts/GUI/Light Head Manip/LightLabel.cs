@@ -24,7 +24,7 @@ public class LightLabel : MonoBehaviour {
 
     public void Refresh() {
         if(lh.lhd.style != null) {
-            label2.text = label.text = "(" + lh.Bit + ")\n" + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
+            label2.text = label.text = (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
             Color clr = lh.lhd.style.color;
             background.color = clr;
             if(clr.r + clr.g < clr.b) {
@@ -42,7 +42,7 @@ public class LightLabel : MonoBehaviour {
             }
             secondImage.color = clr;
         } else {
-            label2.text = label.text = "(" + lh.Bit + ")\nEmpty";
+            label2.text = label.text = "Empty";
             label2.color = label.color = Color.white;
             background.color = new Color(0, 0, 0, 0.45f);
             secondImage.color = new Color(0, 0, 0, 0.45f);
