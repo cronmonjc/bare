@@ -121,8 +121,8 @@ public class FunctionSelect : MonoBehaviour {
         } else if(add) {
             if(opticSelect.fn.Contains(BasicFunction.EMITTER)) {
                 opticSelect.fn.Remove(BasicFunction.EMITTER);
-                opticSelect.fn.Add(fn);
             }
+            opticSelect.fn.Add(fn);
         } else
             opticSelect.fn.Remove(fn);
 

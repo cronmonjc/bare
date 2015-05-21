@@ -40,7 +40,46 @@ public class SplitMerge : MonoBehaviour {
                 continue;
             }
 
-            soc.ShowLong = merge;
+            if(soc.ShowLong != IsMerge) {
+                soc.ShowLong = IsMerge;
+
+                foreach(LightHead alpha in soc.GetComponentsInChildren<LightHead>(true)) {
+                    if(alpha == lh) continue;
+
+                    List<BasicFunction> potential = new List<BasicFunction>();
+                    potential.Add(BasicFunction.FLASHING);
+                    switch(alpha.loc) {
+                        case Location.ALLEY:
+                            potential.Add(BasicFunction.FLASH_ALLEY);
+                            break;
+                        case Location.FRONT:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.CAL_STEADY);
+                            if(!alpha.isSmall) potential.Add(BasicFunction.EMITTER);
+                            break;
+                        case Location.REAR:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.TRAFFIC);
+                            break;
+                        case Location.FAR_REAR:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.STT);
+                            break;
+                        case Location.FRONT_CORNER:
+                        case Location.REAR_CORNER:
+                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.CRUISE);
+                            break;
+                    }
+
+                    alpha.lhd.funcs.Clear();
+                    foreach(BasicFunction f in lh.lhd.funcs) {
+                        if(potential.Contains(f)) {
+                            alpha.lhd.funcs.Add(f);
+                        }
+                    }
+                }
+            }
         }
         cam.fs.Refresh();
     }
