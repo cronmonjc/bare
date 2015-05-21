@@ -10,6 +10,7 @@ public class LightLabel : MonoBehaviour {
     private LightHead lh;
 
     public static CameraControl cam;
+    public static bool showParts;
     private StyleNode lastStyle;
 
     void Start() {
@@ -19,33 +20,56 @@ public class LightLabel : MonoBehaviour {
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
+        showParts = false;
         Refresh();
     }
 
-    public void Refresh() {
-        if(lh.lhd.style != null) {
-            label2.text = label.text = (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
-            Color clr = lh.lhd.style.color;
-            background.color = clr;
-            if(clr.r + clr.g < clr.b) {
-                label.color = Color.white;
-            } else {
-                label.color = Color.black;
+    public void Refresh(bool showHeadNumber = false) {
+        string prefix = "";
+
+        if(showHeadNumber) {
+            for(int i = 0; i < BarManager.headNumber.Length; i++) {
+                if(BarManager.headNumber[i] == lh) {
+                    prefix = "(" + (i + 1) + ") ";
+                    break;
+                }
             }
-            if(lh.lhd.style.isDualColor) {
-                clr = lh.lhd.style.color2;
+            if(prefix == "") {
+                Debug.LogError("Failed to find a head number for " + transform.GetPath());
+                prefix = "(?) ";
             }
-            if(clr.r + clr.g < clr.b) {
-                label2.color = Color.white;
-            } else {
-                label2.color = Color.black;
+        }
+
+        if(showParts) {
+            if(lh.lhd.style != null) {
+                label2.text = label.text = prefix + lh.PartNumber;
+                label2.color = label.color = Color.black;
+                secondImage.color = background.color = Color.white;
             }
-            secondImage.color = clr;
         } else {
-            label2.text = label.text = "Empty";
-            label2.color = label.color = Color.white;
-            background.color = new Color(0, 0, 0, 0.45f);
-            secondImage.color = new Color(0, 0, 0, 0.45f);
+            if(lh.lhd.style != null) {
+                label2.text = label.text = prefix + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
+                Color clr = lh.lhd.style.color;
+                background.color = clr;
+                if(clr.r + clr.g < clr.b) {
+                    label.color = Color.white;
+                } else {
+                    label.color = Color.black;
+                }
+                if(lh.lhd.style.isDualColor) {
+                    clr = lh.lhd.style.color2;
+                }
+                if(clr.r + clr.g < clr.b) {
+                    label2.color = Color.white;
+                } else {
+                    label2.color = Color.black;
+                }
+                secondImage.color = clr;
+            } else {
+                label2.text = label.text = prefix + "Empty";
+                label2.color = label.color = Color.white;
+                secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
+            }
         }
 
         lastStyle = lh.lhd.style;

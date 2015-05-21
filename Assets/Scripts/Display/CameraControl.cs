@@ -7,7 +7,7 @@ public class CameraControl : MonoBehaviour {
     public static AdvFunction funcBeingTested = AdvFunction.NONE;
 
     public static bool ShowPricing = false;
-    public bool ShowWhole = false;
+    public static bool ShowWhole = false;
 
     public Transform pivot;
     public Vector2 dragStart, currMouse;
@@ -71,8 +71,8 @@ public class CameraControl : MonoBehaviour {
         if(!FBrowser.activeInHierarchy) {
             if(ShowWhole) {
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height);
-                float aspectRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
-                myCam.orthographicSize = Mathf.Max(1.95f, (0.00405317f * Screen.width) - (0.00308185f * Screen.height) + 5.92678f);
+                float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
+                myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
             } else {
                 myCam.pixelRect = new Rect(0, Screen.height * 0.45f, Screen.width, Screen.height * 0.55f - 32f);
 

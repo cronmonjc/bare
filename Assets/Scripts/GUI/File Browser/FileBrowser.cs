@@ -117,7 +117,8 @@ public class FileBrowser : MonoBehaviour {
     }
 
     public void ActOnFile(FileItem fileItem) {
-        ActOnFile(fileItem.myPath, true);
+        if(fileItem == null) ActOnFile(GetComponentInChildren<FileField>().GetComponent<UnityEngine.UI.InputField>().textComponent.text, false);
+        else ActOnFile(fileItem.myPath, true);
     }
 
     public void ActOnFile() {

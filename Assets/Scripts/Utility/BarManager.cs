@@ -6,6 +6,8 @@ using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using PdfSharp.Pdf.IO;
 using System.Collections.Generic;
+using System.IO;
+using PdfSharp.Drawing.Layout;
 
 public class BarManager : MonoBehaviour {
     private bool savePDF = false;
@@ -18,6 +20,9 @@ public class BarManager : MonoBehaviour {
 
     public static BarManager inst;
     public List<LightHead> allHeads;
+    public static LightHead[] headNumber;
+
+    public LightHead first;
 
     void Awake() {
         patts = new NbtCompound("pats");
@@ -250,14 +255,43 @@ public class BarManager : MonoBehaviour {
     }
 
     public IEnumerator SavePDF(string filename) {
+        if(!filename.EndsWith(".pdf")) filename = filename + ".pdf";
+
         PdfDocument doc = new PdfDocument();
         doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
         doc.Info.Creator = "1000 Lightbar Configurator";
         doc.Info.Title = "1000 Lightbar Configuration";
 
-        OverviewPage(doc.AddPage());
+        headNumber = GetCurrentHeads();
+        CameraControl.ShowWhole = true;
+        CanvasDisabler.CanvasEnabled = false;
 
+        Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
+        
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
 
+        Vector3 tl = Vector3.zero, br = Vector3.zero;
+        foreach(ReferencePoint rp in FindObjectsOfType<ReferencePoint>()) {
+            if(rp.gameObject.name == "tl") {
+                tl = cam.WorldToScreenPoint(rp.transform.position);
+            } else if(rp.gameObject.name == "br") {
+                br = cam.WorldToScreenPoint(rp.transform.position);
+            }
+        }
+        
+        Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
+
+        yield return StartCoroutine(OverviewPage(doc.AddPage(), capRect));
+        yield return StartCoroutine(PartsPage(doc.AddPage(), capRect));
+
+        LightLabel.showParts = false;
+        CanvasDisabler.CanvasEnabled = true;
+        CameraControl.ShowWhole = false;
+
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh();
+        }
 
         doc.Save(filename);
         Application.OpenURL("file://"+filename);
@@ -265,11 +299,109 @@ public class BarManager : MonoBehaviour {
         yield return null;
     }
 
-    public void OverviewPage(PdfPage p) {
+    public IEnumerator OverviewPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+        XTextFormatter tf = new XTextFormatter(gfx);
+        
+        XFont courier = new XFont("Courier New", new XUnit(12, XGraphicsUnit.Point).Inch);
+        XFont courierSm = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
+        XFont caliLg = new XFont("Calibri", new XUnit(24, XGraphicsUnit.Point).Inch);
+        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
 
-        XFont f = new XFont("Courier New", 12);
+        LightLabel.showParts = false;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
 
+        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        Directory.CreateDirectory("tempgen");
+        File.WriteAllBytes("tempgen\\desc.png", tex.EncodeToPNG());
+
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
+        gfx.DrawImage(XImage.FromFile("tempgen\\desc.png"), 0.5, 1.3, tex.width * scale, tex.height * scale);
+        gfx.DrawImage(XImage.FromFile("pdfassets\\TopLeft.png"), 0.5, 0.5, 0.74, 0.9);
+        XImage tr = XImage.FromFile("pdfassets\\TopRight.png");
+        gfx.DrawImage(tr, ((float)p.Width.Inch) - 2.45, 0.5, 1.95, 0.75);
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Star 1000", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Model 1650", courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
+
+        tf.Alignment = XParagraphAlignment.Left;
+        for(int i = 0; i < headNumber.Length; i++) {
+            LightHead lh = headNumber[i];
+            tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, 3.5 + (i * 0.10), 1.2, 0.10));
+            if(headNumber[i].lhd.style == null) {
+                tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, 3.49 + (i * 0.10), 0.5, 0.10));
+            } else {
+                tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, 3.49 + (i * 0.10), 2.5, 0.10));
+            }
+        }
+
+        yield return null;
+    }
+
+    public IEnumerator PartsPage(PdfPage p, Rect capRect) {
+        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+        XTextFormatter tf = new XTextFormatter(gfx);
+
+        XFont courier = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
+        XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
+        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+
+        LightLabel.showParts = true;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
+
+        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        Directory.CreateDirectory("tempgen");
+        File.WriteAllBytes("tempgen\\part.png", tex.EncodeToPNG());
+
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
+        gfx.DrawImage(XImage.FromFile("tempgen\\part.png"), 0.5, 1, tex.width * scale, tex.height * scale);
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, 3.3, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("Component", caliBold, XBrushes.Black, new XRect(1.5, 3.3, 1.0, 0.2));
+        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 1.0, 0.2));
+
+        List<string> parts = new List<string>();
+        Dictionary<string, int> counts = new Dictionary<string, int>();
+        Dictionary<string, LightHead> descs = new Dictionary<string, LightHead>();
+        foreach(LightHead lh in BarManager.headNumber) {
+            if(lh.lhd.style != null) {
+                string part = lh.PartNumber;
+                if(counts.ContainsKey(part)) {
+                    counts[part]++;
+                } else {
+                    counts[part] = 1;
+                    descs[part] = lh;
+                    parts.Add(part);
+                }
+            }
+        }
+
+        double top = 3.5;
+        foreach(string part in parts) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(counts[part] + "", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString(descs[part].PartNumber, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString((descs[part].lhd.optic.styles.Count > 1 ? descs[part].lhd.style.name + " " : "") + descs[part].lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
+            top += 0.15;
+        }
+
+        yield return null;
     }
 
     public static XPoint[] XPointArray(params Vector2[] vecs) {
@@ -289,4 +421,56 @@ public class BarManager : MonoBehaviour {
             soc.ShowLong = true;
         }
     }
+
+    public LightHead[] GetCurrentHeads() {
+        List<LightHead> rtn = new List<LightHead>(50);
+
+        RaycastHit info;
+        if(Physics.Raycast(new Ray(first.transform.position, new Vector3(1, 0.5f)), out info)) {
+            rtn.Add(first);
+            LightHead curr = info.transform.GetComponent<LightHead>();
+            while(curr != first && rtn.Count < 50) {
+                rtn.Add(curr);
+                Ray ray;
+                switch(curr.loc) {
+                    case Location.FRONT_CORNER:
+                        if(curr.transform.position.x < 0) {
+                            ray = new Ray(curr.transform.position, new Vector3(1, 0));
+                        } else {
+                            ray = new Ray(curr.transform.position, new Vector3(1, -1));
+                        }
+                        break;
+                    case Location.ALLEY:
+                        if(curr.transform.position.x < 0) {
+                            ray = new Ray(curr.transform.position, new Vector3(0, 1));
+                        } else {
+                            ray = new Ray(curr.transform.position, new Vector3(-0.5f, -1));
+                        }
+                        break;
+                    case Location.REAR_CORNER:
+                        if(curr.transform.position.x < 0) {
+                            ray = new Ray(curr.transform.position, new Vector3(-1, 1));
+                        } else {
+                            ray = new Ray(curr.transform.position, new Vector3(-1, -0.5f));
+                        }
+                        break;
+                    case Location.FAR_REAR:
+                    case Location.REAR:
+                        ray = new Ray(curr.transform.position, new Vector3(-1, 0));
+                        break;
+                    case Location.FRONT:
+                    default:
+                        ray = new Ray(curr.transform.position, new Vector3(1, 0));
+                        break;
+                }
+                if(Physics.Raycast(ray, out info))
+                    curr = info.transform.GetComponent<LightHead>();
+                else
+                    break;
+            }
+        }
+
+        return rtn.ToArray();
+    }
+
 }
