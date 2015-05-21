@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class CameraControl : MonoBehaviour {
     public static AdvFunction funcBeingTested = AdvFunction.NONE;
@@ -53,9 +54,17 @@ public class CameraControl : MonoBehaviour {
 
     void Awake() {
         selected = new List<LightHead>();
+
+
     }
 
     void Start() {
+        Directory.CreateDirectory("HasOpen");
+        StreamWriter fw = File.CreateText(Directory.GetCurrentDirectory() + "\\HasOpen\\" + System.Environment.MachineName + ".txt");
+        fw.WriteLine(System.Environment.UserName + " from " + System.Environment.UserDomainName);
+        fw.Flush();
+        fw.Close();
+
         Application.targetFrameRate = 120;
 
         sbc = SelBox.GetComponent<SelBoxCollider>();
@@ -177,5 +186,11 @@ public class CameraControl : MonoBehaviour {
                 }
             }
         }
+    }
+
+    void OnApplicationQuit() {
+        if(Directory.Exists(Directory.GetCurrentDirectory() + "\\tempgen"))
+            Directory.Delete(Directory.GetCurrentDirectory() + "\\tempgen", true);
+        File.Delete(Directory.GetCurrentDirectory() + "\\HasOpen\\" + System.Environment.MachineName + ".txt");
     }
 }
