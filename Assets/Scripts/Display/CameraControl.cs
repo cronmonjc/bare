@@ -74,6 +74,7 @@ public class CameraControl : MonoBehaviour {
 
         myCam = GetComponent<Camera>();
         myCam.pixelRect = new Rect(0, Screen.height * 0.45f, Screen.width, Screen.height * 0.55f - 32f);
+        myCam.orthographicSize = partialOrtho;
     }
 
     void Update() {
