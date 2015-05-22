@@ -310,6 +310,7 @@ public class BarManager : MonoBehaviour {
 
         LightLabel.showParts = false;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.DispError = false;
             alpha.Refresh(true);
         }
 
