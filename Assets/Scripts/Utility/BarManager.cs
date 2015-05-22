@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using fNbt;
 using PdfSharp;
@@ -23,6 +24,8 @@ public class BarManager : MonoBehaviour {
     public static LightHead[] headNumber;
 
     public LightHead first;
+
+    public InputField custName, orderNum, notes;
 
     void Awake() {
         patts = new NbtCompound("pats");
@@ -305,7 +308,7 @@ public class BarManager : MonoBehaviour {
         
         XFont courier = new XFont("Courier New", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont courierSm = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
-        XFont caliLg = new XFont("Calibri", new XUnit(24, XGraphicsUnit.Point).Inch);
+        XFont caliLg = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
 
         LightLabel.showParts = false;
@@ -342,6 +345,22 @@ public class BarManager : MonoBehaviour {
                 tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, 3.49 + (i * 0.10), 2.5, 0.10));
             }
         }
+
+        XPen border = new XPen(XColors.Black, 0.025);
+        double top = p.Height.Inch - 2.5;
+        gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, p.Width.Inch - 1.0, 2.0));
+        gfx.DrawLine(border, 0.5, top + 0.5, p.Width.Inch - 0.5, top + 0.5);
+
+        tf.DrawString("Customer", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.01, 1.0, 0.15));
+        tf.DrawString("Order Number / PO", caliSm, XBrushes.DarkGray, new XRect(4, top + 0.01, 1.5, 0.15));
+        gfx.DrawLine(border, 3.95, top, 3.95, top + 0.5);
+        tf.DrawString("Order Date", caliSm, XBrushes.DarkGray, new XRect(6.2, top + 0.01, 1.0, 0.15));
+        gfx.DrawLine(border, 6.15, top, 6.15, top + 0.5);
+
+        tf.DrawString(custName.text, caliLg, XBrushes.Black, new XRect(0.6, top + 0.2, 3.0, 0.2));
+        tf.DrawString(orderNum.text, courier, XBrushes.Black, new XRect(4.05, top + 0.2, 1.75, 0.2));
+        tf.DrawString(System.DateTime.Now.ToString("MMM dd, yyyy"), courier, XBrushes.Black, new XRect(6.25, top + 0.2, 3.0, 0.2));
+
 
         yield return null;
     }

@@ -17998,7 +17998,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 0
-  m_CharacterLimit: 0
+  m_CharacterLimit: 20
   m_EndEdit:
     m_PersistentCalls:
       m_Calls: []
@@ -38004,3 +38004,6 @@ MonoBehaviour:
   td: 0
   allHeads: []
   first: {fileID: 931591393}
+  custName: {fileID: 2114536052}
+  orderNum: {fileID: 1018853848}
+  notes: {fileID: 1773543323}
