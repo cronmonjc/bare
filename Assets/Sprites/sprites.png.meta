@@ -1,27 +1,28 @@
 fileFormatVersion: 2
 guid: ffafbc1e1a25d774e9e71399198ae6aa
-timeCreated: 1431441010
+timeCreated: 1432296483
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: sprites_0
-    21300002: sprites_1
-    21300004: sprites_2
-    21300006: sprites_3
-    21300008: sprites_4
-    21300010: sprites_5
-    21300012: sprites_6
-    21300014: sprites_7
-    21300016: sprites_8
-    21300018: sprites_9
-    21300020: sprites_10
-    21300022: sprites_11
-    21300024: sprites_12
-    21300026: sprites_13
-    21300028: sprites_14
-    21300030: sprites_15
-    21300032: sprites_16
+    21300000: selBox
+    21300002: new
+    21300004: barSize
+    21300006: saveAs
+    21300008: download
+    21300010: bar
+    21300012: save
+    21300014: upload
+    21300016: smPulldown
+    21300018: erase
+    21300020: connected
+    21300022: file
+    21300024: disconnected
+    21300026: lgPulldown
+    21300028: close
+    21300030: folder
+    21300032: chip
     21300034: whitePixel
+    21300036: Warning
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -44,7 +45,7 @@ TextureImporter:
   cubemapConvolutionSteps: 8
   cubemapConvolutionExponent: 1.5
   seamlessCubemap: 0
-  textureFormat: -2
+  textureFormat: -3
   maxTextureSize: 2048
   textureSettings:
     filterMode: 0
@@ -67,7 +68,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: sprites_0
+    - name: selBox
       rect:
         serializedVersion: 2
         x: 0
@@ -77,7 +78,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 3, y: 3, z: 3, w: 3}
-    - name: sprites_1
+    - name: new
       rect:
         serializedVersion: 2
         x: 18
@@ -87,7 +88,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_2
+    - name: barSize
       rect:
         serializedVersion: 2
         x: 36
@@ -97,7 +98,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_3
+    - name: saveAs
       rect:
         serializedVersion: 2
         x: 0
@@ -107,7 +108,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_4
+    - name: download
       rect:
         serializedVersion: 2
         x: 18
@@ -117,7 +118,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_5
+    - name: bar
       rect:
         serializedVersion: 2
         x: 36
@@ -127,7 +128,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_6
+    - name: save
       rect:
         serializedVersion: 2
         x: 0
@@ -137,7 +138,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_7
+    - name: upload
       rect:
         serializedVersion: 2
         x: 18
@@ -147,7 +148,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_8
+    - name: smPulldown
       rect:
         serializedVersion: 2
         x: 36
@@ -157,7 +158,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_9
+    - name: erase
       rect:
         serializedVersion: 2
         x: 0
@@ -167,7 +168,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_10
+    - name: connected
       rect:
         serializedVersion: 2
         x: 18
@@ -177,7 +178,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_11
+    - name: file
       rect:
         serializedVersion: 2
         x: 0
@@ -187,7 +188,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_12
+    - name: disconnected
       rect:
         serializedVersion: 2
         x: 18
@@ -197,7 +198,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_13
+    - name: lgPulldown
       rect:
         serializedVersion: 2
         x: 0
@@ -207,7 +208,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_14
+    - name: close
       rect:
         serializedVersion: 2
         x: 18
@@ -217,7 +218,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_15
+    - name: folder
       rect:
         serializedVersion: 2
         x: 0
@@ -227,7 +228,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: sprites_16
+    - name: chip
       rect:
         serializedVersion: 2
         x: 18
@@ -244,6 +245,16 @@ TextureImporter:
         y: 32
         width: 1
         height: 1
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Warning
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 58
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

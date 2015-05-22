@@ -9,7 +9,7 @@ public class TDBitChanger : MonoBehaviour {
 
     public byte Bit {
         get {
-            BarManager bm = FindObjectOfType<BarManager>();
+            BarManager bm = BarManager.inst;
             int size = bm.BarSize;
             switch(bm.td) {
                 case TDOption.NONE:

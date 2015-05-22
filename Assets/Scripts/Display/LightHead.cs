@@ -18,19 +18,20 @@ public class LightHead : MonoBehaviour {
         get { return LightDict.inst.capableFunctions[loc]; }
     }
 
-    private LightLabel myLabel;
+    [System.NonSerialized]
+    public LightLabel myLabel;
 
     public Light[] myLights;
 
     public byte[] bits = new byte[5];
+    private TDBitChanger tbc;
 
     public byte Bit {
         get {
-            TDBitChanger tbc = GetComponent<TDBitChanger>();
             if(tbc != null)
                 return tbc.Bit;
             else
-                return bits[FindObjectOfType<BarManager>().BarSize];
+                return bits[BarManager.inst.BarSize];
         }
     }
 
@@ -65,8 +66,11 @@ public class LightHead : MonoBehaviour {
         myLabel.target = transform;
         myLabel.transform.SetParent(cam.LabelParent);
         myLabel.transform.localScale = Vector3.one;
+        myLabel.DispError = false;
 
         myLights = GetComponentsInChildren<Light>(true);
+
+        tbc = GetComponent<TDBitChanger>();
     }
 
     void Update() {

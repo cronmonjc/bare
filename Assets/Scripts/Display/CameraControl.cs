@@ -79,6 +79,10 @@ public class CameraControl : MonoBehaviour {
 
     void Update() {
         if(!FBrowser.activeInHierarchy) {
+            if(Input.GetKeyDown(KeyCode.P)) {
+                LightLabel.showBit = !LightLabel.showBit;
+            }
+
             if(ShowWhole) {
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height);
                 float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);

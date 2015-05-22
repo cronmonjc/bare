@@ -5,13 +5,19 @@ using System.Collections;
 public class LightLabel : MonoBehaviour {
     public Transform target;
     public Text label, label2;
-    public Image background, secondImage, selectionImage;
+    public Image background, secondImage, selectionImage, warnImage;
 
     private LightHead lh;
 
     public static CameraControl cam;
     public static bool showParts;
+    public static bool showBit;
     private StyleNode lastStyle;
+
+    public bool DispError {
+        get { return warnImage.enabled; }
+        set { warnImage.enabled = value; }
+    }
 
     void Start() {
         selectionImage.gameObject.SetActive(false);
@@ -21,6 +27,7 @@ public class LightLabel : MonoBehaviour {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
         showParts = false;
+        showBit = false;
         Refresh();
     }
 
@@ -48,7 +55,7 @@ public class LightLabel : MonoBehaviour {
             }
         } else {
             if(lh.lhd.style != null) {
-                label2.text = label.text = prefix + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
+                label2.text = label.text = prefix + (showBit ? lh.Bit + ": " : "") + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
                 Color clr = lh.lhd.style.color;
                 background.color = clr;
                 if(clr.r + clr.g < clr.b) {
@@ -66,7 +73,7 @@ public class LightLabel : MonoBehaviour {
                 }
                 secondImage.color = clr;
             } else {
-                label2.text = label.text = prefix + "Empty";
+                label2.text = label.text = prefix + (showBit ? lh.Bit + ": " : "") + "Empty";
                 label2.color = label.color = Color.white;
                 secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
             }
