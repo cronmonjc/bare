@@ -269,6 +269,9 @@ public class BarManager : MonoBehaviour {
         CameraControl.ShowWhole = true;
         CanvasDisabler.CanvasEnabled = false;
 
+        bool debugBit = LightLabel.showBit;
+        LightLabel.showBit = false;
+
         Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
         
         yield return new WaitForEndOfFrame();
@@ -292,13 +295,20 @@ public class BarManager : MonoBehaviour {
         CanvasDisabler.CanvasEnabled = true;
         CameraControl.ShowWhole = false;
 
+        LightLabel.showBit = debugBit;
+
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh();
         }
 
-        doc.Save(filename);
-        Application.OpenURL("file://"+filename);
-        savePDF = false;
+        try {
+            doc.Save(filename);
+            Application.OpenURL("file://" + filename);
+        } catch(IOException) {
+            ErrorText.inst.DispError("Unable to produce PDF.  Do you have the PDF open elsewhere, by chance?");
+        } finally {
+            savePDF = false;
+        }
         yield return null;
     }
 
@@ -360,7 +370,9 @@ public class BarManager : MonoBehaviour {
         tf.DrawString(custName.text, caliLg, XBrushes.Black, new XRect(0.6, top + 0.2, 3.0, 0.2));
         tf.DrawString(orderNum.text, courier, XBrushes.Black, new XRect(4.05, top + 0.2, 1.75, 0.2));
         tf.DrawString(System.DateTime.Now.ToString("MMM dd, yyyy"), courier, XBrushes.Black, new XRect(6.25, top + 0.2, 3.0, 0.2));
-
+        
+        tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
+        tf.DrawString(notes.text, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
 
         yield return null;
     }

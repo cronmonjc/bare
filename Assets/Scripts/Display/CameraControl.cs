@@ -81,6 +81,9 @@ public class CameraControl : MonoBehaviour {
         if(!FBrowser.activeInHierarchy) {
             if(Input.GetKeyDown(KeyCode.P)) {
                 LightLabel.showBit = !LightLabel.showBit;
+                foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+                    alpha.Refresh();
+                }
             }
 
             if(ShowWhole) {
