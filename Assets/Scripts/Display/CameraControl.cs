@@ -79,6 +79,7 @@ public class CameraControl : MonoBehaviour {
     }
 
     void Update() {
+        Screen.SetResolution(Screen.width, Screen.height, false);
         if(!FBrowser.activeInHierarchy) {
             if(Input.GetKeyDown(KeyCode.P)) {
                 LightLabel.showBit = !LightLabel.showBit;
