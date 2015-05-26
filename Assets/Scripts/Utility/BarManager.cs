@@ -9,6 +9,7 @@ using PdfSharp.Pdf.IO;
 using System.Collections.Generic;
 using System.IO;
 using PdfSharp.Drawing.Layout;
+using System;
 
 public class BarManager : MonoBehaviour {
     private bool savePDF = false;
@@ -26,6 +27,9 @@ public class BarManager : MonoBehaviour {
     public LightHead first;
 
     public InputField custName, orderNum, notes;
+
+    public FileBrowser fb;
+    private string barFilePath;
 
     void Awake() {
         patts = new NbtCompound("pats");
@@ -104,6 +108,10 @@ public class BarManager : MonoBehaviour {
             default:
                 return null;
         }
+    }
+
+    public void SetBarSize(float to) {
+        SetBarSize(Mathf.RoundToInt(to));
     }
 
     public void SetBarSize(int to) {
@@ -255,6 +263,12 @@ public class BarManager : MonoBehaviour {
 
     public void StartPDF() {
         savePDF = true;
+        barFilePath = fb.currFile;
+    }
+
+    public void JustSavePDF() {
+        Directory.CreateDirectory("output");
+        StartCoroutine(SavePDF("output\\output " + DateTime.Now.ToString("MMddyy HHmmssf") + ".pdf"));
     }
 
     public IEnumerator SavePDF(string filename) {
@@ -308,6 +322,7 @@ public class BarManager : MonoBehaviour {
             ErrorText.inst.DispError("Unable to produce PDF.  Do you have the PDF open elsewhere, by chance?");
         } finally {
             savePDF = false;
+            fb.currFile = barFilePath;
         }
         yield return null;
     }
