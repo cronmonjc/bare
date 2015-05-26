@@ -505,4 +505,13 @@ public class BarManager : MonoBehaviour {
         return rtn.ToArray();
     }
 
+    public IEnumerator RefreshAllLabels() {
+        yield return new WaitForEndOfFrame();
+
+        foreach(LightHead alpha in allHeads) {
+            if(alpha.gameObject.activeInHierarchy) alpha.myLabel.Refresh();
+        }
+
+        yield return null;
+    }
 }

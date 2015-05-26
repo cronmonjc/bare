@@ -82,5 +82,7 @@ public class SplitMerge : MonoBehaviour {
             }
         }
         cam.fs.Refresh();
+        StartCoroutine(BarManager.inst.RefreshAllLabels());
     }
+
 }

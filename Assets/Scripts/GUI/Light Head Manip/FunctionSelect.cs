@@ -136,6 +136,7 @@ public class FunctionSelect : MonoBehaviour {
                             lh.lhd.funcs.Clear();
                             lh.lhd.funcs.Add(fn);
                             lh.SetOptic("Emitter", fn);
+                            change = true;
                         }
                     } else {
                         if(lh.lhd.funcs.Contains(BasicFunction.EMITTER)) {
