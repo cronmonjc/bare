@@ -44,24 +44,24 @@ public class FunctionSelect : MonoBehaviour {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 switch(alpha.loc) {
                     case Location.ALLEY:
-                        if(!potential.Contains(BasicFunction.FLASH_ALLEY)) potential.Add(BasicFunction.FLASH_ALLEY);
+                        if(!potential.Contains(BasicFunction.ALLEY)) potential.Add(BasicFunction.ALLEY);
                         continue;
                     case Location.FRONT:
-                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
                         if(!potential.Contains(BasicFunction.EMITTER) && !alpha.isSmall) potential.Add(BasicFunction.EMITTER);
                         if(!potential.Contains(BasicFunction.CAL_STEADY)) potential.Add(BasicFunction.CAL_STEADY);
                         continue;
                     case Location.REAR:
-                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
                         if(!potential.Contains(BasicFunction.TRAFFIC)) potential.Add(BasicFunction.TRAFFIC);
                         continue;
                     case Location.FAR_REAR:
-                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
                         if(!potential.Contains(BasicFunction.STT)) potential.Add(BasicFunction.STT);
                         continue;
                     case Location.FRONT_CORNER:
                     case Location.REAR_CORNER:
-                        if(!potential.Contains(BasicFunction.FLASH_TAKEDOWN)) potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
                         if(!potential.Contains(BasicFunction.CRUISE)) potential.Add(BasicFunction.CRUISE);
                         continue;
                 }
@@ -147,23 +147,23 @@ public class FunctionSelect : MonoBehaviour {
                         potential.Add(BasicFunction.FLASHING);
                         switch(lh.loc) {
                             case Location.ALLEY:
-                                potential.Add(BasicFunction.FLASH_ALLEY);
+                                potential.Add(BasicFunction.ALLEY);
                                 break;
                             case Location.FRONT:
-                                potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                                potential.Add(BasicFunction.TAKEDOWN);
                                 potential.Add(BasicFunction.CAL_STEADY);
                                 break;
                             case Location.REAR:
-                                potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                                potential.Add(BasicFunction.TAKEDOWN);
                                 potential.Add(BasicFunction.TRAFFIC);
                                 break;
                             case Location.FAR_REAR:
-                                potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                                potential.Add(BasicFunction.TAKEDOWN);
                                 potential.Add(BasicFunction.STT);
                                 break;
                             case Location.FRONT_CORNER:
                             case Location.REAR_CORNER:
-                                potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                                potential.Add(BasicFunction.TAKEDOWN);
                                 potential.Add(BasicFunction.CRUISE);
                                 break;
                         }
@@ -178,15 +178,15 @@ public class FunctionSelect : MonoBehaviour {
                                 }
                             } else if(lh.lhd.funcs.Count == 1) {
                                 switch(fn) {
-                                    case BasicFunction.FLASH_TAKEDOWN:
-                                    case BasicFunction.FLASH_ALLEY:
+                                    case BasicFunction.TAKEDOWN:
+                                    case BasicFunction.ALLEY:
                                     case BasicFunction.STT:
+                                    case BasicFunction.TRAFFIC:
                                         if(lh.isSmall) lh.SetOptic("Starburst", fn);
                                         else lh.SetOptic("");
                                         break;
                                     case BasicFunction.FLASHING:
                                     case BasicFunction.CAL_STEADY:
-                                    case BasicFunction.TRAFFIC:
                                         if(lh.isSmall) lh.SetOptic("Small Lineum", fn);
                                         else lh.SetOptic("Lineum", fn);
                                         break;
@@ -202,15 +202,15 @@ public class FunctionSelect : MonoBehaviour {
                         lh.SetOptic("");
                     } else if(lh.lhd.funcs.Count == 1) {
                         switch(lh.lhd.funcs[0]) {
-                            case BasicFunction.FLASH_TAKEDOWN:
-                            case BasicFunction.FLASH_ALLEY:
+                            case BasicFunction.TAKEDOWN:
+                            case BasicFunction.ALLEY:
                             case BasicFunction.STT:
+                            case BasicFunction.TRAFFIC:
                                 if(lh.isSmall) lh.SetOptic("Starburst", fn);
                                 else lh.SetOptic("");
                                 break;
                             case BasicFunction.FLASHING:
                             case BasicFunction.CAL_STEADY:
-                            case BasicFunction.TRAFFIC:
                                 if(lh.isSmall) lh.SetOptic("Small Lineum", fn);
                                 else lh.SetOptic("Lineum", fn);
                                 break;

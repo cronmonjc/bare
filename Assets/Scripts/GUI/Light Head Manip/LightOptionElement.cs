@@ -61,10 +61,10 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                 case BasicFunction.FLASHING:
                     name = "Flashing";
                     break;
-                case BasicFunction.FLASH_TAKEDOWN:
+                case BasicFunction.TAKEDOWN:
                     name = "Takedown";
                     break;
-                case BasicFunction.FLASH_ALLEY:
+                case BasicFunction.ALLEY:
                     name = "Alley";
                     break;
                 case BasicFunction.EMITTER:

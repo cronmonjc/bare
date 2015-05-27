@@ -50,24 +50,24 @@ public class SplitMerge : MonoBehaviour {
                     potential.Add(BasicFunction.FLASHING);
                     switch(alpha.loc) {
                         case Location.ALLEY:
-                            potential.Add(BasicFunction.FLASH_ALLEY);
+                            potential.Add(BasicFunction.ALLEY);
                             break;
                         case Location.FRONT:
-                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.TAKEDOWN);
                             potential.Add(BasicFunction.CAL_STEADY);
                             if(!alpha.isSmall) potential.Add(BasicFunction.EMITTER);
                             break;
                         case Location.REAR:
-                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.TAKEDOWN);
                             potential.Add(BasicFunction.TRAFFIC);
                             break;
                         case Location.FAR_REAR:
-                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.TAKEDOWN);
                             potential.Add(BasicFunction.STT);
                             break;
                         case Location.FRONT_CORNER:
                         case Location.REAR_CORNER:
-                            potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                            potential.Add(BasicFunction.TAKEDOWN);
                             potential.Add(BasicFunction.CRUISE);
                             break;
                     }

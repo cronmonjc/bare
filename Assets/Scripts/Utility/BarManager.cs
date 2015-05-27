@@ -14,7 +14,7 @@ using System;
 public class BarManager : MonoBehaviour {
     private bool savePDF = false;
 
-    [Range(0,4)]
+    [Range(0, 4)]
     public int BarSize = 3;
     public TDOption td;
 
@@ -129,14 +129,132 @@ public class BarManager : MonoBehaviour {
 
     public void SetTDOption(int to) {
         td = (TDOption)to;
+
+        StartCoroutine(SetTDOption());
+    }
+
+    public IEnumerator SetTDOption() {
+        switch(td) {
+            case TDOption.NONE:
+                foreach(LightHead lh in allHeads) {
+                    if(lh.gameObject.activeInHierarchy && lh.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
+                        lh.lhd.funcs.Remove(BasicFunction.TRAFFIC);
+                        switch(lh.lhd.funcs.Count) {
+                            case 0:
+                                lh.SetOptic("");
+                                break;
+                            case 1:
+                                switch(lh.lhd.funcs[0]) {
+                                    case BasicFunction.TAKEDOWN:
+                                    case BasicFunction.ALLEY:
+                                    case BasicFunction.STT:
+                                        if(lh.isSmall) lh.SetOptic("Starburst");
+                                        else lh.SetOptic("");
+                                        break;
+                                    case BasicFunction.FLASHING:
+                                    case BasicFunction.CAL_STEADY:
+                                        if(lh.isSmall) lh.SetOptic("Small Lineum");
+                                        else lh.SetOptic("Lineum");
+                                        break;
+                                }
+                                break;
+                            case 2:
+                                if(!lh.isSmall) lh.SetOptic("Dual Small Lineum");
+                                else lh.SetOptic("Dual Lineum");
+                                break;
+                        }
+                    }
+                }
+                break;
+            case TDOption.LG_SEVEN:
+                SetBarSize(3);
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                    if(soc.transform.position.y < 0) soc.ShowLong = true;
+                }
+                yield return new WaitForEndOfFrame();
+                foreach(LightHead lh in allHeads) {
+                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                        byte bit = lh.Bit;
+                        if(bit > 1 && bit < 10) {
+                            lh.lhd.funcs.Clear();
+                            lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
+                            lh.SetOptic("Lineum", BasicFunction.TRAFFIC);
+                        }
+                    }
+                }
+                break;
+            case TDOption.SM_EIGHT:
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                    if(soc.transform.position.y < 0) soc.ShowLong = false;
+                }
+                yield return new WaitForEndOfFrame();
+                foreach(LightHead lh in allHeads) {
+                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                        byte bit = lh.Bit;
+                        if(bit > 1 && bit < 10) {
+                            lh.lhd.funcs.Clear();
+                            lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
+                            lh.SetOptic("Starburst", BasicFunction.TRAFFIC);
+                        }
+                    }
+                }
+                break;
+            case TDOption.SM_SIX:
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                    if(soc.transform.position.y < 0) soc.ShowLong = false;
+                }
+                yield return new WaitForEndOfFrame();
+                foreach(LightHead lh in allHeads) {
+                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                        byte bit = lh.Bit;
+                        if(bit > 2 && bit < 9) {
+                            lh.lhd.funcs.Clear();
+                            lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
+                            lh.SetOptic("Starburst", BasicFunction.TRAFFIC);
+                        } else if(bit == 2 || bit == 9) {
+                            if(lh.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
+                                lh.lhd.funcs.Remove(BasicFunction.TRAFFIC);
+                                switch(lh.lhd.funcs.Count) {
+                                    case 0:
+                                        lh.SetOptic("");
+                                        break;
+                                    case 1:
+                                        switch(lh.lhd.funcs[0]) {
+                                            case BasicFunction.TAKEDOWN:
+                                            case BasicFunction.ALLEY:
+                                            case BasicFunction.STT:
+                                                if(lh.isSmall) lh.SetOptic("Starburst");
+                                                else lh.SetOptic("");
+                                                break;
+                                            case BasicFunction.FLASHING:
+                                            case BasicFunction.CAL_STEADY:
+                                                if(lh.isSmall) lh.SetOptic("Small Lineum");
+                                                else lh.SetOptic("Lineum");
+                                                break;
+                                        }
+                                        break;
+                                    case 2:
+                                        if(!lh.isSmall) lh.SetOptic("Dual Small Lineum");
+                                        else lh.SetOptic("Dual Lineum");
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+
         foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
             ll.Refresh();
         }
+
+        yield return null;
     }
 
     public void Save(string filename) {
         if(savePDF) { StartCoroutine(SavePDF(filename)); return; }
-        
+
         NbtCompound root = new NbtCompound("root");
 
         root.Add(new NbtByte("size", (byte)BarSize));
@@ -223,24 +341,24 @@ public class BarManager : MonoBehaviour {
             potential.Add(BasicFunction.FLASHING);
             switch(lh.loc) {
                 case Location.ALLEY:
-                    potential.Add(BasicFunction.FLASH_ALLEY);
+                    potential.Add(BasicFunction.ALLEY);
                     break;
                 case Location.FRONT:
-                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.TAKEDOWN);
                     potential.Add(BasicFunction.EMITTER);
                     potential.Add(BasicFunction.CAL_STEADY);
                     break;
                 case Location.REAR:
-                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.TAKEDOWN);
                     potential.Add(BasicFunction.TRAFFIC);
                     break;
                 case Location.FAR_REAR:
-                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.TAKEDOWN);
                     potential.Add(BasicFunction.STT);
                     break;
                 case Location.FRONT_CORNER:
                 case Location.REAR_CORNER:
-                    potential.Add(BasicFunction.FLASH_TAKEDOWN);
+                    potential.Add(BasicFunction.TAKEDOWN);
                     potential.Add(BasicFunction.CRUISE);
                     break;
             }
@@ -287,7 +405,7 @@ public class BarManager : MonoBehaviour {
         LightLabel.showBit = false;
 
         Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
-        
+
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
 
@@ -299,7 +417,7 @@ public class BarManager : MonoBehaviour {
                 br = cam.WorldToScreenPoint(rp.transform.position);
             }
         }
-        
+
         Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
 
         yield return StartCoroutine(OverviewPage(doc.AddPage(), capRect));
@@ -330,7 +448,7 @@ public class BarManager : MonoBehaviour {
     public IEnumerator OverviewPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
-        
+
         XFont courier = new XFont("Courier New", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont courierSm = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
         XFont caliLg = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
@@ -385,7 +503,7 @@ public class BarManager : MonoBehaviour {
         tf.DrawString(custName.text, caliLg, XBrushes.Black, new XRect(0.6, top + 0.2, 3.0, 0.2));
         tf.DrawString(orderNum.text, courier, XBrushes.Black, new XRect(4.05, top + 0.2, 1.75, 0.2));
         tf.DrawString(System.DateTime.Now.ToString("MMM dd, yyyy"), courier, XBrushes.Black, new XRect(6.25, top + 0.2, 3.0, 0.2));
-        
+
         tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
         tf.DrawString(notes.text, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
 
