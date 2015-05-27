@@ -31,6 +31,25 @@ public class BarManager : MonoBehaviour {
     public FileBrowser fb;
     private string barFilePath;
 
+    public string BarModel {
+        get {
+            switch(BarSize) {
+                case 0:
+                    return "1300";
+                case 1:
+                    return "1400";
+                case 2:
+                    return "1500";
+                case 3:
+                    return "1550";
+                case 4:
+                    return "16xx";
+                default:
+                    return "????";
+            }
+        }
+    }
+
     void Awake() {
         patts = new NbtCompound("pats");
 
@@ -385,8 +404,8 @@ public class BarManager : MonoBehaviour {
     }
 
     public void JustSavePDF() {
-        Directory.CreateDirectory("output");
-        StartCoroutine(SavePDF("output\\output " + DateTime.Now.ToString("MMddyy HHmmssf") + ".pdf"));
+        Directory.CreateDirectory(Application.dataPath + "\\..\\output");
+        StartCoroutine(SavePDF(Application.dataPath + "\\..\\output\\output " + DateTime.Now.ToString("MMddyy HHmmssf") + ".pdf"));
     }
 
     public IEnumerator SavePDF(string filename) {
@@ -439,8 +458,9 @@ public class BarManager : MonoBehaviour {
         } catch(IOException) {
             ErrorText.inst.DispError("Unable to produce PDF.  Do you have the PDF open elsewhere, by chance?");
         } finally {
+            if(savePDF)
+                fb.currFile = barFilePath;
             savePDF = false;
-            fb.currFile = barFilePath;
         }
         yield return null;
     }
@@ -453,6 +473,7 @@ public class BarManager : MonoBehaviour {
         XFont courierSm = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
         XFont caliLg = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+        XFont caliSmBold = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
         LightLabel.showParts = false;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
@@ -476,9 +497,12 @@ public class BarManager : MonoBehaviour {
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Star 1000", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-        tf.DrawString("Model 1650", courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Model " + BarModel, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
 
         tf.Alignment = XParagraphAlignment.Left;
+
+        tf.DrawString("Description", caliSmBold, XBrushes.Black, new XRect(1.4, 3.39, 0.5, 0.1));
+
         for(int i = 0; i < headNumber.Length; i++) {
             LightHead lh = headNumber[i];
             tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, 3.5 + (i * 0.10), 1.2, 0.10));
@@ -507,6 +531,9 @@ public class BarManager : MonoBehaviour {
         tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
         tf.DrawString(notes.text, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
 
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+
         yield return null;
     }
 
@@ -532,9 +559,12 @@ public class BarManager : MonoBehaviour {
         File.WriteAllBytes("tempgen\\part.png", tex.EncodeToPNG());
 
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
-        gfx.DrawImage(XImage.FromFile("tempgen\\part.png"), 0.5, 1, tex.width * scale, tex.height * scale);
+        gfx.DrawImage(XImage.FromFile("tempgen\\part.png"), 0.5, 1.0, tex.width * scale, tex.height * scale);
 
         tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Model " + BarModel, new XFont("Courier New", new XUnit(24, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.5, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Production Copy - Bill of Materials", caliBold, XBrushes.Black, new XRect(0.5, 0.8, p.Width.Inch - 1.0, 1.0));
+
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, 3.3, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Component", caliBold, XBrushes.Black, new XRect(1.5, 3.3, 1.0, 0.2));
@@ -565,6 +595,9 @@ public class BarManager : MonoBehaviour {
             tf.DrawString((descs[part].lhd.optic.styles.Count > 1 ? descs[part].lhd.style.name + " " : "") + descs[part].lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
             top += 0.15;
         }
+
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
 
         yield return null;
     }
