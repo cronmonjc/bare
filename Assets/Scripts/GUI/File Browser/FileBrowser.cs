@@ -18,8 +18,9 @@ public class FileBrowser : MonoBehaviour {
     [NonSerialized]
     public string currDir = "";
 
-    [System.Serializable]
-    public class FileEvent : UnityEvent<string> { }
+    public bool IsOpen {
+        get { return gameObject.activeInHierarchy; }
+    }
 
     [Space(20f)]
     [Header("Callbacks")]
@@ -28,7 +29,12 @@ public class FileBrowser : MonoBehaviour {
 
     void Awake() {
         drives = Directory.GetLogicalDrives();
-        Navigate(Directory.GetCurrentDirectory());
+
+        if(Application.isWebPlayer) {
+            Navigate(Application.persistentDataPath);
+        } else {
+            Navigate(Directory.GetCurrentDirectory());
+        }
     }
 
     public void BeginSaveAs() {
@@ -125,3 +131,6 @@ public class FileBrowser : MonoBehaviour {
         ActOnFile(FileItem.SelectedFile);
     }
 }
+
+[System.Serializable]
+public class FileEvent : UnityEvent<string> { }
