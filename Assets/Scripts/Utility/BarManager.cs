@@ -441,6 +441,7 @@ public class BarManager : MonoBehaviour {
 
         yield return StartCoroutine(OverviewPage(doc.AddPage(), capRect));
         yield return StartCoroutine(PartsPage(doc.AddPage(), capRect));
+        yield return StartCoroutine(WiringPage(doc.AddPage(), capRect));
 
         LightLabel.showParts = false;
         CanvasDisabler.CanvasEnabled = true;
@@ -549,6 +550,7 @@ public class BarManager : MonoBehaviour {
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
         }
+        LightLabel.showParts = false;
 
         Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
         yield return new WaitForEndOfFrame();
@@ -600,6 +602,28 @@ public class BarManager : MonoBehaviour {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
 
         yield return null;
+    }
+
+    public IEnumerator WiringPage(PdfPage p, Rect capRect) {
+        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+        XTextFormatter tf = new XTextFormatter(gfx);
+
+        LightLabel.showWire = true;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
+        LightLabel.showWire = false;
+
+        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        Directory.CreateDirectory("tempgen");
+        File.WriteAllBytes("tempgen\\wire.png", tex.EncodeToPNG());
+
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
+        gfx.DrawImage(XImage.FromFile("tempgen\\wire.png"), 0.5, 1.0, tex.width * scale, tex.height * scale);
     }
 
     public static XPoint[] XPointArray(params Vector2[] vecs) {

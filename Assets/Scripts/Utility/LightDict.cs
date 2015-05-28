@@ -1,9 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using System.IO;
-
 using fNbt;
+using UnityEngine;
 
 public class LightDict : MonoBehaviour {
     public static LightDict inst;
