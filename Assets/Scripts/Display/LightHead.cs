@@ -14,8 +14,31 @@ public class LightHead : MonoBehaviour {
 
     public Dictionary<AdvFunction, Pattern> patterns;
 
-    public List<AdvFunction> CapableFunctions {
+    public List<AdvFunction> CapableAdvFunctions {
         get { return LightDict.inst.capableFunctions[loc]; }
+    }
+
+    public List<BasicFunction> CapableBasicFunctions {
+        get {
+            switch(loc) {
+                case Location.ALLEY:
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.ALLEY });
+                case Location.FRONT:
+                    if(isSmall)
+                        return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.CAL_STEADY });
+                    else
+                        return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.EMITTER, BasicFunction.CAL_STEADY });
+                case Location.FRONT_CORNER:
+                case Location.REAR_CORNER:
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.CRUISE });
+                case Location.REAR:
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.TRAFFIC });
+                case Location.FAR_REAR:
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.STT });
+                default:
+                    return new List<BasicFunction>();
+            }
+        }
     }
 
     [System.NonSerialized]
@@ -94,7 +117,7 @@ public class LightHead : MonoBehaviour {
     }
 
     public bool IsUsingFunction(AdvFunction f) {
-        if(!CapableFunctions.Contains(f) || lhd.style == null) return false;
+        if(!CapableAdvFunctions.Contains(f) || lhd.style == null) return false;
         NbtCompound patts = FindObjectOfType<BarManager>().patts;
 
         string cmpdName = BarManager.GetFnString(transform, f);
@@ -159,12 +182,100 @@ public class LightHead : MonoBehaviour {
 
     }
 
+    public void AddBasicFunction(BasicFunction func, bool doDefault = true) {
+        if(CapableBasicFunctions.Contains(func)) {
+            lhd.funcs.Add(func);
+        }
+    }
+
+    public void RemoveBasicFunction(BasicFunction func) {
+        if(lhd.funcs.Contains(func)) {
+            lhd.funcs.Remove(func);
+            RefreshBasicFuncDefault();
+        }
+    }
+
+    public void RefreshBasicFuncDefault() {
+        switch(lhd.funcs.Count) {
+            case 1:
+                switch(lhd.funcs[0]) {
+                    case BasicFunction.EMITTER:
+                        SetOptic("Emitter");
+                        return;
+                    case BasicFunction.STT:
+                    case BasicFunction.TAKEDOWN:
+                    case BasicFunction.ALLEY:
+                        if(isSmall) {
+                            SetOptic("Starburst", lhd.funcs[0]);
+                        } else {
+                            SetOptic("Lineum", lhd.funcs[0]);
+                        }
+                        return;
+                    case BasicFunction.CAL_STEADY:
+                    case BasicFunction.TRAFFIC:
+                    case BasicFunction.FLASHING:
+                        if(isSmall) {
+                            SetOptic("Small Lineum", lhd.funcs[0]);
+                        } else {
+                            SetOptic("Lineum", lhd.funcs[0]);
+                        }
+                        return;
+                    default:
+                        SetOptic("");
+                        return;
+                }
+            case 2:
+                if(lhd.funcs.Contains(BasicFunction.CRUISE)) {
+                    BasicFunction test = BasicFunction.NULL;
+                    if(lhd.funcs[0] == BasicFunction.CRUISE) {
+                        test = lhd.funcs[1];
+                    } else {
+                        test = lhd.funcs[0];
+                    }
+
+                    if(test == BasicFunction.FLASHING || test == BasicFunction.TAKEDOWN) {
+                        SetOptic("Lineum", test);
+                        return;
+                    } else {
+                        SetOptic("");
+                        return;
+                    }
+                } else if(lhd.funcs.Contains(BasicFunction.EMITTER)) {
+                    lhd.funcs.RemoveAt(0);
+                    RefreshBasicFuncDefault();
+                } else if(lhd.funcs.Contains(BasicFunction.FLASHING) && (lhd.funcs.Contains(BasicFunction.TAKEDOWN) || lhd.funcs.Contains(BasicFunction.ALLEY))) {
+                    SetOptic("Dual " + (isSmall ? "Small" : "") + " Lineum", BasicFunction.TAKEDOWN);
+                    // TODO: Offer single and dual
+                } else {
+                    // TODO: Offer dual
+                }
+                return;
+            case 3:
+                if(lhd.funcs[2] == BasicFunction.EMITTER) {
+                    lhd.funcs.RemoveRange(0, 2);
+                    RefreshBasicFuncDefault();
+                } else {
+                    // TODO: Offer dual
+                }
+                return;
+            case 4:
+                lhd.funcs.RemoveRange(0, 3);
+                RefreshBasicFuncDefault();
+                return;
+            default:
+                SetOptic("");
+                return;
+        }
+    }
+
     public void SetOptic(OpticNode newOptic) {
         if(newOptic == null) SetOptic("");
         else SetOptic(newOptic.name);
     }
 
     public void SetOptic(string newOptic, BasicFunction fn = BasicFunction.NULL, bool doDefault = true) {
+        // TODO: Cleanup
+
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {

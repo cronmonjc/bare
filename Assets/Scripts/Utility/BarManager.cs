@@ -157,6 +157,7 @@ public class BarManager : MonoBehaviour {
             case TDOption.NONE:
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
+                        // TODO: CLEANUP
                         lh.lhd.funcs.Remove(BasicFunction.TRAFFIC);
                         switch(lh.lhd.funcs.Count) {
                             case 0:
@@ -194,6 +195,7 @@ public class BarManager : MonoBehaviour {
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
+                        // TODO: CLEANUP
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
                             lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
@@ -210,6 +212,7 @@ public class BarManager : MonoBehaviour {
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
+                        // TODO: CLEANUP
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
                             lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
@@ -226,6 +229,7 @@ public class BarManager : MonoBehaviour {
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
+                        // TODO: CLEANUP
                         if(bit > 2 && bit < 9) {
                             lh.lhd.funcs.Clear();
                             lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
@@ -336,6 +340,7 @@ public class BarManager : MonoBehaviour {
             NbtCompound lightCmpd = alpha as NbtCompound;
             LightHead lh = lights[lightCmpd["path"].StringValue];
 
+            // TODO: CLEANUP
             if(lightCmpd.Contains("optc")) {
                 LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
                 string partNum = lightCmpd["optc"].StringValue;

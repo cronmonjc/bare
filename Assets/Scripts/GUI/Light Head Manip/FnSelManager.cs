@@ -40,7 +40,7 @@ public class FnSelManager : MonoBehaviour {
                     ErrorText.inst.DispError(lb.GetPath() + " can't find a LightHead.");
                     continue;
                 }
-                if(lh.CapableFunctions.Contains(fn.fn)) {
+                if(lh.CapableAdvFunctions.Contains(fn.fn)) {
                     fn.gameObject.SetActive(true);
 
                     if(lh.IsUsingFunction(fn.fn)) {

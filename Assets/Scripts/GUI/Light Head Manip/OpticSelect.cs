@@ -5,6 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// GUI Item.  Used to allow the user to select the Type they want from a list.
 /// </summary>
+// TODO: CLEANUP
 public class OpticSelect : MonoBehaviour {
     /// <summary>
     /// The next stage.

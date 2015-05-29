@@ -5,6 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// GUI Item.  Used to allow the user to select the Function they want from a list.
 /// </summary>
+// TODO: CLEANUP
 public class FunctionSelect : MonoBehaviour {
     /// <summary>
     /// The next stage.
@@ -129,6 +130,7 @@ public class FunctionSelect : MonoBehaviour {
         opticSelect.gameObject.SetActive(opticSelect.fn.Count > 0);
         bool change = false;
         foreach(LightHead lh in BarManager.inst.allHeads) {
+            // TODO: CLEANUP
             if(lh.gameObject.activeInHierarchy && lh.Selected) {
                 if(add && !lh.lhd.funcs.Contains(fn)) {
                     if(fn == BasicFunction.EMITTER) {

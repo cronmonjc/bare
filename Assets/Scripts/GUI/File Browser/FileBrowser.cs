@@ -118,7 +118,7 @@ public class FileBrowser : MonoBehaviour {
     }
 
     public void DeselectFile() {
-        if(!FileItem.Clicking) {
+        if(!FileItem.Clicking && FileItem.SelectedFile != null) {
             ColorBlock cb = FileItem.SelectedFile.colors;
             cb.normalColor = cb.highlightedColor = new Color(1f, 1f, 1f, 0f);
             FileItem.SelectedFile.colors = cb;
