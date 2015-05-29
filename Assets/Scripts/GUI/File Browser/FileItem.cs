@@ -8,6 +8,7 @@ public class FileItem : Selectable, IPointerClickHandler {
     public bool IsDir = false;
     public bool IsRenaming = false;
     public static FileItem SelectedFile;
+    public static bool Clicking = false;
 
     public string myPath;
 
@@ -55,8 +56,10 @@ public class FileItem : Selectable, IPointerClickHandler {
             cb.highlightedColor = new Color(1f, 0.75f, 0f, 0.5f);
             colors = cb;
 
+            Clicking = true;
             if(!IsDir)
                 FindObjectOfType<FileField>().SetText(this);
+            Clicking = false;
         }
     }
 

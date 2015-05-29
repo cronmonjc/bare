@@ -3,6 +3,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
+using UnityEngine.UI;
 
 public class FileBrowser : MonoBehaviour {
     public enum State {
@@ -17,6 +18,8 @@ public class FileBrowser : MonoBehaviour {
     public string currFile = "";
     [NonSerialized]
     public string currDir = "";
+
+    private FileListing fl;
 
     public bool IsOpen {
         get { return gameObject.activeInHierarchy; }
@@ -41,7 +44,10 @@ public class FileBrowser : MonoBehaviour {
         if(!gameObject.activeInHierarchy) {
             BrowserState = State.SAVE;
             gameObject.SetActive(true);
-            transform.FindChild("FileField").FindChild("Act").FindChild("Text").GetComponent<UnityEngine.UI.Text>().text = "Save";
+            transform.FindChild("FileField").FindChild("Act").FindChild("Text").GetComponent<Text>().text = "Save";
+
+            if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+            fl.Refresh();
         }
     }
 
@@ -59,7 +65,10 @@ public class FileBrowser : MonoBehaviour {
         if(!gameObject.activeInHierarchy) {
             BrowserState = State.OPEN;
             gameObject.SetActive(true);
-            transform.FindChild("FileField").FindChild("Act").FindChild("Text").GetComponent<UnityEngine.UI.Text>().text = "Open";
+            transform.FindChild("FileField").FindChild("Act").FindChild("Text").GetComponent<Text>().text = "Open";
+
+            if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+            fl.Refresh();
         }
     }
 
@@ -68,7 +77,8 @@ public class FileBrowser : MonoBehaviour {
             currDir = str;
         }
         FindObjectOfType<DirectoryTree>().Refresh();
-        FindObjectOfType<FileListing>().Refresh();
+        if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+        fl.Refresh();
     }
 
     public void NewFolder() {
@@ -77,7 +87,8 @@ public class FileBrowser : MonoBehaviour {
             Directory.CreateDirectory(cleanCurrDir + "/New Folder");
         }
         FindObjectOfType<DirectoryTree>().Refresh();
-        FindObjectOfType<FileListing>().Refresh();
+        if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+        fl.Refresh();
     }
 
     public void RenameFile() {
@@ -90,7 +101,7 @@ public class FileBrowser : MonoBehaviour {
         if(FileItem.SelectedFile != null) {
             Transform deleteconfirm = transform.FindChild("DeleteConfirm");
             deleteconfirm.gameObject.SetActive(true);
-            deleteconfirm.FindChild("head").FindChild("pathlabel").GetComponent<UnityEngine.UI.Text>().text = FileItem.SelectedFile.myPath;
+            deleteconfirm.FindChild("head").FindChild("pathlabel").GetComponent<Text>().text = FileItem.SelectedFile.myPath;
         }
     }
 
@@ -102,6 +113,15 @@ public class FileBrowser : MonoBehaviour {
                 File.Delete(FileItem.SelectedFile.myPath);
             }
             GameObject.DestroyImmediate(FileItem.SelectedFile.gameObject);
+            FileItem.SelectedFile = null;
+        }
+    }
+
+    public void DeselectFile() {
+        if(!FileItem.Clicking) {
+            ColorBlock cb = FileItem.SelectedFile.colors;
+            cb.normalColor = cb.highlightedColor = new Color(1f, 1f, 1f, 0f);
+            FileItem.SelectedFile.colors = cb;
             FileItem.SelectedFile = null;
         }
     }
@@ -123,7 +143,7 @@ public class FileBrowser : MonoBehaviour {
     }
 
     public void ActOnFile(FileItem fileItem) {
-        if(fileItem == null) ActOnFile(GetComponentInChildren<FileField>().GetComponent<UnityEngine.UI.InputField>().textComponent.text, false);
+        if(fileItem == null) ActOnFile(GetComponentInChildren<FileField>().GetComponent<InputField>().textComponent.text, false);
         else ActOnFile(fileItem.myPath, true);
     }
 

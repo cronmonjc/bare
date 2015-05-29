@@ -128,7 +128,7 @@ public class LightLabel : MonoBehaviour {
                 }
 
                 if(lh.lhd.style.isDualColor) {
-                    t = t + " C &\n";
+                    t = t + " C & ";
                     if(transform.position.y < 0) {
                         if(transform.position.x > 0) {
                             t = t + "P10-";
