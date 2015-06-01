@@ -281,7 +281,6 @@ public class LightHead : MonoBehaviour {
     }
 
     public void SetOptic(string newOptic, BasicFunction fn = BasicFunction.NULL, bool doDefault = true) {
-        // TODO: Cleanup
 
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
@@ -312,7 +311,7 @@ public class LightHead : MonoBehaviour {
                         break;
                     case BasicFunction.STT:
                         foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
+                            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
                                 break;
                             }
@@ -320,7 +319,7 @@ public class LightHead : MonoBehaviour {
                         break;
                     case BasicFunction.TRAFFIC:
                         foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
+                            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("a" + (lhd.style != null ? lhd.style.partSuffix : "c"), System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
                                 break;
                             }
