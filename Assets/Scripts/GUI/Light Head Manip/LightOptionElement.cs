@@ -52,7 +52,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
 
     void Update() {
         if(funcSel != null) {
-            t.isOn = funcSel.opticSelect.fn.Contains(fn);
+            t.isOn = funcSel.selFuncs.Contains(fn);
             t.image.color = Color.white;
             t.interactable = true;
             text.color = Color.black;
@@ -61,11 +61,8 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                 case BasicFunction.FLASHING:
                     name = "Flashing";
                     break;
-                case BasicFunction.TAKEDOWN:
-                    name = "Takedown";
-                    break;
-                case BasicFunction.ALLEY:
-                    name = "Alley";
+                case BasicFunction.STEADY:
+                    name = "Steady Burn";
                     break;
                 case BasicFunction.EMITTER:
                     name = "Emitter";
@@ -134,7 +131,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
             funcSel.SetSelection(fn);
         else if(optSel != null)
             optSel.SetSelection(optNode);
-        else if(stySel != null)
+        else if(stySel != null && styNode.selectable)
             stySel.SetSelection(styNode);
     }
 }

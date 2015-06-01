@@ -7,7 +7,7 @@ public class LargeFSBSTT : IssueChecker {
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(!lh.gameObject.activeInHierarchy) continue;
             if(lh.isSmall) continue;
-            if(lh.lhd.funcs.Contains(BasicFunction.TAKEDOWN) || lh.lhd.funcs.Contains(BasicFunction.ALLEY) || lh.lhd.funcs.Contains(BasicFunction.STT)) {
+            if(lh.lhd.funcs.Contains(BasicFunction.STEADY) || lh.lhd.funcs.Contains(BasicFunction.STT)) {
                 return true;
             }
         }

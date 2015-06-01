@@ -12,6 +12,11 @@ public class LightHead : MonoBehaviour {
     public bool isSmall;
     public LightHeadDefinition lhd;
 
+    [System.NonSerialized]
+    public bool useSingle;
+    [System.NonSerialized]
+    public bool useDual;
+
     public Dictionary<AdvFunction, Pattern> patterns;
 
     public List<AdvFunction> CapableAdvFunctions {
@@ -22,19 +27,19 @@ public class LightHead : MonoBehaviour {
         get {
             switch(loc) {
                 case Location.ALLEY:
-                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.ALLEY });
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY });
                 case Location.FRONT:
                     if(isSmall)
-                        return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.CAL_STEADY });
+                        return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.CAL_STEADY });
                     else
-                        return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.EMITTER, BasicFunction.CAL_STEADY });
+                        return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.EMITTER, BasicFunction.CAL_STEADY });
                 case Location.FRONT_CORNER:
                 case Location.REAR_CORNER:
-                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.CRUISE });
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.CRUISE });
                 case Location.REAR:
-                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.TRAFFIC });
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.TRAFFIC });
                 case Location.FAR_REAR:
-                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.TAKEDOWN, BasicFunction.STT });
+                    return new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.STT });
                 default:
                     return new List<BasicFunction>();
             }
@@ -183,8 +188,9 @@ public class LightHead : MonoBehaviour {
     }
 
     public void AddBasicFunction(BasicFunction func, bool doDefault = true) {
-        if(CapableBasicFunctions.Contains(func)) {
+        if(CapableBasicFunctions.Contains(func) && !lhd.funcs.Contains(func)) {
             lhd.funcs.Add(func);
+            if(doDefault) RefreshBasicFuncDefault();
         }
     }
 
@@ -196,15 +202,16 @@ public class LightHead : MonoBehaviour {
     }
 
     public void RefreshBasicFuncDefault() {
+        useSingle = useDual = false;
         switch(lhd.funcs.Count) {
             case 1:
+                useSingle = true;
                 switch(lhd.funcs[0]) {
                     case BasicFunction.EMITTER:
                         SetOptic("Emitter");
                         return;
                     case BasicFunction.STT:
-                    case BasicFunction.TAKEDOWN:
-                    case BasicFunction.ALLEY:
+                    case BasicFunction.STEADY:
                         if(isSmall) {
                             SetOptic("Starburst", lhd.funcs[0]);
                         } else {
@@ -233,7 +240,7 @@ public class LightHead : MonoBehaviour {
                         test = lhd.funcs[0];
                     }
 
-                    if(test == BasicFunction.FLASHING || test == BasicFunction.TAKEDOWN) {
+                    if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
                         SetOptic("Lineum", test);
                         return;
                     } else {
@@ -243,11 +250,11 @@ public class LightHead : MonoBehaviour {
                 } else if(lhd.funcs.Contains(BasicFunction.EMITTER)) {
                     lhd.funcs.RemoveAt(0);
                     RefreshBasicFuncDefault();
-                } else if(lhd.funcs.Contains(BasicFunction.FLASHING) && (lhd.funcs.Contains(BasicFunction.TAKEDOWN) || lhd.funcs.Contains(BasicFunction.ALLEY))) {
-                    SetOptic("Dual " + (isSmall ? "Small" : "") + " Lineum", BasicFunction.TAKEDOWN);
-                    // TODO: Offer single and dual
+                } else if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
+                    SetOptic("Dual " + (isSmall ? "Small" : "") + " Lineum", BasicFunction.STEADY);
+                    useSingle = useDual = true;
                 } else {
-                    // TODO: Offer dual
+                    useDual = true;
                 }
                 return;
             case 3:
@@ -255,7 +262,7 @@ public class LightHead : MonoBehaviour {
                     lhd.funcs.RemoveRange(0, 2);
                     RefreshBasicFuncDefault();
                 } else {
-                    // TODO: Offer dual
+                    useDual = true;
                 }
                 return;
             case 4:
@@ -287,8 +294,7 @@ public class LightHead : MonoBehaviour {
                 }
 
                 switch(fn) {
-                    case BasicFunction.TAKEDOWN:
-                    case BasicFunction.ALLEY:
+                    case BasicFunction.STEADY:
                         foreach(StyleNode alpha in styles) {
                             if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
                                 styleToSet = alpha;
@@ -400,22 +406,30 @@ public class LightHead : MonoBehaviour {
                 //}
                 SetStyle(styleToSet);
             } else {
-                SetStyle(null);
+                SetStyle("");
             }
 
         } else {
             lhd.optic = null;
-            SetStyle(null);
+            SetStyle("");
         }
 
 
     }
 
+    public void SetStyle(string newStyle) {
+        if(lhd.optic != null && newStyle.Length > 0) {
+            lhd.style = lhd.optic.styles[newStyle];
+        } else {
+            lhd.style = null;
+        }
+    }
+
     public void SetStyle(StyleNode newStyle) {
         if(newStyle == null || lhd.optic == null) {
-            lhd.style = null;
+            SetStyle("");
         } else {
-            lhd.style = lhd.optic.styles[newStyle.name];
+            SetStyle(newStyle.name);
         }
     }
     void OnDrawGizmos() {

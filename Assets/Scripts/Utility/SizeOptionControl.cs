@@ -38,9 +38,12 @@ public class SizeOptionControl : MonoBehaviour {
                     if(!alpha.Selected) {
                         alpha.Selected = lh.Selected;
                         if(lh.lhd.optic != null) {
-                            // TODO: Copy functions too
+                            alpha.lhd.funcs.Clear();
+                            foreach(BasicFunction f in lh.lhd.funcs) {
+                                alpha.AddBasicFunction(f, false);
+                            }
+
                             if(longGO.activeInHierarchy) {
-                                // TODO: CLEANUP
                                 if(lh.lhd.optic.lgEquivalent.Length > 0) {
                                     alpha.SetOptic(lh.lhd.optic.lgEquivalent, BasicFunction.NULL, false);
                                     alpha.SetStyle(lh.lhd.style);

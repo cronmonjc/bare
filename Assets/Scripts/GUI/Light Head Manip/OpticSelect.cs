@@ -5,16 +5,11 @@ using System.Collections.Generic;
 /// <summary>
 /// GUI Item.  Used to allow the user to select the Type they want from a list.
 /// </summary>
-// TODO: CLEANUP
 public class OpticSelect : MonoBehaviour {
     /// <summary>
     /// The next stage.
     /// </summary>
     public StyleSelect styleSelect;
-    /// <summary>
-    /// 
-    /// </summary>
-    public List<BasicFunction> fn;
     /// <summary>
     /// The Transform that acts as the parent to the options.
     /// </summary>
@@ -45,12 +40,15 @@ public class OpticSelect : MonoBehaviour {
 
         List<Location> locs = new List<Location>();
         bool showLong = true, showShort = true;
+        bool showDual = true, showSingle = true;
         List<LightHead> selected = new List<LightHead>();
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 selected.Add(alpha);
                 showLong &= !alpha.isSmall;
                 showShort &= alpha.isSmall;
+                showDual &= alpha.useDual;
+                showSingle &= alpha.useSingle;
 
                 if(locs.Contains(alpha.loc)) {
                     continue;
@@ -65,11 +63,11 @@ public class OpticSelect : MonoBehaviour {
         if(ln != null) {
             string[] keysArray = new List<string>(ln.optics.Keys).ToArray();
             for(int i = 0; i < keysArray.Length; i++) {
-                if(ln.optics[keysArray[i]].dual && fn.Count != 2) {
+                if(ln.optics[keysArray[i]].dual && !showDual) {
                     continue;
-                } else if(!ln.optics[keysArray[i]].dual && fn.Count != 1) {
+                } else if(!ln.optics[keysArray[i]].dual && !showSingle) {
                     continue;
-                } else if(ln.optics[keysArray[i]].name == "Emitter" ^ (fn.Count == 1 && fn[0] == BasicFunction.EMITTER)) {
+                } else if(ln.optics[keysArray[i]].name == "Emitter") {
                     continue;
                 }
 

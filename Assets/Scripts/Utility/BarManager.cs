@@ -156,33 +156,8 @@ public class BarManager : MonoBehaviour {
         switch(td) {
             case TDOption.NONE:
                 foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy && lh.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
-                        // TODO: CLEANUP
-                        lh.lhd.funcs.Remove(BasicFunction.TRAFFIC);
-                        switch(lh.lhd.funcs.Count) {
-                            case 0:
-                                lh.SetOptic("");
-                                break;
-                            case 1:
-                                switch(lh.lhd.funcs[0]) {
-                                    case BasicFunction.TAKEDOWN:
-                                    case BasicFunction.ALLEY:
-                                    case BasicFunction.STT:
-                                        if(lh.isSmall) lh.SetOptic("Starburst");
-                                        else lh.SetOptic("");
-                                        break;
-                                    case BasicFunction.FLASHING:
-                                    case BasicFunction.CAL_STEADY:
-                                        if(lh.isSmall) lh.SetOptic("Small Lineum");
-                                        else lh.SetOptic("Lineum");
-                                        break;
-                                }
-                                break;
-                            case 2:
-                                if(!lh.isSmall) lh.SetOptic("Dual Small Lineum");
-                                else lh.SetOptic("Dual Lineum");
-                                break;
-                        }
+                    if(lh.gameObject.activeInHierarchy ) {
+                        lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                     }
                 }
                 break;
@@ -195,11 +170,9 @@ public class BarManager : MonoBehaviour {
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
-                        // TODO: CLEANUP
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
-                            lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
-                            lh.SetOptic("Lineum", BasicFunction.TRAFFIC);
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
@@ -212,11 +185,9 @@ public class BarManager : MonoBehaviour {
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
-                        // TODO: CLEANUP
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
-                            lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
-                            lh.SetOptic("Starburst", BasicFunction.TRAFFIC);
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
@@ -229,39 +200,11 @@ public class BarManager : MonoBehaviour {
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
-                        // TODO: CLEANUP
                         if(bit > 2 && bit < 9) {
                             lh.lhd.funcs.Clear();
-                            lh.lhd.funcs.Add(BasicFunction.TRAFFIC);
-                            lh.SetOptic("Starburst", BasicFunction.TRAFFIC);
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         } else if(bit == 2 || bit == 9) {
-                            if(lh.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
-                                lh.lhd.funcs.Remove(BasicFunction.TRAFFIC);
-                                switch(lh.lhd.funcs.Count) {
-                                    case 0:
-                                        lh.SetOptic("");
-                                        break;
-                                    case 1:
-                                        switch(lh.lhd.funcs[0]) {
-                                            case BasicFunction.TAKEDOWN:
-                                            case BasicFunction.ALLEY:
-                                            case BasicFunction.STT:
-                                                if(lh.isSmall) lh.SetOptic("Starburst");
-                                                else lh.SetOptic("");
-                                                break;
-                                            case BasicFunction.FLASHING:
-                                            case BasicFunction.CAL_STEADY:
-                                                if(lh.isSmall) lh.SetOptic("Small Lineum");
-                                                else lh.SetOptic("Lineum");
-                                                break;
-                                        }
-                                        break;
-                                    case 2:
-                                        if(!lh.isSmall) lh.SetOptic("Dual Small Lineum");
-                                        else lh.SetOptic("Dual Lineum");
-                                        break;
-                                }
-                            }
+                            lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
@@ -340,7 +283,14 @@ public class BarManager : MonoBehaviour {
             NbtCompound lightCmpd = alpha as NbtCompound;
             LightHead lh = lights[lightCmpd["path"].StringValue];
 
-            // TODO: CLEANUP
+            byte fn = lightCmpd["func"].ByteValue;
+            lh.lhd.funcs.Clear();
+            foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
+                if(((byte)bfn & fn) != 0) {
+                    lh.AddBasicFunction(bfn, false);
+                }
+            }
+
             if(lightCmpd.Contains("optc")) {
                 LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
                 string partNum = lightCmpd["optc"].StringValue;
@@ -348,48 +298,9 @@ public class BarManager : MonoBehaviour {
                 foreach(OpticNode on in ln.optics.Values) {
                     if(on.partNumber == partNum) {
                         lh.SetOptic(on.name, BasicFunction.NULL, false);
-                        string styleName = lightCmpd["styl"].StringValue;
-                        foreach(StyleNode sn in on.styles.Values) {
-                            if(sn.name == styleName) {
-                                lh.SetStyle(sn);
-                                break;
-                            }
-                        }
+                        lh.SetStyle(lightCmpd["styl"].StringValue);
                         break;
                     }
-                }
-            }
-
-            byte fn = lightCmpd["func"].ByteValue;
-            List<BasicFunction> potential = new List<BasicFunction>();
-            potential.Add(BasicFunction.FLASHING);
-            switch(lh.loc) {
-                case Location.ALLEY:
-                    potential.Add(BasicFunction.ALLEY);
-                    break;
-                case Location.FRONT:
-                    potential.Add(BasicFunction.TAKEDOWN);
-                    potential.Add(BasicFunction.EMITTER);
-                    potential.Add(BasicFunction.CAL_STEADY);
-                    break;
-                case Location.REAR:
-                    potential.Add(BasicFunction.TAKEDOWN);
-                    potential.Add(BasicFunction.TRAFFIC);
-                    break;
-                case Location.FAR_REAR:
-                    potential.Add(BasicFunction.TAKEDOWN);
-                    potential.Add(BasicFunction.STT);
-                    break;
-                case Location.FRONT_CORNER:
-                case Location.REAR_CORNER:
-                    potential.Add(BasicFunction.TAKEDOWN);
-                    potential.Add(BasicFunction.CRUISE);
-                    break;
-            }
-            lh.lhd.funcs.Clear();
-            foreach(BasicFunction bfn in potential) {
-                if(((byte)bfn & fn) != 0) {
-                    lh.lhd.funcs.Add(bfn);
                 }
             }
         }

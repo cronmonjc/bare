@@ -59,8 +59,7 @@ public class StyleSelect : MonoBehaviour {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 foreach(BasicFunction f in alpha.lhd.funcs) {
                     switch(f) {
-                        case BasicFunction.ALLEY:
-                        case BasicFunction.TAKEDOWN:
+                        case BasicFunction.STEADY:
                             rtn &= sn.partSuffix.Contains("C");
                             break;
                         case BasicFunction.CAL_STEADY:

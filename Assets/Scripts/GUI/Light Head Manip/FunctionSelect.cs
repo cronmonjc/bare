@@ -5,7 +5,6 @@ using System.Collections.Generic;
 /// <summary>
 /// GUI Item.  Used to allow the user to select the Function they want from a list.
 /// </summary>
-// TODO: CLEANUP
 public class FunctionSelect : MonoBehaviour {
     /// <summary>
     /// The next stage.
@@ -24,6 +23,8 @@ public class FunctionSelect : MonoBehaviour {
     /// </summary>
     public CameraControl cam;
 
+    public List<BasicFunction> selFuncs, potential;
+
     public void Clear() {
         List<Transform> temp = new List<Transform>();
         foreach(Transform alpha in menu) {
@@ -39,32 +40,17 @@ public class FunctionSelect : MonoBehaviour {
     public void Refresh() {
         Clear();
 
-        List<BasicFunction> potential = new List<BasicFunction>();
-        potential.Add(BasicFunction.FLASHING);
+        if(selFuncs == null) selFuncs = new List<BasicFunction>();
+        else selFuncs.Clear();
+        if(potential == null) potential = new List<BasicFunction>();
+        else potential.Clear();
+
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
-                switch(alpha.loc) {
-                    case Location.ALLEY:
-                        if(!potential.Contains(BasicFunction.ALLEY)) potential.Add(BasicFunction.ALLEY);
-                        continue;
-                    case Location.FRONT:
-                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
-                        if(!potential.Contains(BasicFunction.EMITTER) && !alpha.isSmall) potential.Add(BasicFunction.EMITTER);
-                        if(!potential.Contains(BasicFunction.CAL_STEADY)) potential.Add(BasicFunction.CAL_STEADY);
-                        continue;
-                    case Location.REAR:
-                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
-                        if(!potential.Contains(BasicFunction.TRAFFIC)) potential.Add(BasicFunction.TRAFFIC);
-                        continue;
-                    case Location.FAR_REAR:
-                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
-                        if(!potential.Contains(BasicFunction.STT)) potential.Add(BasicFunction.STT);
-                        continue;
-                    case Location.FRONT_CORNER:
-                    case Location.REAR_CORNER:
-                        if(!potential.Contains(BasicFunction.TAKEDOWN)) potential.Add(BasicFunction.TAKEDOWN);
-                        if(!potential.Contains(BasicFunction.CRUISE)) potential.Add(BasicFunction.CRUISE);
-                        continue;
+                foreach(BasicFunction fn in alpha.CapableBasicFunctions) {
+                    if(!potential.Contains(fn)) {
+                        potential.Add(fn);
+                    }
                 }
             }
         }
@@ -87,161 +73,56 @@ public class FunctionSelect : MonoBehaviour {
             newbie.GetComponent<LightOptionElement>().funcSel = this;
         }
 
-        opticSelect.fn.Clear();
-        opticSelect.fn.AddRange(potential);
         foreach(LightHead alpha in cam.OnlyCamSelected) {
-            if(alpha.lhd.funcs.Count == 0) {
-                opticSelect.fn.Clear();
-                break;
-            }
-            foreach(BasicFunction f in new List<BasicFunction>(opticSelect.fn)) {
-                if(!alpha.lhd.funcs.Contains(f)) {
-                    opticSelect.fn.Remove(f);
+            foreach(BasicFunction f in potential) {
+                if(alpha.lhd.funcs.Contains(f) && !selFuncs.Contains(f)) {
+                    selFuncs.Add(f);
                 }
             }
         }
-        if(opticSelect.fn.Count > 0) {
-            opticSelect.Refresh();
+        if(selFuncs.Count > 1) {
             opticSelect.gameObject.SetActive(true);
+            opticSelect.Refresh();
+        } else {
+            opticSelect.gameObject.SetActive(false);
         }
 
         LayoutRebuilder.MarkLayoutForRebuild(menu);
     }
 
     public void SetSelection(BasicFunction fn) {
-        bool add = true;
+        bool add = false;
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(lh.gameObject.activeInHierarchy && lh.Selected) {
-                if(lh.lhd.funcs.Contains(fn)) add = false;
+                if(!lh.lhd.funcs.Contains(fn)) add = true;
             }
         }
 
-        if(add && fn == BasicFunction.EMITTER) {
-            opticSelect.fn.Clear();
-            opticSelect.fn.Add(fn);
-        } else if(add) {
-            if(opticSelect.fn.Contains(BasicFunction.EMITTER)) {
-                opticSelect.fn.Remove(BasicFunction.EMITTER);
-            }
-            opticSelect.fn.Add(fn);
-        } else
-            opticSelect.fn.Remove(fn);
-
-        opticSelect.gameObject.SetActive(opticSelect.fn.Count > 0);
-        bool change = false;
         foreach(LightHead lh in BarManager.inst.allHeads) {
-            // TODO: CLEANUP
             if(lh.gameObject.activeInHierarchy && lh.Selected) {
-                if(add && !lh.lhd.funcs.Contains(fn)) {
-                    if(fn == BasicFunction.EMITTER) {
-                        if(lh.loc == Location.FRONT && !lh.isSmall) {
-                            lh.lhd.funcs.Clear();
-                            lh.lhd.funcs.Add(fn);
-                            lh.SetOptic("Emitter", fn);
-                            change = true;
-                        }
-                    } else {
-                        if(lh.lhd.funcs.Contains(BasicFunction.EMITTER)) {
-                            lh.lhd.funcs.Remove(BasicFunction.EMITTER);
-                        }
-
-                        List<BasicFunction> potential = new List<BasicFunction>();
-                        potential.Add(BasicFunction.FLASHING);
-                        switch(lh.loc) {
-                            case Location.ALLEY:
-                                potential.Add(BasicFunction.ALLEY);
-                                break;
-                            case Location.FRONT:
-                                potential.Add(BasicFunction.TAKEDOWN);
-                                potential.Add(BasicFunction.CAL_STEADY);
-                                break;
-                            case Location.REAR:
-                                potential.Add(BasicFunction.TAKEDOWN);
-                                potential.Add(BasicFunction.TRAFFIC);
-                                break;
-                            case Location.FAR_REAR:
-                                potential.Add(BasicFunction.TAKEDOWN);
-                                potential.Add(BasicFunction.STT);
-                                break;
-                            case Location.FRONT_CORNER:
-                            case Location.REAR_CORNER:
-                                potential.Add(BasicFunction.TAKEDOWN);
-                                potential.Add(BasicFunction.CRUISE);
-                                break;
-                        }
-                        if(potential.Contains(fn)) {
-                            lh.lhd.funcs.Add(fn);
-
-                            if(lh.lhd.funcs.Count == 2) {
-                                if(lh.isSmall) {
-                                    lh.SetOptic("Dual Small Lineum");
-                                } else {
-                                    lh.SetOptic("Dual Lineum");
-                                }
-                            } else if(lh.lhd.funcs.Count == 1) {
-                                switch(fn) {
-                                    case BasicFunction.TAKEDOWN:
-                                    case BasicFunction.ALLEY:
-                                    case BasicFunction.STT:
-                                    case BasicFunction.TRAFFIC:
-                                        if(lh.isSmall) lh.SetOptic("Starburst", fn);
-                                        else lh.SetOptic("");
-                                        break;
-                                    case BasicFunction.FLASHING:
-                                    case BasicFunction.CAL_STEADY:
-                                        if(lh.isSmall) lh.SetOptic("Small Lineum", fn);
-                                        else lh.SetOptic("Lineum", fn);
-                                        break;
-                                }
-                            }
-                        }
-                        change = true;
-                    }
-                } else if(!add && lh.lhd.funcs.Contains(fn)) {
-                    lh.lhd.funcs.Remove(fn);
-
-                    if(lh.lhd.funcs.Count == 0) {
-                        lh.SetOptic("");
-                    } else if(lh.lhd.funcs.Count == 1) {
-                        switch(lh.lhd.funcs[0]) {
-                            case BasicFunction.TAKEDOWN:
-                            case BasicFunction.ALLEY:
-                            case BasicFunction.STT:
-                            case BasicFunction.TRAFFIC:
-                                if(lh.isSmall) lh.SetOptic("Starburst", fn);
-                                else lh.SetOptic("");
-                                break;
-                            case BasicFunction.FLASHING:
-                            case BasicFunction.CAL_STEADY:
-                                if(lh.isSmall) lh.SetOptic("Small Lineum", fn);
-                                else lh.SetOptic("Lineum", fn);
-                                break;
-                        }
-                    }
-                    change = true;
+                if(add) {
+                    lh.AddBasicFunction(fn);
+                } else {
+                    lh.RemoveBasicFunction(fn);
                 }
             }
         }
-        while(opticSelect.fn.Count > 2) {
-            if(opticSelect.fn.Contains(BasicFunction.CRUISE) && opticSelect.fn.Count == 3) break;
 
-            fn = opticSelect.fn[0];
-            if(fn == BasicFunction.CRUISE) {
-                fn = opticSelect.fn[1];
-            }
-            foreach(LightHead lh in BarManager.inst.allHeads) {
-                if(lh.gameObject.activeInHierarchy && lh.Selected) {
-                    if(lh.lhd.funcs.Contains(fn)) {
-                        lh.lhd.funcs.Remove(fn);
-                        change = true;
-                    }
+
+        selFuncs.Clear();
+
+        foreach(LightHead alpha in cam.OnlyCamSelected) {
+            foreach(BasicFunction f in potential) {
+                if(alpha.lhd.funcs.Contains(f) && !selFuncs.Contains(f)) {
+                    selFuncs.Add(f);
                 }
             }
-            opticSelect.fn.RemoveAt(0);
         }
-
-        if(change) {
+        if(selFuncs.Count > 1) {
+            opticSelect.gameObject.SetActive(true);
             opticSelect.Refresh();
+        } else {
+            opticSelect.gameObject.SetActive(false);
         }
     }
 }
