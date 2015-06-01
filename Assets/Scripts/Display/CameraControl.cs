@@ -14,7 +14,8 @@ public class CameraControl : MonoBehaviour {
     public Vector2 dragStart, currMouse;
     private bool dragging;
 
-    private float partialOrtho = 2.0f;
+    [System.NonSerialized]
+    public float partialOrtho = 2.0f;
 
     public FunctionSelect fs;
     public FnSelManager fsm;

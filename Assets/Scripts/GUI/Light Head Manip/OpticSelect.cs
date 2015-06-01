@@ -57,7 +57,9 @@ public class OpticSelect : MonoBehaviour {
                 }
             }
         }
-
+        if((!showShort && !showLong) || (!showSingle && !showDual)) {
+            return;
+        }
         LocationNode ln = LightDict.inst.FetchLocation(locs.ToArray());
 
         if(ln != null) {

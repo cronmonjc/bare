@@ -365,6 +365,8 @@ public class BarManager : MonoBehaviour {
 
         LightLabel.showBit = debugBit;
 
+        cam.orthographicSize = cam.GetComponent<CameraControl>().partialOrtho;
+
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh();
         }

@@ -52,8 +52,12 @@ public class StyleSelect : MonoBehaviour {
         }
     }
 
-    private bool IsRecommended(StyleNode sn) {
+    public static bool IsRecommended(StyleNode sn) {
         bool rtn = true;
+
+        if(sn.name.Contains("Logo")) {
+            return true;
+        }
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {

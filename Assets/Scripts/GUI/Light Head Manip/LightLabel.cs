@@ -10,7 +10,7 @@ public class LightLabel : MonoBehaviour {
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showWire;
+    public static bool showParts, showBit, showWire, wireOverride;
     private StyleNode lastStyle;
 
     public bool DispError {
@@ -25,9 +25,7 @@ public class LightLabel : MonoBehaviour {
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
-        showParts = false;
-        showBit = false;
-        showWire = false;
+        showParts = showBit = showWire = wireOverride = false;
         Refresh();
     }
 
@@ -57,78 +55,7 @@ public class LightLabel : MonoBehaviour {
             if(lh.lhd.style != null) {
                 string t = prefix;
 
-                if(transform.position.y < 0) {
-                    if(transform.position.x > 0) {
-                        t = t + "P10-";
-                    } else {
-                        t = t + "P9-";
-                    }
-
-                    switch(lh.Bit) {
-                        case 5:
-                        case 6:
-                            t = t + "1";
-                            break;
-                        case 4:
-                        case 7:
-                            t = t + "2";
-                            break;
-                        case 3:
-                        case 8:
-                            t = t + "3";
-                            break;
-                        case 2:
-                        case 9:
-                            t = t + "4";
-                            break;
-                        case 1:
-                        case 10:
-                            t = t + "5";
-                            break;
-                        case 0:
-                        case 11:
-                            t = t + "6";
-                            break;
-                        default:
-                            t = t + "?";
-                            break;
-                    }
-                } else {
-                    if(transform.position.x > 0) {
-                        t = t + "P8-";
-                    } else {
-                        t = t + "P3-";
-                    }
-
-                    switch(lh.Bit) {
-                        case 5:
-                        case 6:
-                            t = t + "2";
-                            break;
-                        case 4:
-                        case 7:
-                            t = t + "3";
-                            break;
-                        case 1:
-                        case 10:
-                            t = t + "4";
-                            break;
-                        case 0:
-                        case 11:
-                            t = t + "5";
-                            break;
-                        case 12:
-                        case 13:
-                            t = t + "6";
-                            break;
-                        default:
-                            t = t + "?";
-                            break;
-                    }
-                }
-
-                if(lh.lhd.style.isDualColor) {
-                    t = t + " C & ";
+                if(!wireOverride) {
                     if(transform.position.y < 0) {
                         if(transform.position.x > 0) {
                             t = t + "P10-";
@@ -139,19 +66,27 @@ public class LightLabel : MonoBehaviour {
                         switch(lh.Bit) {
                             case 5:
                             case 6:
-                                t = t + "7";
+                                t = t + "1";
                                 break;
                             case 4:
                             case 7:
-                                t = t + "8";
+                                t = t + "2";
                                 break;
                             case 3:
                             case 8:
-                                t = t + "9";
+                                t = t + "3";
                                 break;
                             case 2:
                             case 9:
-                                t = t + "10";
+                                t = t + "4";
+                                break;
+                            case 1:
+                            case 10:
+                                t = t + "5";
+                                break;
+                            case 0:
+                            case 11:
+                                t = t + "6";
                                 break;
                             default:
                                 t = t + "?";
@@ -167,30 +102,97 @@ public class LightLabel : MonoBehaviour {
                         switch(lh.Bit) {
                             case 5:
                             case 6:
-                                t = t + "8";
+                                t = t + "2";
                                 break;
                             case 4:
                             case 7:
-                                t = t + "9";
+                                t = t + "3";
                                 break;
                             case 1:
                             case 10:
-                                t = t + "10";
+                                t = t + "4";
                                 break;
                             case 0:
                             case 11:
-                                t = t + "11";
+                                t = t + "5";
                                 break;
                             case 12:
                             case 13:
-                                t = t + "12";
+                                t = t + "6";
                                 break;
                             default:
                                 t = t + "?";
                                 break;
                         }
                     }
-                    t = t + " W";
+
+                    if(lh.lhd.style.isDualColor) {
+                        t = t + " C & ";
+                        if(transform.position.y < 0) {
+                            if(transform.position.x > 0) {
+                                t = t + "P10-";
+                            } else {
+                                t = t + "P9-";
+                            }
+
+                            switch(lh.Bit) {
+                                case 5:
+                                case 6:
+                                    t = t + "7";
+                                    break;
+                                case 4:
+                                case 7:
+                                    t = t + "8";
+                                    break;
+                                case 3:
+                                case 8:
+                                    t = t + "9";
+                                    break;
+                                case 2:
+                                case 9:
+                                    t = t + "10";
+                                    break;
+                                default:
+                                    t = t + "?";
+                                    break;
+                            }
+                        } else {
+                            if(transform.position.x > 0) {
+                                t = t + "P8-";
+                            } else {
+                                t = t + "P3-";
+                            }
+
+                            switch(lh.Bit) {
+                                case 5:
+                                case 6:
+                                    t = t + "8";
+                                    break;
+                                case 4:
+                                case 7:
+                                    t = t + "9";
+                                    break;
+                                case 1:
+                                case 10:
+                                    t = t + "10";
+                                    break;
+                                case 0:
+                                case 11:
+                                    t = t + "11";
+                                    break;
+                                case 12:
+                                case 13:
+                                    t = t + "12";
+                                    break;
+                                default:
+                                    t = t + "?";
+                                    break;
+                            }
+                        }
+                        t = t + " W";
+                    }
+                } else {
+                    t = t + "\n\n\n";
                 }
 
                 label2.text = label.text = t;

@@ -80,11 +80,12 @@ public class FunctionSelect : MonoBehaviour {
                 }
             }
         }
-        if(selFuncs.Count > 1) {
+        if(selFuncs.Count > 0) {
             opticSelect.gameObject.SetActive(true);
             opticSelect.Refresh();
         } else {
             opticSelect.gameObject.SetActive(false);
+            opticSelect.styleSelect.gameObject.SetActive(false);
         }
 
         LayoutRebuilder.MarkLayoutForRebuild(menu);
@@ -118,11 +119,12 @@ public class FunctionSelect : MonoBehaviour {
                 }
             }
         }
-        if(selFuncs.Count > 1) {
+        if(selFuncs.Count > 0) {
             opticSelect.gameObject.SetActive(true);
             opticSelect.Refresh();
         } else {
             opticSelect.gameObject.SetActive(false);
+            opticSelect.styleSelect.gameObject.SetActive(false);
         }
     }
 }

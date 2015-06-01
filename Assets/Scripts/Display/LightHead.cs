@@ -209,6 +209,7 @@ public class LightHead : MonoBehaviour {
                 switch(lhd.funcs[0]) {
                     case BasicFunction.EMITTER:
                         SetOptic("Emitter");
+                        useSingle = false;
                         return;
                     case BasicFunction.STT:
                     case BasicFunction.STEADY:
@@ -250,11 +251,10 @@ public class LightHead : MonoBehaviour {
                 } else if(lhd.funcs.Contains(BasicFunction.EMITTER)) {
                     lhd.funcs.RemoveAt(0);
                     RefreshBasicFuncDefault();
-                } else if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
-                    SetOptic("Dual " + (isSmall ? "Small" : "") + " Lineum", BasicFunction.STEADY);
-                    useSingle = useDual = true;
                 } else {
+                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
                     useDual = true;
+                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) useSingle = true;
                 }
                 return;
             case 3:
@@ -262,6 +262,7 @@ public class LightHead : MonoBehaviour {
                     lhd.funcs.RemoveRange(0, 2);
                     RefreshBasicFuncDefault();
                 } else {
+                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
                     useDual = true;
                 }
                 return;
@@ -286,51 +287,17 @@ public class LightHead : MonoBehaviour {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
-                StyleNode styleToSet = null;
 
-                if(fn == BasicFunction.NULL) {
-                    fn = lhd.funcs[0];
+                foreach(StyleNode alpha in new List<StyleNode>(styles)) {
+                    if(!StyleSelect.IsRecommended(alpha)) {
+                        styles.Remove(alpha);
+                    }
                 }
 
-                switch(fn) {
-                    case BasicFunction.STEADY:
-                        foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
-                                styleToSet = alpha;
-                                break;
-                            }
-                        }
-                        break;
-                    case BasicFunction.CAL_STEADY:
-                        foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("rc", System.StringComparison.CurrentCultureIgnoreCase)) {
-                                styleToSet = alpha;
-                                break;
-                            }
-                        }
-                        break;
-                    case BasicFunction.STT:
-                        foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase)) {
-                                styleToSet = alpha;
-                                break;
-                            }
-                        }
-                        break;
-                    case BasicFunction.TRAFFIC:
-                        foreach(StyleNode alpha in styles) {
-                            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("a" + (lhd.style != null ? lhd.style.partSuffix : "c"), System.StringComparison.CurrentCultureIgnoreCase)) {
-                                styleToSet = alpha;
-                                break;
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-
-                if(styleToSet == null && styles.Count == 1) {
-                    styleToSet = styles[0];
+                if(styles.Count == 1) {
+                    SetStyle(styles[0]);
+                } else {
+                    SetStyle("");
                 }
 
                 //AdvFunction highFunction = AdvFunction.LEVEL1;
@@ -403,7 +370,6 @@ public class LightHead : MonoBehaviour {
                 //    default:
                 //        break;
                 //}
-                SetStyle(styleToSet);
             } else {
                 SetStyle("");
             }
