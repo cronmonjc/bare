@@ -46,6 +46,8 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    public bool[] FarWire = { false, false, false, false, false };
+
     [System.NonSerialized]
     public LightLabel myLabel;
 

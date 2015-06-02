@@ -102,7 +102,7 @@ public class LightLabel : MonoBehaviour {
                         switch(lh.Bit) {
                             case 5:
                             case 6:
-                                t = t + "2";
+                                t = t + (lh.FarWire[BarManager.inst.BarSize] ? "2" : "1");
                                 break;
                             case 4:
                             case 7:
@@ -166,7 +166,7 @@ public class LightLabel : MonoBehaviour {
                             switch(lh.Bit) {
                                 case 5:
                                 case 6:
-                                    t = t + "8";
+                                    t = t + (lh.FarWire[BarManager.inst.BarSize] ? "8" : "7");
                                     break;
                                 case 4:
                                 case 7:

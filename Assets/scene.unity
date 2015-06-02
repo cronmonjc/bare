@@ -9848,7 +9848,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -27.9998932}
+  m_AnchoredPosition: {x: 0, y: 6.10351562e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &542738553
@@ -15359,6 +15359,14 @@ Prefab:
     - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
       propertyPath: bits.Array.data[4]
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[1]
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
@@ -21326,6 +21334,26 @@ Prefab:
       propertyPath: bits.Array.data[4]
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[4]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[4]
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
   m_IsPrefabParent: 0
@@ -24410,7 +24438,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2076613982}
   m_HandleRect: {fileID: 2076613981}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -29532,6 +29560,26 @@ Prefab:
     - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
       propertyPath: bits.Array.data[4]
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11469262, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[4]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11455748, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
+      propertyPath: FarWire.Array.data[4]
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
