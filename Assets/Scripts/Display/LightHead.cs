@@ -54,6 +54,8 @@ public class LightHead : MonoBehaviour {
     public byte[] bits = new byte[5];
     private TDBitChanger tbc;
 
+    public bool shouldBeTD;
+
     public byte Bit {
         get {
             if(tbc != null)
@@ -197,6 +199,12 @@ public class LightHead : MonoBehaviour {
     public void RemoveBasicFunction(BasicFunction func) {
         if(lhd.funcs.Contains(func)) {
             lhd.funcs.Remove(func);
+            if(func == BasicFunction.TRAFFIC && shouldBeTD) {
+                BarManager.inst.td = TDOption.NONE;
+                foreach(LightHead alpha in BarManager.inst.allHeads) {
+                    alpha.shouldBeTD = false;
+                }
+            }
             RefreshBasicFuncDefault();
         }
     }
@@ -291,7 +299,7 @@ public class LightHead : MonoBehaviour {
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
 
                 foreach(StyleNode alpha in new List<StyleNode>(styles)) {
-                    if(!StyleSelect.IsRecommended(alpha)) {
+                    if(!StyleSelect.IsRecommended(this, alpha)) {
                         styles.Remove(alpha);
                     }
                 }
@@ -333,7 +341,7 @@ public class LightHead : MonoBehaviour {
                 //        default: break;
                 //    }
                 //}
-                
+
                 //switch(highFunction) {
                 //    case AdvFunction.T13:
                 //        foreach(StyleNode alpha in styles) {
@@ -401,6 +409,11 @@ public class LightHead : MonoBehaviour {
     }
     void OnDrawGizmos() {
         Gizmos.DrawIcon(transform.position, "Head" + (isSmall ? "Sm" : "Lg") + ".png", true);
+        if(shouldBeTD) {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(transform.position, Vector3.one);
+            Gizmos.color = Color.white;
+        }
     }
 
     public string PartNumber {

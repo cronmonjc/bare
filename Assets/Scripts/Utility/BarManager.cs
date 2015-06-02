@@ -31,6 +31,8 @@ public class BarManager : MonoBehaviour {
     public FileBrowser fb;
     private string barFilePath;
 
+    public Slider SizeSlider;
+
     public string BarModel {
         get {
             switch(BarSize) {
@@ -134,6 +136,15 @@ public class BarManager : MonoBehaviour {
     }
 
     public void SetBarSize(int to) {
+        td = TDOption.NONE;
+        SizeSlider.value = to;
+
+        foreach(LightHead lh in allHeads) {
+            if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+            }
+        }
+
         if(to < 5 && to > -1) {
             BarSize = to;
             foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
@@ -146,26 +157,32 @@ public class BarManager : MonoBehaviour {
         }
     }
 
-    public void SetTDOption(int to) {
-        td = (TDOption)to;
+    public void SetTDOption(TDOption to) {
+        td = to;
 
         StartCoroutine(SetTDOption());
+    }
+
+    public void SetTDOption(int to) {
+        SetTDOption((TDOption)to);
     }
 
     public IEnumerator SetTDOption() {
         switch(td) {
             case TDOption.NONE:
                 foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy ) {
+                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+                        lh.shouldBeTD = false;
                     }
                 }
                 break;
             case TDOption.LG_SEVEN:
-                SetBarSize(3);
+                if(BarSize != 3) SetBarSize(3);
                 foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                     if(soc.transform.position.y < 0) soc.ShowLong = true;
                 }
+                yield return new WaitForEndOfFrame();
                 yield return new WaitForEndOfFrame();
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
@@ -173,6 +190,7 @@ public class BarManager : MonoBehaviour {
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
                             lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                            lh.shouldBeTD = true;
                         }
                     }
                 }
@@ -182,12 +200,14 @@ public class BarManager : MonoBehaviour {
                     if(soc.transform.position.y < 0) soc.ShowLong = false;
                 }
                 yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
                             lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                            lh.shouldBeTD = true;
                         }
                     }
                 }
@@ -197,14 +217,72 @@ public class BarManager : MonoBehaviour {
                     if(soc.transform.position.y < 0) soc.ShowLong = false;
                 }
                 yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
                 foreach(LightHead lh in allHeads) {
                     if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
                         byte bit = lh.Bit;
                         if(bit > 2 && bit < 9) {
                             lh.lhd.funcs.Clear();
                             lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                            lh.shouldBeTD = true;
                         } else if(bit == 2 || bit == 9) {
                             lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+                            lh.shouldBeTD = false;
+                        }
+                    }
+                }
+                break;
+            case TDOption.LG_EIGHT:
+                if(BarSize != 4) SetBarSize(4);
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                    if(soc.transform.position.y < 0) soc.ShowLong = true;
+                }
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                foreach(LightHead lh in allHeads) {
+                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                        byte bit = lh.Bit;
+                        if(bit > 1 && bit < 10) {
+                            lh.lhd.funcs.Clear();
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                            lh.shouldBeTD = true;
+                        }
+                    }
+                }
+                break;
+            case TDOption.LG_SIX:
+                if(BarSize < 2) SetBarSize(2);
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                    if(soc.transform.position.y < 0) soc.ShowLong = (soc.transform.position.x != 0);
+                }
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                if(BarSize == 3) {
+                    foreach(LightHead lh in allHeads) {
+                        if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                            byte bit = lh.Bit;
+                            if((bit > 1 && bit < 10) && (bit != 5 && bit != 6)) {
+                                lh.lhd.funcs.Clear();
+                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                                lh.shouldBeTD = true;
+                            } else if(bit == 5 || bit == 6) {
+                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+                                lh.shouldBeTD = false;
+                            }
+                        }
+                    }
+                } else {
+                    foreach(LightHead lh in allHeads) {
+                        if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
+                            byte bit = lh.Bit;
+                            if(bit > 2 && bit < 9) {
+                                lh.lhd.funcs.Clear();
+                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                                lh.shouldBeTD = true;
+                            } else if(bit == 2 || bit == 9) {
+                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+                                lh.shouldBeTD = false;
+                            }
                         }
                     }
                 }

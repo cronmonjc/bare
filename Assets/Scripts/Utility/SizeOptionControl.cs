@@ -38,6 +38,12 @@ public class SizeOptionControl : MonoBehaviour {
                     if(!alpha.Selected) {
                         alpha.Selected = lh.Selected;
                         if(lh.lhd.optic != null) {
+                            if(alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && alpha.shouldBeTD) {
+                                BarManager.inst.td = TDOption.NONE;
+                                foreach(LightHead beta in BarManager.inst.allHeads) {
+                                    beta.shouldBeTD = false;
+                                }
+                            }
                             alpha.lhd.funcs.Clear();
                             foreach(BasicFunction f in lh.lhd.funcs) {
                                 alpha.AddBasicFunction(f, false);

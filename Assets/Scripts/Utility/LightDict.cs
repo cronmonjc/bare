@@ -538,7 +538,7 @@ public enum AdvFunction {
 }
 
 public enum TDOption {
-    NONE = 0, LG_SEVEN = 1, SM_EIGHT = 2, SM_SIX = 3
+    NONE = 0, LG_SEVEN = 1, SM_EIGHT = 2, SM_SIX = 3, LG_EIGHT = 4, LG_SIX = 5
 }
 
 public static class Extensions {

@@ -42,10 +42,10 @@ public class BOMElement : MonoBehaviour {
         cam = GameObject.FindObjectOfType<CameraControl>();
     }
     
-    void Update() {
+    void LateUpdate() {
         qty.text = quantity + "x"; // Always update the quantity.
         if(!unconfigured) {
-            if(type == BOMControl.BOMType.Lights && headToDescribe != null) {
+            if(type == BOMControl.BOMType.Lights && headToDescribe != null && headToDescribe.lhd.style != null) {
                 desc.text = headToDescribe.PartNumber + " -- " + (headToDescribe.lhd.optic.styles.Count > 1 ? headToDescribe.lhd.style.name + " " : "") + headToDescribe.lhd.optic.name;
                 
                 amp.text = (headToDescribe.lhd.optic.amperage * 0.001f).ToString("F2") + "A";

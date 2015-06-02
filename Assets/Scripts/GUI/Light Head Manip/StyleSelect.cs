@@ -52,6 +52,29 @@ public class StyleSelect : MonoBehaviour {
         }
     }
 
+    public static bool IsRecommended(LightHead lh, StyleNode sn) {
+        bool rtn = true;
+
+        foreach(BasicFunction f in lh.lhd.funcs) {
+            switch(f) {
+                case BasicFunction.STEADY:
+                    rtn &= sn.partSuffix.Contains("C");
+                    break;
+                case BasicFunction.CAL_STEADY:
+                case BasicFunction.STT:
+                    rtn &= sn.partSuffix.Contains("R");
+                    break;
+                case BasicFunction.TRAFFIC:
+                    rtn &= sn.partSuffix.Contains("A");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return rtn;
+    }
+
     public static bool IsRecommended(StyleNode sn) {
         bool rtn = true;
 
@@ -61,22 +84,7 @@ public class StyleSelect : MonoBehaviour {
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
-                foreach(BasicFunction f in alpha.lhd.funcs) {
-                    switch(f) {
-                        case BasicFunction.STEADY:
-                            rtn &= sn.partSuffix.Contains("C");
-                            break;
-                        case BasicFunction.CAL_STEADY:
-                        case BasicFunction.STT:
-                            rtn &= sn.partSuffix.Contains("R");
-                            break;
-                        case BasicFunction.TRAFFIC:
-                            rtn &= sn.partSuffix.Contains("A");
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                rtn &= IsRecommended(alpha, sn);
 
                 //foreach(AdvFunction f in alpha.patterns.Keys) {
                 //    switch(f) {
