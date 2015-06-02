@@ -612,8 +612,12 @@ public class BarManager : MonoBehaviour {
     }
 
     public IEnumerator WiringPage(PdfPage p, Rect capRect) {
+        p.Orientation = PageOrientation.Landscape;
+
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
+
+        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
 
         LightLabel.showWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
@@ -630,7 +634,17 @@ public class BarManager : MonoBehaviour {
         File.WriteAllBytes("tempgen\\wire.png", tex.EncodeToPNG());
 
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
-        gfx.DrawImage(XImage.FromFile("tempgen\\wire.png"), 0.5, 1.0, tex.width * scale, tex.height * scale);
+        gfx.DrawImage(XImage.FromFile("tempgen\\wire.png"), 0.5, 1.5, tex.width * scale, tex.height * scale);
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Wiring Diagram", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+
+        XImage circuit = XImage.FromFile("pdfassets\\Circuit.png");
+        scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (circuit.PixelWidth * 1.0f);
+        gfx.DrawImage(circuit, 0.5, 5.0, circuit.PixelWidth * scale, circuit.PixelHeight * scale);
+
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
 
     public static XPoint[] XPointArray(params Vector2[] vecs) {
