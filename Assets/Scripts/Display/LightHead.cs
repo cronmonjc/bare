@@ -243,6 +243,7 @@ public class LightHead : MonoBehaviour {
 
                     if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
                         SetOptic("Lineum", test);
+                        useSingle = true;
                         return;
                     } else {
                         SetOptic("");
@@ -264,6 +265,7 @@ public class LightHead : MonoBehaviour {
                 } else {
                     SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
                     useDual = true;
+                    if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true;
                 }
                 return;
             case 4:
