@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ffafbc1e1a25d774e9e71399198ae6aa
-timeCreated: 1432296483
+timeCreated: 1433265167
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -23,6 +23,10 @@ TextureImporter:
     21300032: chip
     21300034: whitePixel
     21300036: Warning
+    21300038: barTD
+    21300040: barTDSel
+    21300042: can
+    21300044: noCan
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -253,6 +257,46 @@ TextureImporter:
         serializedVersion: 2
         x: 36
         y: 58
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: barTD
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 40
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: barTDSel
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 22
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: can
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 4
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: noCan
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 4
         width: 16
         height: 16
       alignment: 0

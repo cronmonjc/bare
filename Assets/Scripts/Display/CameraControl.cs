@@ -192,8 +192,10 @@ public class CameraControl : MonoBehaviour {
                     }
                 }
 
-                if((myCam.pixelRect.Contains(mousePos)) && Mathf.Abs(Input.GetAxisRaw("Mouse ScrollWheel")) > 0) {
+                if((myCam.pixelRect.Contains(mousePos))) {
                     myCam.orthographicSize = partialOrtho = Mathf.Clamp(partialOrtho + Input.GetAxisRaw("Mouse ScrollWheel") * 1f, 1f, 10f);
+                    if(Input.GetMouseButton(1))
+                        transform.position -= (new Vector3(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"), 0f) * myCam.orthographicSize * 0.1f);
                 }
             }
         }

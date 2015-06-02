@@ -2555,7 +2555,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300042, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -4672,7 +4672,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300044, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -9848,7 +9848,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 28.0001488}
+  m_AnchoredPosition: {x: 0, y: -27.9998932}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &542738553
@@ -10951,6 +10951,7 @@ GameObject:
   - 222: {fileID: 611428822}
   - 114: {fileID: 611428821}
   - 114: {fileID: 611428823}
+  - 114: {fileID: 611428824}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -10988,7 +10989,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -11020,6 +11021,20 @@ MonoBehaviour:
   m_PreferredHeight: 16
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &611428824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 611428819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767e9ed183d27b64ea043e6503e70ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  selected: {fileID: 21300040, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  myOpt: 3
 --- !u!1 &638954894
 GameObject:
   m_ObjectHideFlags: 0
@@ -14575,6 +14590,7 @@ GameObject:
   - 222: {fileID: 805350668}
   - 114: {fileID: 805350667}
   - 114: {fileID: 805350669}
+  - 114: {fileID: 805350670}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -14612,7 +14628,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -14644,6 +14660,20 @@ MonoBehaviour:
   m_PreferredHeight: 16
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &805350670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 805350665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767e9ed183d27b64ea043e6503e70ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  selected: {fileID: 21300040, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  myOpt: 0
 --- !u!1 &805590781
 GameObject:
   m_ObjectHideFlags: 0
@@ -17176,6 +17206,7 @@ GameObject:
   - 222: {fileID: 957202993}
   - 114: {fileID: 957202992}
   - 114: {fileID: 957202994}
+  - 114: {fileID: 957202995}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -17213,7 +17244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -17245,6 +17276,20 @@ MonoBehaviour:
   m_PreferredHeight: 16
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &957202995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 957202990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767e9ed183d27b64ea043e6503e70ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  selected: {fileID: 21300040, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  myOpt: 2
 --- !u!1001 &957544326
 Prefab:
   m_ObjectHideFlags: 0
@@ -22385,7 +22430,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300042, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -23680,6 +23725,7 @@ GameObject:
   - 222: {fileID: 1293109395}
   - 114: {fileID: 1293109394}
   - 114: {fileID: 1293109393}
+  - 114: {fileID: 1293109396}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -23735,7 +23781,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -23749,6 +23795,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1293109391}
+--- !u!114 &1293109396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1293109391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767e9ed183d27b64ea043e6503e70ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  selected: {fileID: 21300040, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  myOpt: 4
 --- !u!1 &1295889166
 GameObject:
   m_ObjectHideFlags: 0
@@ -23760,6 +23820,7 @@ GameObject:
   - 222: {fileID: 1295889169}
   - 114: {fileID: 1295889168}
   - 114: {fileID: 1295889170}
+  - 114: {fileID: 1295889171}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -23797,7 +23858,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -23829,6 +23890,20 @@ MonoBehaviour:
   m_PreferredHeight: 16
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!114 &1295889171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1295889166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767e9ed183d27b64ea043e6503e70ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  selected: {fileID: 21300040, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  myOpt: 1
 --- !u!1 &1304117809 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 164582, guid: 6a2b83f4de3b7454c9112eb17b44333d, type: 2}
@@ -24335,7 +24410,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2076613982}
   m_HandleRect: {fileID: 2076613981}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -27275,7 +27350,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -29163,6 +29238,10 @@ Prefab:
     - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
       propertyPath: loc
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
+      propertyPath: shouldBeTD
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
@@ -37022,6 +37101,7 @@ GameObject:
   - 222: {fileID: 2031210927}
   - 114: {fileID: 2031210926}
   - 114: {fileID: 2031210925}
+  - 114: {fileID: 2031210928}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -37077,7 +37157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300004, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  m_Sprite: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -37091,6 +37171,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2031210923}
+--- !u!114 &2031210928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2031210923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767e9ed183d27b64ea043e6503e70ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idle: {fileID: 21300038, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  selected: {fileID: 21300040, guid: ffafbc1e1a25d774e9e71399198ae6aa, type: 3}
+  myOpt: 5
 --- !u!1 &2034862952
 GameObject:
   m_ObjectHideFlags: 0

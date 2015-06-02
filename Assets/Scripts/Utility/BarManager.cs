@@ -132,17 +132,23 @@ public class BarManager : MonoBehaviour {
     }
 
     public void SetBarSize(float to) {
-        SetBarSize(Mathf.RoundToInt(to));
+        SetBarSize(Mathf.RoundToInt(to), sliding:true);
     }
 
-    public void SetBarSize(int to) {
-        td = TDOption.NONE;
-        SizeSlider.value = to;
+    public void SetBarSize(int to, bool changingTD = false, bool sliding = false) {
+        if(!changingTD) {
+            td = TDOption.NONE;
 
-        foreach(LightHead lh in allHeads) {
-            if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+            foreach(LightHead lh in allHeads) {
+                if(lh.transform.position.y < 0) {
+                    lh.shouldBeTD = false;
+                    lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+                }
             }
+        }
+        if(!sliding) {
+            SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to;
+            SizeSlider.value = to;
         }
 
         if(to < 5 && to > -1) {
@@ -171,14 +177,15 @@ public class BarManager : MonoBehaviour {
         switch(td) {
             case TDOption.NONE:
                 foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                        lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+                    if(lh.transform.position.y < 0) {
                         lh.shouldBeTD = false;
+                        lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                     }
                 }
                 break;
             case TDOption.LG_SEVEN:
-                if(BarSize != 3) SetBarSize(3);
+                if(BarSize != 3) SetBarSize(3, changingTD: true);
+                yield return new WaitForEndOfFrame();
                 foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                     if(soc.transform.position.y < 0) soc.ShowLong = true;
                 }
@@ -226,14 +233,15 @@ public class BarManager : MonoBehaviour {
                             lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             lh.shouldBeTD = true;
                         } else if(bit == 2 || bit == 9) {
-                            lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                             lh.shouldBeTD = false;
+                            lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
                 break;
             case TDOption.LG_EIGHT:
-                if(BarSize != 4) SetBarSize(4);
+                if(BarSize != 4) SetBarSize(4, changingTD: true);
+                yield return new WaitForEndOfFrame();
                 foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                     if(soc.transform.position.y < 0) soc.ShowLong = true;
                 }
@@ -251,7 +259,8 @@ public class BarManager : MonoBehaviour {
                 }
                 break;
             case TDOption.LG_SIX:
-                if(BarSize < 2) SetBarSize(2);
+                if(BarSize < 2) SetBarSize(2, changingTD: true);
+                yield return new WaitForEndOfFrame();
                 foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                     if(soc.transform.position.y < 0) soc.ShowLong = (soc.transform.position.x != 0);
                 }
@@ -266,8 +275,8 @@ public class BarManager : MonoBehaviour {
                                 lh.AddBasicFunction(BasicFunction.TRAFFIC);
                                 lh.shouldBeTD = true;
                             } else if(bit == 5 || bit == 6) {
-                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                                 lh.shouldBeTD = false;
+                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                             }
                         }
                     }
@@ -280,8 +289,8 @@ public class BarManager : MonoBehaviour {
                                 lh.AddBasicFunction(BasicFunction.TRAFFIC);
                                 lh.shouldBeTD = true;
                             } else if(bit == 2 || bit == 9) {
-                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                                 lh.shouldBeTD = false;
+                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                             }
                         }
                     }
@@ -418,6 +427,8 @@ public class BarManager : MonoBehaviour {
         LightLabel.showBit = false;
 
         Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
+
+        cam.transform.position = new Vector3(0f, 0f, -10f);
 
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
