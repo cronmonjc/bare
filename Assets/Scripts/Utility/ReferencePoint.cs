@@ -3,6 +3,7 @@ using System.Collections;
 
 public class ReferencePoint : MonoBehaviour {
     void Start() {
+#if UNITY_EDITOR
         Debug.Log(this.GetPath() + " - " + transform.position);
     }
 
@@ -13,5 +14,6 @@ public class ReferencePoint : MonoBehaviour {
         Gizmos.DrawLine(transform.position + new Vector3(0, -10, 0), transform.position + new Vector3(0, 10, 0));
         Gizmos.DrawLine(transform.position + new Vector3(0, 0, -10), transform.position + new Vector3(0, 0, 10));
         Gizmos.color = Color.white;
+#endif
     }
 }

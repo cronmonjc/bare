@@ -10,7 +10,7 @@ public class LightLabel : MonoBehaviour {
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showWire, wireOverride;
+    public static bool showParts, showBit, showWire, wireOverride, alternateNumbering;
     private StyleNode lastStyle;
 
     public bool DispError {
@@ -25,7 +25,7 @@ public class LightLabel : MonoBehaviour {
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
-        showParts = showBit = showWire = wireOverride = false;
+        showParts = showBit = showWire = wireOverride = alternateNumbering = false;
         Refresh();
     }
 
@@ -33,15 +33,24 @@ public class LightLabel : MonoBehaviour {
         string prefix = "";
 
         if(showHeadNumber) {
-            for(int i = 0; i < BarManager.headNumber.Length; i++) {
-                if(BarManager.headNumber[i] == lh) {
-                    prefix = "(" + (i + 1) + ") ";
-                    break;
+            if(alternateNumbering) {
+                if(BarManager.altHeadNumber.ContainsKey(lh))
+                    prefix = "(" + BarManager.altHeadNumber[lh] + ") ";
+                else {
+                    Debug.LogError("Failed to find a head ID for " + lh.transform.GetPath());
+                    prefix = "(?) ";
                 }
-            }
-            if(prefix == "") {
-                Debug.LogError("Failed to find a head number for " + transform.GetPath());
-                prefix = "(?) ";
+            } else {
+                for(int i = 0; i < BarManager.headNumber.Length; i++) {
+                    if(BarManager.headNumber[i] == lh) {
+                        prefix = "(" + (i + 1) + ") ";
+                        break;
+                    }
+                }
+                if(prefix == "") {
+                    Debug.LogError("Failed to find a head number for " + lh.transform.GetPath());
+                    prefix = "(?) ";
+                }
             }
         }
 
@@ -192,7 +201,7 @@ public class LightLabel : MonoBehaviour {
                         t = t + " W";
                     }
                 } else {
-                    t = t + "\n\n\n";
+                    t = t + "\n\n";
                 }
 
                 label2.text = label.text = t;

@@ -7,11 +7,6 @@ using System.Collections.Generic;
 /// </summary>
 public class BOMElement : MonoBehaviour {
     /// <summary>
-    /// A reference to the <see cref="CameraControl"/>, because it needs to reference things off of it.
-    /// </summary>
-    private CameraControl cam;
-
-    /// <summary>
     /// Is this element an "unconfigured" element?  That is, does it display the quantity of items that still need to be configured?
     /// </summary>
     public bool unconfigured;
@@ -37,10 +32,6 @@ public class BOMElement : MonoBehaviour {
     public string bundleToDescribe;
     
     public Text qty, desc, amp, cost;
-
-    void Start() {
-        cam = GameObject.FindObjectOfType<CameraControl>();
-    }
     
     void LateUpdate() {
         qty.text = quantity + "x"; // Always update the quantity.
