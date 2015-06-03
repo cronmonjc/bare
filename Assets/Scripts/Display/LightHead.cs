@@ -17,6 +17,9 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public bool useDual;
 
+    [System.NonSerialized]
+    public bool basicPhaseB = false;
+
     public Dictionary<AdvFunction, Pattern> patterns;
 
     public List<AdvFunction> CapableAdvFunctions {
@@ -51,11 +54,13 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public LightLabel myLabel;
 
+    [System.NonSerialized]
     public Light[] myLights;
 
     public byte[] bits = new byte[5];
     private TDBitChanger tbc;
 
+    [System.NonSerialized]
     public bool shouldBeTD;
 
     public byte Bit {
