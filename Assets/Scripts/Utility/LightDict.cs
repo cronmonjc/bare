@@ -13,6 +13,8 @@ public class LightDict : MonoBehaviour {
 
     public Dictionary<Location, List<AdvFunction>> capableFunctions;
 
+    private bool pricing = false;
+
     void Awake() {
         if(inst == null) inst = this;
 
@@ -27,6 +29,10 @@ public class LightDict : MonoBehaviour {
 
             try {
                 NbtFile cat = new NbtFile("lib.nbt");
+
+                if(!cat.RootTag.Contains("pric")) {
+                    Destroy(FindObjectOfType<DispPricing>().gameObject);
+                }
 
                 NbtList heads = (NbtList)(cat.RootTag["heads"]);
 
@@ -366,7 +372,8 @@ public class OpticNode {
         }
         dual = false;
 
-        cost = amperage = 0;
+        cost = (defTag.Contains("cost")) ? (uint)defTag["cost"].IntValue : 0;
+        amperage = (uint)defTag["amp"].IntValue;
 
         NbtList stylList = (NbtList)defTag["styl"];
         foreach(NbtTag style in stylList) {
