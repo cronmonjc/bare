@@ -24,6 +24,9 @@ public class BOMControl : MonoBehaviour {
     /// </summary>
     private Dictionary<string, BOMElement> elements;
 
+    private Dictionary<string, int> counts;
+    private Dictionary<string, LightHead> descs; 
+
     /// <summary>
     /// The "unconfigured" element.
     /// </summary>
@@ -34,23 +37,30 @@ public class BOMControl : MonoBehaviour {
     /// </summary>
     public GameObject elementPrefab;
 
-    void Start() {
+    void Awake() {
         elements = new Dictionary<string, BOMElement>();
+        counts = new Dictionary<string, int>();
+        if(type == BOMType.Lights) {
+            descs = new Dictionary<string, LightHead>();
+        }
     }
 
     void Update() {
         List<string> parts = new List<string>();
-        Dictionary<string, int> counts = new Dictionary<string, int>();
+        foreach(string alpha in new List<string>(counts.Keys)) {
+            counts[alpha] = 0;
+        }
 
         if(type == BOMType.Lights) {
-
-            Dictionary<string, LightHead> descs = new Dictionary<string, LightHead>();
+            foreach(string alpha in new List<string>(descs.Keys)) {
+                descs[alpha] = null;
+            }
             int unconfig = 0;
             foreach(LightHead lh in BarManager.inst.allHeads) {
                 if(lh.gameObject.activeInHierarchy) {
                     if(lh.lhd.style != null) {
                         string part = lh.PartNumber;
-                        if(counts.ContainsKey(part)) {
+                        if(parts.Contains(part)) {
                             counts[part]++;
                         } else {
                             counts[part] = 1;
@@ -78,7 +88,7 @@ public class BOMControl : MonoBehaviour {
                 }
             }
             foreach(string alpha in new List<string>(elements.Keys)) {
-                if(!counts.ContainsKey(alpha)) {
+                if(!parts.Contains(alpha)) {
                     RemoveItem(alpha);
                 }
             }

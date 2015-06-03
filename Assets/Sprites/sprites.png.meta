@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ffafbc1e1a25d774e9e71399198ae6aa
-timeCreated: 1433265167
+timeCreated: 1433350214
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -27,6 +27,12 @@ TextureImporter:
     21300040: barTDSel
     21300042: can
     21300044: noCan
+    21300046: lenLong
+    21300048: wireLen
+    21300050: wireKindSingle
+    21300052: wireKind
+    21300054: lenShort
+    21300056: lenMedium
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -299,6 +305,66 @@ TextureImporter:
         y: 4
         width: 16
         height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: lenLong
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 77
+        width: 9
+        height: 14
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wireLen
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 58
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wireKindSingle
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 40
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wireKind
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 23
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: lenShort
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 76
+        width: 5
+        height: 7
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: lenMedium
+      rect:
+        serializedVersion: 2
+        x: 57
+        y: 80
+        width: 7
+        height: 11
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}

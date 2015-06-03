@@ -17,6 +17,8 @@ public class BarManager : MonoBehaviour {
     [Range(0, 4)]
     public int BarSize = 3;
     public TDOption td;
+    public static bool useCAN = false;
+    public static int cableType = 0, cableLength = 0;
 
     public NbtCompound patts;
 
