@@ -13,8 +13,6 @@ public class LightDict : MonoBehaviour {
 
     public Dictionary<Location, List<AdvFunction>> capableFunctions;
 
-    private bool pricing = false;
-
     void Awake() {
         if(inst == null) inst = this;
 
