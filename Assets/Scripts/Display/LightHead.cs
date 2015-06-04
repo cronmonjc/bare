@@ -419,8 +419,12 @@ public class LightHead : MonoBehaviour {
         if(shouldBeTD) {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(transform.position, Vector3.one);
-            Gizmos.color = Color.white;
         }
+        if(basicPhaseB) {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.98f);
+        }
+        Gizmos.color = Color.white;
     }
 
     public string PartNumber {

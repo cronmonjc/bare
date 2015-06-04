@@ -48,6 +48,8 @@ public class SizeOptionControl : MonoBehaviour {
                             foreach(BasicFunction f in lh.lhd.funcs) {
                                 alpha.AddBasicFunction(f, false);
                             }
+                            alpha.useSingle = lh.useSingle;
+                            alpha.useDual = lh.useDual;
 
                             if(longGO.activeInHierarchy) {
                                 if(lh.lhd.optic.lgEquivalent.Length > 0) {

@@ -875,6 +875,21 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    public void AutoPhase() {
+        StyleNode AStyle = first.lhd.style;
+
+        if(AStyle == null) {
+            ErrorText.inst.DispError("Define the color that's using Phase A on the front driver's corner light, first.");
+            return;
+        }
+
+        foreach(LightHead alpha in allHeads) {
+            if(alpha.gameObject.activeInHierarchy && alpha.lhd.style != null && alpha.lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                alpha.basicPhaseB = (alpha.lhd.style != AStyle);
+            }
+        }
+    }
+
     public IEnumerator RefreshAllLabels() {
         yield return new WaitForEndOfFrame();
 
