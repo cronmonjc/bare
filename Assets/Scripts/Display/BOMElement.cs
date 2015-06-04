@@ -39,7 +39,7 @@ public class BOMElement : MonoBehaviour {
             if(type == BOMControl.BOMType.Lights && headToDescribe != null && headToDescribe.lhd.style != null) {
                 desc.text = headToDescribe.PartNumber + " -- " + (headToDescribe.lhd.optic.styles.Count > 1 ? headToDescribe.lhd.style.name + " " : "") + headToDescribe.lhd.optic.name;
                 
-                amp.text = (headToDescribe.lhd.optic.amperage * 0.001f).ToString("F2") + "A";
+                amp.text = (headToDescribe.lhd.optic.amperage * quantity * 0.001f).ToString("F2") + "A";
                 if(CameraControl.ShowPricing) {
                     cost.text = "$" + (headToDescribe.lhd.optic.cost * quantity * 0.01f).ToString("F2");
                 } else {

@@ -64,10 +64,11 @@ public class LightLabel : MonoBehaviour {
         } else if(showWire) {
             if(lh.lhd.style != null) {
                 string t = prefix;
+                byte bit = lh.Bit;
 
                 if(!wireOverride) {
                     if(transform.position.y < 0) {
-                        if(transform.position.x > 0) {
+                        if(bit > 5) {
                             t = t + "P10-";
                         } else {
                             t = t + "P9-";
@@ -103,13 +104,13 @@ public class LightLabel : MonoBehaviour {
                                 break;
                         }
                     } else {
-                        if(transform.position.x > 0) {
+                        if(bit > 5 && bit != 12) {
                             t = t + "P8-";
                         } else {
                             t = t + "P3-";
                         }
 
-                        switch(lh.Bit) {
+                        switch(bit) {
                             case 5:
                             case 6:
                                 t = t + (lh.FarWire[BarManager.inst.BarSize] ? "2" : "1");
@@ -139,13 +140,13 @@ public class LightLabel : MonoBehaviour {
                     if(lh.lhd.style.isDualColor) {
                         t = t + " C & ";
                         if(transform.position.y < 0) {
-                            if(transform.position.x > 0) {
+                            if(bit > 5) {
                                 t = t + "P10-";
                             } else {
                                 t = t + "P9-";
                             }
 
-                            switch(lh.Bit) {
+                            switch(bit) {
                                 case 5:
                                 case 6:
                                     t = t + "7";
@@ -167,13 +168,13 @@ public class LightLabel : MonoBehaviour {
                                     break;
                             }
                         } else {
-                            if(transform.position.x > 0) {
+                            if(bit > 5 && bit != 12) {
                                 t = t + "P8-";
                             } else {
                                 t = t + "P3-";
                             }
 
-                            switch(lh.Bit) {
+                            switch(bit) {
                                 case 5:
                                 case 6:
                                     t = t + (lh.FarWire[BarManager.inst.BarSize] ? "8" : "7");
