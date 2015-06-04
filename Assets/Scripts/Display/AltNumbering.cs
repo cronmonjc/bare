@@ -1,26 +1,26 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class AltNumbering : MonoBehaviour {
     public Text t;
     private Button b;
 
+    public ColorBlock tru = new ColorBlock() { colorMultiplier = 1f, normalColor = new Color32(255, 216, 0, 255), highlightedColor = new Color32(255, 223, 63, 255), pressedColor = new Color32(191, 159, 0, 255), disabledColor = new Color32(200, 200, 200, 128) },
+                      fal = new ColorBlock() { colorMultiplier = 1f, normalColor = new Color32(0, 255, 255, 255), highlightedColor = new Color32(63, 255, 255, 255), pressedColor = new Color32(0, 191, 191, 255), disabledColor = new Color32(200, 200, 200, 128) };
+
     public void Clicked() {
         LightLabel.alternateNumbering = !LightLabel.alternateNumbering;
+
+        t.text = (LightLabel.alternateNumbering ? "From Corners In" : "Around the Bar");
+
+        b.colors = (LightLabel.alternateNumbering ? tru : fal);
     }
 
-    void Update() {
+    void OnEnable() {
         if(b == null) b = GetComponent<Button>();
 
         t.text = (LightLabel.alternateNumbering ? "From Corners In" : "Around the Bar");
 
-        ColorBlock cb = b.colors;
-
-        cb.normalColor = (LightLabel.alternateNumbering ? new Color32(255, 216, 0, 255) : new Color32(0, 255, 255, 255));
-        cb.highlightedColor = (LightLabel.alternateNumbering ? new Color32(255, 223, 63, 255) : new Color32(63, 255, 255, 255));
-        cb.pressedColor = (LightLabel.alternateNumbering ? new Color32(191, 159, 0, 255) : new Color32(0, 191, 191, 255));
-
-        b.colors = cb;
+        b.colors = (LightLabel.alternateNumbering ? tru : fal);
     }
 }

@@ -513,74 +513,27 @@ public class BarManager : MonoBehaviour {
 
         tf.Alignment = XParagraphAlignment.Left;
 
-        tf.DrawString("Description", caliSmBold, XBrushes.Black, new XRect(1.4, 3.39, 0.5, 0.1));
+        tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(1.4, 3.39, 2.0, 0.1));
+        tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(4.0, 3.39, 0.5, 0.1));
 
         double top = 3.5;
         if(LightLabel.alternateNumbering) {
             tf.Alignment = XParagraphAlignment.Right;
             tf.DrawString("Driver Front", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
             tf.Alignment = XParagraphAlignment.Left;
-            string corner = "DF"; byte number = 0;
-            while(true) {
-                number++;
-                top += 0.1;
-                LightHead head = null;
-                foreach(LightHead lh in headNumber) {
-                    if(altHeadNumber[lh] == corner + number) {
-                        head = lh;
-                        break;
-                    }
-                }
-                if(head == null) {
-                    break;
-                }
-                tf.Alignment = XParagraphAlignment.Right;
-                tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                tf.Alignment = XParagraphAlignment.Left;
-                if(head.lhd.style == null) {
-                    tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-                } else {
-                    tf.DrawString((head.lhd.optic.styles.Count > 1 ? head.lhd.style.name + " " : "") + head.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-                }
-            }
+            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "DF");
             top += 0.1;
             tf.Alignment = XParagraphAlignment.Right;
             tf.DrawString("Pass. Front", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
             tf.Alignment = XParagraphAlignment.Left;
-            corner = "PF"; number = 0;
-            while(true) {
-                number++;
-                top += 0.1;
-                LightHead head = null;
-                foreach(LightHead lh in headNumber) {
-                    if(altHeadNumber[lh] == corner + number) {
-                        head = lh;
-                        break;
-                    }
-                }
-                if(head == null) {
-                    break;
-                }
-                tf.Alignment = XParagraphAlignment.Right;
-                tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                tf.Alignment = XParagraphAlignment.Left;
-                if(head.lhd.style == null) {
-                    tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-                } else {
-                    tf.DrawString((head.lhd.optic.styles.Count > 1 ? head.lhd.style.name + " " : "") + head.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-                }
-            }
+            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "PF");
             top += 0.1;
             foreach(LightHead lh in headNumber) {
                 if(altHeadNumber[lh] == "DA") {
                     tf.Alignment = XParagraphAlignment.Right;
                     tf.DrawString("Driver Alley", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
                     tf.Alignment = XParagraphAlignment.Left;
-                    if(lh.lhd.style == null) {
-                        tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-                    } else {
-                        tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-                    }
+                    PrintHead(tf, caliSm, courierSm, top, lh);
                     break;
                 }
             }
@@ -590,11 +543,7 @@ public class BarManager : MonoBehaviour {
                     tf.Alignment = XParagraphAlignment.Right;
                     tf.DrawString("Pass. Alley", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
                     tf.Alignment = XParagraphAlignment.Left;
-                    if(lh.lhd.style == null) {
-                        tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-                    } else {
-                        tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-                    }
+                    PrintHead(tf, caliSm, courierSm, top, lh);
                     break;
                 }
             }
@@ -602,65 +551,17 @@ public class BarManager : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Right;
             tf.DrawString("Driver Rear", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
             tf.Alignment = XParagraphAlignment.Left;
-            corner = "DR"; number = 0;
-            while(true) {
-                number++;
-                top += 0.1;
-                LightHead head = null;
-                foreach(LightHead lh in headNumber) {
-                    if(altHeadNumber[lh] == corner + number) {
-                        head = lh;
-                        break;
-                    }
-                }
-                if(head == null) {
-                    break;
-                }
-                tf.Alignment = XParagraphAlignment.Right;
-                tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                tf.Alignment = XParagraphAlignment.Left;
-                if(head.lhd.style == null) {
-                    tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-                } else {
-                    tf.DrawString((head.lhd.optic.styles.Count > 1 ? head.lhd.style.name + " " : "") + head.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-                }
-            }
+            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "DR");
             top += 0.1;
             tf.Alignment = XParagraphAlignment.Right;
             tf.DrawString("Pass. Rear", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
             tf.Alignment = XParagraphAlignment.Left;
-            corner = "PR"; number = 0;
-            while(true) {
-                number++;
-                top += 0.1;
-                LightHead head = null;
-                foreach(LightHead lh in headNumber) {
-                    if(altHeadNumber[lh] == corner + number) {
-                        head = lh;
-                        break;
-                    }
-                }
-                if(head == null) {
-                    break;
-                }
-                tf.Alignment = XParagraphAlignment.Right;
-                tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                tf.Alignment = XParagraphAlignment.Left;
-                if(head.lhd.style == null) {
-                    tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-                } else {
-                    tf.DrawString((head.lhd.optic.styles.Count > 1 ? head.lhd.style.name + " " : "") + head.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-                }
-            }
+            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "PR");
         } else {
             for(int i = 0; i < headNumber.Length; i++) {
                 LightHead lh = headNumber[i];
                 tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, top + (i * 0.10), 1.2, 0.10));
-                if(headNumber[i].lhd.style == null) {
-                    tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01) + (i * 0.10), 0.5, 0.10));
-                } else {
-                    tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01) + (i * 0.10), 2.5, 0.10));
-                }
+                PrintHead(tf, caliSm, courierSm, top + (i * 0.10), lh);
             }
             top += headNumber.Length * 0.1;
             top += 0.1;
@@ -688,6 +589,37 @@ public class BarManager : MonoBehaviour {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
 
         yield return null;
+    }
+
+    private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh) {
+        if(lh.lhd.style == null) {
+            tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
+        } else {
+            tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            tf.DrawString((lh.lhd.optic.amperage * 0.01f).ToString("F3"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
+        }
+    }
+
+    private void SummaryPrintCorner(XTextFormatter tf, XFont courierSm, XFont caliSm, ref double top, string corner) {
+        byte number = 0;
+        while(true) {
+            number++;
+            top += 0.1;
+            LightHead head = null;
+            foreach(LightHead lh in headNumber) {
+                if(altHeadNumber[lh] == corner + number) {
+                    head = lh;
+                    break;
+                }
+            }
+            if(head == null) {
+                break;
+            }
+            tf.Alignment = XParagraphAlignment.Right;
+            tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            PrintHead(tf, caliSm, courierSm, top, head);
+        }
     }
 
     public IEnumerator PartsPage(PdfPage p, Rect capRect) {
