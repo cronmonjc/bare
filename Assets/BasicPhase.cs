@@ -8,17 +8,20 @@ public class BasicPhase : MonoBehaviour {
 
     void Update() {
         bool active = true;
+        bool interact = false;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 active &= IsPhaseB ? alpha.basicPhaseB : !alpha.basicPhaseB;
+                interact |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
             }
         }
-        Check.enabled = active;
+        Check.enabled = active & interact;
+        GetComponent<Button>().interactable = interact;
     }
 
     public void Clicked() {
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
+            if(alpha.gameObject.activeInHierarchy && alpha.Selected && alpha.lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 alpha.basicPhaseB = IsPhaseB;
             }
         }

@@ -11,6 +11,7 @@ public class LightLabel : MonoBehaviour {
 
     public static CameraControl cam;
     public static bool showParts, showBit, showWire, wireOverride, alternateNumbering;
+    private OpticNode lastOptic;
     private StyleNode lastStyle;
 
     public bool DispError {
@@ -234,6 +235,7 @@ public class LightLabel : MonoBehaviour {
             }
         }
 
+        lastOptic = lh.lhd.optic;
         lastStyle = lh.lhd.style;
     }
 
@@ -252,7 +254,7 @@ public class LightLabel : MonoBehaviour {
         }
 
         if(lh == null) lh = target.GetComponent<LightHead>();
-        if(lh.lhd.style != lastStyle) {
+        if(lh.lhd.style != lastStyle || lh.lhd.optic != lastOptic) {
             Refresh();
         }
 
