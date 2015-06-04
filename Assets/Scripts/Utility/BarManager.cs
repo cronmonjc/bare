@@ -541,9 +541,8 @@ public class BarManager : MonoBehaviour {
 
         tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(1.4, 3.39, 2.0, 0.1));
         tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(4.0, 3.39, 0.5, 0.1));
-        if(CameraControl.ShowPricing) {
+        if(CameraControl.ShowPricing)
             tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, 3.39, 0.5, 0.1));
-        }
 
         double top = 3.5;
         if(LightLabel.alternateNumbering) {
@@ -626,7 +625,8 @@ public class BarManager : MonoBehaviour {
         } else {
             tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("F3"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
-            tf.DrawString((lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
         }
     }
 
