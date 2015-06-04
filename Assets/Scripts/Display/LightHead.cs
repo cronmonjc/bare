@@ -141,10 +141,10 @@ public class LightHead : MonoBehaviour {
         }
         NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-        short en = func.Get<NbtShort>("en" + (transform.position.z > 0 ? "f" : "r") + "1").ShortValue;
+        short en = func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "1").ShortValue;
 
         if(lhd.style.isDualColor) {
-            en = (short)(en | func.Get<NbtShort>("en" + (transform.position.z > 0 ? "f" : "r") + "2").ShortValue);
+            en = (short)(en | func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "2").ShortValue);
         }
 
         return ((en & (0x1 << Bit)) > 0);
@@ -168,16 +168,16 @@ public class LightHead : MonoBehaviour {
         string tagname = transform.position.z < 0 ? "r" : "f";
         string path = transform.GetPath();
 
-        if(path.Contains("Corner")) {
+        if(path.Contains("C")) {
             tagname = tagname + "cor";
-        } else if(path.Contains("Inboard")) {
+        } else if(path.Contains("I")) {
             tagname = tagname + "inb";
-        } else if(path.Contains("Outboard")) {
+        } else if(path.Contains("O")) {
             if(loc == Location.FAR_REAR)
                 tagname = tagname + "far";
             else
                 tagname = tagname + "oub";
-        } else if(path.Contains("MidSection")) {
+        } else if(path.Contains("N") || path.Split('/')[1].EndsWith("F")) {
             tagname = tagname + "cen";
         }
 

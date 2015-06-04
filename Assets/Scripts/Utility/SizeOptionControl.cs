@@ -70,8 +70,8 @@ public class SizeOptionControl : MonoBehaviour {
 
 
     void Start() {
-        longGO = transform.FindChild("Long").gameObject;
-        shortGO = transform.FindChild("DoubleShort").gameObject;
+        longGO = transform.FindChild("L").gameObject;
+        shortGO = transform.FindChild("DS").gameObject;
 
         ShowLong = true;
     }

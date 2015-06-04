@@ -73,9 +73,9 @@ public class PattSelectElement : MonoBehaviour {
                 patCmpd.Get<NbtShort>(tagname).Value = selID;
             } else if(ps.f == AdvFunction.TRAFFIC) {
                 NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
-                patCmpd.Get<NbtShort>("left").Value = selID;
-                patCmpd.Get<NbtShort>("rite").Value = selID;
-                patCmpd.Get<NbtShort>("cntr").Value = selID;
+                patCmpd.Get<NbtShort>("l").Value = selID;
+                patCmpd.Get<NbtShort>("r").Value = selID;
+                patCmpd.Get<NbtShort>("c").Value = selID;
             }
         }
 

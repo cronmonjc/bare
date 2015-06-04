@@ -190,11 +190,11 @@ public class PattSelect : MonoBehaviour {
             enableButton.GetComponent<Button>().interactable = true;
         } else if(f == AdvFunction.TRAFFIC) {
             NbtCompound patts = FindObjectOfType<BarManager>().patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
-            short selID = patts["left"].ShortValue;
-            if(selID != patts["rite"].ShortValue) {
+            short selID = patts["l"].ShortValue;
+            if(selID != patts["r"].ShortValue) {
                 selID = -2;
             }
-            if(selID != patts["cntr"].ShortValue) {
+            if(selID != patts["c"].ShortValue) {
                 selID = -2;
             }
 

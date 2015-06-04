@@ -52,13 +52,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ccaaccd5e8b6e842b4a58f570db3f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Single: {fileID: 0}
-  DualL: {fileID: 0}
-  DualR: {fileID: 0}
   loc: 0
   isSmall: 0
-  myLights: []
-  bits: 00000000
+  FarWire: 0000000000
+  bits: 0404040404
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

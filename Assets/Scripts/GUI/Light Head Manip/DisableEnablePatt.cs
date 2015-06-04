@@ -47,8 +47,8 @@ public class DisableEnablePatt : MonoBehaviour {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            short en = func.Get<NbtShort>("en" + (lb.transform.position.z < 0 ? "r" : "f") + "1").ShortValue;
-            en |= func.Get<NbtShort>("en" + (lb.transform.position.z < 0 ? "r" : "f") + "2").ShortValue;
+            short en = func.Get<NbtShort>("e" + (lb.transform.position.z < 0 ? "r" : "f") + "1").ShortValue;
+            en |= func.Get<NbtShort>("e" + (lb.transform.position.z < 0 ? "r" : "f") + "2").ShortValue;
             
             if(IsEnable)
                 show = show && ((en & (0x1 << lh.Bit)) > 0);
@@ -82,14 +82,14 @@ public class DisableEnablePatt : MonoBehaviour {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            NbtShort en = func.Get<NbtShort>("en" + (lh.transform.position.z < 0 ? "r" : "f") + "1");
+            NbtShort en = func.Get<NbtShort>("e" + (lh.transform.position.z < 0 ? "r" : "f") + "1");
 
             if(IsEnable)
                 en.EnableBit(lh.Bit);
             else
                 en.DisableBit(lh.Bit);
             
-            en = func.Get<NbtShort>("en" + (lh.transform.position.z < 0 ? "r" : "f") + "2");
+            en = func.Get<NbtShort>("e" + (lh.transform.position.z < 0 ? "r" : "f") + "2");
 
             if(IsEnable)
                 en.EnableBit(lh.Bit);
