@@ -317,7 +317,8 @@ public class BarManager : MonoBehaviour {
         root.Add(new NbtByte("size", (byte)BarSize));
 
         NbtList lightList = new NbtList("lite");
-        foreach(LightHead lh in GetComponentsInChildren<LightHead>(true)) {
+        foreach(LightHead lh in allHeads) {
+            if(!lh.gameObject.activeInHierarchy) continue;
             NbtCompound lightCmpd = new NbtCompound();
             lightCmpd.Add(new NbtString("path", lh.transform.GetPath()));
             if(lh.lhd.style != null) {
@@ -354,6 +355,8 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Open(string filename) {
+        Clear();
+
         NbtFile file = new NbtFile(filename);
 
         NbtCompound root = file.RootTag;
@@ -364,7 +367,7 @@ public class BarManager : MonoBehaviour {
         Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
         Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
 
-        foreach(LightHead lh in transform.GetComponentsInChildren<LightHead>(true)) {
+        foreach(LightHead lh in allHeads) {
             lights[lh.transform.GetPath()] = lh;
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
@@ -733,7 +736,7 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Clear() {
-        foreach(LightHead lh in transform.GetComponentsInChildren<LightHead>(true)) {
+        foreach(LightHead lh in allHeads) {
             lh.SetOptic("");
             lh.patterns.Clear();
         }

@@ -64,8 +64,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 workSinceMonday.sh
-/tempgen
-/test
-/output
-/WiringTest
-/HasOpen
+tempgen/
+test/
+output/
+WiringTest/
+HasOpen/
