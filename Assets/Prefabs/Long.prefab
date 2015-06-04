@@ -52,10 +52,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ccaaccd5e8b6e842b4a58f570db3f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loc: 0
+  loc: 1
   isSmall: 0
   FarWire: 0000000000
-  bits: 0404040404
+  bits: 0000000000
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

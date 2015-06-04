@@ -2658,10 +2658,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1896809272}
     m_Modifications:
-    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
-      propertyPath: bits.Array.size
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 479012, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2693,10 +2689,6 @@ Prefab:
     - target: {fileID: 479012, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
       propertyPath: m_RootOrder
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
-      propertyPath: loc
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 123502, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
       propertyPath: m_Name
@@ -16477,6 +16469,26 @@ Prefab:
     - target: {fileID: 123502, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
       propertyPath: m_Name
       value: L
+      objectReference: {fileID: 0}
+    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
+      propertyPath: bits.Array.data[0]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
+      propertyPath: bits.Array.data[1]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
+      propertyPath: bits.Array.data[2]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
+      propertyPath: bits.Array.data[3]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11409634, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}
+      propertyPath: bits.Array.data[4]
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 306ab8fe8db7cf44e9300978e888fd01, type: 2}

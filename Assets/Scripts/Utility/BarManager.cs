@@ -314,7 +314,19 @@ public class BarManager : MonoBehaviour {
 
         NbtCompound root = new NbtCompound("root");
 
-        root.Add(new NbtByte("size", (byte)BarSize));
+        NbtCompound opts = new NbtCompound("opts");
+        opts.Add(new NbtByte("size", (byte)BarSize));
+        opts.Add(new NbtByte("tdop", (byte)td));
+        opts.Add(new NbtByte("can", (byte)(useCAN ? 1 : 0)));
+        opts.Add(new NbtByte("cabt", (byte)cableType));
+        opts.Add(new NbtByte("cabl", (byte)cableLength));
+        root.Add(opts);
+
+        NbtCompound order = new NbtCompound("ordr");
+        order.Add(new NbtString("name", custName.text));
+        order.Add(new NbtString("num", orderNum.text));
+        order.Add(new NbtString("note", notes.text));
+        root.Add(order);
 
         NbtList lightList = new NbtList("lite");
         foreach(LightHead lh in allHeads) {
@@ -360,7 +372,18 @@ public class BarManager : MonoBehaviour {
         NbtFile file = new NbtFile(filename);
 
         NbtCompound root = file.RootTag;
-        BarSize = root["size"].IntValue;
+
+        NbtCompound opts = root.Get<NbtCompound>("opts");
+        BarSize = opts["size"].IntValue;
+        td = (TDOption)opts["tdop"].ByteValue;
+        useCAN = opts["can"].ByteValue == 1;
+        cableType = opts["cabt"].IntValue;
+        cableLength = opts["cabl"].IntValue;
+
+        NbtCompound order = root.Get<NbtCompound>("ordr");
+        custName.text = order["name"].StringValue;
+        orderNum.text = order["num"].StringValue;
+        notes.text = order["note"].StringValue;
 
         NbtList lightList = (NbtList)root["lite"];
         NbtList socList = (NbtList)root["soc"];
