@@ -578,7 +578,7 @@ RectTransform:
   m_Father: {fileID: 2083214429}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
@@ -4353,7 +4353,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 207986134}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1200242548, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
@@ -5321,7 +5321,6 @@ GameObject:
   - 224: {fileID: 238889118}
   - 222: {fileID: 238889121}
   - 114: {fileID: 238889120}
-  - 114: {fileID: 238889119}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -5341,24 +5340,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1692637932}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
---- !u!114 &238889119
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 238889117}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &238889120
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5371,20 +5357,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Pattern Trigger, Red with Green
+  m_Text: 'Pattern Trigger
+
+    Red with Green'
 --- !u!222 &238889121
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7029,7 +7017,6 @@ GameObject:
   - 224: {fileID: 309302501}
   - 222: {fileID: 309302504}
   - 114: {fileID: 309302503}
-  - 114: {fileID: 309302502}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -7049,24 +7036,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 498550413}
   m_RootOrder: 1
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &309302502
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 309302500}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &309302503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7079,10 +7053,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -7092,7 +7066,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: L1 Trigger, White with Yellow
+  m_Text: 'L1 Trigger
+
+    White with Yellow'
 --- !u!222 &309302504
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7422,6 +7398,7 @@ RectTransform:
   - {fileID: 476369282}
   - {fileID: 671438103}
   - {fileID: 2012977187}
+  - {fileID: 811644085}
   m_Father: {fileID: 1732686839}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
@@ -7617,7 +7594,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 16
+    m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -10366,7 +10343,6 @@ GameObject:
   - 224: {fileID: 457848345}
   - 222: {fileID: 457848348}
   - 114: {fileID: 457848347}
-  - 114: {fileID: 457848346}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -10386,24 +10362,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2057957509}
   m_RootOrder: 1
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &457848346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 457848344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &457848347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10416,10 +10379,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -10429,7 +10392,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Cruise Trigger, Purple with White
+  m_Text: 'Cruise Trigger
+
+    Purple with White'
 --- !u!222 &457848348
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -10563,7 +10528,6 @@ GameObject:
   - 224: {fileID: 462992783}
   - 222: {fileID: 462992786}
   - 114: {fileID: 462992785}
-  - 114: {fileID: 462992784}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -10583,24 +10547,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 974209177}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
---- !u!114 &462992784
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 462992782}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &462992785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10613,20 +10564,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Steady Trigger, White with Orange
+  m_Text: 'Steady Trigger
+
+    White with Orange'
 --- !u!222 &462992786
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11473,7 +11426,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Defined Patterns
+  m_Text: Defined Functions
 --- !u!222 &490898788
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17179,7 +17132,6 @@ GameObject:
   - 224: {fileID: 781447435}
   - 222: {fileID: 781447438}
   - 114: {fileID: 781447437}
-  - 114: {fileID: 781447436}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -17199,24 +17151,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 929250141}
   m_RootOrder: 0
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &781447436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 781447434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &781447437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17229,10 +17168,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -17242,7 +17181,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TD Left Trigger, Yellow
+  m_Text: 'TD Left Trigger
+
+    Yellow'
 --- !u!222 &781447438
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18684,6 +18625,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canLong: 0101010101
   canShort: 0101010101
+--- !u!1 &811644084
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 811644085}
+  m_Layer: 5
+  m_Name: FuncEdit
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &811644085
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 811644084}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 322799226}
+  m_RootOrder: 3
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: .5, y: .5}
 --- !u!1 &816987952
 GameObject:
   m_ObjectHideFlags: 0
@@ -19334,7 +19307,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 841860844}
   m_Layer: 5
-  m_Name: PatternList
+  m_Name: FuncList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19889,7 +19862,6 @@ GameObject:
   - 224: {fileID: 878005726}
   - 222: {fileID: 878005729}
   - 114: {fileID: 878005728}
-  - 114: {fileID: 878005727}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -19909,24 +19881,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 490074737}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
---- !u!114 &878005727
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 878005725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &878005728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19939,20 +19898,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Dimmer Trigger, Purple
+  m_Text: 'Dimmer Trigger
+
+    Purple'
 --- !u!222 &878005729
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -20046,7 +20007,7 @@ RectTransform:
   m_Father: {fileID: 2077159450}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
@@ -22286,7 +22247,7 @@ RectTransform:
   m_Father: {fileID: 1745734899}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
@@ -22346,8 +22307,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 24096054}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: .283913076}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
@@ -22521,8 +22482,8 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 256, y: 40}
-  m_Spacing: {x: 96, y: 4}
+  m_CellSize: {x: 210, y: 32}
+  m_Spacing: {x: 80, y: 4}
   m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!1 &980721966
@@ -27686,7 +27647,6 @@ GameObject:
   - 224: {fileID: 1224658951}
   - 222: {fileID: 1224658954}
   - 114: {fileID: 1224658953}
-  - 114: {fileID: 1224658952}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -27706,24 +27666,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 816987953}
   m_RootOrder: 0
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &1224658952
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1224658950}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &1224658953
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27736,10 +27683,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -27749,7 +27696,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Flash Trigger, White with Pink
+  m_Text: 'Flash Trigger
+
+    White with Pink'
 --- !u!222 &1224658954
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28732,8 +28681,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 491328941}
   m_HandleRect: {fileID: 491328940}
   m_Direction: 2
-  m_Value: 1
-  m_Size: .387297869
+  m_Value: .99999845
+  m_Size: .61039263
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -31276,7 +31225,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Pattern Selection
+  m_Text: Function Selection
 --- !u!222 &1347929055
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -31646,7 +31595,6 @@ GameObject:
   - 224: {fileID: 1382605800}
   - 222: {fileID: 1382605803}
   - 114: {fileID: 1382605802}
-  - 114: {fileID: 1382605801}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -31666,24 +31614,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 176916514}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
---- !u!114 &1382605801
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1382605799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &1382605802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31696,20 +31631,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TD Right Trigger, Green
+  m_Text: 'TD Right Trigger
+
+    Green'
 --- !u!222 &1382605803
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34540,7 +34477,6 @@ GameObject:
   - 224: {fileID: 1517497028}
   - 222: {fileID: 1517497031}
   - 114: {fileID: 1517497030}
-  - 114: {fileID: 1517497029}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -34560,24 +34496,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 625775613}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
---- !u!114 &1517497029
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1517497027}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &1517497030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34590,20 +34513,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Right Alley Trigger, Gray
+  m_Text: 'Right Alley Trigger
+
+    Gray'
 --- !u!222 &1517497031
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -36094,7 +36019,6 @@ GameObject:
   - 224: {fileID: 1581442348}
   - 222: {fileID: 1581442351}
   - 114: {fileID: 1581442350}
-  - 114: {fileID: 1581442349}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -36114,24 +36038,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 73423802}
   m_RootOrder: 0
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &1581442349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1581442347}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &1581442350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36144,10 +36055,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -36157,7 +36068,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: L3 Trigger, Brown
+  m_Text: 'L3 Trigger
+
+    Brown'
 --- !u!222 &1581442351
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37748,7 +37661,6 @@ GameObject:
   - 224: {fileID: 1646320449}
   - 222: {fileID: 1646320452}
   - 114: {fileID: 1646320451}
-  - 114: {fileID: 1646320450}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -37768,24 +37680,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1357198466}
   m_RootOrder: 0
-  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
---- !u!114 &1646320450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1646320448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &1646320451
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37798,10 +37697,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
@@ -37811,7 +37710,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Left Alley Trigger, Blue
+  m_Text: 'Left Alley Trigger
+
+    Blue'
 --- !u!222 &1646320452
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -39428,6 +39329,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SummaryPane: {fileID: 476369281}
   OpticPane: {fileID: 671438102}
+  FuncAssignPane: {fileID: 2012977186}
+  FuncEditPane: {fileID: 811644084}
 --- !u!1 &1742738711
 GameObject:
   m_ObjectHideFlags: 0
@@ -41181,7 +41084,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 16
+    m_FontSize: 28
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -42799,7 +42702,6 @@ GameObject:
   - 224: {fileID: 1864380652}
   - 222: {fileID: 1864380655}
   - 114: {fileID: 1864380654}
-  - 114: {fileID: 1864380653}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -42819,24 +42721,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2098600370}
   m_RootOrder: 1
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 4, y: -4}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 1}
---- !u!114 &1864380653
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1864380651}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 2
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -8, y: -4}
+  m_Pivot: {x: .5, y: .5}
 --- !u!114 &1864380654
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42849,20 +42738,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: .501960814}
+  m_Color: {r: 0, g: 0, b: 0, a: .411764711}
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 11
+    m_FontSize: 12
     m_FontStyle: 1
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 2
+    m_Alignment: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: L2 Trigger, White with Red
+  m_Text: 'L2 Trigger
+
+    White with Red'
 --- !u!222 &1864380655
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -44611,7 +44502,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 40, y: 40}
+  m_CellSize: {x: 32, y: 32}
   m_Spacing: {x: 4, y: 4}
   m_Constraint: 1
   m_ConstraintCount: 2
@@ -46400,7 +46291,7 @@ GameObject:
   m_Component:
   - 224: {fileID: 2012977187}
   m_Layer: 5
-  m_Name: Patterns
+  m_Name: FuncAssign
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46607,7 +46498,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: .132352948, g: .132352948, b: .132352948, a: .392156869}
+  m_Color: {r: .375, g: .375, b: .375, a: 1}
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
