@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ffafbc1e1a25d774e9e71399198ae6aa
-timeCreated: 1433350214
+timeCreated: 1433528996
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -33,6 +33,9 @@ TextureImporter:
     21300052: wireKind
     21300054: lenShort
     21300056: lenMedium
+    21300058: pencil32
+    21300060: squareInput
+    21300062: circleInput
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -342,7 +345,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 54
-        y: 23
+        y: 22
         width: 16
         height: 16
       alignment: 0
@@ -365,6 +368,36 @@ TextureImporter:
         y: 80
         width: 7
         height: 11
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: pencil32
+      rect:
+        serializedVersion: 2
+        x: 54
+        y: 94
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: squareInput
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 22
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: circleInput
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 4
+        width: 16
+        height: 16
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
