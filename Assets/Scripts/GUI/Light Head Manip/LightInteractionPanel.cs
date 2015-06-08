@@ -2,13 +2,13 @@
 using System.Collections;
 
 public class LightInteractionPanel : MonoBehaviour {
-    private enum ShowState {
+    public enum ShowState {
         SUMMARY, OPTICS, FUNCASSIGN, FUNCEDIT
     }
     private static CameraControl cam;
     public static bool EditingFunc = false;
     private ShowState _state = ShowState.SUMMARY;
-    private ShowState state {
+    public ShowState state {
         set { _state = value; Set(); }
         get { return _state; }
     }
@@ -52,5 +52,9 @@ public class LightInteractionPanel : MonoBehaviour {
         OpticPane.SetActive(state == ShowState.OPTICS);
         FuncAssignPane.SetActive(state == ShowState.FUNCASSIGN);
         FuncEditPane.SetActive(state == ShowState.FUNCEDIT);
+    }
+
+    public void ToggleEditFunc() {
+        EditingFunc = !EditingFunc;
     }
 }

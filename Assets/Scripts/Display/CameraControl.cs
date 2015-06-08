@@ -18,13 +18,14 @@ public class CameraControl : MonoBehaviour {
     public float partialOrtho = 2.0f;
 
     public FunctionSelect fs;
-    public FnSelManager fsm;
 
     public RectTransform cover;
 
     public RectTransform SelBox;
     private SelBoxCollider sbc, msbc;
     private SymmMode sm;
+
+    private LightInteractionPanel lip;
 
     private Camera myCam;
 
@@ -55,8 +56,6 @@ public class CameraControl : MonoBehaviour {
 
     void Awake() {
         selected = new List<LightHead>();
-
-
     }
 
     void Start() {
@@ -71,12 +70,21 @@ public class CameraControl : MonoBehaviour {
         sbc = SelBox.GetComponent<SelBoxCollider>();
         msbc = SelBox.transform.GetChild(0).GetComponent<SelBoxCollider>();
 
+        lip = FindObjectOfType<LightInteractionPanel>();
+
         sm = FindObjectOfType<SymmMode>();
 
         myCam = GetComponent<Camera>();
         myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 32f);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
         myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+    }
+
+    public void ResetView() {
+        transform.position = new Vector3(0, 0, -10);
+        float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
+        myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+
     }
 
     void Update() {
@@ -98,10 +106,21 @@ public class CameraControl : MonoBehaviour {
 
                 Vector2 mousePos = Input.mousePosition;
                 if(Input.GetMouseButtonDown(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB pressed
-                    if(myCam.pixelRect.Contains(mousePos)) {
-                        dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
-                        fs.Clear();
+                    Camera UICam = GameObject.Find("UI").GetComponent<Camera>();
+
+                    bool cont = true;
+
+                    foreach(CollapsingMenuControl cmc in FindObjectsOfType<CollapsingMenuControl>()) {
+                        if(RectTransformUtility.RectangleContainsScreenPoint(cmc.transform as RectTransform, Input.mousePosition, UICam)) {
+                            cont = false;
+                        }
                     }
+
+                    if(cont)
+                        if(myCam.pixelRect.Contains(mousePos)) {
+                            dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
+                            fs.Clear();
+                        }
                 } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB released
                     if(dragging) {
                         if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
@@ -148,7 +167,6 @@ public class CameraControl : MonoBehaviour {
 
                         if(selected.Count > 0) {
                             fs.Refresh();
-                            fsm.Refresh();
                         }
                     }
                 } else if(dragging) { // LMB held
@@ -192,7 +210,13 @@ public class CameraControl : MonoBehaviour {
                     }
                 }
 
-                if((myCam.pixelRect.Contains(mousePos))) {
+                Rect r = myCam.pixelRect;
+                r.x += 5;
+                r.y += 5;
+                r.width -= 10;
+                r.height -= 10;
+
+                if((r.Contains(mousePos))) {
                     myCam.orthographicSize = partialOrtho = Mathf.Clamp(partialOrtho + Input.GetAxisRaw("Mouse ScrollWheel") * 1f, 1f, 10f);
                     if(Input.GetMouseButton(1))
                         transform.position -= (new Vector3(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"), 0f) * myCam.orthographicSize * 0.1f);

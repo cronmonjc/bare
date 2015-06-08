@@ -4,7 +4,7 @@ using System.Collections;
 
 public class LightLabel : MonoBehaviour {
     public Transform target;
-    public Text label, label2;
+    public Text label, label2, colorLabel;
     public Image background, secondImage, selectionImage, warnImage;
 
     private LightHead lh;
@@ -31,6 +31,8 @@ public class LightLabel : MonoBehaviour {
     }
 
     public void Refresh(bool showHeadNumber = false) {
+        colorLabel.text = "";
+
         string prefix = "";
 
         if(showHeadNumber) {
@@ -66,6 +68,8 @@ public class LightLabel : MonoBehaviour {
                 string t = prefix;
                 byte bit = lh.Bit;
 
+                Color labelColor = Color.white;
+
                 if(!wireOverride) {
                     if(transform.position.y < 0) {
                         if(bit > 5) {
@@ -78,26 +82,37 @@ public class LightLabel : MonoBehaviour {
                             case 5:
                             case 6:
                                 t = t + "1";
+                                labelColor = new Color(0.5f, 0.25f, 0.0f);
+                                colorLabel.text = "Brown";
                                 break;
                             case 4:
                             case 7:
                                 t = t + "2";
+                                labelColor = Color.yellow;
+                                colorLabel.text = "Yellow";
                                 break;
                             case 3:
                             case 8:
                                 t = t + "3";
+                                labelColor = Color.green;
+                                colorLabel.text = "Green";
                                 break;
                             case 2:
                             case 9:
                                 t = t + "4";
+                                labelColor = Color.blue;
+                                colorLabel.text = "Blue";
                                 break;
                             case 1:
                             case 10:
                                 t = t + "5";
+                                labelColor = new Color(0.5f, 0.0f, 1.0f);
+                                colorLabel.text = "Purple";
                                 break;
                             case 0:
                             case 11:
                                 t = t + "6";
+                                colorLabel.text = "White";
                                 break;
                             default:
                                 t = t + "?";
@@ -114,27 +129,43 @@ public class LightLabel : MonoBehaviour {
                             case 5:
                             case 6:
                                 t = t + (lh.FarWire[BarManager.inst.BarSize] ? "2" : "1");
+                                labelColor = (lh.FarWire[BarManager.inst.BarSize] ? Color.yellow : new Color(0.5f, 0.25f, 0.0f));
+                                colorLabel.text = (lh.FarWire[BarManager.inst.BarSize] ? "Yellow" : "Brown");
                                 break;
                             case 4:
                             case 7:
+                                labelColor = Color.green;
+                                colorLabel.text = "Green";
                                 t = t + "3";
                                 break;
                             case 1:
                             case 10:
                                 t = t + "4";
+                                labelColor = Color.blue;
+                                colorLabel.text = "Blue";
                                 break;
                             case 0:
                             case 11:
                                 t = t + "5";
+                                labelColor = new Color(0.5f, 0.0f, 1.0f);
+                                colorLabel.text = "Purple";
                                 break;
                             case 12:
                             case 13:
                                 t = t + "6";
+                                colorLabel.text = "White";
                                 break;
                             default:
                                 t = t + "?";
                                 break;
                         }
+                    }
+
+                    secondImage.color = background.color = labelColor;
+                    if(labelColor.r + labelColor.g < labelColor.b) {
+                        label2.color = label.color = Color.white;
+                    } else {
+                        label2.color = label.color = Color.black;
                     }
 
                     if(lh.lhd.style.isDualColor) {
@@ -204,11 +235,12 @@ public class LightLabel : MonoBehaviour {
                     }
                 } else {
                     t = t + "\n\n";
+
+                    label2.color = label.color = Color.black;
+                    secondImage.color = background.color = Color.white;
                 }
 
                 label2.text = label.text = t;
-                label2.color = label.color = Color.black;
-                secondImage.color = background.color = Color.white;
             }
         } else {
             if(lh.lhd.style != null) {

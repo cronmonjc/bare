@@ -57,6 +57,17 @@ public class FunctionSelect : MonoBehaviour {
 
         for(int i = 0; i < potential.Count; i++) {
             if(potential[i] == BasicFunction.CRUISE) continue;
+            if(potential[i] == BasicFunction.EMITTER) {
+                if(cam.OnlyCamSelected.Count > 1) continue;
+                bool found = false;
+                foreach(LightHead alpha in BarManager.inst.allHeads) {
+                    if(alpha.gameObject.activeInHierarchy && !alpha.Selected && alpha.lhd.funcs.Contains(BasicFunction.EMITTER)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if(found) continue;
+            }
 
             GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
             newbie.transform.SetParent(menu, false);

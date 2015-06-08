@@ -16,10 +16,20 @@ public class CollapsingMenuControl : MonoBehaviour, ILayoutElement {
         if(cam == null) {
             cam = GameObject.Find("UI").GetComponent<Camera>();
         }
-        if(display && Input.GetMouseButtonUp(0)) {
-            if(!RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Input.mousePosition, cam) && !RectTransformUtility.RectangleContainsScreenPoint(transform.parent as RectTransform, Input.mousePosition, cam)) {
-                display = false;
+        if(display && Input.GetMouseButtonDown(0)) {
+            bool hide = true;
+
+            if(RectTransformUtility.RectangleContainsScreenPoint(transform as RectTransform, Input.mousePosition, cam)) {
+                hide = false;
+            } else {
+                foreach(Transform t in GetComponentsInChildren<Transform>()) {
+                    if(RectTransformUtility.RectangleContainsScreenPoint(t as RectTransform, Input.mousePosition, cam)) {
+                        hide = false;
+                    }
+                }
             }
+
+            display = !hide;
         }
 
         float height = transform.localScale.y;
@@ -49,6 +59,10 @@ public class CollapsingMenuControl : MonoBehaviour, ILayoutElement {
             transform.localScale = new Vector3(1, height, 1);
             LayoutRebuilder.MarkLayoutForRebuild((RectTransform)transform);
         }
+    }
+
+    public void Show() {
+        display = true;
     }
 
     public void ToggleDisplay() {

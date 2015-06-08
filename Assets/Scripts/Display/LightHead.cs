@@ -242,6 +242,9 @@ public class LightHead : MonoBehaviour {
                         } else {
                             SetOptic("Lineum", lhd.funcs[0]);
                         }
+                        if(lhd.funcs[0] == BasicFunction.FLASHING) {
+                            useDual = true;
+                        }
                         return;
                     default:
                         SetOptic("");
@@ -268,9 +271,13 @@ public class LightHead : MonoBehaviour {
                     lhd.funcs.RemoveAt(0);
                     RefreshBasicFuncDefault();
                 } else {
-                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
                     useDual = true;
-                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) useSingle = true;
+                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
+                        useSingle = true;
+                        SetOptic(isSmall ? "Starburst" : "Lineum", BasicFunction.STEADY);
+                    } else {
+                        SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
+                    }
                 }
                 return;
             case 3:

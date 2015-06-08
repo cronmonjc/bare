@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ffafbc1e1a25d774e9e71399198ae6aa
-timeCreated: 1433528996
+timeCreated: 1433789977
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -36,6 +36,8 @@ TextureImporter:
     21300058: pencil32
     21300060: squareInput
     21300062: circleInput
+    21300064: wireKindDual
+    21300066: newcam
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -396,6 +398,26 @@ TextureImporter:
         serializedVersion: 2
         x: 72
         y: 4
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: wireKindDual
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 40
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: newcam
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 58
         width: 16
         height: 16
       alignment: 0
