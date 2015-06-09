@@ -770,7 +770,7 @@ public class BarManager : MonoBehaviour {
 
         XImage circuit = XImage.FromFile("pdfassets\\Circuit.png");
         scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (circuit.PixelWidth * 1.0f);
-        gfx.DrawImage(circuit, 0.5, 4.25, circuit.PixelWidth * scale, circuit.PixelHeight * scale);
+        gfx.DrawImage(circuit, 0.5, 3.75, circuit.PixelWidth * scale, circuit.PixelHeight * scale);
 
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));

@@ -68,7 +68,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                     name = "Emitter";
                     break;
                 case BasicFunction.CAL_STEADY:
-                    name = "Cali Steady";
+                    name = "California T13 Steady";
                     break;
                 case BasicFunction.CRUISE:
                     name = "Cruise";
