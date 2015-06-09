@@ -24,7 +24,7 @@ public class DisableEnablePatt : MonoBehaviour {
     }
 
     public void Retest() {
-        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+        NbtCompound patts = BarManager.inst.patts;
         PattSelect ps = FindObjectOfType<PattSelect>();
         bool show = true;
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
