@@ -19,6 +19,8 @@ public class LightHead : MonoBehaviour {
 
     [System.NonSerialized]
     public bool basicPhaseB = false;
+    [System.NonSerialized]
+    public bool basicPhaseB2 = false;
 
     public Dictionary<AdvFunction, Pattern> patterns;
 

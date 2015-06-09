@@ -443,23 +443,12 @@ public class BarManager : MonoBehaviour {
 
     public IEnumerator SavePDF(string filename) {
         if(!filename.EndsWith(".pdf")) filename = filename + ".pdf";
-
-        PdfDocument doc = new PdfDocument();
-        doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
-        doc.Info.Creator = "1000 Lightbar Configurator";
-        doc.Info.Title = "1000 Lightbar Configuration";
-
-        RefreshCurrentHeads();
         CameraControl.ShowWhole = true;
         CanvasDisabler.CanvasEnabled = false;
-
-        bool debugBit = LightLabel.showBit;
-        LightLabel.showBit = false;
 
         Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
 
         cam.transform.position = new Vector3(0f, 0f, -10f);
-
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
 
@@ -474,9 +463,90 @@ public class BarManager : MonoBehaviour {
 
         Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
 
-        yield return StartCoroutine(OverviewPage(doc.AddPage(), capRect));
-        yield return StartCoroutine(PartsPage(doc.AddPage(), capRect));
-        yield return StartCoroutine(WiringPage(doc.AddPage(), capRect));
+        yield return StartCoroutine(CapImages(capRect));
+
+        PdfDocument doc = new PdfDocument();
+        doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
+        doc.Info.Creator = "1000 Lightbar Configurator";
+        doc.Info.Title = "1000 Lightbar Configuration";
+        OverviewPage(doc.AddPage(), capRect);
+        PartsPage(doc.AddPage(), capRect);
+        WiringPage(doc.AddPage(), capRect);
+
+        try {
+            doc.Save(filename);
+            Application.OpenURL("file://" + filename);
+        } catch(IOException) {
+            ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
+        } finally {
+            doc.Close();
+            doc.Dispose();
+
+            if(savePDF)
+                fb.currFile = barFilePath;
+            savePDF = false;
+        }
+        yield return null;
+    }
+
+    public IEnumerator CapImages(Rect capRect) {
+        RefreshCurrentHeads();
+
+        Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
+
+        bool debugBit = LightLabel.showBit;
+        LightLabel.showBit = false;
+
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+
+        LightLabel.showParts = false;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.DispError = false;
+            alpha.Refresh(true);
+        }
+        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        Directory.CreateDirectory("tempgen");
+        using(FileStream imgOut = new FileStream("tempgen\\desc.png", FileMode.OpenOrCreate)) {
+            byte[] imgbytes = tex.EncodeToPNG();
+            imgOut.Write(imgbytes, 0, imgbytes.Length);
+        }
+
+        LightLabel.showParts = true;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
+        LightLabel.showParts = false;
+
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        Directory.CreateDirectory("tempgen");
+        using(FileStream imgOut = new FileStream("tempgen\\part.png", FileMode.OpenOrCreate)) {
+            byte[] imgbytes = tex.EncodeToPNG();
+            imgOut.Write(imgbytes, 0, imgbytes.Length);
+        }
+
+        LightLabel.showWire = true;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
+        LightLabel.showWire = false;
+
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        Directory.CreateDirectory("tempgen");
+        using(FileStream imgOut = new FileStream("tempgen\\wire.png", FileMode.OpenOrCreate)) {
+            byte[] imgbytes = tex.EncodeToPNG();
+            imgOut.Write(imgbytes, 0, imgbytes.Length);
+        }
 
         LightLabel.showParts = false;
         CanvasDisabler.CanvasEnabled = true;
@@ -490,20 +560,9 @@ public class BarManager : MonoBehaviour {
             alpha.Refresh();
         }
 
-        try {
-            doc.Save(filename);
-            Application.OpenURL("file://" + filename);
-        } catch(IOException) {
-            ErrorText.inst.DispError("Unable to produce PDF.  Do you have the PDF open elsewhere, by chance?");
-        } finally {
-            if(savePDF)
-                fb.currFile = barFilePath;
-            savePDF = false;
-        }
-        yield return null;
     }
 
-    public IEnumerator OverviewPage(PdfPage p, Rect capRect) {
+    public void OverviewPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
@@ -513,25 +572,16 @@ public class BarManager : MonoBehaviour {
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
         XFont caliSmBold = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
-        LightLabel.showParts = false;
-        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
-            alpha.DispError = false;
-            alpha.Refresh(true);
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
+        using(XImage descImg = XImage.FromFile("tempgen\\desc.png")) {
+            gfx.DrawImage(descImg, 0.5, 1.3, capRect.width * scale, capRect.height * scale);
         }
-
-        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
-        yield return new WaitForEndOfFrame();
-        tex.ReadPixels(capRect, 0, 0);
-        tex.Apply();
-
-        Directory.CreateDirectory("tempgen");
-        File.WriteAllBytes("tempgen\\desc.png", tex.EncodeToPNG());
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
-        gfx.DrawImage(XImage.FromFile("tempgen\\desc.png"), 0.5, 1.3, tex.width * scale, tex.height * scale);
-        gfx.DrawImage(XImage.FromFile("pdfassets\\TopLeft.png"), 0.5, 0.5, 0.74, 0.9);
-        XImage tr = XImage.FromFile("pdfassets\\TopRight.png");
-        gfx.DrawImage(tr, ((float)p.Width.Inch) - 2.45, 0.5, 1.95, 0.75);
+        using(XImage tl = XImage.FromFile("pdfassets\\TopLeft.png")) {
+            gfx.DrawImage(tl, 0.5, 0.5, 0.74, 0.9);
+        }
+        using(XImage tr = XImage.FromFile("pdfassets\\TopRight.png")) {
+            gfx.DrawImage(tr, ((float)p.Width.Inch) - 2.45, 0.5, 1.95, 0.75);
+        }
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Star 1000", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
@@ -615,8 +665,6 @@ public class BarManager : MonoBehaviour {
 
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-
-        yield return null;
     }
 
     private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh) {
@@ -652,7 +700,7 @@ public class BarManager : MonoBehaviour {
         }
     }
 
-    public IEnumerator PartsPage(PdfPage p, Rect capRect) {
+    public void PartsPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
@@ -660,22 +708,10 @@ public class BarManager : MonoBehaviour {
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
 
-        LightLabel.showParts = true;
-        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
-            alpha.Refresh(true);
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
+        using(XImage partImg = XImage.FromFile("tempgen\\part.png")) {
+            gfx.DrawImage(partImg, 0.5, 1.0, capRect.width * scale, capRect.height * scale);
         }
-        LightLabel.showParts = false;
-
-        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
-        yield return new WaitForEndOfFrame();
-        tex.ReadPixels(capRect, 0, 0);
-        tex.Apply();
-
-        Directory.CreateDirectory("tempgen");
-        File.WriteAllBytes("tempgen\\part.png", tex.EncodeToPNG());
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
-        gfx.DrawImage(XImage.FromFile("tempgen\\part.png"), 0.5, 1.0, tex.width * scale, tex.height * scale);
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Model " + BarModel, new XFont("Courier New", new XUnit(24, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.5, p.Width.Inch - 1.0, 1.0));
@@ -714,11 +750,9 @@ public class BarManager : MonoBehaviour {
 
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-
-        yield return null;
     }
 
-    public IEnumerator WiringPage(PdfPage p, Rect capRect) {
+    public void WiringPage(PdfPage p, Rect capRect) {
         p.Orientation = PageOrientation.Landscape;
 
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
@@ -726,22 +760,10 @@ public class BarManager : MonoBehaviour {
 
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
 
-        LightLabel.showWire = true;
-        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
-            alpha.Refresh(true);
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
+        using(XImage wireImg = XImage.FromFile("tempgen\\wire.png")) {
+            gfx.DrawImage(wireImg, 0.5, 1.2, capRect.width * scale, capRect.height * scale);
         }
-        LightLabel.showWire = false;
-
-        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
-        yield return new WaitForEndOfFrame();
-        tex.ReadPixels(capRect, 0, 0);
-        tex.Apply();
-
-        Directory.CreateDirectory("tempgen");
-        File.WriteAllBytes("tempgen\\wire.png", tex.EncodeToPNG());
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (tex.width * 1.0f);
-        gfx.DrawImage(XImage.FromFile("tempgen\\wire.png"), 0.5, 1.2, tex.width * scale, tex.height * scale);
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Wiring Diagram", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
