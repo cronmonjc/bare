@@ -13,6 +13,7 @@ public class LightInteractionPanel : MonoBehaviour {
         get { return _state; }
     }
     public GameObject SummaryPane, OpticPane, FuncAssignPane, FuncEditPane;
+    private FunctionEditPane fep;
 
     // Update is called once per frame
     void Update() {
@@ -39,9 +40,20 @@ public class LightInteractionPanel : MonoBehaviour {
             case ShowState.FUNCASSIGN:
                 if(!EditingFunc) {
                     state = ShowState.SUMMARY;
+                } else {
+                    if(fep == null) fep = FuncEditPane.GetComponent<FunctionEditPane>();
+                    if(fep.currFunc != AdvFunction.NONE) {
+                        state = ShowState.FUNCEDIT;
+                    }
                 }
                 break;
             case ShowState.FUNCEDIT:
+                if(!EditingFunc) {
+                    state = ShowState.SUMMARY;
+                } else if(fep.currFunc == AdvFunction.NONE) {
+                    state = ShowState.FUNCASSIGN;
+                }
+                break;
             default:
                 break;
         }

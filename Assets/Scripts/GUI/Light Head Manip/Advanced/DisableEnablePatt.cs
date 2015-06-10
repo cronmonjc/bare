@@ -100,6 +100,6 @@ public class DisableEnablePatt : MonoBehaviour {
         ps.enableButton.Retest();
         ps.disableButton.Retest();
 
-        FnSelManager.inst.RefreshLabels();
+        //FnSelManager.inst.RefreshLabels();
     }
 }

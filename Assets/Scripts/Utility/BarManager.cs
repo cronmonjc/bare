@@ -94,18 +94,20 @@ public class BarManager : MonoBehaviour {
 
     public static string GetFnString(Transform t, AdvFunction f) {
         switch(f) {
-            case AdvFunction.ALLEY:
-                if(t.position.x < 0) {
-                    return "lall";
-                } else {
-                    return "rall";
-                }
+            case AdvFunction.ALLEY_LEFT:
+                return "lall";
+            case AdvFunction.ALLEY_RIGHT:
+                return "rall";
             case AdvFunction.CRUISE:
                 return "cru";
             case AdvFunction.DIM:
                 return "dim";
             case AdvFunction.EMITTER:
                 return "emi";
+            case AdvFunction.FALLEY:
+                return "afl";
+            case AdvFunction.FTAKEDOWN:
+                return "tdp";
             case AdvFunction.ICL:
                 return "icl";
             case AdvFunction.LEVEL1:
@@ -118,7 +120,11 @@ public class BarManager : MonoBehaviour {
                 return "l4";
             case AdvFunction.LEVEL5:
                 return "l5";
-            case AdvFunction.STT_AND_TAIL:
+            case AdvFunction.TURN_LEFT:
+                return "ltai";
+            case AdvFunction.TURN_RIGHT:
+                return "rtai";
+            case AdvFunction.TAIL:
                 if(t.position.x < 0) {
                     return "ltai";
                 } else {
@@ -126,7 +132,8 @@ public class BarManager : MonoBehaviour {
                 }
             case AdvFunction.TAKEDOWN:
                 return "td";
-            case AdvFunction.TRAFFIC:
+            case AdvFunction.TRAFFIC_LEFT:
+            case AdvFunction.TRAFFIC_RIGHT:
                 return "traf";
             case AdvFunction.T13:
                 return "cal";

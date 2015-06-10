@@ -95,6 +95,6 @@ public class PhaseButton : MonoBehaviour {
         ps.PhaseA.Retest();
         ps.PhaseB.Retest();
 
-        FnSelManager.inst.RefreshLabels();
+        //FnSelManager.inst.RefreshLabels();
     }
 }

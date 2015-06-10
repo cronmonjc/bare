@@ -24,10 +24,6 @@ public class LightHead : MonoBehaviour {
 
     public Dictionary<AdvFunction, Pattern> patterns;
 
-    public List<AdvFunction> CapableAdvFunctions {
-        get { return LightDict.inst.capableFunctions[loc]; }
-    }
-
     public List<BasicFunction> CapableBasicFunctions {
         get {
             switch(loc) {
@@ -132,25 +128,25 @@ public class LightHead : MonoBehaviour {
         }
     }
 
-    public bool IsUsingFunction(AdvFunction f) {
-        if(!CapableAdvFunctions.Contains(f) || lhd.style == null) return false;
-        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+    //public bool IsUsingFunction(AdvFunction f) {
+    //    if(!CapableAdvFunctions.Contains(f) || lhd.style == null) return false;
+    //    NbtCompound patts = FindObjectOfType<BarManager>().patts;
 
-        string cmpdName = BarManager.GetFnString(transform, f);
-        if(cmpdName == null) {
-            Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-            return false;
-        }
-        NbtCompound func = patts.Get<NbtCompound>(cmpdName);
+    //    string cmpdName = BarManager.GetFnString(transform, f);
+    //    if(cmpdName == null) {
+    //        Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+    //        return false;
+    //    }
+    //    NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-        short en = func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "1").ShortValue;
+    //    short en = func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "1").ShortValue;
 
-        if(lhd.style.isDualColor) {
-            en = (short)(en | func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "2").ShortValue);
-        }
+    //    if(lhd.style.isDualColor) {
+    //        en = (short)(en | func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "2").ShortValue);
+    //    }
 
-        return ((en & (0x1 << Bit)) > 0);
-    }
+    //    return ((en & (0x1 << Bit)) > 0);
+    //}
 
     public Pattern GetPattern(AdvFunction f, bool clr2 = false) {
         if(lhd.style == null) return null;

@@ -58,50 +58,50 @@ public class PattSelect : MonoBehaviour {
 
             PhaseA.GetComponent<Button>().interactable = false;
             PhaseB.GetComponent<Button>().interactable = false;
-        } else if(f == AdvFunction.TRAFFIC) {
-            short selID = -2;
-            foreach(Pattern p in LightDict.inst.tdPatts) {
-                newbie = GameObject.Instantiate<GameObject>(prefab);
-                newbie.transform.SetParent(menu, false);
-                newbie.transform.localScale = Vector3.one;
-                newpse = newbie.GetComponent<PattSelectElement>();
-                newpse.selID = (short)p.id;
-                newpse.ps = this;
-                newpse.FuncText = p.name;
-                newpse.Retest();
-                if(TestPatternAny((short)p.id)) {
-                    if(selID == -2) {
-                        selID = (short)p.id;
-                    } else if(selID != -1 && selID != p.id) {
-                        selID = -1;
-                    }
-                }
-            }
-            if(selID == -2) {
-                enableButton.text = "Cannot Enable, No Pattern";
-                enableButton.GetComponent<Button>().interactable = false;
-            } else if(selID == -1) {
-                enableButton.text = "Enable: <i>Multiple Patterns</i>";
-                enableButton.GetComponent<Button>().interactable = true;
-            } else {
-                Pattern a = null;
-                foreach(Pattern p in LightDict.inst.tdPatts) {
-                    if(p.id == selID) {
-                        a = p;
-                        break;
-                    }
-                }
-                if(a == null) {
-                    enableButton.text = "Cannot Enable, No Pattern";
-                    enableButton.GetComponent<Button>().interactable = false;
-                } else {
-                    enableButton.text = "Enable: " + a.name;
-                    enableButton.GetComponent<Button>().interactable = true;
-                }
-            }
+        //} else if(f == AdvFunction.TRAFFIC) {
+        //    short selID = -2;
+        //    foreach(Pattern p in LightDict.inst.tdPatts) {
+        //        newbie = GameObject.Instantiate<GameObject>(prefab);
+        //        newbie.transform.SetParent(menu, false);
+        //        newbie.transform.localScale = Vector3.one;
+        //        newpse = newbie.GetComponent<PattSelectElement>();
+        //        newpse.selID = (short)p.id;
+        //        newpse.ps = this;
+        //        newpse.FuncText = p.name;
+        //        newpse.Retest();
+        //        if(TestPatternAny((short)p.id)) {
+        //            if(selID == -2) {
+        //                selID = (short)p.id;
+        //            } else if(selID != -1 && selID != p.id) {
+        //                selID = -1;
+        //            }
+        //        }
+        //    }
+        //    if(selID == -2) {
+        //        enableButton.text = "Cannot Enable, No Pattern";
+        //        enableButton.GetComponent<Button>().interactable = false;
+        //    } else if(selID == -1) {
+        //        enableButton.text = "Enable: <i>Multiple Patterns</i>";
+        //        enableButton.GetComponent<Button>().interactable = true;
+        //    } else {
+        //        Pattern a = null;
+        //        foreach(Pattern p in LightDict.inst.tdPatts) {
+        //            if(p.id == selID) {
+        //                a = p;
+        //                break;
+        //            }
+        //        }
+        //        if(a == null) {
+        //            enableButton.text = "Cannot Enable, No Pattern";
+        //            enableButton.GetComponent<Button>().interactable = false;
+        //        } else {
+        //            enableButton.text = "Enable: " + a.name;
+        //            enableButton.GetComponent<Button>().interactable = true;
+        //        }
+        //    }
 
-            PhaseA.GetComponent<Button>().interactable = false;
-            PhaseB.GetComponent<Button>().interactable = false;
+        //    PhaseA.GetComponent<Button>().interactable = false;
+        //    PhaseB.GetComponent<Button>().interactable = false;
         } else {
             short selID = -2;
             foreach(Pattern p in LightDict.inst.flashPatts) {
@@ -188,39 +188,39 @@ public class PattSelect : MonoBehaviour {
         if(LightDict.inst.steadyBurn.Contains(f) || f == AdvFunction.DIM) {
             enableButton.text = "Enable " + (f == AdvFunction.DIM ? "Light Dimming" : "Steady Burn");
             enableButton.GetComponent<Button>().interactable = true;
-        } else if(f == AdvFunction.TRAFFIC) {
-            NbtCompound patts = FindObjectOfType<BarManager>().patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
-            short selID = patts["l"].ShortValue;
-            if(selID != patts["r"].ShortValue) {
-                selID = -2;
-            }
-            if(selID != patts["c"].ShortValue) {
-                selID = -2;
-            }
+        //} else if(f == AdvFunction.TRAFFIC) {
+        //    NbtCompound patts = FindObjectOfType<BarManager>().patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+        //    short selID = patts["l"].ShortValue;
+        //    if(selID != patts["r"].ShortValue) {
+        //        selID = -2;
+        //    }
+        //    if(selID != patts["c"].ShortValue) {
+        //        selID = -2;
+        //    }
 
-            if(selID == -2) {
-                enableButton.text = "Enable: <i>Multiple Patterns</i>";
-                enableButton.GetComponent<Button>().interactable = true;
-            }
-            if(selID == -1) {
-                enableButton.text = "Cannot Enable, No Pattern";
-                enableButton.GetComponent<Button>().interactable = false;
-            } else {
-                Pattern a = null;
-                foreach(Pattern p in LightDict.inst.tdPatts) {
-                    if(p.id == selID) {
-                        a = p;
-                        break;
-                    }
-                }
-                if(a == null) {
-                    enableButton.text = "Cannot Enable, No Pattern";
-                    enableButton.GetComponent<Button>().interactable = false;
-                } else {
-                    enableButton.text = "Enable: " + a.name;
-                    enableButton.GetComponent<Button>().interactable = true;
-                }
-            }
+        //    if(selID == -2) {
+        //        enableButton.text = "Enable: <i>Multiple Patterns</i>";
+        //        enableButton.GetComponent<Button>().interactable = true;
+        //    }
+        //    if(selID == -1) {
+        //        enableButton.text = "Cannot Enable, No Pattern";
+        //        enableButton.GetComponent<Button>().interactable = false;
+        //    } else {
+        //        Pattern a = null;
+        //        foreach(Pattern p in LightDict.inst.tdPatts) {
+        //            if(p.id == selID) {
+        //                a = p;
+        //                break;
+        //            }
+        //        }
+        //        if(a == null) {
+        //            enableButton.text = "Cannot Enable, No Pattern";
+        //            enableButton.GetComponent<Button>().interactable = false;
+        //        } else {
+        //            enableButton.text = "Enable: " + a.name;
+        //            enableButton.GetComponent<Button>().interactable = true;
+        //        }
+        //    }
         } else {
             bool foundOne = false;
             Pattern a = null;
@@ -275,46 +275,46 @@ public class PattSelect : MonoBehaviour {
                 continue;
             }
 
-            if(f == AdvFunction.TRAFFIC) {
-                NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
-                if(patCmpd["left"].ShortValue == id) return true;
-                if(patCmpd["rite"].ShortValue == id) return true;
-                if(patCmpd["cntr"].ShortValue == id) return true;
-            } else {
-                string cmpdName = BarManager.GetFnString(lb.transform, f);
-                if(cmpdName == null) {
-                    Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-                    ErrorText.inst.DispError(f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-                    return false;
-                }
-                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
+            //if(f == AdvFunction.TRAFFIC) {
+            //    NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+            //    if(patCmpd["left"].ShortValue == id) return true;
+            //    if(patCmpd["rite"].ShortValue == id) return true;
+            //    if(patCmpd["cntr"].ShortValue == id) return true;
+            //} else {
+            //    string cmpdName = BarManager.GetFnString(lb.transform, f);
+            //    if(cmpdName == null) {
+            //        Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+            //        ErrorText.inst.DispError(f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+            //        return false;
+            //    }
+            //    NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
 
-                string tagname = lb.transform.position.z < 0 ? "r" : "f";
-                string path = lh.transform.GetPath();
+            //    string tagname = lb.transform.position.z < 0 ? "r" : "f";
+            //    string path = lh.transform.GetPath();
 
-                if(path.Contains("Corner")) {
-                    tagname = tagname + "cor";
-                } else if(path.Contains("Inboard")) {
-                    tagname = tagname + "inb";
-                } else if(path.Contains("Outboard")) {
-                    if(lh.loc == Location.FAR_REAR)
-                        tagname = tagname + "far";
-                    else
-                        tagname = tagname + "oub";
-                } else if(path.Contains("MidSection")) {
-                    tagname = tagname + "cen";
-                }
+            //    if(path.Contains("Corner")) {
+            //        tagname = tagname + "cor";
+            //    } else if(path.Contains("Inboard")) {
+            //        tagname = tagname + "inb";
+            //    } else if(path.Contains("Outboard")) {
+            //        if(lh.loc == Location.FAR_REAR)
+            //            tagname = tagname + "far";
+            //        else
+            //            tagname = tagname + "oub";
+            //    } else if(path.Contains("MidSection")) {
+            //        tagname = tagname + "cen";
+            //    }
 
-                if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
-                    return true;
-                }
+            //    if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
+            //        return true;
+            //    }
 
-                patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
+            //    patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
 
-                if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
-                    return true;
-                }
-            }
+            //    if(patCmpd.Get<NbtShort>(tagname).ShortValue == id) {
+            //        return true;
+            //    }
+            //}
         }
         return false;
     }
@@ -337,43 +337,43 @@ public class PattSelect : MonoBehaviour {
                 continue;
             }
 
-            if(f == AdvFunction.TRAFFIC) {
-                NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
-                if(patCmpd["left"].ShortValue != id) return false;
-                if(patCmpd["rite"].ShortValue != id) return false;
-                if(patCmpd["cntr"].ShortValue != id) return false;
-            } else {
-                string cmpdName = BarManager.GetFnString(lb.transform, f);
-                if(cmpdName == null) {
-                    Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-                    return false;
-                }
-                NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
+            //if(f == AdvFunction.TRAFFIC) {
+            //    NbtCompound patCmpd = patts.Get<NbtCompound>("traf").Get<NbtCompound>("patt");
+            //    if(patCmpd["left"].ShortValue != id) return false;
+            //    if(patCmpd["rite"].ShortValue != id) return false;
+            //    if(patCmpd["cntr"].ShortValue != id) return false;
+            //} else {
+            //    string cmpdName = BarManager.GetFnString(lb.transform, f);
+            //    if(cmpdName == null) {
+            //        Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+            //        return false;
+            //    }
+            //    NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat1");
 
-                string tagname = lb.transform.position.z < 0 ? "r" : "f";
-                string path = lh.transform.GetPath();
+            //    string tagname = lb.transform.position.z < 0 ? "r" : "f";
+            //    string path = lh.transform.GetPath();
 
-                if(path.Contains("Corner")) {
-                    tagname = tagname + "cor";
-                } else if(path.Contains("Inboard")) {
-                    tagname = tagname + "inb";
-                } else if(path.Contains("Outboard")) {
-                    if(lh.loc == Location.FAR_REAR)
-                        tagname = tagname + "far";
-                    else
-                        tagname = tagname + "oub";
-                } else if(path.Contains("MidSection")) {
-                    tagname = tagname + "cen";
-                }
+            //    if(path.Contains("Corner")) {
+            //        tagname = tagname + "cor";
+            //    } else if(path.Contains("Inboard")) {
+            //        tagname = tagname + "inb";
+            //    } else if(path.Contains("Outboard")) {
+            //        if(lh.loc == Location.FAR_REAR)
+            //            tagname = tagname + "far";
+            //        else
+            //            tagname = tagname + "oub";
+            //    } else if(path.Contains("MidSection")) {
+            //        tagname = tagname + "cen";
+            //    }
 
-                if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
-                    return false;
-                }
-                patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
-                if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
-                    return false;
-                }
-            }
+            //    if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
+            //        return false;
+            //    }
+            //    patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat2");
+            //    if(patCmpd.Get<NbtShort>(tagname).ShortValue != id) {
+            //        return false;
+            //    }
+            //}
         }
         return true;
     }

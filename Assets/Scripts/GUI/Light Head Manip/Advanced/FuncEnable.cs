@@ -50,22 +50,26 @@ public class FuncEnable : MonoBehaviour {
                     selectable |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
                 case AdvFunction.TAKEDOWN:
-                case AdvFunction.ALLEY:
+                case AdvFunction.ALLEY_LEFT:
+                case AdvFunction.ALLEY_RIGHT:
                     selectable |= alpha.lhd.funcs.Contains(BasicFunction.STEADY) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
-                case AdvFunction.CRUISE:
-                    selectable |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
-                    break;
-                case AdvFunction.EMITTER:
-                    selectable |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+                case AdvFunction.TURN_LEFT:
+                case AdvFunction.TURN_RIGHT:
+                case AdvFunction.TAIL:
+                    selectable |= alpha.lhd.funcs.Contains(BasicFunction.STT) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
                 case AdvFunction.T13:
                     selectable |= alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
-                case AdvFunction.STT_AND_TAIL:
-                    selectable |= alpha.lhd.funcs.Contains(BasicFunction.STT) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+                case AdvFunction.EMITTER:
+                    selectable |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
-                case AdvFunction.TRAFFIC:
+                case AdvFunction.CRUISE:
+                    selectable |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+                    break;
+                case AdvFunction.TRAFFIC_LEFT:
+                case AdvFunction.TRAFFIC_RIGHT:
                     selectable |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
                 case AdvFunction.DIM:
