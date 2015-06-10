@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class FunctionEditPane : MonoBehaviour {
+    private CameraControl cam;
+
     public AdvFunction currFunc;
     public enum ShowState {
         NONE, FLASHING, DIMMER, TRAFFIC
@@ -97,11 +99,14 @@ public class FunctionEditPane : MonoBehaviour {
             case AdvFunction.TURN_RIGHT:
                 funcName.text = "Turn Right";
                 break;
+            case AdvFunction.TAIL:
+                funcName.text = "Brake Lights";
+                break;
             case AdvFunction.T13:
                 funcName.text = "California T13 Steady";
                 break;
             case AdvFunction.EMITTER:
-                funcName.text = "Emittery";
+                funcName.text = "Emitter";
                 break;
             case AdvFunction.LEVEL1:
                 funcName.text = "Level 1";
@@ -146,7 +151,9 @@ public class FunctionEditPane : MonoBehaviour {
     }
 
     void Update() {
+        if(cam == null) cam = FindObjectOfType<CameraControl>();
 
+        paneParent.SetActive(cam.OnlyCamSelected.Count > 0);
     }
 
     private void Set() {

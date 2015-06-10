@@ -83,6 +83,9 @@ public class BarManager : MonoBehaviour {
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
         }
 
+        FnDragTarget.inputMap = new NbtIntArray("map", new int[20]);
+        patts.Add(FnDragTarget.inputMap);
+
         allHeads = new List<LightHead>();
         altHeadNumber = new Dictionary<LightHead, string>();
         inst = this;

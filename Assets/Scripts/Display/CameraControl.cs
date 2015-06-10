@@ -83,7 +83,7 @@ public class CameraControl : MonoBehaviour {
     public void ResetView() {
         transform.position = new Vector3(0, 0, -10);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
-        myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+        partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
 
     }
 
@@ -97,7 +97,8 @@ public class CameraControl : MonoBehaviour {
                 }
             }
 
-            if(ShowWhole) {
+            if(ShowWhole || lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) {
+                selected.Clear();
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height);
                 float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
                 myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
@@ -217,10 +218,11 @@ public class CameraControl : MonoBehaviour {
                 r.height -= 10;
 
                 if((r.Contains(mousePos))) {
-                    myCam.orthographicSize = partialOrtho = Mathf.Clamp(partialOrtho + Input.GetAxisRaw("Mouse ScrollWheel") * 1f, 1f, 10f);
+                    partialOrtho = Mathf.Clamp(partialOrtho + Input.GetAxisRaw("Mouse ScrollWheel") * 1f, 1f, 10f);
                     if(Input.GetMouseButton(1))
                         transform.position -= (new Vector3(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"), 0f) * myCam.orthographicSize * 0.1f);
                 }
+                myCam.orthographicSize = partialOrtho;
             }
         }
     }
