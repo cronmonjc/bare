@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler {
     public static Camera cam;
     public AdvFunction myFunc;
     public Transform LabelParent;
@@ -135,5 +135,11 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public void OnEndDrag(PointerEventData eventData) {
         draggedItem = null;
         dragItem.SetActive(false);
+    }
+
+    public void OnDrop(PointerEventData eventData) {
+        if(FnDragTarget.draggedItem != null) {
+            FnDragTarget.inputMap.Value[FnDragTarget.draggedItem.key] = 0;
+        }
     }
 }

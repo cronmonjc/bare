@@ -29,7 +29,6 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public void OnEndDrag(PointerEventData eventData) {
         draggedItem = null;
         dragItem.SetActive(false);
-        inputMap.Value[key] = 0;
     }
 
     public void OnDrop(PointerEventData eventData) {
@@ -52,6 +51,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         } else if(FnDragTarget.draggedItem != null) {
             int[] val = inputMap.Value;
             int newFunc = val[FnDragTarget.draggedItem.key];
+            val[FnDragTarget.draggedItem.key] = 0;
             if((val[key] | newFunc) == (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN) &&
                 (val[key] != (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN))) {
                 val[key] = (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN);
