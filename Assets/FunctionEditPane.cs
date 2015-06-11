@@ -1,16 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FunctionEditPane : MonoBehaviour {
     private CameraControl cam;
 
-    public AdvFunction currFunc;
+    public static AdvFunction currFunc;
     public enum ShowState {
         NONE, FLASHING, DIMMER, TRAFFIC
     }
     public Text funcName, funcType;
-    public GameObject paneParent, flashing, dimmer, traffic;
+    public GameObject paneParent, flashing, dimmer, traffic, otherHeadsWarn;
     private ShowState _state, funcState;
     public ShowState state {
         get {
@@ -160,5 +161,48 @@ public class FunctionEditPane : MonoBehaviour {
         flashing.SetActive(state == ShowState.FLASHING);
         dimmer.SetActive(state == ShowState.DIMMER);
         traffic.SetActive(state == ShowState.TRAFFIC);
+    }
+
+    public void Retest() {
+        otherHeadsWarn.SetActive(false);
+
+        List<byte> front = new List<byte>(), back = new List<byte>();
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
+
+            byte bit = alpha.Bit;
+            if(alpha.transform.position.y < 0) {
+                if(!back.Contains(bit)) {
+                    back.Add(bit);
+                }
+            } else {
+                if(!front.Contains(bit)) {
+                    front.Add(bit);
+                }
+            }
+        }
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(!alpha.gameObject.activeInHierarchy || alpha.lhd.style == null || alpha.Selected) continue;
+
+            byte bit = alpha.Bit;
+            if(alpha.transform.position.y < 0) {
+                if(back.Contains(bit)) {
+                    otherHeadsWarn.SetActive(true);
+                    return;
+                }
+            } else {
+                if(front.Contains(bit)) {
+                    otherHeadsWarn.SetActive(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    public static void RetestStatic() {
+        if(FuncEnable.clr1 != null) FuncEnable.clr1.Retest();
+        if(FuncEnable.clr2 != null) FuncEnable.clr2.Retest();
+
+        FindObjectOfType<FunctionEditPane>().Retest();
     }
 }

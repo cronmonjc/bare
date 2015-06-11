@@ -4,8 +4,7 @@ using System.Collections;
 using fNbt;
 
 public class FuncEnable : MonoBehaviour {
-    private static FuncEnable clr1, clr2;
-    private FunctionEditPane pane;
+    public static FuncEnable clr1, clr2;
     private Image checkmark;
     private Text label;
     private Button button;
@@ -15,30 +14,32 @@ public class FuncEnable : MonoBehaviour {
         button = GetComponent<Button>();
         label = transform.FindChild("Label").GetComponent<Text>();
         checkmark = transform.FindChild("Checkmark").GetComponent<Image>();
-        pane = transform.parent.parent.GetComponent<FunctionEditPane>();
         if(IsColor2) clr2 = this;
         else clr1 = this;
+        Retest();
     }
 
     public void Retest() {
+        if(FunctionEditPane.currFunc == AdvFunction.NONE) return;
+
         NbtCompound patts = BarManager.inst.patts;
         bool enabled = false, disabled = false, selectable = false;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
-            string cmpdName = BarManager.GetFnString(alpha.transform, pane.currFunc);
+            string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
             if(cmpdName == null) {
-                Debug.LogWarning(pane.currFunc.ToString() + " has no similar setting in the data bytes.");
+                Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
                 return;
             }
-            short en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.z < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
+            short en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
 
             bool thisEnabled = ((en & (0x1 << alpha.Bit)) > 0);
 
             enabled |= thisEnabled;
             disabled |= !thisEnabled;
 
-            switch(pane.currFunc) {
+            switch(FunctionEditPane.currFunc) {
                 case AdvFunction.LEVEL1:
                 case AdvFunction.LEVEL2:
                 case AdvFunction.LEVEL3:
@@ -89,7 +90,7 @@ public class FuncEnable : MonoBehaviour {
             checkmark.enabled = !disabled;
 
             if(enabled && disabled) {
-                label.text = "Color " + " Partly Enabled";
+                label.text = "Color " + (IsColor2 ? "2" : "1") + " Partly Enabled";
             } else {
                 label.text = "Color " + (IsColor2 ? "2" : "1") + (enabled ? " Enabled" : " Disabled");
             }
@@ -101,12 +102,12 @@ public class FuncEnable : MonoBehaviour {
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
-            string cmpdName = BarManager.GetFnString(alpha.transform, pane.currFunc);
+            string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
             if(cmpdName == null) {
-                Debug.LogWarning(pane.currFunc.ToString() + " has no similar setting in the data bytes.");
+                Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
                 return;
             }
-            NbtShort en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.z < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"));
+            NbtShort en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"));
 
             if(checkmark.enabled) {
                 en.DisableBit(alpha.Bit);
@@ -117,5 +118,9 @@ public class FuncEnable : MonoBehaviour {
 
         clr1.Retest();
         clr2.Retest();
+
+        foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
+            ll.Refresh();
+        }
     }
 }

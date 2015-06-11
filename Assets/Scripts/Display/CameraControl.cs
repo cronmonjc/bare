@@ -166,6 +166,9 @@ public class CameraControl : MonoBehaviour {
                         bc.center = Vector3.zero;
                         msbc.transform.position = Vector3.zero;
 
+                        if(FunctionEditPane.currFunc != AdvFunction.NONE) {
+                            FunctionEditPane.RetestStatic();
+                        }
                         if(selected.Count > 0) {
                             fs.Refresh();
                         }

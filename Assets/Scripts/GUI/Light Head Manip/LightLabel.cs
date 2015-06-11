@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using fNbt;
 
 public class LightLabel : MonoBehaviour {
     public Transform target;
@@ -10,7 +11,7 @@ public class LightLabel : MonoBehaviour {
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showWire, wireOverride, alternateNumbering;
+    public static bool showParts, showBit, showWire, wireOverride, alternateNumbering, showPatt;
     private OpticNode lastOptic;
     private StyleNode lastStyle;
 
@@ -241,6 +242,75 @@ public class LightLabel : MonoBehaviour {
                 }
 
                 label2.text = label.text = t;
+            }
+        } else if(showPatt) {
+            if(lh.lhd.style != null) {
+                NbtCompound patts = BarManager.inst.patts;
+                string cmpdName = BarManager.GetFnString(lh.transform, FunctionEditPane.currFunc);
+                if(cmpdName == null) {
+                    Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
+                    return;
+                }
+
+                NbtCompound func = patts.Get<NbtCompound>(cmpdName);
+
+                bool thisEnabled1 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
+                     thisEnabled2 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+
+                Color clr = lh.lhd.style.color * (thisEnabled1 ? 1.0f : 0.25f);
+                background.color = clr;
+                if(clr.r + clr.g < clr.b) {
+                    label.color = Color.white;
+                } else {
+                    label.color = Color.black;
+                }
+                if(lh.lhd.style.isDualColor) {
+                    clr = lh.lhd.style.color2 * (thisEnabled2 ? 1.0f : 0.25f);
+                }
+                if(clr.r + clr.g < clr.b) {
+                    label2.color = Color.white;
+                } else {
+                    label2.color = Color.black;
+                }
+                secondImage.color = clr;
+
+                string t = (showBit ? lh.Bit + ": " : "");
+
+                if(thisEnabled1) {
+                    if(func.Contains("pat1")) {
+                        Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, false);
+                        if(pat == null)
+                            t = t + "No Patt";
+                        else
+                            t = t + pat.name;
+                    } else {
+                        t = t + "Enabled";
+                    }
+                } else {
+                    t = t + "Disabled";
+                }
+                if(lh.lhd.style.isDualColor) {
+                    if(thisEnabled2) {
+                        if(func.Contains("pat2")) {
+                            Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, true);
+                            if(pat == null)
+                                t = t + " / No Patt";
+                            else
+                                t = t + " / " + pat.name;
+                        } else {
+                            t = t + " / Enabled";
+                        }
+                    } else {
+                        t = t + " / Disabled";
+                    }
+                }
+
+                label2.text = label.text = t;
+
+            } else {
+                label2.text = label.text = (showBit ? lh.Bit + ": " : "") + "No Head";
+                label2.color = label.color = Color.white;
+                secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
             }
         } else {
             if(lh.lhd.style != null) {

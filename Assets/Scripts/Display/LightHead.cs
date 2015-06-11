@@ -175,7 +175,7 @@ public class LightHead : MonoBehaviour {
                 tagname = tagname + "far";
             else
                 tagname = tagname + "oub";
-        } else if(path.Contains("N") || path.Split('/')[1].EndsWith("F")) {
+        } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
             tagname = tagname + "cen";
         }
 

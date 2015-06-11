@@ -4,10 +4,33 @@ using UnityEngine.UI;
 using System.Collections;
 using fNbt;
 
-public class FnDragTarget : MonoBehaviour, IDropHandler {
+public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler {
     public Text display;
     public int key;
     public static NbtIntArray inputMap;
+    public static FnDragTarget draggedItem;
+    public GameObject dragItem;
+
+    public void OnBeginDrag(PointerEventData eventData) {
+        if(inputMap.Value[key] == 0) return;
+
+        draggedItem = this;
+        dragItem.gameObject.SetActive(true);
+    }
+
+    public void OnDrag(PointerEventData eventData) {
+        if(inputMap.Value[key] == 0) return;
+
+        Vector3 newPos;
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, Input.mousePosition, FnDrag.cam, out newPos);
+        dragItem.transform.position = newPos;
+    }
+
+    public void OnEndDrag(PointerEventData eventData) {
+        draggedItem = null;
+        dragItem.SetActive(false);
+        inputMap.Value[key] = 0;
+    }
 
     public void OnDrop(PointerEventData eventData) {
         if(FnDrag.draggedItem != null) {
@@ -20,16 +43,21 @@ public class FnDragTarget : MonoBehaviour, IDropHandler {
                 val[key] = newFunc;
             }
 
-            FnDragTarget[] targs = FindObjectsOfType<FnDragTarget>();
-
             for(int i = 0; i < 20; i++) {
                 if(key == i) continue;
                 if((val[i] & newFunc) > 0) {
                     val[i] &= ~newFunc;
                 }
             }
-
-            inputMap.Value = val;
+        } else if(FnDragTarget.draggedItem != null) {
+            int[] val = inputMap.Value;
+            int newFunc = val[FnDragTarget.draggedItem.key];
+            if((val[key] | newFunc) == (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN) &&
+                (val[key] != (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN))) {
+                val[key] = (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN);
+            } else {
+                val[key] = newFunc;
+            }
         }
     }
 
