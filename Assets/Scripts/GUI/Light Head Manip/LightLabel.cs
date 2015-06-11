@@ -278,11 +278,14 @@ public class LightLabel : MonoBehaviour {
 
                 if(thisEnabled1) {
                     if(func.Contains("pat1")) {
+                        bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
+
                         Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, false);
                         if(pat == null)
                             t = t + "No Patt";
-                        else
-                            t = t + pat.name;
+                        else {
+                            t = t + (pat is FlashPatt ? (thisPhase ? "B " : "A ") : "") + pat.name;
+                        }
                     } else {
                         t = t + "Enabled";
                     }
@@ -292,11 +295,13 @@ public class LightLabel : MonoBehaviour {
                 if(lh.lhd.style.isDualColor) {
                     if(thisEnabled2) {
                         if(func.Contains("pat2")) {
+                            bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
+
                             Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, true);
                             if(pat == null)
                                 t = t + " / No Patt";
                             else
-                                t = t + " / " + pat.name;
+                                t = t + " / " + (pat is FlashPatt ? (thisPhase ? "B " : "A ") : "") + pat.name;
                         } else {
                             t = t + " / Enabled";
                         }

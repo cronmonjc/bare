@@ -202,6 +202,8 @@ public class FunctionEditPane : MonoBehaviour {
     public static void RetestStatic() {
         if(FuncEnable.clr1 != null) FuncEnable.clr1.Retest();
         if(FuncEnable.clr2 != null) FuncEnable.clr2.Retest();
+        if(FuncPhase.ph1 != null) FuncPhase.ph1.Retest();
+        if(FuncPhase.ph2 != null) FuncPhase.ph2.Retest();
 
         FindObjectOfType<FunctionEditPane>().Retest();
     }
