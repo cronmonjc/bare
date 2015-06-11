@@ -38,14 +38,19 @@ public class FuncPhase : MonoBehaviour {
 
             enabled |= thisEnabled;
             disabled |= !thisEnabled;
-            selectable |= !IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual);
+
+            Pattern patt = alpha.GetPattern(FunctionEditPane.currFunc, IsColor2);
+
+            if(patt != null && patt is FlashPatt) {
+                selectable |= !IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual);
+            }
         }
 
         button.interactable = selectable;
 
         if(!selectable) {
             checkmark.enabled = false;
-            label.text = "Cannot Phase Color 2";
+            label.text = "Cannot Phase Color " + (IsColor2 ? "2" : "1");
         } else {
             checkmark.enabled = !disabled;
 
