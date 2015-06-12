@@ -110,9 +110,6 @@ public class LightHead : MonoBehaviour {
 
     void Update() {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
-            if(myLabel.gameObject.activeInHierarchy) {
-                myLabel.gameObject.SetActive(false);
-            }
             return;
         }
 
@@ -162,10 +159,10 @@ public class LightHead : MonoBehaviour {
         }
         NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1"));
 
-        string tagname = transform.position.z < 0 ? "r" : "f";
+        string tagname = transform.position.y < 0 ? "r" : "f";
         string path = transform.GetPath();
 
-        if(path.Contains("C")) {
+        if(path.Contains("C") || path.Contains("A")) {
             tagname = tagname + "cor";
         } else if(path.Contains("I")) {
             tagname = tagname + "inb";

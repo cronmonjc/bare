@@ -43,8 +43,8 @@ public class PhaseButton : MonoBehaviour {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            short ph = func.Get<NbtShort>("p" + (lb.transform.position.z < 0 ? "r" : "f") + "1").ShortValue;
-            ph |= func.Get<NbtShort>("p" + (lb.transform.position.z < 0 ? "r" : "f") + "2").ShortValue;
+            short ph = func.Get<NbtShort>("p" + (lb.transform.position.y < 0 ? "r" : "f") + "1").ShortValue;
+            ph |= func.Get<NbtShort>("p" + (lb.transform.position.y < 0 ? "r" : "f") + "2").ShortValue;
 
             if(IsPhaseB)
                 show &= ((ph & (0x1 << lh.Bit)) > 0);
@@ -77,14 +77,14 @@ public class PhaseButton : MonoBehaviour {
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-            NbtShort ph = func.Get<NbtShort>("p" + (lb.transform.position.z < 0 ? "r" : "f") + "1");
+            NbtShort ph = func.Get<NbtShort>("p" + (lb.transform.position.y < 0 ? "r" : "f") + "1");
 
             if(IsPhaseB)
                 ph.EnableBit(lh.Bit);
             else
                 ph.DisableBit(lh.Bit);
 
-            ph = func.Get<NbtShort>("p" + (lb.transform.position.z < 0 ? "r" : "f") + "2");
+            ph = func.Get<NbtShort>("p" + (lb.transform.position.y < 0 ? "r" : "f") + "2");
 
             if(IsPhaseB)
                 ph.EnableBit(lh.Bit);

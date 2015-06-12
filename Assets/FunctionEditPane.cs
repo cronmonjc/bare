@@ -11,7 +11,7 @@ public class FunctionEditPane : MonoBehaviour {
         NONE, FLASHING, DIMMER, TRAFFIC
     }
     public Text funcName, funcType;
-    public GameObject paneParent, flashing, dimmer, traffic, otherHeadsWarn;
+    public GameObject paneParent, flashing, dimmer, traffic, otherHeadsWarn, testFlashing;
     private ShowState _state, funcState;
     public ShowState state {
         get {
@@ -157,6 +157,21 @@ public class FunctionEditPane : MonoBehaviour {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 
         paneParent.SetActive(cam.OnlyCamSelected.Count > 0);
+        switch(currFunc) {
+            case AdvFunction.LEVEL1:
+            case AdvFunction.LEVEL2:
+            case AdvFunction.LEVEL3:
+            case AdvFunction.LEVEL4:
+            case AdvFunction.LEVEL5:
+            case AdvFunction.FTAKEDOWN:
+            case AdvFunction.FALLEY:
+            case AdvFunction.ICL:
+                testFlashing.SetActive(true);
+                break;
+            default:
+                testFlashing.SetActive(false);
+                break;
+        }
     }
 
     private void Set() {
@@ -188,10 +203,10 @@ public class FunctionEditPane : MonoBehaviour {
                 }
             }
 
-            string tagname = alpha.transform.position.z < 0 ? "r" : "f";
+            string tagname = alpha.transform.position.y < 0 ? "r" : "f";
             string path = alpha.transform.GetPath();
 
-            if(path.Contains("C")) {
+            if(path.Contains("C") || path.Contains("A")) {
                 tagname = tagname + "cor";
             } else if(path.Contains("I")) {
                 tagname = tagname + "inb";
@@ -224,10 +239,10 @@ public class FunctionEditPane : MonoBehaviour {
                 }
             }
 
-            string tagname = alpha.transform.position.z < 0 ? "r" : "f";
+            string tagname = alpha.transform.position.y < 0 ? "r" : "f";
             string path = alpha.transform.GetPath();
 
-            if(path.Contains("C")) {
+            if(path.Contains("C") || path.Contains("A")) {
                 tagname = tagname + "cor";
             } else if(path.Contains("I")) {
                 tagname = tagname + "inb";

@@ -92,10 +92,10 @@ public class FuncPattSelect : MonoBehaviour {
         NbtCompound patCmpd = BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (IsColor2 ? "2" : "1"));
 
         foreach(LightHead alpha in cam.OnlyCamSelected) {
-            string tagname = alpha.transform.position.z < 0 ? "r" : "f";
+            string tagname = alpha.transform.position.y < 0 ? "r" : "f";
             string path = alpha.transform.GetPath();
 
-            if(path.Contains("C")) {
+            if(path.Contains("C") || path.Contains("A")) {
                 tagname = tagname + "cor";
             } else if(path.Contains("I")) {
                 tagname = tagname + "inb";

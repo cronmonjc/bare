@@ -36,6 +36,8 @@ public class CameraControl : MonoBehaviour {
 
     private List<LightHead> selected;
 
+    public GameObject backButton;
+
     public List<LightHead> Selected {
         get {
             if(dragging) {
@@ -95,6 +97,8 @@ public class CameraControl : MonoBehaviour {
                 }
             }
 
+            backButton.SetActive(BarManager.inst.funcBeingTested != AdvFunction.NONE);
+
             if(ShowWhole || lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) {
                 selected.Clear();
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height);
@@ -104,7 +108,7 @@ public class CameraControl : MonoBehaviour {
                 myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 32f);
 
                 Vector2 mousePos = Input.mousePosition;
-                if(Input.GetMouseButtonDown(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB pressed
+                if(Input.GetMouseButtonDown(0) && (BarManager.inst.funcBeingTested == AdvFunction.NONE)) { // LMB pressed
                     Camera UICam = GameObject.Find("UI").GetComponent<Camera>();
 
                     bool cont = true;
@@ -120,7 +124,7 @@ public class CameraControl : MonoBehaviour {
                             dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
                             fs.Clear();
                         }
-                } else if(Input.GetMouseButtonUp(0) && (funcBeingTested == AdvFunction.NONE)) { // LMB released
+                } else if(Input.GetMouseButtonUp(0) && (BarManager.inst.funcBeingTested == AdvFunction.NONE)) { // LMB released
                     if(dragging) {
                         if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
                             selected.Clear();

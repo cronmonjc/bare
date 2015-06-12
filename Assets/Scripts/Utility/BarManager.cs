@@ -929,10 +929,27 @@ public class BarManager : MonoBehaviour {
     public IEnumerator RefreshAllLabels() {
         yield return new WaitForEndOfFrame();
 
-        foreach(LightHead alpha in allHeads) {
-            if(alpha.gameObject.activeInHierarchy) alpha.myLabel.Refresh();
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh();
         }
 
         yield return null;
+    }
+
+    public void BeginPreview() {
+        funcBeingTested = FunctionEditPane.currFunc;
+        FindObjectOfType<CameraControl>().OnlyCamSelected.Clear();
+        CameraControl.ShowWhole = true;
+        CanvasDisabler.CanvasEnabled = false;
+        PattTimer.inst.StartTimer();
+        StartCoroutine(RefreshAllLabels());
+    }
+
+    public void EndPreview() {
+        PattTimer.inst.StopTimer();
+        CameraControl.ShowWhole = false;
+        CanvasDisabler.CanvasEnabled = true;
+        funcBeingTested = AdvFunction.NONE;
+        StartCoroutine(RefreshAllLabels());
     }
 }

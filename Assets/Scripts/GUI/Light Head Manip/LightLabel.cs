@@ -34,6 +34,11 @@ public class LightLabel : MonoBehaviour {
     public void Refresh(bool showHeadNumber = false) {
         colorLabel.text = "";
 
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
+            StartCoroutine(PatternSim());
+            return;
+        }
+
         string prefix = "";
 
         if(showHeadNumber) {
@@ -356,6 +361,321 @@ public class LightLabel : MonoBehaviour {
 
         lastOptic = lh.lhd.optic;
         lastStyle = lh.lhd.style;
+    }
+
+    private IEnumerator PatternSim() {
+        selectionImage.enabled = false;
+
+        if(lh.lhd.style == null) {
+            label2.text = label.text = "--";
+            label2.color = label.color = Color.white;
+            secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
+            yield return null;
+        } else {
+            NbtCompound patts = BarManager.inst.patts;
+            string cmpdName = BarManager.GetFnString(lh.transform, FunctionEditPane.currFunc);
+            if(cmpdName == null) {
+                Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
+                yield return null;
+            } else {
+                label2.text = label.text = "";
+
+                NbtCompound func = patts.Get<NbtCompound>(cmpdName);
+
+                Pattern p1 = lh.GetPattern(BarManager.inst.funcBeingTested, false);
+                Pattern p2 = lh.GetPattern(BarManager.inst.funcBeingTested, true);
+
+                bool phase1 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
+                     phase2 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+
+                ulong p1period = 0, p2period = 0;
+                if(p1 is FlashPatt) {
+                    FlashPatt p = p1 as FlashPatt;
+                    foreach(byte b in p.definition) {
+                        byte time = (byte)(0x3 & (b >> 2));
+                        switch(time) {
+                            case 0:
+                                p1period += p1.t0;
+                                break;
+                            case 1:
+                                p1period += p1.t1;
+                                break;
+                            case 2:
+                                p1period += p1.t2;
+                                break;
+                            case 3:
+                                p1period += p1.t3;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                } else {
+                    WarnPatt p = p1 as WarnPatt;
+                    foreach(short b in p.definition) {
+                        byte time = (byte)(0x3 & (b >> 14));
+                        switch(time) {
+                            case 0:
+                                p1period += p1.t0;
+                                break;
+                            case 1:
+                                p1period += p1.t1;
+                                break;
+                            case 2:
+                                p1period += p1.t2;
+                                break;
+                            case 3:
+                                p1period += p1.t3;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                if(lh.lhd.style.isDualColor && p2 != null) {
+                    if(p2 is FlashPatt) {
+                        FlashPatt p = p2 as FlashPatt;
+                        foreach(byte b in p.definition) {
+                            byte time = (byte)(0x3 & (b >> 2));
+                            switch(time) {
+                                case 0:
+                                    p2period += p2.t0;
+                                    break;
+                                case 1:
+                                    p2period += p2.t1;
+                                    break;
+                                case 2:
+                                    p2period += p2.t2;
+                                    break;
+                                case 3:
+                                    p2period += p2.t3;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    } else {
+                        WarnPatt p = p2 as WarnPatt;
+                        foreach(short b in p.definition) {
+                            byte time = (byte)(0x3 & (b >> 14));
+                            switch(time) {
+                                case 0:
+                                    p2period += p2.t0;
+                                    break;
+                                case 1:
+                                    p2period += p2.t1;
+                                    break;
+                                case 2:
+                                    p2period += p2.t2;
+                                    break;
+                                case 3:
+                                    p2period += p2.t3;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                ulong ticksPast, ticksThisPeriod;
+                bool enableC1 = false, enableC2 = false, found = false;
+                byte bit = lh.Bit, thisT = 0;
+
+                while(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
+                    ticksPast = PattTimer.inst.passedTicks;
+                    ticksThisPeriod = ticksPast % p1period;
+
+                    if(p1 is FlashPatt) {
+                        FlashPatt p = p1 as FlashPatt;
+                        foreach(byte b in p.definition) {
+                            thisT = (byte)(0x3 & (b >> 2));
+                            found = false;
+                            switch(thisT) {
+                                case 0:
+                                    if(ticksThisPeriod < p.t0) {
+                                        enableC1 = (b & (phase1 ? 0x2 : 0x1)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t0;
+                                    }
+                                    break;
+                                case 1:
+                                    if(ticksThisPeriod < p.t1) {
+                                        enableC1 = (b & (phase1 ? 0x2 : 0x1)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t1;
+                                    }
+                                    break;
+                                case 2:
+                                    if(ticksThisPeriod < p.t2) {
+                                        enableC1 = (b & (phase1 ? 0x2 : 0x1)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t2;
+                                    }
+                                    break;
+                                case 3:
+                                    if(ticksThisPeriod < p.t3) {
+                                        enableC1 = (b & (phase1 ? 0x2 : 0x1)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t3;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if(found) break;
+                        }
+                    } else {
+                        WarnPatt p = p1 as WarnPatt;
+                        foreach(short b in p.definition) {
+                            thisT = (byte)(0x3 & (b >> 14));
+                            found = false;
+                            switch(thisT) {
+                                case 0:
+                                    if(ticksThisPeriod < p.t0) {
+                                        enableC1 = (b & (0x1 << bit)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t0;
+                                    }
+                                    break;
+                                case 1:
+                                    if(ticksThisPeriod < p.t1) {
+                                        enableC1 = (b & (0x1 << bit)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t1;
+                                    }
+                                    break;
+                                case 2:
+                                    if(ticksThisPeriod < p.t2) {
+                                        enableC1 = (b & (0x1 << bit)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t2;
+                                    }
+                                    break;
+                                case 3:
+                                    if(ticksThisPeriod < p.t3) {
+                                        enableC1 = (b & (0x1 << bit)) > 0;
+                                        found = true;
+                                    } else {
+                                        ticksThisPeriod -= p.t3;
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                            if(found) break;
+                        }
+                    }
+                    if(lh.lhd.style.isDualColor && p2 != null) {
+                        ticksThisPeriod = ticksPast % p2period;
+
+                        if(p2 is FlashPatt) {
+                            FlashPatt p = p2 as FlashPatt;
+                            foreach(byte b in p.definition) {
+                                thisT = (byte)(0x3 & (b >> 2));
+                                found = false;
+                                switch(thisT) {
+                                    case 0:
+                                        if(ticksThisPeriod < p.t0) {
+                                            enableC2 = (b & (phase2 ? 0x2 : 0x1)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t0;
+                                        }
+                                        break;
+                                    case 1:
+                                        if(ticksThisPeriod < p.t1) {
+                                            enableC2 = (b & (phase2 ? 0x2 : 0x1)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t1;
+                                        }
+                                        break;
+                                    case 2:
+                                        if(ticksThisPeriod < p.t2) {
+                                            enableC2 = (b & (phase2 ? 0x2 : 0x1)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t2;
+                                        }
+                                        break;
+                                    case 3:
+                                        if(ticksThisPeriod < p.t3) {
+                                            enableC2 = (b & (phase2 ? 0x2 : 0x1)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t3;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if(found) break;
+                            }
+                        } else {
+                            WarnPatt p = p2 as WarnPatt;
+                            foreach(short b in p.definition) {
+                                thisT = (byte)(0x3 & (b >> 14));
+                                found = false;
+                                switch(thisT) {
+                                    case 0:
+                                        if(ticksThisPeriod < p.t0) {
+                                            enableC2 = (b & (0x1 << bit)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t0;
+                                        }
+                                        break;
+                                    case 1:
+                                        if(ticksThisPeriod < p.t1) {
+                                            enableC2 = (b & (0x1 << bit)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t1;
+                                        }
+                                        break;
+                                    case 2:
+                                        if(ticksThisPeriod < p.t2) {
+                                            enableC2 = (b & (0x1 << bit)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t2;
+                                        }
+                                        break;
+                                    case 3:
+                                        if(ticksThisPeriod < p.t3) {
+                                            enableC2 = (b & (0x1 << bit)) > 0;
+                                            found = true;
+                                        } else {
+                                            ticksThisPeriod -= p.t3;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                if(found) break;
+                            }
+                        }
+                    }
+
+                    background.color = lh.lhd.style.color * (enableC1 ? 1.0f : 0.25f);
+                    if(lh.lhd.style.isDualColor) {
+                        secondImage.color = lh.lhd.style.color2 * (enableC2 ? 1.0f : 0.25f);
+                    } else {
+                        secondImage.color = background.color;
+                    }
+
+                    yield return null;
+                }
+            }
+        }
     }
 
     void Update() {
