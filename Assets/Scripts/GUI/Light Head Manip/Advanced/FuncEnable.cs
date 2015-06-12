@@ -32,6 +32,10 @@ public class FuncEnable : MonoBehaviour {
                 Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
                 return;
             }
+            if(!patts.Get<NbtCompound>(cmpdName).Contains("e" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"))) {
+                button.interactable = false;
+                return;
+            }
             short en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
 
             bool thisEnabled = ((en & (0x1 << alpha.Bit)) > 0);

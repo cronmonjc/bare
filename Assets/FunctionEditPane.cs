@@ -24,6 +24,8 @@ public class FunctionEditPane : MonoBehaviour {
     }
 
     void OnEnable() {
+        RetestStatic();
+
         paneParent.SetActive(false);
         switch(currFunc) {
             case AdvFunction.LEVEL1:
@@ -166,7 +168,12 @@ public class FunctionEditPane : MonoBehaviour {
     public void Retest() {
         otherHeadsWarn.SetActive(false);
 
+        foreach(FuncPattSelect fps in transform.GetComponentsInChildren<FuncPattSelect>(true)) {
+            fps.Refresh();
+        }
+
         List<byte> front = new List<byte>(), back = new List<byte>();
+        List<string> patts = new List<string>();
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
@@ -179,6 +186,26 @@ public class FunctionEditPane : MonoBehaviour {
                 if(!front.Contains(bit)) {
                     front.Add(bit);
                 }
+            }
+
+            string tagname = alpha.transform.position.z < 0 ? "r" : "f";
+            string path = alpha.transform.GetPath();
+
+            if(path.Contains("C")) {
+                tagname = tagname + "cor";
+            } else if(path.Contains("I")) {
+                tagname = tagname + "inb";
+            } else if(path.Contains("O")) {
+                if(alpha.loc == Location.FAR_REAR)
+                    tagname = tagname + "far";
+                else
+                    tagname = tagname + "oub";
+            } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
+                tagname = tagname + "cen";
+            }
+
+            if(!patts.Contains(tagname)) {
+                patts.Add(tagname);
             }
         }
         foreach(LightHead alpha in BarManager.inst.allHeads) {
@@ -195,6 +222,27 @@ public class FunctionEditPane : MonoBehaviour {
                     otherHeadsWarn.SetActive(true);
                     return;
                 }
+            }
+
+            string tagname = alpha.transform.position.z < 0 ? "r" : "f";
+            string path = alpha.transform.GetPath();
+
+            if(path.Contains("C")) {
+                tagname = tagname + "cor";
+            } else if(path.Contains("I")) {
+                tagname = tagname + "inb";
+            } else if(path.Contains("O")) {
+                if(alpha.loc == Location.FAR_REAR)
+                    tagname = tagname + "far";
+                else
+                    tagname = tagname + "oub";
+            } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
+                tagname = tagname + "cen";
+            }
+
+            if(patts.Contains(tagname)) {
+                otherHeadsWarn.SetActive(true);
+                return;
             }
         }
     }

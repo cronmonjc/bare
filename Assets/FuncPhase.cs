@@ -32,6 +32,10 @@ public class FuncPhase : MonoBehaviour {
                 Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
                 return;
             }
+            if(!patts.Get<NbtCompound>(cmpdName).Contains("pf1")) {
+                button.interactable = false;
+                return;
+            }
             short ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
 
             bool thisEnabled = ((ph & (0x1 << alpha.Bit)) > 0);

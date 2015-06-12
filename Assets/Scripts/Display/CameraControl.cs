@@ -90,7 +90,7 @@ public class CameraControl : MonoBehaviour {
     void Update() {
         Screen.SetResolution(Screen.width, Screen.height, false);
         if(!FBrowser.activeInHierarchy) {
-            if(Input.GetKeyDown(KeyCode.P)) {
+            if(Input.GetKeyDown(KeyCode.LeftBracket) && Input.GetKey(KeyCode.RightControl) && Input.GetKey(KeyCode.RightShift)) {
                 LightLabel.showBit = !LightLabel.showBit;
                 foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
                     alpha.Refresh();

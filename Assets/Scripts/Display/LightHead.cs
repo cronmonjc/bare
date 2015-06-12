@@ -153,12 +153,11 @@ public class LightHead : MonoBehaviour {
         if(LightDict.inst.steadyBurn.Contains(f)) {
             return LightDict.stdy;
         }
-        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+        NbtCompound patts = BarManager.inst.patts;
 
         string cmpdName = BarManager.GetFnString(transform, f);
         if(cmpdName == null) {
-            Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-            ErrorText.inst.DispError(f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+            Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.");
             return null;
         }
         NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1"));

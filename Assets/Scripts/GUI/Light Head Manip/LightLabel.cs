@@ -254,60 +254,64 @@ public class LightLabel : MonoBehaviour {
 
                 NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-                bool thisEnabled1 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
-                     thisEnabled2 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
-
-                Color clr = lh.lhd.style.color * (thisEnabled1 ? 1.0f : 0.25f);
-                background.color = clr;
-                if(clr.r + clr.g < clr.b) {
-                    label.color = Color.white;
-                } else {
-                    label.color = Color.black;
-                }
-                if(lh.lhd.style.isDualColor) {
-                    clr = lh.lhd.style.color2 * (thisEnabled2 ? 1.0f : 0.25f);
-                }
-                if(clr.r + clr.g < clr.b) {
-                    label2.color = Color.white;
-                } else {
-                    label2.color = Color.black;
-                }
-                secondImage.color = clr;
-
                 string t = (showBit ? lh.Bit + ": " : "");
 
-                if(thisEnabled1) {
-                    if(func.Contains("pat1")) {
-                        bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
+                if(func.Contains("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1")) {
+                    bool thisEnabled1 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
+                         thisEnabled2 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
 
-                        Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, false);
-                        if(pat == null)
-                            t = t + "No Patt";
-                        else {
-                            t = t + (pat is FlashPatt ? (thisPhase ? "B " : "A ") : "") + pat.name;
+                    Color clr = lh.lhd.style.color * (thisEnabled1 ? 1.0f : 0.25f);
+                    background.color = clr;
+                    if(clr.r + clr.g < clr.b) {
+                        label.color = Color.white;
+                    } else {
+                        label.color = Color.black;
+                    }
+                    if(lh.lhd.style.isDualColor) {
+                        clr = lh.lhd.style.color2 * (thisEnabled2 ? 1.0f : 0.25f);
+                    }
+                    if(clr.r + clr.g < clr.b) {
+                        label2.color = Color.white;
+                    } else {
+                        label2.color = Color.black;
+                    }
+                    secondImage.color = clr;
+
+                    if(thisEnabled1) {
+                        if(func.Contains("pat1")) {
+                            bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
+
+                            Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, false);
+                            if(pat == null)
+                                t = t + "No Patt";
+                            else {
+                                t = t + pat.name + (pat is FlashPatt ? (thisPhase ? " B" : " A") : "");
+                            }
+                        } else {
+                            t = t + "Enabled";
                         }
                     } else {
-                        t = t + "Enabled";
+                        t = t + "Disabled";
+                    }
+                    if(lh.lhd.style.isDualColor) {
+                        if(thisEnabled2) {
+                            if(func.Contains("pat2")) {
+                                bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+
+                                Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, true);
+                                if(pat == null)
+                                    t = t + " / No Patt";
+                                else
+                                    t = t + " / " + pat.name + (pat is FlashPatt ? (thisPhase ? " B" : " A") : "");
+                            } else {
+                                t = t + " / Enabled";
+                            }
+                        } else {
+                            t = t + " / Disabled";
+                        }
                     }
                 } else {
                     t = t + "Disabled";
-                }
-                if(lh.lhd.style.isDualColor) {
-                    if(thisEnabled2) {
-                        if(func.Contains("pat2")) {
-                            bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
-
-                            Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, true);
-                            if(pat == null)
-                                t = t + " / No Patt";
-                            else
-                                t = t + " / " + (pat is FlashPatt ? (thisPhase ? "B " : "A ") : "") + pat.name;
-                        } else {
-                            t = t + " / Enabled";
-                        }
-                    } else {
-                        t = t + " / Disabled";
-                    }
                 }
 
                 label2.text = label.text = t;

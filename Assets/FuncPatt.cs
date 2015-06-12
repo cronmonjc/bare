@@ -8,16 +8,20 @@ public class FuncPatt : MonoBehaviour {
     public Image i;
     public FuncPattSelect fps;
 
-    void Start() {
-        text.text = patt.name;
-    }
-
-    void Update() {
+    public void Refresh() {
         bool on = true;
+        text.text = patt.name;
+
+        if(!BarManager.inst.patts.Get<fNbt.NbtCompound>(BarManager.GetFnString(BarManager.inst.transform, FunctionEditPane.currFunc)).Contains("pat1")) {
+            return;
+        }
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-
+            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
+            on &= alpha.GetPattern(FunctionEditPane.currFunc, fps.IsColor2) == patt;
         }
+
+        i.enabled = on;
     }
 
     public void Clicked() {
