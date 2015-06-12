@@ -194,7 +194,7 @@ public class LightHead : MonoBehaviour {
     }
 
     public void AddBasicFunction(BasicFunction func, bool doDefault = true) {
-        if(CapableBasicFunctions.Contains(func) && !lhd.funcs.Contains(func)) {
+        if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {
             lhd.funcs.Add(func);
             if(doDefault) RefreshBasicFuncDefault();
         }

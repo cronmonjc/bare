@@ -177,14 +177,14 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    public void SetTDOption(int to) {
+        SetTDOption((TDOption)to);
+    }
+
     public void SetTDOption(TDOption to) {
         td = to;
 
         StartCoroutine(SetTDOption());
-    }
-
-    public void SetTDOption(int to) {
-        SetTDOption((TDOption)to);
     }
 
     public IEnumerator SetTDOption() {
@@ -210,8 +210,8 @@ public class BarManager : MonoBehaviour {
                         byte bit = lh.Bit;
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             lh.shouldBeTD = true;
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
@@ -227,8 +227,8 @@ public class BarManager : MonoBehaviour {
                         byte bit = lh.Bit;
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             lh.shouldBeTD = true;
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
@@ -244,8 +244,8 @@ public class BarManager : MonoBehaviour {
                         byte bit = lh.Bit;
                         if(bit > 2 && bit < 9) {
                             lh.lhd.funcs.Clear();
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             lh.shouldBeTD = true;
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         } else if(bit == 2 || bit == 9) {
                             lh.shouldBeTD = false;
                             lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
@@ -266,8 +266,8 @@ public class BarManager : MonoBehaviour {
                         byte bit = lh.Bit;
                         if(bit > 1 && bit < 10) {
                             lh.lhd.funcs.Clear();
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             lh.shouldBeTD = true;
+                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
                         }
                     }
                 }
@@ -286,8 +286,8 @@ public class BarManager : MonoBehaviour {
                             byte bit = lh.Bit;
                             if((bit > 1 && bit < 10) && (bit != 5 && bit != 6)) {
                                 lh.lhd.funcs.Clear();
-                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
                                 lh.shouldBeTD = true;
+                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             } else if(bit == 5 || bit == 6) {
                                 lh.shouldBeTD = false;
                                 lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
@@ -300,8 +300,8 @@ public class BarManager : MonoBehaviour {
                             byte bit = lh.Bit;
                             if(bit > 2 && bit < 9) {
                                 lh.lhd.funcs.Clear();
-                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
                                 lh.shouldBeTD = true;
+                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
                             } else if(bit == 2 || bit == 9) {
                                 lh.shouldBeTD = false;
                                 lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
@@ -311,6 +311,8 @@ public class BarManager : MonoBehaviour {
                 }
                 break;
         }
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
 
         foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
             ll.Refresh();
