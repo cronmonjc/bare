@@ -270,7 +270,7 @@ public class LightLabel : MonoBehaviour {
                     if(lh.lhd.style.isDualColor) {
                         clr = lh.lhd.style.color2 * (thisEnabled2 ? 1.0f : 0.25f);
                     }
-                    if((!lh.lhd.style.isDualColor && !thisEnabled1) || !thisEnabled2 || clr.r + clr.g < clr.b) {
+                    if((!lh.lhd.style.isDualColor && !thisEnabled1) || (lh.lhd.style.isDualColor && !thisEnabled2) || clr.r + clr.g < clr.b) {
                         label2.color = Color.white;
                     } else {
                         label2.color = Color.black;

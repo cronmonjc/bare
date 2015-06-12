@@ -23,7 +23,6 @@ public class FuncPattSelect : MonoBehaviour {
 
     public void Refresh() {
         Clear();
-        Debug.Log("Refreshing!", this);
 
         bool showPatts = false;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
