@@ -15,7 +15,7 @@ public class Pushpin : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
         if(lh == null) {
             lh = target.GetComponent<LightHead>();
         } else {

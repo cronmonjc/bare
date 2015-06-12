@@ -12,7 +12,7 @@ public class FarTest : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
         if(bm == null) bm = FindObjectOfType<BarManager>();
         if(lh == null) lh = GetComponent<LightHead>();
         bool far = (lh.Bit == 1 || lh.Bit == 10);

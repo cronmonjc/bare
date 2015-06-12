@@ -12,6 +12,8 @@ using PdfSharp.Drawing.Layout;
 using System;
 
 public class BarManager : MonoBehaviour {
+    public AdvFunction funcBeingTested = AdvFunction.NONE;
+
     private bool savePDF = false;
 
     [Range(0, 4)]

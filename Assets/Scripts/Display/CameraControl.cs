@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 
 public class CameraControl : MonoBehaviour {
-    public static AdvFunction funcBeingTested = AdvFunction.NONE;
-
     public static bool ShowPricing = false;
     public static bool ShowWhole = false;
 

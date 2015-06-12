@@ -109,7 +109,7 @@ public class LightHead : MonoBehaviour {
     }
 
     void Update() {
-        if(CameraControl.funcBeingTested != AdvFunction.NONE) {
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
             if(myLabel.gameObject.activeInHierarchy) {
                 myLabel.gameObject.SetActive(false);
             }

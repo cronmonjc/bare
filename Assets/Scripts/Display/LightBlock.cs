@@ -67,8 +67,5 @@ public class LightBlock : MonoBehaviour {
 
     void Update() {
         RenderColor = c + (Color.white * (Selected ? 0.25f : 0.0f));
-        if(CameraControl.funcBeingTested != AdvFunction.NONE) {
-            // todo: flashy
-        }
     }
 }

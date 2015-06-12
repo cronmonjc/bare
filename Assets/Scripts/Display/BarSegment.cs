@@ -10,7 +10,7 @@ public class BarSegment : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if(CameraControl.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
         if(man == null) {
             man = FindObjectOfType<BarManager>();
         }
