@@ -248,6 +248,8 @@ public class FunctionEditPane : MonoBehaviour {
     }
 
     public static void RetestStatic() {
+        if(FunctionEditPane.currFunc == AdvFunction.NONE) return;
+
         if(FuncEnable.clr1 != null) FuncEnable.clr1.Retest();
         if(FuncEnable.clr2 != null) FuncEnable.clr2.Retest();
         if(FuncPhase.ph1 != null) FuncPhase.ph1.Retest();
