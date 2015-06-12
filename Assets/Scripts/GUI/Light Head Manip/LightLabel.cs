@@ -262,7 +262,7 @@ public class LightLabel : MonoBehaviour {
 
                     Color clr = lh.lhd.style.color * (thisEnabled1 ? 1.0f : 0.25f);
                     background.color = clr;
-                    if(clr.r + clr.g < clr.b) {
+                    if(!thisEnabled1 || clr.r + clr.g < clr.b) {
                         label.color = Color.white;
                     } else {
                         label.color = Color.black;
@@ -270,7 +270,7 @@ public class LightLabel : MonoBehaviour {
                     if(lh.lhd.style.isDualColor) {
                         clr = lh.lhd.style.color2 * (thisEnabled2 ? 1.0f : 0.25f);
                     }
-                    if(clr.r + clr.g < clr.b) {
+                    if((!lh.lhd.style.isDualColor && !thisEnabled1) || !thisEnabled2 || clr.r + clr.g < clr.b) {
                         label2.color = Color.white;
                     } else {
                         label2.color = Color.black;
@@ -311,6 +311,13 @@ public class LightLabel : MonoBehaviour {
                         }
                     }
                 } else {
+                    Color clr = lh.lhd.style.color * 0.25f;
+                    background.color = clr;
+                    if(lh.lhd.style.isDualColor) {
+                        clr = lh.lhd.style.color2 * 0.25f;
+                    }
+                    secondImage.color = clr;
+                    label2.color = label.color = Color.white;
                     t = t + "Disabled";
                 }
 

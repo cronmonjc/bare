@@ -10,6 +10,7 @@ public class LightDict : MonoBehaviour {
     public Dictionary<Location, LocationNode> lights;
     public List<AdvFunction> steadyBurn;
     public List<Pattern> flashPatts, warnPatts, tdPatts;
+    public short pattBase = 0;
 
     void Awake() {
         if(inst == null) inst = this;
@@ -64,6 +65,8 @@ public class LightDict : MonoBehaviour {
                 }
 
                 NbtCompound pattstag = cat.RootTag.Get<NbtCompound>("patts");
+
+                pattBase = pattstag["base"].ShortValue;
 
                 warnPatts = new List<Pattern>();
                 NbtList patlist = pattstag.Get<NbtList>("flash");

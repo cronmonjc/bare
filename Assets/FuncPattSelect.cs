@@ -23,6 +23,33 @@ public class FuncPattSelect : MonoBehaviour {
 
     public void Refresh() {
         Clear();
+        Debug.Log("Refreshing!", this);
+
+        bool showPatts = false;
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
+
+            switch(FunctionEditPane.currFunc) {
+                case AdvFunction.TRAFFIC_LEFT:
+                case AdvFunction.TRAFFIC_RIGHT:
+                    showPatts |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+                    break;
+                case AdvFunction.LEVEL1:
+                case AdvFunction.LEVEL2:
+                case AdvFunction.LEVEL3:
+                case AdvFunction.LEVEL4:
+                case AdvFunction.LEVEL5:
+                case AdvFunction.FTAKEDOWN:
+                case AdvFunction.FALLEY:
+                case AdvFunction.ICL:
+                    showPatts |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(!showPatts) return;
 
         if(IsTD) {
             foreach(Pattern alpha in LightDict.inst.tdPatts) {
@@ -34,7 +61,7 @@ public class FuncPattSelect : MonoBehaviour {
                 patt.patt = alpha;
                 patt.Refresh();
             }
-        
+
         } else {
             foreach(Pattern alpha in LightDict.inst.flashPatts) {
                 GameObject newbie = GameObject.Instantiate<GameObject>(optionPrefab);

@@ -36,17 +36,20 @@ public class FuncPhase : MonoBehaviour {
                 button.interactable = false;
                 return;
             }
-            short ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
-
-            bool thisEnabled = ((ph & (0x1 << alpha.Bit)) > 0);
-
-            enabled |= thisEnabled;
-            disabled |= !thisEnabled;
 
             Pattern patt = alpha.GetPattern(FunctionEditPane.currFunc, IsColor2);
 
-            if(patt != null && patt is FlashPatt) {
-                selectable |= !IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual);
+            bool thisSelectable = (patt != null && patt is FlashPatt && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual)));
+
+            if(thisSelectable) {
+                short ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
+
+                bool thisEnabled = ((ph & (0x1 << alpha.Bit)) > 0);
+
+                enabled |= thisEnabled;
+                disabled |= !thisEnabled;
+
+                selectable = true;
             }
         }
 
@@ -71,17 +74,62 @@ public class FuncPhase : MonoBehaviour {
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
-            string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
-            if(cmpdName == null) {
-                Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
-                return;
-            }
-            NbtShort ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"));
+            bool trigger = false;
 
-            if(checkmark.enabled) {
-                ph.DisableBit(alpha.Bit);
-            } else {
-                ph.EnableBit(alpha.Bit);
+            switch(FunctionEditPane.currFunc) {
+                case AdvFunction.LEVEL1:
+                case AdvFunction.LEVEL2:
+                case AdvFunction.LEVEL3:
+                case AdvFunction.LEVEL4:
+                case AdvFunction.LEVEL5:
+                case AdvFunction.FTAKEDOWN:
+                case AdvFunction.FALLEY:
+                case AdvFunction.ICL:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
+                    break;
+                case AdvFunction.TAKEDOWN:
+                case AdvFunction.ALLEY_LEFT:
+                case AdvFunction.ALLEY_RIGHT:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.STEADY);
+                    break;
+                case AdvFunction.TURN_LEFT:
+                case AdvFunction.TURN_RIGHT:
+                case AdvFunction.TAIL:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.STT);
+                    break;
+                case AdvFunction.T13:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
+                    break;
+                case AdvFunction.EMITTER:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
+                    break;
+                case AdvFunction.CRUISE:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
+                    break;
+                case AdvFunction.TRAFFIC_LEFT:
+                case AdvFunction.TRAFFIC_RIGHT:
+                    trigger = alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
+                    break;
+                case AdvFunction.DIM:
+                    trigger = true;
+                    break;
+                default:
+                    break;
+            }
+
+            if(trigger) {
+                string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
+                if(cmpdName == null) {
+                    Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
+                    return;
+                }
+                NbtShort ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"));
+
+                if(checkmark.enabled) {
+                    ph.DisableBit(alpha.Bit);
+                } else {
+                    ph.EnableBit(alpha.Bit);
+                }
             }
         }
 
