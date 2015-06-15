@@ -85,12 +85,21 @@ public class BarManager : MonoBehaviour {
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
         }
 
-        FnDragTarget.inputMap = new NbtIntArray("map", new int[20]);
+        FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000 });
         patts.Add(FnDragTarget.inputMap);
 
         allHeads = new List<LightHead>();
         altHeadNumber = new Dictionary<LightHead, string>();
         inst = this;
+    }
+
+    public void SetCAN(bool to) {
+        if(to) {
+            FnDragTarget.inputMap.Value = new int[] {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
+                                                     0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000};
+        } else {
+            FnDragTarget.inputMap.Value = new int[] {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000};
+        }
     }
 
     void Start() {

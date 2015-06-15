@@ -5,15 +5,14 @@ using fNbt;
 
 public class FuncPhase : MonoBehaviour {
     public static FuncPhase ph1, ph2;
-    private Image checkmark;
     private Text label;
     private Button button;
     public bool IsColor2 = false;
+    public bool CurrentlyB = false;
 
     void Start() {
         button = GetComponent<Button>();
         label = transform.FindChild("Label").GetComponent<Text>();
-        checkmark = transform.FindChild("Checkmark").GetComponent<Image>();
         if(IsColor2) ph2 = this;
         else ph1 = this;
         Retest();
@@ -56,11 +55,10 @@ public class FuncPhase : MonoBehaviour {
         button.interactable = selectable;
 
         if(!selectable) {
-            checkmark.enabled = false;
+            CurrentlyB = false;
             label.text = "Cannot Phase Color " + (IsColor2 ? "2" : "1");
         } else {
-            checkmark.enabled = !disabled;
-
+            CurrentlyB = !enabled;
             if(enabled && disabled) {
                 label.text = "Color " + (IsColor2 ? "2" : "1") + " Mixed Phase";
             } else {
@@ -125,7 +123,7 @@ public class FuncPhase : MonoBehaviour {
                 }
                 NbtShort ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"));
 
-                if(checkmark.enabled) {
+                if(CurrentlyB) {
                     ph.DisableBit(alpha.Bit);
                 } else {
                     ph.EnableBit(alpha.Bit);

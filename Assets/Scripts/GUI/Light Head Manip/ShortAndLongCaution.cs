@@ -2,6 +2,8 @@
 using System.Collections;
 
 public class ShortAndLongCaution : MonoBehaviour {
+    public GameObject CautionObject;
+
     void Update() {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
 
@@ -14,6 +16,6 @@ public class ShortAndLongCaution : MonoBehaviour {
             }
         }
 
-        GetComponent<UnityEngine.UI.Text>().enabled = (!Short && !Long);
+        CautionObject.SetActive(!Short && !Long);
     }
 }

@@ -115,6 +115,12 @@ public class FuncPattSelect : MonoBehaviour {
             ll.Refresh();
         }
 
+        foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
+            if(!(fe.IsColor2 ^ IsColor2)) {
+                fe.Enable();
+            }
+        }
+
         FunctionEditPane.RetestStatic();
     }
 }

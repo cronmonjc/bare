@@ -7,7 +7,7 @@ public abstract class PulldownItem : MonoBehaviour {
     public int number;
     public ColorBlock selected = new ColorBlock() { colorMultiplier = 1f, normalColor = new Color32(255, 192, 0, 255), highlightedColor = new Color32(255, 223, 127, 255), pressedColor = new Color32(255, 192, 0, 255), disabledColor = new Color32(255, 144, 144, 255) },
                     unselected = new ColorBlock() { colorMultiplier = 1f, normalColor = new Color32(255, 255, 255, 255), highlightedColor = new Color32(245, 245, 245, 255), pressedColor = new Color32(200, 200, 200, 255), disabledColor = new Color32(255, 144, 144, 255) };
-    private Button b;
+    protected Button b;
     private bool prev = false;
 
     protected abstract bool IsSelected();
