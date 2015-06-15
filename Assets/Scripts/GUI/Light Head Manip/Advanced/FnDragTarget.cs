@@ -11,6 +11,8 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public static FnDragTarget draggedItem;
     public GameObject dragItem;
 
+    public GameObject Edit1, Edit2;
+
     public void OnBeginDrag(PointerEventData eventData) {
         if(inputMap.Value[key] == 0) return;
 
@@ -68,7 +70,20 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     }
 
     public void Update() {
-        switch(inputMap.Value[key]) {
+        int val = inputMap.Value[key];
+
+        if(val == 0xC00) {
+            Edit1.SetActive(true);
+            Edit2.SetActive(true);
+        } else if(val == 0x0) {
+            Edit1.SetActive(false);
+            Edit2.SetActive(false);
+        } else {
+            Edit1.SetActive(true);
+            Edit2.SetActive(false);
+        }
+
+        switch(val) {
             case 0x1: // TAKEDOWN
                 display.text = "Takedown";
                 break;
