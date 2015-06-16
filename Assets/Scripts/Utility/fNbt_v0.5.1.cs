@@ -106,6 +106,14 @@ namespace fNbt {
             sb.Append( ": " );
             sb.Append( Value );
         }
+
+        /// <summary>
+        /// Clones this NbtByte tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtByte(Name, Value);
+        }
     }
 
     /// <summary> A tag containing an array of bytes. </summary>
@@ -216,6 +224,14 @@ namespace fNbt {
                 sb.AppendFormat( "(\"{0}\")", Name );
             }
             sb.AppendFormat( ": [{0} bytes]", bytes.Length );
+        }
+
+        /// <summary>
+        /// Clones this NbtByteArray tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtByteArray(Name, Value);
         }
     }
 
@@ -752,6 +768,20 @@ namespace fNbt {
             }
             sb.Append( '}' );
         }
+
+        /// <summary>
+        /// Clones this NbtCompound tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            NbtCompound rtn = new NbtCompound(Name);
+
+            foreach(NbtTag tag in Tags) {
+                rtn.Add(tag.Clone());
+            }
+
+            return rtn;
+        }
     }
 
     /// <summary> A tag containing a double-precision floating point number. </summary>
@@ -822,6 +852,14 @@ namespace fNbt {
             }
             sb.Append( ": " );
             sb.Append( Value );
+        }
+
+        /// <summary>
+        /// Clones this NbtDouble tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtDouble(Name, Value);
         }
     }
 
@@ -894,6 +932,14 @@ namespace fNbt {
             sb.Append( ": " );
             sb.Append( Value );
         }
+
+        /// <summary>
+        /// Clones this NbtFloat tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtFloat(Name, Value);
+        }
     }
 
     /// <summary> A tag containing a single signed 32-bit integer. </summary>
@@ -964,6 +1010,14 @@ namespace fNbt {
             }
             sb.Append( ": " );
             sb.Append( Value );
+        }
+
+        /// <summary>
+        /// Clones this NbtInt tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtInt(Name, Value);
         }
     }
 
@@ -1081,6 +1135,14 @@ namespace fNbt {
                 sb.AppendFormat( "(\"{0}\")", Name );
             }
             sb.AppendFormat( ": [{0} ints]", ints.Length );
+        }
+
+        /// <summary>
+        /// Clones this NbtIntArray tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtIntArray(Name, Value);
         }
     }
 
@@ -1629,6 +1691,20 @@ namespace fNbt {
             }
             sb.Append( '}' );
         }
+
+        /// <summary>
+        /// Clones this NbtList tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            NbtList rtn = new NbtList(Name);
+
+            foreach(NbtTag tag in tags) {
+                rtn.Add(tag);
+            }
+
+            return rtn;
+        }
     }
 
     /// <summary> A tag containing a single signed 64-bit integer. </summary>
@@ -1704,6 +1780,14 @@ namespace fNbt {
             sb.Append( ": " );
             sb.Append( Value );
         }
+
+        /// <summary>
+        /// Clones this NbtLong tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtLong(Name, Value);
+        }
     }
 
     /// <summary> A tag containing a single signed 16-bit integer. </summary>
@@ -1778,6 +1862,14 @@ namespace fNbt {
             }
             sb.Append( ": " );
             sb.Append( Value );
+        }
+
+        /// <summary>
+        /// Clones this NbtShort tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtShort(Name, Value);
         }
     }
 
@@ -1865,6 +1957,14 @@ namespace fNbt {
             sb.Append( ": \"" );
             sb.Append( Value );
             sb.Append( '"' );
+        }
+
+        /// <summary>
+        /// Clones this NbtString tag.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal override NbtTag Clone() {
+            return new NbtString(Name, Value);
         }
     }
 
@@ -2226,6 +2326,12 @@ namespace fNbt {
         }
 
         static string defaultIndentString = "  ";
+
+        /// <summary>
+        /// Creates a new tag with the exact same contents as the original.
+        /// </summary>
+        /// <returns>The cloned tag.</returns>
+        internal abstract NbtTag Clone();
     }
 
     /// <summary> Exception thrown when an operation is attempted on an NbtReader that

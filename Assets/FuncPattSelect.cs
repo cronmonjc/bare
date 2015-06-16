@@ -89,35 +89,39 @@ public class FuncPattSelect : MonoBehaviour {
             Debug.LogWarning("lolnope - " + FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
             return;
         }
-        NbtCompound patCmpd = BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (IsColor2 ? "2" : "1"));
+        if(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT) {
+            BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("patt").Get<NbtShort>("l").Value = (short)p.id;
+        } else {
+            NbtCompound patCmpd = BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (IsColor2 ? "2" : "1"));
 
-        foreach(LightHead alpha in cam.OnlyCamSelected) {
-            string tagname = alpha.transform.position.y < 0 ? "r" : "f";
-            string path = alpha.transform.GetPath();
+            foreach(LightHead alpha in cam.OnlyCamSelected) {
+                string tagname = alpha.transform.position.y < 0 ? "r" : "f";
+                string path = alpha.transform.GetPath();
 
-            if(path.Contains("C") || path.Contains("A")) {
-                tagname = tagname + "cor";
-            } else if(path.Contains("I")) {
-                tagname = tagname + "inb";
-            } else if(path.Contains("O")) {
-                if(alpha.loc == Location.FAR_REAR)
-                    tagname = tagname + "far";
-                else
-                    tagname = tagname + "oub";
-            } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
-                tagname = tagname + "cen";
+                if(path.Contains("C") || path.Contains("A")) {
+                    tagname = tagname + "cor";
+                } else if(path.Contains("I")) {
+                    tagname = tagname + "inb";
+                } else if(path.Contains("O")) {
+                    if(alpha.loc == Location.FAR_REAR)
+                        tagname = tagname + "far";
+                    else
+                        tagname = tagname + "oub";
+                } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
+                    tagname = tagname + "cen";
+                }
+
+                patCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
             }
 
-            patCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
-        }
+            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
+                ll.Refresh();
+            }
 
-        foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-            ll.Refresh();
-        }
-
-        foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
-            if(!(fe.IsColor2 ^ IsColor2)) {
-                fe.Enable();
+            foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
+                if(!(fe.IsColor2 ^ IsColor2)) {
+                    fe.Enable();
+                }
             }
         }
 

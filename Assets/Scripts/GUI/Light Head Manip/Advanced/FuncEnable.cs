@@ -124,33 +124,33 @@ public class FuncEnable : MonoBehaviour {
                 case AdvFunction.FTAKEDOWN:
                 case AdvFunction.FALLEY:
                 case AdvFunction.ICL:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
                     break;
                 case AdvFunction.TAKEDOWN:
                 case AdvFunction.ALLEY_LEFT:
                 case AdvFunction.ALLEY_RIGHT:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.STEADY);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STEADY);
                     break;
                 case AdvFunction.TURN_LEFT:
                 case AdvFunction.TURN_RIGHT:
                 case AdvFunction.TAIL:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.STT);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STT);
                     break;
                 case AdvFunction.T13:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
                     break;
                 case AdvFunction.EMITTER:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
                     break;
                 case AdvFunction.CRUISE:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
                     break;
                 case AdvFunction.TRAFFIC_LEFT:
                 case AdvFunction.TRAFFIC_RIGHT:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
                     break;
                 case AdvFunction.DIM:
-                    trigger = true;
+                    trigger |= true;
                     break;
                 default:
                     break;
@@ -192,33 +192,33 @@ public class FuncEnable : MonoBehaviour {
                 case AdvFunction.FTAKEDOWN:
                 case AdvFunction.FALLEY:
                 case AdvFunction.ICL:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
                     break;
                 case AdvFunction.TAKEDOWN:
                 case AdvFunction.ALLEY_LEFT:
                 case AdvFunction.ALLEY_RIGHT:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.STEADY);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STEADY);
                     break;
                 case AdvFunction.TURN_LEFT:
                 case AdvFunction.TURN_RIGHT:
                 case AdvFunction.TAIL:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.STT);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STT);
                     break;
                 case AdvFunction.T13:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
                     break;
                 case AdvFunction.EMITTER:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
                     break;
                 case AdvFunction.CRUISE:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
                     break;
                 case AdvFunction.TRAFFIC_LEFT:
                 case AdvFunction.TRAFFIC_RIGHT:
-                    trigger = alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
+                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
                     break;
                 case AdvFunction.DIM:
-                    trigger = true;
+                    trigger |= true;
                     break;
                 default:
                     break;

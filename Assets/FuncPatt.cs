@@ -12,7 +12,7 @@ public class FuncPatt : MonoBehaviour {
         bool on = true;
         text.text = patt.name;
 
-        if(!BarManager.inst.patts.Get<fNbt.NbtCompound>(BarManager.GetFnString(BarManager.inst.transform, FunctionEditPane.currFunc)).Contains("pat1")) {
+        if(!BarManager.inst.patts.Get<fNbt.NbtCompound>(BarManager.GetFnString(BarManager.inst.transform, FunctionEditPane.currFunc)).Contains(patt is TraffPatt ? "patt" : "pat1")) {
             return;
         }
 

@@ -25305,8 +25305,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noTDBits: 0808090909
   SvLgBits: 0808080909
-  EtSmBits: 0808080a0a
-  SxSmBits: 0808080a0a
+  EtSmBits: 08080a0a0a
+  SxSmBits: 08080a0a0a
   EtLgBits: 0000000009
   SxLgBits: 0000080909
 --- !u!1 &641839591
@@ -28815,7 +28815,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Steady Burn: Takedown'
+  m_Text: 'Steady Burn: Takedown / Work Lights'
 --- !u!222 &733443429
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -42808,7 +42808,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2146742786}
         m_MethodName: Clear
         m_Mode: 1
         m_Arguments:
@@ -48649,8 +48649,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noTDBits: 0303020202
   SvLgBits: 0303030202
-  EtSmBits: 0000000101
-  SxSmBits: 0000000101
+  EtSmBits: 0000010101
+  SxSmBits: 0000010101
   EtLgBits: 0000000002
   SxLgBits: 0000030202
 --- !u!1001 &1199324455

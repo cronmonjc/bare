@@ -157,37 +157,45 @@ public class LightHead : MonoBehaviour {
             Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.");
             return null;
         }
-        NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1"));
-
-        string tagname = transform.position.y < 0 ? "r" : "f";
-        string path = transform.GetPath();
-
-        if(path.Contains("C") || path.Contains("A")) {
-            tagname = tagname + "cor";
-        } else if(path.Contains("I")) {
-            tagname = tagname + "inb";
-        } else if(path.Contains("O")) {
-            if(loc == Location.FAR_REAR)
-                tagname = tagname + "far";
-            else
-                tagname = tagname + "oub";
-        } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
-            tagname = tagname + "cen";
-        }
-
-        short patID = patCmpd.Get<NbtShort>(tagname).Value;
-        foreach(Pattern p in LightDict.inst.flashPatts) {
-            if(p.id == patID) {
-                return p;
+        if(f == AdvFunction.TRAFFIC_LEFT || f == AdvFunction.TRAFFIC_RIGHT) {
+            short patID = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("patt").Get<NbtShort>("l").Value;
+            foreach(Pattern p in LightDict.inst.tdPatts) {
+                if(p.id == patID) {
+                    return p;
+                }
             }
-        }
-        foreach(Pattern p in LightDict.inst.warnPatts) {
-            if(p.id == patID) {
-                return p;
+        } else {
+            NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1"));
+
+            string tagname = transform.position.y < 0 ? "r" : "f";
+            string path = transform.GetPath();
+
+            if(path.Contains("C") || path.Contains("A")) {
+                tagname = tagname + "cor";
+            } else if(path.Contains("I")) {
+                tagname = tagname + "inb";
+            } else if(path.Contains("O")) {
+                if(loc == Location.FAR_REAR)
+                    tagname = tagname + "far";
+                else
+                    tagname = tagname + "oub";
+            } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
+                tagname = tagname + "cen";
+            }
+
+            short patID = patCmpd.Get<NbtShort>(tagname).Value;
+            foreach(Pattern p in LightDict.inst.flashPatts) {
+                if(p.id == patID) {
+                    return p;
+                }
+            }
+            foreach(Pattern p in LightDict.inst.warnPatts) {
+                if(p.id == patID) {
+                    return p;
+                }
             }
         }
         return null;
-
     }
 
     public void AddBasicFunction(BasicFunction func, bool doDefault = true) {
@@ -256,6 +264,7 @@ public class LightHead : MonoBehaviour {
                     if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
                         SetOptic("Lineum", test);
                         useSingle = true;
+                        useDual = (test == BasicFunction.FLASHING);
                         return;
                     } else {
                         SetOptic("");

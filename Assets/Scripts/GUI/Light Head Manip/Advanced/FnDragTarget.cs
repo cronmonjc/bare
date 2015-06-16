@@ -75,7 +75,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         if(val == 0xC00) {
             Edit1.SetActive(true);
             Edit2.SetActive(true);
-        } else if(val == 0x0) {
+        } else if(val == 0x0 || val == 0x1000) {
             Edit1.SetActive(false);
             Edit2.SetActive(false);
         } else {
@@ -85,7 +85,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
         switch(val) {
             case 0x1: // TAKEDOWN
-                display.text = "Takedown";
+                display.text = "Takedown / Work Lights";
                 break;
             case 0x2: // LEVEL1
                 display.text = "Level 1";

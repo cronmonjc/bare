@@ -76,7 +76,7 @@ public class BarManager : MonoBehaviour {
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("pf1", 0), new NbtShort("pf2", 0), new NbtShort("pr1", 0), new NbtShort("pr2", 0) });
         }
 
-        patts.Get<NbtCompound>("traf").Add(new NbtCompound("patt", new NbtTag[] { new NbtShort("l", 0), new NbtShort("r", 0), new NbtShort("c", 0) }));
+        patts.Get<NbtCompound>("traf").Add(new NbtShort("patt", 0));
 
         foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl" }) {
             patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat1", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
@@ -335,122 +335,133 @@ public class BarManager : MonoBehaviour {
     public void Save(string filename) {
         if(savePDF) { StartCoroutine(SavePDF(filename)); return; }
 
-        NbtCompound root = new NbtCompound("root");
+        try {
+            NbtCompound root = new NbtCompound("root");
 
-        NbtCompound opts = new NbtCompound("opts");
-        opts.Add(new NbtByte("size", (byte)BarSize));
-        opts.Add(new NbtByte("tdop", (byte)td));
-        opts.Add(new NbtByte("can", (byte)(useCAN ? 1 : 0)));
-        opts.Add(new NbtByte("cabt", (byte)cableType));
-        opts.Add(new NbtByte("cabl", (byte)cableLength));
-        root.Add(opts);
+            NbtCompound opts = new NbtCompound("opts");
+            opts.Add(new NbtByte("size", (byte)BarSize));
+            opts.Add(new NbtByte("tdop", (byte)td));
+            opts.Add(new NbtByte("can", (byte)(useCAN ? 1 : 0)));
+            opts.Add(new NbtByte("cabt", (byte)cableType));
+            opts.Add(new NbtByte("cabl", (byte)cableLength));
+            root.Add(opts);
 
-        NbtCompound order = new NbtCompound("ordr");
-        order.Add(new NbtString("name", custName.text));
-        order.Add(new NbtString("num", orderNum.text));
-        order.Add(new NbtString("note", notes.text));
-        root.Add(order);
+            NbtCompound order = new NbtCompound("ordr");
+            order.Add(new NbtString("name", custName.text));
+            order.Add(new NbtString("num", orderNum.text));
+            order.Add(new NbtString("note", notes.text));
+            root.Add(order);
 
-        NbtList lightList = new NbtList("lite");
-        foreach(LightHead lh in allHeads) {
-            if(!lh.gameObject.activeInHierarchy) continue;
-            NbtCompound lightCmpd = new NbtCompound();
-            lightCmpd.Add(new NbtString("path", lh.transform.GetPath()));
-            if(lh.lhd.style != null) {
-                lightCmpd.Add(new NbtString("optc", lh.lhd.optic.partNumber));
-                lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
+            NbtList lightList = new NbtList("lite");
+            foreach(LightHead lh in allHeads) {
+                if(!lh.gameObject.activeInHierarchy) continue;
+                NbtCompound lightCmpd = new NbtCompound();
+                lightCmpd.Add(new NbtString("path", lh.transform.GetPath()));
+                if(lh.lhd.style != null) {
+                    lightCmpd.Add(new NbtString("optc", lh.lhd.optic.partNumber));
+                    lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
+                }
+
+                byte fn = 0;
+                foreach(BasicFunction bfn in lh.lhd.funcs) {
+                    fn |= (byte)bfn;
+                }
+                lightCmpd.Add(new NbtByte("func", fn));
+
+                lightList.Add(lightCmpd);
             }
+            root.Add(lightList);
 
-            byte fn = 0;
-            foreach(BasicFunction bfn in lh.lhd.funcs) {
-                fn |= (byte)bfn;
+            root.Add(patts.Clone());
+
+            NbtList socList = new NbtList("soc");
+            foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
+                NbtCompound socCmpd = new NbtCompound();
+                socCmpd.Add(new NbtString("path", soc.transform.GetPath()));
+                socCmpd.Add(new NbtByte("isLg", soc.ShowLong ? (byte)1 : (byte)0));
+                socList.Add(socCmpd);
             }
-            lightCmpd.Add(new NbtByte("func", fn));
+            root.Add(socList);
 
-            lightList.Add(lightCmpd);
+            NbtFile file = new NbtFile(root);
+            if(!filename.EndsWith(".bar.nbt")) {
+                filename = filename + ".bar.nbt";
+            }
+            file.SaveToFile(filename, NbtCompression.None);
+        } catch(Exception ex) {
+            ErrorText.inst.DispError("Problem saving: " + ex.Message);
+            Debug.LogException(ex);
         }
-        root.Add(lightList);
-
-        root.Add(patts);
-
-        NbtList socList = new NbtList("soc");
-        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
-            NbtCompound socCmpd = new NbtCompound();
-            socCmpd.Add(new NbtString("path", soc.transform.GetPath()));
-            socCmpd.Add(new NbtByte("isLg", soc.ShowLong ? (byte)1 : (byte)0));
-            socList.Add(socCmpd);
-        }
-        root.Add(socList);
-
-        NbtFile file = new NbtFile(root);
-        if(!filename.EndsWith(".bar.nbt")) {
-            filename = filename + ".bar.nbt";
-        }
-        file.SaveToFile(filename, NbtCompression.None);
     }
 
     public void Open(string filename) {
-        Clear();
+        try {
+            Clear();
 
-        NbtFile file = new NbtFile(filename);
+            NbtFile file = new NbtFile(filename);
 
-        NbtCompound root = file.RootTag;
+            NbtCompound root = file.RootTag;
 
-        NbtCompound opts = root.Get<NbtCompound>("opts");
-        BarSize = opts["size"].IntValue;
-        td = (TDOption)opts["tdop"].ByteValue;
-        useCAN = opts["can"].ByteValue == 1;
-        cableType = opts["cabt"].IntValue;
-        cableLength = opts["cabl"].IntValue;
+            NbtCompound opts = root.Get<NbtCompound>("opts");
+            BarSize = opts["size"].IntValue;
+            SetTDOption((TDOption)opts["tdop"].ByteValue);
+            useCAN = opts["can"].ByteValue == 1;
+            cableType = opts["cabt"].IntValue;
+            cableLength = opts["cabl"].IntValue;
 
-        NbtCompound order = root.Get<NbtCompound>("ordr");
-        custName.text = order["name"].StringValue;
-        orderNum.text = order["num"].StringValue;
-        notes.text = order["note"].StringValue;
+            NbtCompound order = root.Get<NbtCompound>("ordr");
+            custName.text = order["name"].StringValue;
+            orderNum.text = order["num"].StringValue;
+            notes.text = order["note"].StringValue;
 
-        NbtList lightList = (NbtList)root["lite"];
-        NbtList socList = (NbtList)root["soc"];
-        Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
-        Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
+            NbtList lightList = (NbtList)root["lite"];
+            NbtList socList = (NbtList)root["soc"];
+            Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
+            Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
 
-        foreach(LightHead lh in allHeads) {
-            lights[lh.transform.GetPath()] = lh;
-        }
-        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
-            socs[soc.transform.GetPath()] = soc;
-        }
-        foreach(NbtTag alpha in lightList) {
-            NbtCompound lightCmpd = alpha as NbtCompound;
-            LightHead lh = lights[lightCmpd["path"].StringValue];
-
-            byte fn = lightCmpd["func"].ByteValue;
-            lh.lhd.funcs.Clear();
-            foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
-                if(((byte)bfn & fn) != 0) {
-                    lh.AddBasicFunction(bfn, false);
-                }
+            foreach(LightHead lh in allHeads) {
+                lights[lh.transform.GetPath()] = lh;
             }
+            foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
+                socs[soc.transform.GetPath()] = soc;
+            }
+            foreach(NbtTag alpha in lightList) {
+                NbtCompound lightCmpd = alpha as NbtCompound;
+                LightHead lh = lights[lightCmpd["path"].StringValue];
 
-            if(lightCmpd.Contains("optc")) {
-                LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
-                string partNum = lightCmpd["optc"].StringValue;
+                byte fn = lightCmpd["func"].ByteValue;
+                lh.lhd.funcs.Clear();
+                foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
+                    if(bfn == BasicFunction.TRAFFIC) continue;
+                    if(((byte)bfn & fn) != 0) {
+                        lh.AddBasicFunction(bfn, false);
+                    }
+                }
 
-                foreach(OpticNode on in ln.optics.Values) {
-                    if(on.partNumber == partNum) {
-                        lh.SetOptic(on.name, BasicFunction.NULL, false);
-                        lh.SetStyle(lightCmpd["styl"].StringValue);
-                        break;
+                if(lightCmpd.Contains("optc")) {
+                    LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
+                    string partNum = lightCmpd["optc"].StringValue;
+
+                    foreach(OpticNode on in ln.optics.Values) {
+                        if(on.partNumber == partNum) {
+                            lh.SetOptic(on.name, BasicFunction.NULL, false);
+                            lh.SetStyle(lightCmpd["styl"].StringValue);
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        patts = root.Get<NbtCompound>("pats");
+            patts = root.Get<NbtCompound>("pats");
 
-        foreach(NbtTag alpha in socList) {
-            NbtCompound socCmpd = alpha as NbtCompound;
-            SizeOptionControl soc = socs[socCmpd["path"].StringValue];
-            soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
+            foreach(NbtTag alpha in socList) {
+                NbtCompound socCmpd = alpha as NbtCompound;
+                SizeOptionControl soc = socs[socCmpd["path"].StringValue];
+                soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
+            }
+        } catch(Exception ex) {
+            ErrorText.inst.DispError("Problem opening: " + ex.Message);
+            Debug.LogException(ex);
         }
     }
 

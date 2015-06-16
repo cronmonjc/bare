@@ -28,7 +28,7 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         string t = "";
         switch(myFunc) {
             case AdvFunction.TAKEDOWN:
-                t = "Takedown";
+                t = "Takedown / Work Lights";
                 break;
             case AdvFunction.ALLEY_LEFT:
                 t = "Left Alley";
