@@ -37,6 +37,7 @@ public class CameraControl : MonoBehaviour {
     private List<LightHead> selected;
 
     public GameObject backButton;
+    public GameObject timeSlider;
 
     public List<LightHead> Selected {
         get {
@@ -98,6 +99,7 @@ public class CameraControl : MonoBehaviour {
             }
 
             backButton.SetActive(BarManager.inst.funcBeingTested != AdvFunction.NONE);
+            timeSlider.SetActive(BarManager.inst.funcBeingTested != AdvFunction.NONE);
 
             if(ShowWhole || lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) {
                 selected.Clear();

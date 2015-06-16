@@ -12,7 +12,7 @@ public class InputEdit : MonoBehaviour {
             FunctionEditPane.currFunc = (AdvFunction)val;
         }
 
-        LightLabel.showPatt = false;
+        LightLabel.showPatt = true;
 
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
