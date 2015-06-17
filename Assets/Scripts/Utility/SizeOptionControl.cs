@@ -12,7 +12,7 @@ public class SizeOptionControl : MonoBehaviour {
             return longGO.activeInHierarchy;
         }
         set {
-            int size = FindObjectOfType<BarManager>().BarSize;
+            int size = BarManager.inst.BarSize;
 
             LightHead[] lhs = transform.GetComponentsInChildren<LightHead>(true);
             LightHead lh = null;

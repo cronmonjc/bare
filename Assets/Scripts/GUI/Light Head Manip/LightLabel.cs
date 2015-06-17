@@ -134,9 +134,9 @@ public class LightLabel : MonoBehaviour {
                         switch(bit) {
                             case 5:
                             case 6:
-                                t = t + (lh.FarWire[BarManager.inst.BarSize] ? "2" : "1");
-                                labelColor = (lh.FarWire[BarManager.inst.BarSize] ? Color.yellow : new Color(0.5f, 0.25f, 0.0f));
-                                colorLabel.text = (lh.FarWire[BarManager.inst.BarSize] ? "Yellow" : "Brown");
+                                t = t + (lh.FarWire ? "2" : "1");
+                                labelColor = (lh.FarWire ? Color.yellow : new Color(0.5f, 0.25f, 0.0f));
+                                colorLabel.text = (lh.FarWire ? "Yellow" : "Brown");
                                 break;
                             case 4:
                             case 7:
@@ -214,7 +214,7 @@ public class LightLabel : MonoBehaviour {
                             switch(bit) {
                                 case 5:
                                 case 6:
-                                    t = t + (lh.FarWire[BarManager.inst.BarSize] ? "8" : "7");
+                                    t = t + (lh.FarWire ? "8" : "7");
                                     break;
                                 case 4:
                                 case 7:
@@ -259,7 +259,7 @@ public class LightLabel : MonoBehaviour {
 
                 NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-                string t = (showBit ? lh.Bit + ": " : "");
+                string t = ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "");
 
                 if(func.Contains("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1")) {
                     bool thisEnabled1 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
@@ -329,13 +329,13 @@ public class LightLabel : MonoBehaviour {
                 label2.text = label.text = t;
 
             } else {
-                label2.text = label.text = (showBit ? lh.Bit + ": " : "") + "No Head";
+                label2.text = label.text = ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + "No Head";
                 label2.color = label.color = Color.white;
                 secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
             }
         } else {
             if(lh.lhd.style != null) {
-                label2.text = label.text = prefix + (showBit ? lh.Bit + ": " : "") + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
+                label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
                 Color clr = lh.lhd.style.color;
                 background.color = clr;
                 if(clr.r + clr.g < clr.b) {
@@ -353,7 +353,7 @@ public class LightLabel : MonoBehaviour {
                 }
                 secondImage.color = clr;
             } else {
-                label2.text = label.text = prefix + (showBit ? lh.Bit + ": " : "") + "Empty";
+                label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + "Empty";
                 label2.color = label.color = Color.white;
                 secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
             }

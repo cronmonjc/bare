@@ -25,9 +25,11 @@ public class SameOutputWarning : IssueChecker {
     public override bool DoCheck() {
         bool rtn = false;
 
+        if(BarManager.RefreshingBits) return false;
+
         LightHead[] front = new LightHead[16], rear = new LightHead[16];
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(alpha.gameObject.activeInHierarchy) {
+            if(alpha.gameObject.activeInHierarchy && alpha.lhd.style != null) {
                 if(alpha.myLabel != null) {
                     alpha.myLabel.DispError = false;
 

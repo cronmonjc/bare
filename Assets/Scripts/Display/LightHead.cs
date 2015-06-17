@@ -22,8 +22,6 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public bool basicPhaseB2 = false;
 
-    public Dictionary<AdvFunction, Pattern> patterns;
-
     public List<BasicFunction> CapableBasicFunctions {
         get {
             switch(loc) {
@@ -47,7 +45,7 @@ public class LightHead : MonoBehaviour {
         }
     }
 
-    public bool[] FarWire = { false, false, false, false, false };
+    public bool FarWire = false;
 
     [System.NonSerialized]
     public LightLabel myLabel;
@@ -55,18 +53,14 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public Light[] myLights;
 
-    public byte[] bits = new byte[5];
-    private TDBitChanger tbc;
+    public byte myBit = 255;
 
     [System.NonSerialized]
     public bool shouldBeTD;
 
     public byte Bit {
         get {
-            if(tbc != null)
-                return tbc.Bit;
-            else
-                return bits[BarManager.inst.BarSize];
+            return myBit;
         }
     }
 
@@ -88,8 +82,6 @@ public class LightHead : MonoBehaviour {
 
     void Awake() {
         lhd = new LightHeadDefinition();
-
-        patterns = new Dictionary<AdvFunction, Pattern>();
     }
 
     void Start() {
@@ -104,8 +96,6 @@ public class LightHead : MonoBehaviour {
         myLabel.DispError = false;
 
         myLights = GetComponentsInChildren<Light>(true);
-
-        tbc = GetComponent<TDBitChanger>();
     }
 
     void Update() {
@@ -158,7 +148,7 @@ public class LightHead : MonoBehaviour {
             return null;
         }
         if(f == AdvFunction.TRAFFIC_LEFT || f == AdvFunction.TRAFFIC_RIGHT) {
-            short patID = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("patt").Get<NbtShort>("l").Value;
+            short patID = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("patt").Value;
             foreach(Pattern p in LightDict.inst.tdPatts) {
                 if(p.id == patID) {
                     return p;
@@ -202,6 +192,7 @@ public class LightHead : MonoBehaviour {
         if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {
             lhd.funcs.Add(func);
             if(doDefault) RefreshBasicFuncDefault();
+            TestSingleDual();
         }
     }
 
@@ -213,20 +204,69 @@ public class LightHead : MonoBehaviour {
                 foreach(LightHead alpha in BarManager.inst.allHeads) {
                     alpha.shouldBeTD = false;
                 }
+                BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
             }
             RefreshBasicFuncDefault();
+            TestSingleDual();
         }
     }
 
-    public void RefreshBasicFuncDefault() {
+    public void TestSingleDual() {
         useSingle = useDual = false;
         switch(lhd.funcs.Count) {
             case 1:
                 useSingle = true;
                 switch(lhd.funcs[0]) {
                     case BasicFunction.EMITTER:
-                        SetOptic("Emitter");
                         useSingle = false;
+                        return;
+                    case BasicFunction.CAL_STEADY:
+                    case BasicFunction.TRAFFIC:
+                    case BasicFunction.FLASHING:
+                        if(lhd.funcs[0] == BasicFunction.FLASHING) {
+                            useDual = true;
+                        }
+                        return;
+                    default:
+                        return;
+                }
+            case 2:
+                if(lhd.funcs.Contains(BasicFunction.CRUISE)) {
+                    BasicFunction test = BasicFunction.NULL;
+                    if(lhd.funcs[0] == BasicFunction.CRUISE) {
+                        test = lhd.funcs[1];
+                    } else {
+                        test = lhd.funcs[0];
+                    }
+
+                    if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
+                        useSingle = true;
+                        useDual = (test == BasicFunction.FLASHING);
+                    }
+                    return;
+                } else {
+                    useDual = true;
+                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
+                        useSingle = true;
+                    }
+                }
+                return;
+            case 3:
+                useDual = true;
+                if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true;
+                return;
+            default:
+                return;
+        }
+
+    }
+
+    public void RefreshBasicFuncDefault() {
+        switch(lhd.funcs.Count) {
+            case 1:
+                switch(lhd.funcs[0]) {
+                    case BasicFunction.EMITTER:
+                        SetOptic("Emitter");
                         return;
                     case BasicFunction.STT:
                     case BasicFunction.STEADY:
@@ -244,9 +284,6 @@ public class LightHead : MonoBehaviour {
                         } else {
                             SetOptic("Lineum", lhd.funcs[0]);
                         }
-                        if(lhd.funcs[0] == BasicFunction.FLASHING) {
-                            useDual = true;
-                        }
                         return;
                     default:
                         SetOptic("");
@@ -263,8 +300,6 @@ public class LightHead : MonoBehaviour {
 
                     if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
                         SetOptic("Lineum", test);
-                        useSingle = true;
-                        useDual = (test == BasicFunction.FLASHING);
                         return;
                     } else {
                         SetOptic("");
@@ -274,9 +309,7 @@ public class LightHead : MonoBehaviour {
                     lhd.funcs.RemoveAt(0);
                     RefreshBasicFuncDefault();
                 } else {
-                    useDual = true;
                     if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
-                        useSingle = true;
                         SetOptic(isSmall ? "Starburst" : "Lineum", BasicFunction.STEADY);
                     } else {
                         SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
@@ -289,8 +322,6 @@ public class LightHead : MonoBehaviour {
                     RefreshBasicFuncDefault();
                 } else {
                     SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
-                    useDual = true;
-                    if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true;
                 }
                 return;
             case 4:
@@ -415,6 +446,7 @@ public class LightHead : MonoBehaviour {
         } else {
             lhd.style = null;
         }
+        BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
     }
 
     public void SetStyle(StyleNode newStyle) {

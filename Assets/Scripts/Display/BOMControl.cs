@@ -37,16 +37,19 @@ public class BOMControl : MonoBehaviour {
     /// </summary>
     public GameObject elementPrefab;
 
+    private List<string> parts;
+
     void Awake() {
         elements = new Dictionary<string, BOMElement>();
         counts = new Dictionary<string, int>();
         if(type == BOMType.Lights) {
             descs = new Dictionary<string, LightHead>();
         }
+        parts = new List<string>();
     }
 
     void Update() {
-        List<string> parts = new List<string>();
+        parts.Clear();
         foreach(string alpha in new List<string>(counts.Keys)) {
             counts[alpha] = 0;
         }

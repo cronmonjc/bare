@@ -38,6 +38,8 @@ public class BarManager : MonoBehaviour {
 
     public Slider SizeSlider;
 
+    public static bool RefreshingBits = false;
+
     public string BarModel {
         get {
             switch(BarSize) {
@@ -58,6 +60,14 @@ public class BarManager : MonoBehaviour {
     }
 
     void Awake() {
+        CreatePatts();
+
+        allHeads = new List<LightHead>();
+        altHeadNumber = new Dictionary<LightHead, string>();
+        inst = this;
+    }
+
+    private void CreatePatts() {
         patts = new NbtCompound("pats");
 
         foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
@@ -87,23 +97,20 @@ public class BarManager : MonoBehaviour {
 
         FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 });
         patts.Add(FnDragTarget.inputMap);
-
-        allHeads = new List<LightHead>();
-        altHeadNumber = new Dictionary<LightHead, string>();
-        inst = this;
     }
 
     public void SetCAN(bool to) {
         if(to) {
-            FnDragTarget.inputMap.Value = new int[] {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
-                                                     0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000};
+            FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
+                                                      0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 };
         } else {
-            FnDragTarget.inputMap.Value = new int[] {0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 };
+            FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 };
         }
     }
 
     void Start() {
         allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true));
+        StartCoroutine(RefreshBits());
     }
 
     public static string GetFnString(Transform t, AdvFunction f) {
@@ -157,11 +164,16 @@ public class BarManager : MonoBehaviour {
     }
 
     public void SetBarSize(float to) {
-        SetBarSize(Mathf.RoundToInt(to), sliding: true);
+        SetBarSize(Mathf.RoundToInt(to), true);
     }
 
-    public void SetBarSize(int to, bool changingTD = false, bool sliding = false) {
-        if(!changingTD) {
+    public void SetBarSize(int to, bool sliding = false) {
+        if(to < 5 && to > -1) {
+            if(!sliding) {
+                SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to;
+                SizeSlider.value = to;
+            }
+
             td = TDOption.NONE;
 
             foreach(LightHead lh in allHeads) {
@@ -169,23 +181,16 @@ public class BarManager : MonoBehaviour {
                     lh.shouldBeTD = false;
                     lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                 }
+                lh.myLabel.Refresh();
             }
-        }
-        if(!sliding) {
-            SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to;
-            SizeSlider.value = to;
-        }
 
-        if(to < 5 && to > -1) {
             BarSize = to;
             foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                 soc.ShowLong = true;
             }
             FindObjectOfType<CameraControl>().OnlyCamSelected.Clear();
-            foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
-                ll.Refresh();
-            }
         }
+        StartCoroutine(RefreshBits());
     }
 
     public void SetTDOption(int to) {
@@ -193,142 +198,281 @@ public class BarManager : MonoBehaviour {
     }
 
     public void SetTDOption(TDOption to) {
-        td = to;
-
-        StartCoroutine(SetTDOption());
+        StartCoroutine(SetTDOptionCoroutine(to));
     }
 
-    public IEnumerator SetTDOption() {
+    public IEnumerator SetTDOptionCoroutine(TDOption to) {
+        RaycastHit[] hits;
+        foreach(LightHead lh in allHeads) {
+            if(lh.transform.position.y < 0) {
+                lh.shouldBeTD = false;
+                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
+            }
+        }
+        td = to;
+
         switch(td) {
             case TDOption.NONE:
                 foreach(LightHead lh in allHeads) {
                     if(lh.transform.position.y < 0) {
-                        lh.shouldBeTD = false;
                         lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                     }
                 }
                 break;
             case TDOption.LG_SEVEN:
-                if(BarSize != 3) SetBarSize(3, changingTD: true);
-                yield return new WaitForEndOfFrame();
-                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
-                    if(soc.transform.position.y < 0) soc.ShowLong = true;
-                }
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                        byte bit = lh.Bit;
-                        if(bit > 1 && bit < 10) {
-                            lh.lhd.funcs.Clear();
-                            lh.shouldBeTD = true;
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                        }
-                    }
-                }
-                break;
-            case TDOption.SM_EIGHT:
-                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
-                    if(soc.transform.position.y < 0) soc.ShowLong = false;
-                }
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                        byte bit = lh.Bit;
-                        if(bit > 1 && bit < 10) {
-                            lh.lhd.funcs.Clear();
-                            lh.shouldBeTD = true;
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                        }
-                    }
-                }
-                break;
-            case TDOption.SM_SIX:
-                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
-                    if(soc.transform.position.y < 0) soc.ShowLong = false;
-                }
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                        byte bit = lh.Bit;
-                        if(bit > 2 && bit < 9) {
-                            lh.lhd.funcs.Clear();
-                            lh.shouldBeTD = true;
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                        } else if(bit == 2 || bit == 9) {
-                            lh.shouldBeTD = false;
-                            lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
-                        }
-                    }
-                }
-                break;
             case TDOption.LG_EIGHT:
-                if(BarSize != 4) SetBarSize(4, changingTD: true);
                 yield return new WaitForEndOfFrame();
                 foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                     if(soc.transform.position.y < 0) soc.ShowLong = true;
                 }
                 yield return new WaitForEndOfFrame();
                 yield return new WaitForEndOfFrame();
-                foreach(LightHead lh in allHeads) {
-                    if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                        byte bit = lh.Bit;
-                        if(bit > 1 && bit < 10) {
-                            lh.lhd.funcs.Clear();
-                            lh.shouldBeTD = true;
-                            lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                        }
-                    }
+                hits = Physics.RaycastAll(new Vector3(-8, -1.25f), new Vector3(1, 0));
+
+                foreach(RaycastHit hit in hits) {
+                    LightHead lh = hit.transform.GetComponent<LightHead>();
+                    lh.lhd.funcs.Clear();
+                    lh.shouldBeTD = true;
+                    lh.AddBasicFunction(BasicFunction.TRAFFIC);
                 }
                 break;
             case TDOption.LG_SIX:
-                if(BarSize < 2) SetBarSize(2, changingTD: true);
                 yield return new WaitForEndOfFrame();
                 foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                     if(soc.transform.position.y < 0) soc.ShowLong = (soc.transform.position.x != 0);
                 }
                 yield return new WaitForEndOfFrame();
                 yield return new WaitForEndOfFrame();
-                if(BarSize == 3) {
-                    foreach(LightHead lh in allHeads) {
-                        if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                            byte bit = lh.Bit;
-                            if((bit > 1 && bit < 10) && (bit != 5 && bit != 6)) {
-                                lh.lhd.funcs.Clear();
-                                lh.shouldBeTD = true;
-                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                            } else if(bit == 5 || bit == 6) {
-                                lh.shouldBeTD = false;
-                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
-                            }
-                        }
-                    }
-                } else {
-                    foreach(LightHead lh in allHeads) {
-                        if(lh.gameObject.activeInHierarchy && lh.transform.position.y < 0) {
-                            byte bit = lh.Bit;
-                            if(bit > 2 && bit < 9) {
-                                lh.lhd.funcs.Clear();
-                                lh.shouldBeTD = true;
-                                lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                            } else if(bit == 2 || bit == 9) {
-                                lh.shouldBeTD = false;
-                                lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
-                            }
-                        }
-                    }
+                hits = Physics.RaycastAll(new Vector3(-8f, -1.25f), new Vector3(1, 0));
+
+                foreach(RaycastHit hit in hits) {
+                    if(BarSize == 4 && hit.transform.GetPath().Contains("RO")) continue;
+                    LightHead lh = hit.transform.GetComponent<LightHead>();
+                    if(lh.isSmall) continue;
+                    lh.lhd.funcs.Clear();
+                    lh.shouldBeTD = true;
+                    lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                }
+                break;
+            case TDOption.SM_EIGHT:
+            case TDOption.SM_SIX:
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                    if(soc.transform.position.y < 0) soc.ShowLong = false;
+                }
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                if(td == TDOption.SM_SIX)
+                    hits = Physics.RaycastAll(new Vector3(-2.4f, -1.25f), new Vector3(1, 0), 4.4f);
+                else //SM_EIGHT
+                    hits = Physics.RaycastAll(new Vector3(-3.2f, -1.25f), new Vector3(1, 0), 6.0f);
+
+                foreach(RaycastHit hit in hits) {
+                    LightHead lh = hit.transform.GetComponent<LightHead>();
+                    lh.lhd.funcs.Clear();
+                    lh.shouldBeTD = true;
+                    lh.AddBasicFunction(BasicFunction.TRAFFIC);
                 }
                 break;
         }
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
+        yield return StartCoroutine(RefreshBits());
 
         foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
             ll.Refresh();
         }
 
+        yield return null;
+    }
+
+    public IEnumerator RefreshBits() {
+        RefreshingBits = true;
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        foreach(LightHead alpha in allHeads) {
+            if(!alpha.gameObject.activeInHierarchy) continue;
+            if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) {
+                if(alpha.transform.position.x < 0) {
+                    alpha.myBit = 0;
+                } else {
+                    alpha.myBit = 11;
+                }
+            } else if(alpha.loc == Location.ALLEY) {
+                if(alpha.transform.position.x < 0) {
+                    alpha.myBit = 12;
+                } else {
+                    alpha.myBit = 13;
+                }
+            } else {
+                if(alpha.transform.position.y < 0) continue;
+                string path = alpha.transform.GetPath();
+                if(path.StartsWith("/Bar/DE/FO")) {
+                    alpha.myBit = 1;
+                } else if(path.StartsWith("/Bar/DE/FI")) {
+                    alpha.myBit = 4;
+                } else if(path.StartsWith("/Bar/PE/FO")) {
+                    alpha.myBit = 10;
+                } else if(path.StartsWith("/Bar/PE/FI")) {
+                    alpha.myBit = 7;
+                } else if(path.StartsWith("/Bar/DF/F")) {
+                    if(BarSize == 2) {
+                        if(alpha.isSmall) {
+                            alpha.FarWire = path.EndsWith("DS/L");
+                            alpha.myBit = (byte)(alpha.FarWire ? 5 : 6);
+                        } else {
+                            alpha.myBit = 5;
+                            alpha.FarWire = true;
+                        }
+                    } else {
+                        alpha.myBit = 5;
+                        alpha.FarWire = true;
+                    }
+                } else if(path.StartsWith("/Bar/PF/F")) {
+                    if(BarSize == 2) {
+                        if(alpha.isSmall) {
+                            alpha.FarWire = path.EndsWith("DS/R");
+                            alpha.myBit = (byte)(alpha.FarWire ? 6 : 5);
+                        } else {
+                            alpha.myBit = 6;
+                            alpha.FarWire = true;
+                        }
+                    } else {
+                        alpha.myBit = 6;
+                        alpha.FarWire = true;
+                    }
+                } else if(path.StartsWith("/Bar/DN/F")) {
+                    alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
+                    alpha.FarWire = (BarSize == 1);
+                } else if(path.StartsWith("/Bar/PN/F")) {
+                    alpha.myBit = 6;
+                    alpha.FarWire = false;
+                }
+            }
+        }
+
+
+
+        List<LightHead> heads = new List<LightHead>(10);
+        List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0)));
+        byte bit = 5;
+        RaycastHit center;
+        if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) {
+            LightHead alpha = center.transform.GetComponent<LightHead>();
+            if(alpha.lhd.style != null) {
+                alpha.myBit = 5;
+                bit = 4;
+            } else {
+                alpha.myBit = 255;
+            }
+        }
+        bool cont = true;
+        while(cont && test.Count > 0) {
+            for(int i = 0; i < test.Count; i++) {
+                LightHead testHead = test[i].transform.GetComponent<LightHead>();
+                if(testHead.lhd.style == null) {
+                    testHead.myBit = 255;
+                    test.RemoveAt(i);
+                    break;
+                }
+                if(i == test.Count - 1) {
+                    cont = false;
+                    break;
+                }
+            }
+        }
+        while(test.Count > 0) {
+            center = test[0];
+            for(int i = 1; i < test.Count; i++) {
+                if(test[i].point.x > center.point.x) {
+                    center = test[i];
+                }
+            }
+            test.Remove(center);
+            heads.Add(center.transform.GetComponent<LightHead>());
+        }
+        for(int i = 0; i < heads.Count; i++) {
+            if(heads[i].lhd.style == null) {
+                heads[i].myBit = 255;
+                continue;
+            }
+            if(heads[i].shouldBeTD) {
+                heads[i].myBit = bit--;
+            } else if(bit == 1) {
+                heads[i].myBit = 1;
+            } else {
+                if(heads.Count - i > bit) {
+                    heads[i].myBit = bit;
+                    heads[++i].myBit = bit--;
+                } else {
+                    heads[i].myBit = bit--;
+                }
+            }
+        }
+        if(bit == 1) {
+            test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(-1f, 0)));
+            if(test.Count > 0) {
+                foreach(RaycastHit hit in test) {
+                    hit.transform.GetComponent<LightHead>().myBit = 1;
+                }
+            }
+        }
+
+        heads.Clear();
+        test.Clear();
+        test.AddRange(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(1f, 0)));
+        cont = true;
+        while(cont && test.Count > 0) {
+            for(int i = 0; i < test.Count; i++) {
+                LightHead testHead = test[i].transform.GetComponent<LightHead>();
+                if(testHead.lhd.style == null) {
+                    testHead.myBit = 255;
+                    test.RemoveAt(i);
+                    break;
+                }
+                if(i == test.Count - 1) {
+                    cont = false;
+                    break;
+                }
+            }
+        }
+        while(test.Count > 0) {
+            center = test[0];
+            for(int i = 1; i < test.Count; i++) {
+                if(test[i].point.x < center.point.x) {
+                    center = test[i];
+                }
+            }
+            test.Remove(center);
+            heads.Add(center.transform.GetComponent<LightHead>());
+        }
+        bit = 6;
+        for(int i = 0; i < heads.Count; i++) {
+            if(heads[i].lhd.style == null) {
+                heads[i].myBit = 255;
+                continue;
+            }
+            if(heads[i].shouldBeTD) {
+                heads[i].myBit = bit++;
+            } else if(bit == 10) {
+                heads[i].myBit = 10;
+            } else {
+                if(heads.Count - i > (11 - bit)) {
+                    heads[i].myBit = bit;
+                    heads[++i].myBit = bit++;
+                } else {
+                    heads[i].myBit = bit++;
+                }
+            }
+        }
+        if(bit == 10) {
+            test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
+            if(test.Count > 0) {
+                foreach(RaycastHit hit in test) {
+                    hit.transform.GetComponent<LightHead>().myBit = 10;
+                }
+            }
+        }
+        RefreshingBits = false;
+
+        yield return StartCoroutine(RefreshAllLabels());
         yield return null;
     }
 
@@ -403,7 +547,7 @@ public class BarManager : MonoBehaviour {
             NbtCompound root = file.RootTag;
 
             NbtCompound opts = root.Get<NbtCompound>("opts");
-            BarSize = opts["size"].IntValue;
+            SetBarSize(opts["size"].IntValue, false);
             SetTDOption((TDOption)opts["tdop"].ByteValue);
             useCAN = opts["can"].ByteValue == 1;
             cableType = opts["cabt"].IntValue;
@@ -450,6 +594,8 @@ public class BarManager : MonoBehaviour {
                         }
                     }
                 }
+
+                lh.TestSingleDual();
             }
 
             patts = root.Get<NbtCompound>("pats");
@@ -821,11 +967,14 @@ public class BarManager : MonoBehaviour {
     public void Clear() {
         foreach(LightHead lh in allHeads) {
             lh.SetOptic("");
-            lh.patterns.Clear();
+            lh.myLabel.Refresh();
         }
-        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
+        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
             soc.ShowLong = true;
-        }
+
+        RefreshBits();
+
+        CreatePatts();
     }
 
     public void RefreshCurrentHeads() {

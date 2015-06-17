@@ -17,7 +17,8 @@ public class DeviceManager : MonoBehaviour {
     void Start() {
         try {
             d = new Device();
-        } catch(DeviceErrorException ex) {
+        } catch(DeviceErrorException) {
+            d.Dispose();
             d = null;
         }
     }
@@ -42,6 +43,7 @@ public class DeviceManager : MonoBehaviour {
                     ErrorText.inst.DispError("Unknown error communicating with bar. (" + ex.errCode + ")");
                     break;
             }
+            d.Dispose();
             d = null;
         }
     }
@@ -66,6 +68,7 @@ public class DeviceManager : MonoBehaviour {
                     ErrorText.inst.DispError("Unknown error communicating with bar. (" + ex.errCode + ")");
                     break;
             }
+            d.Dispose();
             d = null;
         }
     }
@@ -90,6 +93,7 @@ public class DeviceManager : MonoBehaviour {
                     ErrorText.inst.DispError("Unknown error communicating with bar. (" + ex.errCode + ")");
                     break;
             }
+            d.Dispose();
             d = null;
         }
     }
