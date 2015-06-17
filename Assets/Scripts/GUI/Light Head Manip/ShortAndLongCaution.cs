@@ -9,8 +9,8 @@ public class ShortAndLongCaution : MonoBehaviour {
 
         bool Short = true, Long = true;
 
-        foreach(LightHead alpha in FindObjectsOfType<LightHead>()) {
-            if(alpha.Selected) {
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 Short &= alpha.isSmall;
                 Long &= !alpha.isSmall;
             }
