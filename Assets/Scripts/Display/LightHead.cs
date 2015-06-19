@@ -394,7 +394,7 @@ public class LightHead : MonoBehaviour {
 
     public void SetOptic(string newOptic, BasicFunction fn = BasicFunction.NULL, bool doDefault = true) {
         if(newOptic.Length > 0) {
-            if(newOptic == lhd.optic.name) return;
+            if(lhd.optic != null && newOptic == lhd.optic.name) return;
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
