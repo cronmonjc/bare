@@ -186,19 +186,19 @@ public class LightLabel : MonoBehaviour {
                             switch(bit) {
                                 case 5:
                                 case 6:
-                                    t = t + "7";
+                                    t = t + "12";
                                     break;
                                 case 4:
                                 case 7:
-                                    t = t + "8";
+                                    t = t + "11";
                                     break;
                                 case 3:
                                 case 8:
-                                    t = t + "9";
+                                    t = t + "10";
                                     break;
                                 case 2:
                                 case 9:
-                                    t = t + "10";
+                                    t = t + "9";
                                     break;
                                 default:
                                     t = t + "?";
@@ -214,23 +214,23 @@ public class LightLabel : MonoBehaviour {
                             switch(bit) {
                                 case 5:
                                 case 6:
-                                    t = t + (lh.FarWire ? "8" : "7");
+                                    t = t + (lh.FarWire ? "11" : "12");
                                     break;
                                 case 4:
                                 case 7:
-                                    t = t + "9";
+                                    t = t + "10";
                                     break;
                                 case 1:
                                 case 10:
-                                    t = t + "10";
+                                    t = t + "9";
                                     break;
                                 case 0:
                                 case 11:
-                                    t = t + "11";
+                                    t = t + "8";
                                     break;
                                 case 12:
                                 case 13:
-                                    t = t + "12";
+                                    t = t + "7";
                                     break;
                                 default:
                                     t = t + "?";

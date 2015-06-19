@@ -13,6 +13,7 @@ public class LightInteractionPanel : MonoBehaviour {
         get { return _state; }
     }
     public GameObject SummaryPane, OpticPane, FuncAssignPane, FuncEditPane;
+    public UnityEngine.UI.Text PattEditButton;
 
     // Update is called once per frame
     void Update() {
@@ -71,6 +72,9 @@ public class LightInteractionPanel : MonoBehaviour {
 
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
+        }
+        if(PattEditButton != null) {
+            PattEditButton.text = (EditingFunc ? "Light Editing" : "Pattern Editing");
         }
     }
 }
