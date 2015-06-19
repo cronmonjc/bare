@@ -20,5 +20,6 @@ public class InputEdit : MonoBehaviour {
 
         if(FuncEnable.clr1 != null) FuncEnable.clr1.Retest();
         if(FuncEnable.clr2 != null) FuncEnable.clr2.Retest();
+        BarManager.moddedBar = true;
     }
 }

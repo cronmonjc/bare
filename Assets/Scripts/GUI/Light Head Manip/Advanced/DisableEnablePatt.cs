@@ -99,6 +99,7 @@ public class DisableEnablePatt : MonoBehaviour {
 
         ps.enableButton.Retest();
         ps.disableButton.Retest();
+        BarManager.moddedBar = true;
 
         //FnSelManager.inst.RefreshLabels();
     }

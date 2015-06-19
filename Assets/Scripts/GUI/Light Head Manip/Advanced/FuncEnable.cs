@@ -174,6 +174,7 @@ public class FuncEnable : MonoBehaviour {
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
         }
+        BarManager.moddedBar = true;
     }
 
     public void Clicked() {

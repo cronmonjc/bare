@@ -31,6 +31,7 @@ public class DimSelect : MonoBehaviour {
     public void ChangeValue(float to) {
         CurrVal = (short)Mathf.Clamp(to, minimumPercentage, maximumPercentage);
         label.text = CurrVal + "%";
+        BarManager.moddedBar = true;
     }
 
     public void SetValue(short to) {
@@ -38,5 +39,6 @@ public class DimSelect : MonoBehaviour {
         label.text = CurrVal + "%";
 
         GetComponentInChildren<UnityEngine.UI.Slider>().value = to;
+        BarManager.moddedBar = true;
     }
 }

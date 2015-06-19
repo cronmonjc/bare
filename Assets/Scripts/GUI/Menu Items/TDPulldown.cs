@@ -41,5 +41,6 @@ public class TDPulldown : PulldownItem {
     }
 
     public override void Clicked() {
+        BarManager.moddedBar = true;
     }
 }

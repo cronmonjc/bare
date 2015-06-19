@@ -41,6 +41,7 @@ public class SplitMerge : MonoBehaviour {
         cam.fs.Refresh();
         BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
         StartCoroutine(BarManager.inst.RefreshAllLabels());
+        BarManager.moddedBar = true;
     }
 
 }

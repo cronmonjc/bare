@@ -12,6 +12,9 @@ public class DispPricing : Selectable, IPointerClickHandler {
     }
 
     public void OnPointerClick(PointerEventData eventData) {
-        if(interactable) CameraControl.ShowPricing = !CameraControl.ShowPricing;
+        if(interactable) {
+            CameraControl.ShowPricing = !CameraControl.ShowPricing;
+            BarManager.moddedBar = true;
+        }
     }
 }

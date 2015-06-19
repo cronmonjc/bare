@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using PdfSharp.Drawing.Layout;
 using System;
+using System.Text;
 
 public class BarManager : MonoBehaviour {
     public AdvFunction funcBeingTested = AdvFunction.NONE;
@@ -53,7 +54,14 @@ public class BarManager : MonoBehaviour {
 
     public Slider SizeSlider;
 
+    public IssueChecker[] issues;
+
     public static bool RefreshingBits = false;
+
+    public GameObject quitDialog;
+    public static bool moddedBar = false;
+    public static bool quitAfterSave = false;
+    public static bool forceQuit = false;
 
     public string BarModel {
         get {
@@ -543,6 +551,11 @@ public class BarManager : MonoBehaviour {
                 filename = filename + ".bar.nbt";
             }
             file.SaveToFile(filename, NbtCompression.None);
+
+            moddedBar = false;
+            if(quitAfterSave) {
+                Application.Quit();
+            }
         } catch(Exception ex) {
             ErrorText.inst.DispError("Problem saving: " + ex.Message);
             Debug.LogException(ex);
@@ -879,8 +892,25 @@ public class BarManager : MonoBehaviour {
             top += headNumber.Length * 0.1;
             top += 0.1;
         }
+        top += 0.2;
 
         XPen border = new XPen(XColors.Black, 0.025);
+
+        StringBuilder sb = new StringBuilder(1024);
+        foreach(IssueChecker issue in issues) {
+            if(issue.DoCheck()) {
+                sb.AppendLine(issue.text.text);
+            }
+        }
+        if(sb.Length > 0) {
+            tf.DrawString("Issues found:", caliSmBold, XBrushes.Black, new XRect(0.5, top, 1.2, 0.10));
+            tf.DrawString("Sign Off:", caliLg, XBrushes.Black, new XRect(3.2, top - .1, 0.6, 0.2));
+            gfx.DrawLine(border, 3.8, top + 0.1, 4.0, top - 0.1);
+            gfx.DrawLine(border, 3.8, top - 0.1, 4.0, top + 0.1);
+            gfx.DrawLine(border, 4.0, top + 0.1, 6.0, top + 0.1);
+            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.8, top + 0.10, p.Width.Inch - 1.3, 2.0));
+        }
+
         top = p.Height.Inch - 2.5;
         gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, p.Width.Inch - 1.0, 2.0));
         gfx.DrawLine(border, 0.5, top + 0.5, p.Width.Inch - 0.5, top + 0.5);
@@ -1181,4 +1211,23 @@ public class BarManager : MonoBehaviour {
         funcBeingTested = AdvFunction.NONE;
         StartCoroutine(RefreshAllLabels());
     }
+
+    public void SaveAndQuit() {
+        quitAfterSave = true;
+        fb.BeginSave();
+    }
+
+    public void ForceQuit() {
+        forceQuit = true;
+        Application.Quit();
+    }
+
+    public void OnApplicationQuit() {
+        if(!forceQuit && moddedBar) {
+            Application.CancelQuit();
+            quitDialog.SetActive(true);
+        }
+    }
+
+
 }

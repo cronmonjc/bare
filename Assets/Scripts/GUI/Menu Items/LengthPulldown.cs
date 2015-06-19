@@ -8,5 +8,6 @@ public class LengthPulldown : PulldownItem {
 
     public override void Clicked() {
         BarManager.cableLength = number;
+        BarManager.moddedBar = true;
     }
 }

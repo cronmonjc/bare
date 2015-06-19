@@ -8,5 +8,6 @@ public class CANPulldown : PulldownItem {
 
     public override void Clicked() {
         BarManager.useCAN = (number == 0);
+        BarManager.moddedBar = true;
     }
 }

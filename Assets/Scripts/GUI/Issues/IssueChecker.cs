@@ -8,7 +8,7 @@ using System.Collections;
 [RequireComponent(typeof(LayoutElement))]
 [RequireComponent(typeof(Text))]
 public abstract class IssueChecker : MonoBehaviour {
-    protected Text text;
+    public Text text;
     protected LayoutElement le;
     
     void Start() {

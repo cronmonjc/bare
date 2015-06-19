@@ -30,5 +30,6 @@ public class BasicPhase : MonoBehaviour {
                 else alpha.basicPhaseB = IsPhaseB;
             }
         }
+        BarManager.moddedBar = true;
     }
 }

@@ -8,5 +8,6 @@ public class TypePulldown : PulldownItem {
 
     public override void Clicked() {
         BarManager.cableType = number;
+        BarManager.moddedBar = true;
     }
 }

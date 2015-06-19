@@ -50,6 +50,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                     val[i] &= ~newFunc;
                 }
             }
+            BarManager.moddedBar = true;
         } else if(FnDragTarget.draggedItem != null) {
             int[] val = inputMap.Value;
             int newFunc = val[FnDragTarget.draggedItem.key];
@@ -60,6 +61,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             } else {
                 val[key] = newFunc;
             }
+            BarManager.moddedBar = true;
         }
     }
 

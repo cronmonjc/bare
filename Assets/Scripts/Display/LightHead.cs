@@ -245,6 +245,7 @@ public class LightHead : MonoBehaviour {
             if(doDefault) RefreshBasicFuncDefault();
             TestSingleDual();
         }
+        BarManager.moddedBar = true;
     }
 
     public void RemoveBasicFunction(BasicFunction func) {
@@ -260,6 +261,7 @@ public class LightHead : MonoBehaviour {
             RefreshBasicFuncDefault();
             TestSingleDual();
         }
+        BarManager.moddedBar = true;
     }
 
     public void TestSingleDual() {
@@ -391,8 +393,8 @@ public class LightHead : MonoBehaviour {
     }
 
     public void SetOptic(string newOptic, BasicFunction fn = BasicFunction.NULL, bool doDefault = true) {
-
         if(newOptic.Length > 0) {
+            if(newOptic == lhd.optic.name) return;
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
                 List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
@@ -482,10 +484,12 @@ public class LightHead : MonoBehaviour {
             } else {
                 SetStyle("");
             }
-
+            BarManager.moddedBar = true;
         } else {
+            if(lhd.optic == null) return;
             lhd.optic = null;
             SetStyle("");
+            BarManager.moddedBar = true;
         }
 
 
@@ -498,6 +502,7 @@ public class LightHead : MonoBehaviour {
             lhd.style = null;
         }
         BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
+        BarManager.moddedBar = true;
     }
 
     public void SetStyle(StyleNode newStyle) {
