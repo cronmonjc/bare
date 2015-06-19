@@ -115,7 +115,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 display.text = "Dimmer";
                 break;
             case 0x400: // FTAKEDOWN
-                display.text = "Flashing Takedown";
+                display.text = "Flashing Pursuit";
                 break;
             case 0x800: // FALLEY
                 display.text = "Flashing Alley";

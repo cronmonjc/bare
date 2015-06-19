@@ -1599,7 +1599,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24.0000534}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &52049332
@@ -11705,7 +11705,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1215775491}
   m_Direction: 2
   m_Value: 0
-  m_Size: .999999702
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11807,7 +11807,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flashing: Flashing Takedown'
+  m_Text: 'Flashing: Flashing Pursuit'
 --- !u!222 &277372436
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -34343,7 +34343,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 886624619}
   m_Direction: 2
   m_Value: 1
-  m_Size: .941916585
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -43878,7 +43878,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24.0000534}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &1053764426
@@ -45691,7 +45691,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24.0000534}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &1099662960
@@ -48682,7 +48682,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 970915128}
   m_Direction: 2
   m_Value: 1
-  m_Size: .941916585
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -53255,7 +53255,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Flashing Takedown
+  m_Text: Flashing Pursuit
 --- !u!222 &1284692499
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -56959,7 +56959,7 @@ GameObject:
   - 114: {fileID: 1390141041}
   - 225: {fileID: 1390141042}
   m_Layer: 5
-  m_Name: Flash Takedown
+  m_Name: Flash Pursuit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63554,7 +63554,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 26512022}
   m_Direction: 2
   m_Value: 1
-  m_Size: .941916585
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

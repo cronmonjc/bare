@@ -127,7 +127,7 @@ public class FunctionEditPane : MonoBehaviour {
                 funcName.text = "Level 5";
                 break;
             case AdvFunction.FTAKEDOWN:
-                funcName.text = "Flashing Takedown";
+                funcName.text = "Flashing Pursuit";
                 break;
             case AdvFunction.FALLEY:
                 funcName.text = "Flashing Alley";

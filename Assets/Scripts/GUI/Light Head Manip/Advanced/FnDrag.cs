@@ -67,7 +67,7 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
                 t = "Level 5";
                 break;
             case AdvFunction.FTAKEDOWN:
-                t = "Flashing Takedown";
+                t = "Flashing Pursuit";
                 break;
             case AdvFunction.FALLEY:
                 t = "Flashing Alley";
