@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class AdvPattDisp : MonoBehaviour {
+    private CameraControl cam;
     public Text color1, color2;
     public Dictionary<AdvFunction, AdvFuncDisp> displays;
 
@@ -14,7 +15,7 @@ public class AdvPattDisp : MonoBehaviour {
         }
     }
 
-    void Refresh() {
+    public void Refresh() {
         foreach(AdvFuncDisp alpha in displays.Values) {
             alpha.gameObject.SetActive(false);
         }
@@ -22,7 +23,9 @@ public class AdvPattDisp : MonoBehaviour {
         HashSet<AdvFunction> funcs = new HashSet<AdvFunction>();
         funcs.Add(AdvFunction.DIM);
 
-        foreach(LightHead alpha in AdvFuncDisp.cam.OnlyCamSelected) {
+        if(cam == null) cam = FindObjectOfType<CameraControl>();
+
+        foreach(LightHead alpha in cam.OnlyCamSelected) {
             foreach(BasicFunction beta in alpha.lhd.funcs) {
                 switch(beta) {
                     case BasicFunction.CAL_STEADY:

@@ -20,6 +20,5 @@ public abstract class PulldownItem : MonoBehaviour {
             b.colors = curr ? selected : unselected;
             prev = curr;
         }
-        
     }
 }

@@ -262,7 +262,7 @@ public class PattSelect : MonoBehaviour {
     }
 
     public bool TestPatternAny(short id, AdvFunction f) {
-        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+        //NbtCompound patts = FindObjectOfType<BarManager>().patts;
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
             LightHead lh = null;
@@ -324,7 +324,7 @@ public class PattSelect : MonoBehaviour {
     }
 
     public bool TestPatternAll(short id, AdvFunction f) {
-        NbtCompound patts = FindObjectOfType<BarManager>().patts;
+        //NbtCompound patts = FindObjectOfType<BarManager>().patts;
         foreach(LightBlock lb in FindObjectsOfType<LightBlock>()) {
             if(!lb.gameObject.activeInHierarchy || !lb.Selected) continue;
             LightHead lh = null;

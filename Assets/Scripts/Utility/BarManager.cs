@@ -19,7 +19,22 @@ public class BarManager : MonoBehaviour {
     [Range(0, 4)]
     public int BarSize = 3;
     public TDOption td;
-    public static bool useCAN = false;
+    public static bool _useCAN = false;
+    public static bool useCAN {
+        get { return _useCAN; }
+        set {
+            _useCAN = value;
+            GameObject.Find("UI/Canvas/FuncAssign/FunctionSelection/Panel/InputSelects/Hardwire").SetActive(!value);
+            GameObject.Find("UI/Canvas/FuncAssign/FunctionSelection/Panel/InputSelects/CAN").SetActive(value);
+
+            if(value) {
+                FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
+                                                      0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 };
+            } else {
+                FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 };
+            }
+        }
+    }
     public static int cableType = 0, cableLength = 0;
 
     public NbtCompound patts;
@@ -100,12 +115,7 @@ public class BarManager : MonoBehaviour {
     }
 
     public void SetCAN(bool to) {
-        if(to) {
-            FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
-                                                      0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 };
-        } else {
-            FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 };
-        }
+        useCAN = to;
     }
 
     void Start() {
@@ -181,7 +191,8 @@ public class BarManager : MonoBehaviour {
                     lh.shouldBeTD = false;
                     lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                 }
-                lh.myLabel.Refresh();
+                if(lh.myLabel != null)
+                    lh.myLabel.Refresh();
             }
 
             BarSize = to;
@@ -539,48 +550,88 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Open(string filename) {
-        try {
-            Clear();
+        StartCoroutine(OpenIEnum(filename));
+    }
 
-            NbtFile file = new NbtFile(filename);
+    public IEnumerator OpenIEnum(string filename) {
+        Clear();
 
-            NbtCompound root = file.RootTag;
+        NbtFile file = new NbtFile(filename);
 
-            NbtCompound opts = root.Get<NbtCompound>("opts");
-            SetBarSize(opts["size"].IntValue, false);
-            SetTDOption((TDOption)opts["tdop"].ByteValue);
-            useCAN = opts["can"].ByteValue == 1;
-            cableType = opts["cabt"].IntValue;
-            cableLength = opts["cabl"].IntValue;
+        NbtCompound root = file.RootTag;
 
-            NbtCompound order = root.Get<NbtCompound>("ordr");
-            custName.text = order["name"].StringValue;
-            orderNum.text = order["num"].StringValue;
-            notes.text = order["note"].StringValue;
+        NbtCompound opts = root.Get<NbtCompound>("opts");
+        SetBarSize(opts["size"].IntValue, false);
+        SetTDOption((TDOption)opts["tdop"].ByteValue);
+        useCAN = opts["can"].ByteValue == 1;
+        cableType = opts["cabt"].IntValue;
+        cableLength = opts["cabl"].IntValue;
 
-            NbtList lightList = (NbtList)root["lite"];
-            NbtList socList = (NbtList)root["soc"];
-            Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
-            Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
+        NbtCompound order = root.Get<NbtCompound>("ordr");
+        custName.text = order["name"].StringValue;
+        orderNum.text = order["num"].StringValue;
+        notes.text = order["note"].StringValue;
 
-            foreach(LightHead lh in allHeads) {
-                lights[lh.transform.GetPath()] = lh;
+        NbtList lightList = (NbtList)root["lite"];
+        NbtList socList = (NbtList)root["soc"];
+        Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
+        Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
+
+        foreach(LightHead lh in allHeads) {
+            lights[lh.transform.GetPath()] = lh;
+        }
+        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
+            socs[soc.transform.GetPath()] = soc;
+        }
+        List<NbtTag> stts = new List<NbtTag>();
+        foreach(NbtTag alpha in lightList) {
+            NbtCompound lightCmpd = alpha as NbtCompound;
+            LightHead lh = lights[lightCmpd["path"].StringValue];
+
+            byte fn = lightCmpd["func"].ByteValue;
+            lh.lhd.funcs.Clear();
+            foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
+                if(bfn == BasicFunction.TRAFFIC) continue;
+                if(((byte)bfn & fn) != 0) {
+                    lh.lhd.funcs.Add(bfn);
+                }
             }
-            foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
-                socs[soc.transform.GetPath()] = soc;
-            }
-            foreach(NbtTag alpha in lightList) {
-                NbtCompound lightCmpd = alpha as NbtCompound;
-                LightHead lh = lights[lightCmpd["path"].StringValue];
 
-                byte fn = lightCmpd["func"].ByteValue;
-                lh.lhd.funcs.Clear();
-                foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
-                    if(bfn == BasicFunction.TRAFFIC) continue;
-                    if(((byte)bfn & fn) != 0) {
-                        lh.AddBasicFunction(bfn, false);
+            if(lh.lhd.funcs.Contains(BasicFunction.STT)) {
+                stts.Add(alpha);
+                continue;
+            }
+
+            if(lightCmpd.Contains("optc")) {
+                LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
+                string partNum = lightCmpd["optc"].StringValue;
+
+                foreach(OpticNode on in ln.optics.Values) {
+                    if(on.partNumber == partNum) {
+                        lh.SetOptic(on.name, BasicFunction.NULL, false);
+                        lh.SetStyle(lightCmpd["styl"].StringValue);
+                        break;
                     }
                 }
+            }
+
+            lh.TestSingleDual();
+        }
+
+        patts = root.Get<NbtCompound>("pats");
+
+        foreach(NbtTag alpha in socList) {
+            NbtCompound socCmpd = alpha as NbtCompound;
+            SizeOptionControl soc = socs[socCmpd["path"].StringValue];
+            soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
+        }
+
+        yield return StartCoroutine(RefreshBits());
+
+        if(stts.Count > 0) {
+            foreach(NbtTag alpha in stts) {
+                NbtCompound lightCmpd = alpha as NbtCompound;
+                LightHead lh = lights[lightCmpd["path"].StringValue];
 
                 if(lightCmpd.Contains("optc")) {
                     LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
@@ -598,16 +649,7 @@ public class BarManager : MonoBehaviour {
                 lh.TestSingleDual();
             }
 
-            patts = root.Get<NbtCompound>("pats");
-
-            foreach(NbtTag alpha in socList) {
-                NbtCompound socCmpd = alpha as NbtCompound;
-                SizeOptionControl soc = socs[socCmpd["path"].StringValue];
-                soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
-            }
-        } catch(Exception ex) {
-            ErrorText.inst.DispError("Problem opening: " + ex.Message);
-            Debug.LogException(ex);
+            yield return StartCoroutine(RefreshBits());
         }
     }
 
@@ -652,6 +694,7 @@ public class BarManager : MonoBehaviour {
         OverviewPage(doc.AddPage(), capRect);
         PartsPage(doc.AddPage(), capRect);
         WiringPage(doc.AddPage(), capRect);
+        PatternPage(doc.AddPage(), capRect);
 
         try {
             doc.Save(filename);
@@ -706,7 +749,6 @@ public class BarManager : MonoBehaviour {
         tex.ReadPixels(capRect, 0, 0);
         tex.Apply();
 
-        Directory.CreateDirectory("tempgen");
         using(FileStream imgOut = new FileStream("tempgen\\part.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
@@ -716,19 +758,32 @@ public class BarManager : MonoBehaviour {
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
         }
+
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        using(FileStream imgOut = new FileStream("tempgen\\wire.png", FileMode.OpenOrCreate)) {
+            byte[] imgbytes = tex.EncodeToPNG();
+            imgOut.Write(imgbytes, 0, imgbytes.Length);
+        }
+
+        LightLabel.colorlessWire = true;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
+        LightLabel.colorlessWire = false;
         LightLabel.showWire = false;
 
         yield return new WaitForEndOfFrame();
         tex.ReadPixels(capRect, 0, 0);
         tex.Apply();
 
-        Directory.CreateDirectory("tempgen");
-        using(FileStream imgOut = new FileStream("tempgen\\wire.png", FileMode.OpenOrCreate)) {
+        using(FileStream imgOut = new FileStream("tempgen\\wireClrless.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
         }
 
-        LightLabel.showParts = false;
         CanvasDisabler.CanvasEnabled = true;
         CameraControl.ShowWhole = false;
 
@@ -956,6 +1011,10 @@ public class BarManager : MonoBehaviour {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
 
+    public void PatternPage(PdfPage p, Rect capRect) {
+
+    }
+
     public static XPoint[] XPointArray(params Vector2[] vecs) {
         XPoint[] rtn = new XPoint[vecs.Length];
         for(int i = 0; i < vecs.Length; i++) {
@@ -966,8 +1025,9 @@ public class BarManager : MonoBehaviour {
 
     public void Clear() {
         foreach(LightHead lh in allHeads) {
-            lh.SetOptic("");
-            lh.myLabel.Refresh();
+            lh.lhd.funcs.Clear();
+            lh.RefreshBasicFuncDefault();
+            if(lh.myLabel != null) lh.myLabel.Refresh();
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
             soc.ShowLong = true;

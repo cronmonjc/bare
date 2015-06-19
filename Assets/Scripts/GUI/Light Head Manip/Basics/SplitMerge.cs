@@ -13,10 +13,7 @@ public class SplitMerge : MonoBehaviour {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(!lh.gameObject.activeInHierarchy || !lh.Selected) continue;
-            SizeOptionControl soc = null;
-            for(Transform t = lh.transform; soc == null && t != null; t = t.parent) {
-                soc = t.GetComponent<SizeOptionControl>();
-            }
+            SizeOptionControl soc = lh.soc;
             if(soc == null) {
                 continue;
             }
@@ -32,10 +29,7 @@ public class SplitMerge : MonoBehaviour {
     public void Act() {
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(!lh.gameObject.activeInHierarchy || !lh.Selected) continue;
-            SizeOptionControl soc = null;
-            for(Transform t = lh.transform; soc == null && t != null; t = t.parent) {
-                soc = t.GetComponent<SizeOptionControl>();
-            }
+            SizeOptionControl soc = lh.soc;
             if(soc == null) {
                 continue;
             }

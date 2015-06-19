@@ -18,7 +18,6 @@ public class DeviceManager : MonoBehaviour {
         try {
             d = new Device();
         } catch(DeviceErrorException) {
-            d.Dispose();
             d = null;
         }
     }
@@ -38,13 +37,13 @@ public class DeviceManager : MonoBehaviour {
                     break;
                 case -101:
                     ErrorText.inst.DispError("Cannot communicate with bar.  Is it connected? (" + ex.errCode + ")");
+                    d = null;
                     break;
                 default:
                     ErrorText.inst.DispError("Unknown error communicating with bar. (" + ex.errCode + ")");
+                    d = null;
                     break;
             }
-            d.Dispose();
-            d = null;
         }
     }
 
@@ -63,13 +62,13 @@ public class DeviceManager : MonoBehaviour {
                     break;
                 case -101:
                     ErrorText.inst.DispError("Cannot communicate with bar.  Is it connected? (" + ex.errCode + ")");
+                    d = null;
                     break;
                 default:
                     ErrorText.inst.DispError("Unknown error communicating with bar. (" + ex.errCode + ")");
+                    d = null;
                     break;
             }
-            d.Dispose();
-            d = null;
         }
     }
 
@@ -88,13 +87,13 @@ public class DeviceManager : MonoBehaviour {
                     break;
                 case -101:
                     ErrorText.inst.DispError("Cannot communicate with bar.  Is it connected? (" + ex.errCode + ")");
+                    d = null;
                     break;
                 default:
                     ErrorText.inst.DispError("Unknown error communicating with bar. (" + ex.errCode + ")");
+                    d = null;
                     break;
             }
-            d.Dispose();
-            d = null;
         }
     }
 

@@ -31,6 +31,7 @@ public class CameraControl : MonoBehaviour {
     public Transform LabelParent;
 
     public GameObject FuncSelectRoot;
+    public AdvPattDisp advPattDisp;
 
     public GameObject FBrowser;
 
@@ -175,6 +176,7 @@ public class CameraControl : MonoBehaviour {
                         }
                         if(selected.Count > 0) {
                             fs.Refresh();
+                            advPattDisp.Refresh();
                         }
                     }
                 } else if(dragging) { // LMB held

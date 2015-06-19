@@ -18,6 +18,9 @@ public class LightHead : MonoBehaviour {
     public bool useDual;
 
     [System.NonSerialized]
+    public SizeOptionControl soc;
+
+    [System.NonSerialized]
     public bool basicPhaseB = false;
     [System.NonSerialized]
     public bool basicPhaseB2 = false;
@@ -96,6 +99,10 @@ public class LightHead : MonoBehaviour {
         myLabel.DispError = false;
 
         myLights = GetComponentsInChildren<Light>(true);
+
+        for(Transform t = transform; soc == null && t != null; t = t.parent) {
+            soc = t.GetComponent<SizeOptionControl>();
+        }
     }
 
     void Update() {

@@ -90,7 +90,7 @@ public class FuncPattSelect : MonoBehaviour {
             return;
         }
         if(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT) {
-            BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("patt").Get<NbtShort>("l").Value = (short)p.id;
+            BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("patt").Value = (short)p.id;
         } else {
             NbtCompound patCmpd = BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (IsColor2 ? "2" : "1"));
 

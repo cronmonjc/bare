@@ -6,6 +6,7 @@ public class BasicPhase : MonoBehaviour {
     public bool IsPhaseB;
     public bool IsColor2;
     public Image Check;
+    private Button b;
 
     void Update() {
         bool active = true;
@@ -18,7 +19,8 @@ public class BasicPhase : MonoBehaviour {
             }
         }
         Check.enabled = active & interact;
-        GetComponent<Button>().interactable = interact;
+        if(b == null) b = GetComponent<Button>();
+        b.interactable = interact;
     }
 
     public void Clicked() {

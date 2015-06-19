@@ -11,7 +11,7 @@ public class LightLabel : MonoBehaviour {
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showWire, wireOverride, alternateNumbering, showPatt;
+    public static bool showParts, showBit, showWire, colorlessWire, wireOverride, alternateNumbering, showPatt;
     private OpticNode lastOptic;
     private StyleNode lastStyle;
 
@@ -27,7 +27,7 @@ public class LightLabel : MonoBehaviour {
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
-        showParts = showBit = showWire = wireOverride = alternateNumbering = false;
+        showParts = showBit = showWire = colorlessWire = wireOverride = alternateNumbering = false;
         Refresh();
     }
 
@@ -247,9 +247,58 @@ public class LightLabel : MonoBehaviour {
                 }
 
                 label2.text = label.text = t;
+
+                if(colorlessWire) {
+                    label2.color = label.color = Color.black;
+                    secondImage.color = background.color = Color.white;
+                    colorLabel.text = "";
+                }
             }
         } else if(showPatt) {
             if(lh.lhd.style != null) {
+                bool canEnable;
+                switch(FunctionEditPane.currFunc) {
+                    case AdvFunction.LEVEL1:
+                    case AdvFunction.LEVEL2:
+                    case AdvFunction.LEVEL3:
+                    case AdvFunction.LEVEL4:
+                    case AdvFunction.LEVEL5:
+                    case AdvFunction.FALLEY:
+                    case AdvFunction.FTAKEDOWN:
+                    case AdvFunction.ICL:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.FLASHING);
+                        break;
+                    case AdvFunction.TAKEDOWN:
+                    case AdvFunction.ALLEY_LEFT:
+                    case AdvFunction.ALLEY_RIGHT:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.STEADY);
+                        break;
+                    case AdvFunction.TURN_LEFT:
+                    case AdvFunction.TURN_RIGHT:
+                    case AdvFunction.TAIL:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.STT);
+                        break;
+                    case AdvFunction.T13:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
+                        break;
+                    case AdvFunction.TRAFFIC_LEFT:
+                    case AdvFunction.TRAFFIC_RIGHT:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.TRAFFIC);
+                        break;
+                    case AdvFunction.CRUISE:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.CRUISE);
+                        break;
+                    case AdvFunction.DIM:
+                        canEnable = true;
+                        break;
+                    case AdvFunction.EMITTER:
+                        canEnable = lh.lhd.funcs.Contains(BasicFunction.EMITTER);
+                        break;
+                    default:
+                        canEnable = false;
+                        break;
+                }
+
                 NbtCompound patts = BarManager.inst.patts;
                 string cmpdName = BarManager.GetFnString(lh.transform, FunctionEditPane.currFunc);
                 if(cmpdName == null) {
@@ -264,6 +313,9 @@ public class LightLabel : MonoBehaviour {
                 if(func.Contains("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1")) {
                     bool thisEnabled1 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
                          thisEnabled2 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+
+                    thisEnabled1 &= canEnable;
+                    thisEnabled2 &= canEnable;
 
                     Color clr = lh.lhd.style.color * (thisEnabled1 ? 1.0f : 0.25f);
                     background.color = clr;
@@ -367,9 +419,9 @@ public class LightLabel : MonoBehaviour {
         selectionImage.gameObject.SetActive(false);
 
         if(lh.lhd.style == null) {
-            label2.text = label.text = "--";
+            label2.text = label.text = "";
             label2.color = label.color = Color.white;
-            secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
+            secondImage.color = background.color = new Color(0, 0, 0, 0f);
             yield return null;
         } else {
             NbtCompound patts = BarManager.inst.patts;
