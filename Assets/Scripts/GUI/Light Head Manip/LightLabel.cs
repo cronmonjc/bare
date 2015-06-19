@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using fNbt;
+using System.Text;
 
 public class LightLabel : MonoBehaviour {
     public Transform target;
@@ -387,7 +388,43 @@ public class LightLabel : MonoBehaviour {
             }
         } else {
             if(lh.lhd.style != null) {
-                label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
+                StringBuilder sb = new StringBuilder(20);
+                foreach(BasicFunction func in new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.EMITTER, BasicFunction.CAL_STEADY, BasicFunction.CRUISE, BasicFunction.STT, BasicFunction.TRAFFIC }) {
+                    if(!lh.lhd.funcs.Contains(func)) continue;
+                    string chars = "";
+                    switch(func) {
+                        case BasicFunction.CAL_STEADY:
+                            chars = "T13";
+                            break;
+                        case BasicFunction.CRUISE:
+                            chars = "C";
+                            break;
+                        case BasicFunction.EMITTER:
+                            chars = "E";
+                            break;
+                        case BasicFunction.FLASHING:
+                            chars = "F";
+                            break;
+                        case BasicFunction.STEADY:
+                            chars = "SB";
+                            break;
+                        case BasicFunction.STT:
+                            chars = "STT";
+                            break;
+                        case BasicFunction.TRAFFIC:
+                            chars = "TD";
+                            break;
+                        default:
+                            continue;
+                    }
+                    if(sb.Length > 0)
+                        sb.Append('/');
+                    sb.Append(chars);
+                }
+                if(sb.Length > 0)
+                    sb.Append(' ');
+
+                label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + sb.ToString() + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
                 Color clr = lh.lhd.style.color;
                 background.color = clr;
                 if(clr.r + clr.g < clr.b) {

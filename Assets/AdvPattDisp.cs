@@ -9,13 +9,21 @@ public class AdvPattDisp : MonoBehaviour {
     public Dictionary<AdvFunction, AdvFuncDisp> displays;
 
     void Start() {
-        displays = new Dictionary<AdvFunction, AdvFuncDisp>();
-        foreach(AdvFuncDisp alpha in GetComponentsInChildren<AdvFuncDisp>()) {
-            displays[alpha.func] = alpha;
+        if(displays == null) {
+            displays = new Dictionary<AdvFunction, AdvFuncDisp>();
+            foreach(AdvFuncDisp alpha in GetComponentsInChildren<AdvFuncDisp>(true)) {
+                displays[alpha.func] = alpha;
+            }
         }
     }
 
     public void Refresh() {
+        if(displays == null) {
+            displays = new Dictionary<AdvFunction, AdvFuncDisp>();
+            foreach(AdvFuncDisp alpha in GetComponentsInChildren<AdvFuncDisp>(true)) {
+                displays[alpha.func] = alpha;
+            }
+        }
         foreach(AdvFuncDisp alpha in displays.Values) {
             alpha.gameObject.SetActive(false);
         }

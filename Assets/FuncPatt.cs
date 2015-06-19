@@ -9,6 +9,7 @@ public class FuncPatt : MonoBehaviour {
     public FuncPattSelect fps;
 
     public void Refresh() {
+        bool anyEnabled = false;
         bool on = true;
         text.text = patt.name;
 
@@ -18,10 +19,11 @@ public class FuncPatt : MonoBehaviour {
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
+            anyEnabled |= alpha.GetIsEnabled(FunctionEditPane.currFunc, fps.IsColor2);
             on &= alpha.GetPattern(FunctionEditPane.currFunc, fps.IsColor2) == patt;
         }
 
-        i.enabled = on;
+        i.enabled = anyEnabled & on;
     }
 
     public void Clicked() {

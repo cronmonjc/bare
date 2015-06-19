@@ -137,5 +137,7 @@ public class FunctionSelect : MonoBehaviour {
             opticSelect.gameObject.SetActive(false);
             opticSelect.styleSelect.gameObject.SetActive(false);
         }
+
+        FindObjectOfType<AdvPattDisp>().Refresh();
     }
 }

@@ -25,6 +25,50 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public bool basicPhaseB2 = false;
 
+    public bool GetCanEnable(AdvFunction fn) {
+        switch(fn) {
+            case AdvFunction.LEVEL1:
+            case AdvFunction.LEVEL2:
+            case AdvFunction.LEVEL3:
+            case AdvFunction.LEVEL4:
+            case AdvFunction.LEVEL5:
+            case AdvFunction.FTAKEDOWN:
+            case AdvFunction.FALLEY:
+            case AdvFunction.ICL:
+                return lhd.funcs.Contains(BasicFunction.FLASHING);
+            case AdvFunction.TAKEDOWN:
+            case AdvFunction.ALLEY_LEFT:
+            case AdvFunction.ALLEY_RIGHT:
+                return lhd.funcs.Contains(BasicFunction.STEADY);
+            case AdvFunction.TURN_LEFT:
+            case AdvFunction.TURN_RIGHT:
+            case AdvFunction.TAIL:
+                return lhd.funcs.Contains(BasicFunction.STT);
+            case AdvFunction.T13:
+                return lhd.funcs.Contains(BasicFunction.CAL_STEADY);
+            case AdvFunction.EMITTER:
+                return lhd.funcs.Contains(BasicFunction.EMITTER);
+            case AdvFunction.CRUISE:
+                return lhd.funcs.Contains(BasicFunction.CRUISE);
+            case AdvFunction.TRAFFIC_LEFT:
+            case AdvFunction.TRAFFIC_RIGHT:
+                return lhd.funcs.Contains(BasicFunction.TRAFFIC);
+            case AdvFunction.DIM:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public bool GetIsEnabled(AdvFunction fn, bool clr2 = false) {
+        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(transform, fn));
+
+        if(!patt.Contains("e" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")))
+            return false;
+        else
+            return (patt.Get<NbtShort>("e" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
+    }
+
     public List<BasicFunction> CapableBasicFunctions {
         get {
             switch(loc) {

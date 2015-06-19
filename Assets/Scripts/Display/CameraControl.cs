@@ -23,7 +23,7 @@ public class CameraControl : MonoBehaviour {
     private SelBoxCollider sbc, msbc;
     private SymmMode sm;
 
-    private LightInteractionPanel lip;
+    public LightInteractionPanel lip;
 
     private Camera myCam;
 
@@ -71,8 +71,6 @@ public class CameraControl : MonoBehaviour {
 
         sbc = SelBox.GetComponent<SelBoxCollider>();
         msbc = SelBox.transform.GetChild(0).GetComponent<SelBoxCollider>();
-
-        lip = FindObjectOfType<LightInteractionPanel>();
 
         sm = FindObjectOfType<SymmMode>();
 
