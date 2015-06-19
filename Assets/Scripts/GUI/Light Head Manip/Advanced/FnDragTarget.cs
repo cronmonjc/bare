@@ -125,7 +125,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 display.text = "Flashing Alley";
                 break;
             case 0xC00: // FTAKEDOWN | FALLEY
-                display.text = "Flashing Alley & Takedown";
+                display.text = "Flashing Alley & Pursuit";
                 break;
             case 0x1000: // PATTERN
                 display.text = "Pattern";

@@ -127,6 +127,6 @@ public class FuncPattSelect : MonoBehaviour {
 
         FunctionEditPane.RetestStatic();
         BarManager.moddedBar = true;
-        if(patts.Contains("prog")) patts.Remove("prog");
+        if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
     }
 }

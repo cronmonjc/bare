@@ -732,10 +732,6 @@ public class BarManager : MonoBehaviour {
 
         bool debugBit = LightLabel.showBit;
         LightLabel.showBit = false;
-
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-
         LightLabel.showParts = false;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.DispError = false;
@@ -1042,7 +1038,164 @@ public class BarManager : MonoBehaviour {
     }
 
     public void PatternPage(PdfPage p, Rect capRect) {
+        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+        XTextFormatter tf = new XTextFormatter(gfx);
 
+        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+        XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
+
+        XPen border = new XPen(XColors.Black, 0.025);
+
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
+        using(XImage wireImg = XImage.FromFile("tempgen\\wireClrless.png")) {
+            gfx.DrawImage(wireImg, 0.5, 1.2, capRect.width * scale, capRect.height * scale);
+        }
+
+        tf.Alignment = XParagraphAlignment.Center;
+        if(patts.Contains("prog")) {
+            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 3.3, 0.75, 0.5));
+            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.5));
+        }
+
+        double top = 3.3;
+
+        tf.DrawString("Input Map", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
+        top += 0.2;
+        if(useCAN) {
+            PrintRow(tf, caliSm, GetFuncFromMap(0), GetFuncFromMap(12), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(13), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(2), GetFuncFromMap(14), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(15), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(16), ref top);
+
+            PrintRow(tf, caliSm, GetFuncFromMap(5), GetFuncFromMap(17), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(18), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(7), GetFuncFromMap(19), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(8), "POWER", ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(9), "GROUND", ref top);
+
+            PrintRow(tf, caliSm, GetFuncFromMap(10), "---", ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(11), "---", ref top);
+        } else {
+            PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(0), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(2), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(11), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(5), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(8), GetFuncFromMap(7), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(10), GetFuncFromMap(9), ref top);
+            PrintRow(tf, caliSm, "---", "---", ref top);
+        }
+
+        top += 0.2;
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Function Definitions", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
+        top += 0.2;
+        gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.4));
+        tf.DrawString("Function" + (useCAN ? "\nBreak Out Box" : ""), caliBold, XBrushes.Black, new XRect(0.55, top, 1.2, 0.4));
+        gfx.DrawLine(border, 1.75, top, 1.75, top + 0.4);
+        tf.DrawString("Positions", caliBold, XBrushes.Black, new XRect(1.8, top, 3.0, 0.1));
+        tf.DrawString("Phase A", caliBold, XBrushes.Black, new XRect(1.8, top + 0.2, 1.45, 0.1));
+        gfx.DrawLine(border, 3.3, top + 0.2, 3.3, top + 0.4);
+        tf.DrawString("Phase B", caliBold, XBrushes.Black, new XRect(3.35, top + 0.2, 1.45, 0.1));
+        gfx.DrawLine(border, 4.8, top, 4.8, top + 0.4);
+
+
+        top += 0.4;
+        foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
+            for(int i = 0; i < 20; i++) {
+                if((FnDragTarget.inputMap[i] & (int)func) > 0) {
+                    gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
+                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.55, top + 0.05, 1.2, 0.1));
+                    gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
+                    switch(func) {
+                        case 0x2: // LEVEL1
+                        case 0x4: // LEVEL2
+                        case 0x8: // LEVEL3
+                        case 0x100: // ICL
+                        case 0x400: // FTAKEDOWN
+                        case 0x800: // FALLEY
+                        case 0x40000: // LEVEL4
+                        case 0x80000: // LEVEL5
+                            gfx.DrawLine(border, 3.3, top, 3.3, top + 0.2);
+                            break;
+                        default:
+                            break;
+                    }
+                    gfx.DrawLine(border, 4.8, top, 4.8, top + 0.2);
+                    top += 0.2;
+                }
+            }
+        }
+
+
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+    }
+
+    public string GetFuncFromInt(int num) {
+        switch(num) {
+            case 0x0: // Nothing
+                return "---";
+            case 0x1: // TAKEDOWN
+                return "Takedown / Work Lights";
+            case 0x2: // LEVEL1
+                return "Level 1";
+            case 0x4: // LEVEL2
+                return "Level 2";
+            case 0x8: // LEVEL3
+                return "Level 3";
+            case 0x10: // TRAFFIC_LEFT
+                return "Direct Left";
+            case 0x20: // TRAFFIC_RIGHT
+                return "Direct Right";
+            case 0x40: // ALLEY_LEFT
+                return "Left Alley";
+            case 0x80: // ALLEY_RIGHT
+                return "Right Alley";
+            case 0x100: // ICL
+                return "ICL";
+            case 0x200: // DIM
+                return "Dimmer";
+            case 0x400: // FTAKEDOWN
+                return "Flashing Pursuit";
+            case 0x800: // FALLEY
+                return "Flashing Alley";
+            case 0xC00: // FTAKEDOWN | FALLEY
+                return "Flashing Alley & Pursuit";
+            case 0x1000: // PATTERN
+                return "Pattern";
+            case 0x2000: // CRUISE
+                return "Cruise";
+            case 0x4000: // TURN_LEFT
+                return "Turn Left";
+            case 0x8000: // TURN_RIGHT
+                return "Turn Right";
+            case 0x10000: // TAIL
+                return "Brake Lights";
+            case 0x20000: // T13
+                return "California T13 Steady";
+            case 0x40000: // LEVEL4
+                return "Level 4";
+            case 0x80000: // LEVEL5
+                return "Level 5";
+            case 0x100000: // EMITTER
+                return "Emitter";
+            default:
+                return "???";
+        }
+    }
+
+    public string GetFuncFromMap(int which) {
+        return GetFuncFromInt(FnDragTarget.inputMap[which]);
+    }
+
+    public void PrintRow(XTextFormatter tf, XFont caliSm, string left, string right, ref double top) {
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString(left, caliSm, XBrushes.Black, new XRect(3.0, top, 1.15, 0.1));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString(right, caliSm, XBrushes.Black, new XRect(4.35, top, 1.15, 0.1));
+        top += 0.1;
     }
 
     public static XPoint[] XPointArray(params Vector2[] vecs) {
