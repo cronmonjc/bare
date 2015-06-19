@@ -175,6 +175,7 @@ public class FuncEnable : MonoBehaviour {
             ll.Refresh();
         }
         BarManager.moddedBar = true;
+        if(patts.Contains("prog")) patts.Remove("prog");
     }
 
     public void Clicked() {
@@ -247,5 +248,7 @@ public class FuncEnable : MonoBehaviour {
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
         }
+        BarManager.moddedBar = true;
+        if(patts.Contains("prog")) patts.Remove("prog");
     }
 }

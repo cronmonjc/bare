@@ -100,6 +100,7 @@ public class DisableEnablePatt : MonoBehaviour {
         ps.enableButton.Retest();
         ps.disableButton.Retest();
         BarManager.moddedBar = true;
+        if(patts.Contains("prog")) patts.Remove("prog");
 
         //FnSelManager.inst.RefreshLabels();
     }

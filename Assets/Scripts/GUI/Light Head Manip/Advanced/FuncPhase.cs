@@ -138,6 +138,7 @@ public class FuncPhase : MonoBehaviour {
             ll.Refresh();
         }
         BarManager.moddedBar = true;
+        if(patts.Contains("prog")) patts.Remove("prog");
     }
 
 }

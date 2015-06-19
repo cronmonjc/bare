@@ -7,6 +7,7 @@ public class FuncRemover : MonoBehaviour, IDropHandler {
         if(FnDragTarget.draggedItem != null) {
             FnDragTarget.inputMap.Value[FnDragTarget.draggedItem.key] = 0;
             BarManager.moddedBar = true;
+            if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
         }
     }
 }

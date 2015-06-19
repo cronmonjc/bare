@@ -9,5 +9,6 @@ public class CANPulldown : PulldownItem {
     public override void Clicked() {
         BarManager.useCAN = (number == 0);
         BarManager.moddedBar = true;
+        if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
     }
 }
