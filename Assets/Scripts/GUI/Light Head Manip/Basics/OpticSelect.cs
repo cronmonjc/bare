@@ -41,6 +41,7 @@ public class OpticSelect : MonoBehaviour {
         List<Location> locs = new List<Location>();
         bool showLong = true, showShort = true;
         bool showDual = true, showSingle = true;
+        bool showBO = true, showEmi = true;
         List<LightHead> selected = new List<LightHead>();
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
@@ -49,6 +50,8 @@ public class OpticSelect : MonoBehaviour {
                 showShort &= alpha.isSmall;
                 showDual &= alpha.useDual;
                 showSingle &= alpha.useSingle;
+                showBO &= alpha.lhd.funcs.Contains(BasicFunction.BLOCK_OFF);
+                showEmi &= alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
 
                 if(locs.Contains(alpha.loc)) {
                     continue;
@@ -64,21 +67,39 @@ public class OpticSelect : MonoBehaviour {
 
         if(ln != null) {
             string[] keysArray = new List<string>(ln.optics.Keys).ToArray();
-            for(int i = 0; i < keysArray.Length; i++) {
-                if(ln.optics[keysArray[i]].dual && !showDual) {
-                    continue;
-                } else if(!ln.optics[keysArray[i]].dual && !showSingle) {
-                    continue;
-                } else if(ln.optics[keysArray[i]].name == "Emitter") {
-                    continue;
-                }
+            if(showBO) {
+                GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
+                newbie.transform.SetParent(menu, false);
+                newbie.transform.localScale = Vector3.one;
+                newbie.GetComponent<LightOptionElement>().optNode = ln.optics["Block Off"];
+                newbie.GetComponent<LightOptionElement>().optSel = this;
+            }
 
-                if((showLong && ln.optics[keysArray[i]].fitsLg) || (showShort && ln.optics[keysArray[i]].fitsSm)) {
-                    GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
-                    newbie.transform.SetParent(menu, false);
-                    newbie.transform.localScale = Vector3.one;
-                    newbie.GetComponent<LightOptionElement>().optNode = ln.optics[keysArray[i]];
-                    newbie.GetComponent<LightOptionElement>().optSel = this;
+            if(showEmi) {
+                GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
+                newbie.transform.SetParent(menu, false);
+                newbie.transform.localScale = Vector3.one;
+                newbie.GetComponent<LightOptionElement>().optNode = ln.optics["Emitter"];
+                newbie.GetComponent<LightOptionElement>().optSel = this;
+            }
+            if(!showBO && !showEmi) {
+                for(int i = 0; i < keysArray.Length; i++) {
+                    if(keysArray[i] == "Block Off" || keysArray[i] == "Emitter") {
+                        continue;
+                    }
+                    if(ln.optics[keysArray[i]].dual && !showDual) {
+                        continue;
+                    } else if(!ln.optics[keysArray[i]].dual && !showSingle) {
+                        continue;
+                    }
+
+                    if((showLong && ln.optics[keysArray[i]].fitsLg) || (showShort && ln.optics[keysArray[i]].fitsSm)) {
+                        GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
+                        newbie.transform.SetParent(menu, false);
+                        newbie.transform.localScale = Vector3.one;
+                        newbie.GetComponent<LightOptionElement>().optNode = ln.optics[keysArray[i]];
+                        newbie.GetComponent<LightOptionElement>().optSel = this;
+                    }
                 }
             }
         }

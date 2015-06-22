@@ -171,8 +171,7 @@ public class CameraControl : MonoBehaviour {
 
                         if(FunctionEditPane.currFunc != AdvFunction.NONE) {
                             FunctionEditPane.RetestStatic();
-                        }
-                        if(selected.Count > 0) {
+                        } else if(selected.Count > 0) {
                             fs.Refresh();
                             advPattDisp.Refresh();
                         }

@@ -79,6 +79,9 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                 case BasicFunction.TRAFFIC:
                     name = "Traffic Director";
                     break;
+                case BasicFunction.BLOCK_OFF:
+                    name = "Block Off";
+                    break;
                 default:
                     throw new System.ArgumentException();
             }

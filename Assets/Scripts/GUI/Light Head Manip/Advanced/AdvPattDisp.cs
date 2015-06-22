@@ -58,7 +58,6 @@ public class AdvPattDisp : MonoBehaviour {
                     case BasicFunction.STT:
                         funcs.Add(AdvFunction.TURN_LEFT);
                         funcs.Add(AdvFunction.TURN_RIGHT);
-                        funcs.Add(AdvFunction.TAIL);
                         break;
                     case BasicFunction.TRAFFIC:
                         funcs.Add(AdvFunction.TRAFFIC_LEFT);

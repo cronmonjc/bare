@@ -728,6 +728,8 @@ public class BarManager : MonoBehaviour {
         cableType = opts["cabt"].IntValue;
         cableLength = opts["cabl"].IntValue;
 
+        yield return StartCoroutine(RefreshBits());
+
         NbtCompound order = root.Get<NbtCompound>("ordr");
         custName.text = order["name"].StringValue;
         orderNum.text = order["num"].StringValue;
@@ -812,6 +814,8 @@ public class BarManager : MonoBehaviour {
 
             yield return StartCoroutine(RefreshBits());
         }
+
+        moddedBar = false;
     }
 
     public void StartPDF() {
@@ -1203,8 +1207,10 @@ public class BarManager : MonoBehaviour {
         tf.DrawString("Bar Programming", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
 
         if(patts.Contains("prog")) {
-            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 3.3, 0.75, 0.5));
-            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.5));
+            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(0.5, 3.25, 0.75, 0.7));
+            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 3.3, 0.75, 0.6));
+            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(p.Width.Inch - 1.25, 3.25, 0.75, 0.7));
+            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.6));
         }
 
         double top = 3.3;
@@ -1253,14 +1259,15 @@ public class BarManager : MonoBehaviour {
         tf.DrawString("Pattern(s)", caliBold, XBrushes.Black, new XRect(5.85, top + 0.1, p.Width.Inch - 6.4, 0.2));
 
         top += 0.4;
-        foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
+        foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
             for(int i = 0; i < 20; i++) {
                 if((FnDragTarget.inputMap[i] & (int)func) > 0) {
                     gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
-                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.05, 1.25, 0.1));
+                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
                     gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
 
-                    StringBuilder sb = new StringBuilder(128);
+                    List<string> parts = new List<string>();
+                    AdvFunction advfunc = (AdvFunction)func;
 
                     switch(func) {
                         case 0x2: // LEVEL1
@@ -1271,51 +1278,129 @@ public class BarManager : MonoBehaviour {
                         case 0x800: // FALLEY
                         case 0x40000: // LEVEL4
                         case 0x80000: // LEVEL5
-                            StringBuilder sbb = new StringBuilder(128);
+                            List<string> partsB = new List<string>();
                             foreach(LightHead alpha in headNumber) {
-                                if(alpha.GetIsEnabled((AdvFunction)func, false)) {
-                                    if(alpha.GetPhaseB((AdvFunction)func, false)) {
-                                        if(sbb.Length > 0) sbb.Append(", ");
-                                        sbb.Append(GetWireColor1(alpha));
+                                if(alpha.lhd.style == null) continue;
+                                if(alpha.GetIsEnabled(advfunc, false)) {
+                                    if(alpha.GetPhaseB(advfunc, false)) {
+                                        partsB.Add(GetWireColor1(alpha));
                                     } else {
-                                        if(sb.Length > 0) sb.Append(", ");
-                                        sb.Append(GetWireColor1(alpha));
+                                        parts.Add(GetWireColor1(alpha));
                                     }
                                 }
-                                if(alpha.GetIsEnabled((AdvFunction)func, true)) {
-                                    if(alpha.GetPhaseB((AdvFunction)func, false)) {
-                                        if(sbb.Length > 0) sbb.Append(", ");
-                                        sbb.Append(GetWireColor2(alpha));
+                                if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
+                                    if(alpha.GetPhaseB(advfunc, false)) {
+                                        partsB.Add(GetWireColor2(alpha));
                                     } else {
-                                        if(sb.Length > 0) sb.Append(", ");
-                                        sb.Append(GetWireColor2(alpha));
+                                        parts.Add(GetWireColor2(alpha));
                                     }
                                 }
                             }
+
+                            foreach(string prefix in new string[] { "P3-", "P8-", "P9-", "P10-" }) {
+                                for(int wire = 0; wire < 13; wire++) {
+                                    if(parts.Contains(prefix + wire)) {
+                                        for(int part = 0; part < parts.Count; part++) {
+                                            if(parts[part].StartsWith(prefix) && parts[part].EndsWith("-" + (wire - 1))) {
+                                                parts[part] = parts[part].Split(' ')[0] + " thru -" + wire;
+                                                parts.Remove(prefix + wire);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if(partsB.Contains(prefix + wire)) {
+                                        for(int part = 0; part < partsB.Count; part++) {
+                                            if(partsB[part].StartsWith(prefix) && partsB[part].EndsWith("-" + (wire - 1))) {
+                                                partsB[part] = partsB[part].Split(' ')[0] + " thru -" + wire;
+                                                partsB.Remove(prefix + wire);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             // Write out Phase A, new XRect(1.8, top, 1.95, 0.1)
-                            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(1.8, top, 1.95, 0.1));
+                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.1));
                             gfx.DrawLine(border, 3.8, top, 3.8, top + 0.2);
                             // Write out Phase B, new XRect(3.85, top, 1.95, 0.1)
-                            tf.DrawString(sbb.ToString(), caliSm, XBrushes.Black, new XRect(3.85, top, 1.95, 0.1));
+                            tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.1));
                             break;
                         default:
                             // Write out enabled, new XRect(1.8, top, 4.0, 0.1)
-                            sb.EnsureCapacity(256);
                             foreach(LightHead alpha in headNumber) {
-                                if(alpha.GetIsEnabled((AdvFunction)func, false)) {
-                                    if(sb.Length > 0) sb.Append(", ");
-                                    sb.Append(GetWireColor1(alpha));
+                                if(alpha.lhd.style == null) continue;
+                                if(alpha.GetIsEnabled(advfunc, false)) {
+                                    parts.Add(GetWireColor1(alpha));
                                 }
-                                if(alpha.GetIsEnabled((AdvFunction)func, true)) {
-                                    if(sb.Length > 0) sb.Append(", ");
-                                    sb.Append(GetWireColor2(alpha));
+                                if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
+                                    parts.Add(GetWireColor2(alpha));
                                 }
                             }
-                            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(1.8, top, 4.0, 0.1));
+
+                            foreach(string prefix in new string[] { "P3-", "P8-", "P9-", "P10-" }) {
+                                for(int wire = 0; wire < 13; wire++) {
+                                    if(parts.Contains(prefix + wire)) {
+                                        for(int part = 0; part < parts.Count; part++) {
+                                            if(parts[part].StartsWith(prefix) && parts[part].EndsWith("-" + (wire - 1))) {
+                                                parts[part] = parts[part].Split(' ')[0] + " thru -" + wire;
+                                                parts.Remove(prefix + wire);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.1));
                             break;
                     }
                     gfx.DrawLine(border, 5.8, top, 5.8, top + 0.2);
                     // Write out pattern(s), new XRect(5.85, top + 0.1, p.Width.Inch - 8.4, 0.2)
+                    switch(func) {
+                        case 0x2: // LEVEL1
+                        case 0x4: // LEVEL2
+                        case 0x8: // LEVEL3
+                        case 0x10: // TRAFFIC_LEFT
+                        case 0x20: // TRAFFIC_RIGHT
+                        case 0x100: // ICL
+                        case 0x400: // FTAKEDOWN
+                        case 0x800: // FALLEY
+                        case 0x40000: // LEVEL4
+                        case 0x80000: // LEVEL5
+                            List<string> patt = new List<string>(5);
+                            Pattern thisPatt;
+
+                            foreach(LightHead alpha in headNumber) {
+                                if(alpha.lhd.style == null) continue;
+                                if(alpha.GetIsEnabled(advfunc, false)) {
+                                    thisPatt = alpha.GetPattern(advfunc);
+                                    if(thisPatt != null) {
+                                        if(!patt.Contains(thisPatt.name)) {
+                                            patt.Add(thisPatt.name);
+                                        }
+                                    }
+                                }
+                                if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
+                                    thisPatt = alpha.GetPattern(advfunc, true);
+                                    if(thisPatt != null) {
+                                        if(!patt.Contains(thisPatt.name)) {
+                                            patt.Add(thisPatt.name);
+                                        }
+                                    }
+                                }
+                                thisPatt = null;
+                            }
+
+                            if(patt.Count > 0) {
+                                tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.2));
+                            }
+                            break;
+                        default:
+                            tf.DrawString("Steady Burn", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.2));
+                            break;
+                    }
+
                     top += 0.2;
                     break;
                 }

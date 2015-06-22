@@ -174,6 +174,11 @@ public class FuncEnable : MonoBehaviour {
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
         }
+
+        foreach(FuncPattSelect fps in transform.parent.GetComponentsInChildren<FuncPattSelect>(true)) {
+            fps.Refresh();
+        }
+
         BarManager.moddedBar = true;
         if(patts.Contains("prog")) patts.Remove("prog");
     }
