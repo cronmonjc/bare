@@ -158,5 +158,35 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 display.text = "";
                 break;
         }
+
+        short en = 0x0;
+        NbtCompound patts = BarManager.inst.patts;
+        switch(val) {
+            case 0xC00:
+                NbtCompound afl = patts.Get<NbtCompound>("afl"), tdp = patts.Get<NbtCompound>("tdp");
+                foreach(string alpha in new string[] { "ef1","ef2","er1","er2" }) {
+                    en |= afl[alpha].ShortValue;
+                    en |= tdp[alpha].ShortValue;
+                }
+                break;
+            case 0x10:
+            case 0x20:
+                NbtCompound traf = patts.Get<NbtCompound>("traf");
+                foreach(string alpha in new string[] { "er1","er2" }) {
+                    en |= traf[alpha].ShortValue;
+                }
+                break;
+            case 0x1000:
+                en = 1;
+                break;
+            default:
+                NbtCompound cmpd = patts.Get<NbtCompound>(BarManager.GetFnString(BarManager.inst.transform, (AdvFunction)val));
+                foreach(string alpha in new string[] { "ef1","ef2","er1","er2" }) {
+                    en |= cmpd[alpha].ShortValue;
+                }
+                break;
+
+        }
+        display.color = (en == 0 ? new Color(0.75f, 0.75f, 0.75f, 1.0f) : new Color(0.2f, 0.2f, 0.2f, 1.0f));
     }
 }
