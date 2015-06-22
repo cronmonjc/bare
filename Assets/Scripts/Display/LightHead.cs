@@ -69,6 +69,15 @@ public class LightHead : MonoBehaviour {
             return (patt.Get<NbtShort>("e" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
     }
 
+    public bool GetPhaseB(AdvFunction fn, bool clr2 = false) {
+        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(transform, fn));
+
+        if(!patt.Contains("p" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")))
+            return false;
+        else
+            return (patt.Get<NbtShort>("p" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
+    }
+
     public List<BasicFunction> CapableBasicFunctions {
         get {
             switch(loc) {

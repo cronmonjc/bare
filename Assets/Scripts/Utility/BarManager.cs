@@ -181,6 +181,154 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    public static string GetWire(LightHead lh) {
+        return GetWireColor1(lh) + ( lh.lhd.style.isDualColor ? (" C & " + GetWireColor2(lh) + " W") : "" );
+    }
+
+    public static string GetWireColor1(LightHead lh) {
+        byte bit = lh.Bit;
+        string rtn = "";
+
+        if(lh.transform.position.y < 0) {
+            if(bit > 5) {
+                rtn = "P10-";
+            } else {
+                rtn = "P9-";
+            }
+
+            switch(bit) {
+                case 5:
+                case 6:
+                    rtn = rtn + "1";
+                    break;
+                case 4:
+                case 7:
+                    rtn = rtn + "2";
+                    break;
+                case 3:
+                case 8:
+                    rtn = rtn + "3";
+                    break;
+                case 2:
+                case 9:
+                    rtn = rtn + "4";
+                    break;
+                case 1:
+                case 10:
+                    rtn = rtn + "5";
+                    break;
+                case 0:
+                case 11:
+                    rtn = rtn + "6";
+                    break;
+                default:
+                    rtn = rtn + "?";
+                    break;
+            }
+        } else {
+            if(bit > 5 && bit != 12) {
+                rtn = "P8-";
+            } else {
+                rtn = "P3-";
+            }
+
+            switch(bit) {
+                case 5:
+                case 6:
+                    rtn = rtn + (lh.FarWire ? "2" : "1");
+                    break;
+                case 4:
+                case 7:
+                    rtn = rtn + "3";
+                    break;
+                case 1:
+                case 10:
+                    rtn = rtn + "4";
+                    break;
+                case 0:
+                case 11:
+                    rtn = rtn + "5";
+                    break;
+                case 12:
+                case 13:
+                    rtn = rtn + "6";
+                    break;
+                default:
+                    rtn = rtn + "?";
+                    break;
+            }
+        }
+        return rtn;
+    }
+
+    public static string GetWireColor2(LightHead lh) {
+        byte bit = lh.Bit;
+        string rtn = "";
+
+        if(lh.transform.position.y < 0) {
+            if(bit > 5) {
+                rtn = "P10-";
+            } else {
+                rtn = "P9-";
+            }
+
+            switch(bit) {
+                case 5:
+                case 6:
+                    rtn = rtn + "12";
+                    break;
+                case 4:
+                case 7:
+                    rtn = rtn + "11";
+                    break;
+                case 3:
+                case 8:
+                    rtn = rtn + "10";
+                    break;
+                case 2:
+                case 9:
+                    rtn = rtn + "9";
+                    break;
+                default:
+                    rtn = rtn + "?";
+                    break;
+            }
+        } else {
+            if(bit > 5 && bit != 12) {
+                rtn = "P8-";
+            } else {
+                rtn = "P3-";
+            }
+
+            switch(bit) {
+                case 5:
+                case 6:
+                    rtn = rtn + (lh.FarWire ? "11" : "12");
+                    break;
+                case 4:
+                case 7:
+                    rtn = rtn + "10";
+                    break;
+                case 1:
+                case 10:
+                    rtn = rtn + "9";
+                    break;
+                case 0:
+                case 11:
+                    rtn = rtn + "8";
+                    break;
+                case 12:
+                case 13:
+                    rtn = rtn + "7";
+                    break;
+                default:
+                    rtn = rtn + "?";
+                    break;
+            }
+        }
+        return rtn;
+    }
+
     public void SetBarSize(float to) {
         SetBarSize(Mathf.RoundToInt(to), true);
     }
@@ -1052,6 +1200,8 @@ public class BarManager : MonoBehaviour {
         }
 
         tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Bar Programming", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+
         if(patts.Contains("prog")) {
             tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 3.3, 0.75, 0.5));
             tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.5));
@@ -1090,24 +1240,28 @@ public class BarManager : MonoBehaviour {
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Function Definitions", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
-        top += 0.2;
+        top += 0.3;
         gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.4));
-        tf.DrawString("Function" + (useCAN ? "\nBreak Out Box" : ""), caliBold, XBrushes.Black, new XRect(0.55, top, 1.2, 0.4));
+        tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(0.5, top + (useCAN ? 0.0 : 0.1), 1.25, 0.2));
+        if(useCAN) tf.DrawString("Break Out Box", caliBold, XBrushes.Black, new XRect(0.50, top + 0.2, 1.25, 0.2));
         gfx.DrawLine(border, 1.75, top, 1.75, top + 0.4);
-        tf.DrawString("Positions", caliBold, XBrushes.Black, new XRect(1.8, top, 3.0, 0.1));
-        tf.DrawString("Phase A", caliBold, XBrushes.Black, new XRect(1.8, top + 0.2, 1.45, 0.1));
-        gfx.DrawLine(border, 3.3, top + 0.2, 3.3, top + 0.4);
-        tf.DrawString("Phase B", caliBold, XBrushes.Black, new XRect(3.35, top + 0.2, 1.45, 0.1));
-        gfx.DrawLine(border, 4.8, top, 4.8, top + 0.4);
-
+        tf.DrawString("Positions", caliBold, XBrushes.Black, new XRect(1.8, top, 4.0, 0.1));
+        tf.DrawString("Phase A", caliBold, XBrushes.Black, new XRect(1.8, top + 0.2, 1.95, 0.1));
+        gfx.DrawLine(border, 3.8, top + 0.2, 3.8, top + 0.4);
+        tf.DrawString("Phase B", caliBold, XBrushes.Black, new XRect(3.85, top + 0.2, 1.95, 0.1));
+        gfx.DrawLine(border, 5.8, top, 5.8, top + 0.4);
+        tf.DrawString("Pattern(s)", caliBold, XBrushes.Black, new XRect(5.85, top + 0.1, p.Width.Inch - 6.4, 0.2));
 
         top += 0.4;
         foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
             for(int i = 0; i < 20; i++) {
                 if((FnDragTarget.inputMap[i] & (int)func) > 0) {
                     gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
-                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.55, top + 0.05, 1.2, 0.1));
+                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.05, 1.25, 0.1));
                     gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
+
+                    StringBuilder sb = new StringBuilder(128);
+
                     switch(func) {
                         case 0x2: // LEVEL1
                         case 0x4: // LEVEL2
@@ -1117,13 +1271,53 @@ public class BarManager : MonoBehaviour {
                         case 0x800: // FALLEY
                         case 0x40000: // LEVEL4
                         case 0x80000: // LEVEL5
-                            gfx.DrawLine(border, 3.3, top, 3.3, top + 0.2);
+                            StringBuilder sbb = new StringBuilder(128);
+                            foreach(LightHead alpha in headNumber) {
+                                if(alpha.GetIsEnabled((AdvFunction)func, false)) {
+                                    if(alpha.GetPhaseB((AdvFunction)func, false)) {
+                                        if(sbb.Length > 0) sbb.Append(", ");
+                                        sbb.Append(GetWireColor1(alpha));
+                                    } else {
+                                        if(sb.Length > 0) sb.Append(", ");
+                                        sb.Append(GetWireColor1(alpha));
+                                    }
+                                }
+                                if(alpha.GetIsEnabled((AdvFunction)func, true)) {
+                                    if(alpha.GetPhaseB((AdvFunction)func, false)) {
+                                        if(sbb.Length > 0) sbb.Append(", ");
+                                        sbb.Append(GetWireColor2(alpha));
+                                    } else {
+                                        if(sb.Length > 0) sb.Append(", ");
+                                        sb.Append(GetWireColor2(alpha));
+                                    }
+                                }
+                            }
+                            // Write out Phase A, new XRect(1.8, top, 1.95, 0.1)
+                            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(1.8, top, 1.95, 0.1));
+                            gfx.DrawLine(border, 3.8, top, 3.8, top + 0.2);
+                            // Write out Phase B, new XRect(3.85, top, 1.95, 0.1)
+                            tf.DrawString(sbb.ToString(), caliSm, XBrushes.Black, new XRect(3.85, top, 1.95, 0.1));
                             break;
                         default:
+                            // Write out enabled, new XRect(1.8, top, 4.0, 0.1)
+                            sb.EnsureCapacity(256);
+                            foreach(LightHead alpha in headNumber) {
+                                if(alpha.GetIsEnabled((AdvFunction)func, false)) {
+                                    if(sb.Length > 0) sb.Append(", ");
+                                    sb.Append(GetWireColor1(alpha));
+                                }
+                                if(alpha.GetIsEnabled((AdvFunction)func, true)) {
+                                    if(sb.Length > 0) sb.Append(", ");
+                                    sb.Append(GetWireColor2(alpha));
+                                }
+                            }
+                            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(1.8, top, 4.0, 0.1));
                             break;
                     }
-                    gfx.DrawLine(border, 4.8, top, 4.8, top + 0.2);
+                    gfx.DrawLine(border, 5.8, top, 5.8, top + 0.2);
+                    // Write out pattern(s), new XRect(5.85, top + 0.1, p.Width.Inch - 8.4, 0.2)
                     top += 0.2;
+                    break;
                 }
             }
         }

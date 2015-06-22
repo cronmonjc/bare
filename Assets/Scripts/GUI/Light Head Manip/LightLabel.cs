@@ -72,70 +72,49 @@ public class LightLabel : MonoBehaviour {
             }
         } else if(showWire) {
             if(lh.lhd.style != null) {
-                string t = prefix;
                 byte bit = lh.Bit;
 
                 Color labelColor = Color.white;
 
                 if(!wireOverride) {
-                    if(transform.position.y < 0) {
-                        if(bit > 5) {
-                            t = t + "P10-";
-                        } else {
-                            t = t + "P9-";
-                        }
-
+                    if(lh.transform.position.y < 0) {
                         switch(lh.Bit) {
                             case 5:
                             case 6:
-                                t = t + "1";
                                 labelColor = new Color(0.5f, 0.25f, 0.0f);
                                 colorLabel.text = "Brown";
                                 break;
                             case 4:
                             case 7:
-                                t = t + "2";
                                 labelColor = Color.yellow;
                                 colorLabel.text = "Yellow";
                                 break;
                             case 3:
                             case 8:
-                                t = t + "3";
                                 labelColor = Color.green;
                                 colorLabel.text = "Green";
                                 break;
                             case 2:
                             case 9:
-                                t = t + "4";
                                 labelColor = Color.blue;
                                 colorLabel.text = "Blue";
                                 break;
                             case 1:
                             case 10:
-                                t = t + "5";
                                 labelColor = new Color(0.5f, 0.0f, 1.0f);
                                 colorLabel.text = "Purple";
                                 break;
                             case 0:
                             case 11:
-                                t = t + "6";
                                 colorLabel.text = "White";
                                 break;
                             default:
-                                t = t + "?";
                                 break;
                         }
                     } else {
-                        if(bit > 5 && bit != 12) {
-                            t = t + "P8-";
-                        } else {
-                            t = t + "P3-";
-                        }
-
                         switch(bit) {
                             case 5:
                             case 6:
-                                t = t + (lh.FarWire ? "2" : "1");
                                 labelColor = (lh.FarWire ? Color.yellow : new Color(0.5f, 0.25f, 0.0f));
                                 colorLabel.text = (lh.FarWire ? "Yellow" : "Brown");
                                 break;
@@ -143,27 +122,22 @@ public class LightLabel : MonoBehaviour {
                             case 7:
                                 labelColor = Color.green;
                                 colorLabel.text = "Green";
-                                t = t + "3";
                                 break;
                             case 1:
                             case 10:
-                                t = t + "4";
                                 labelColor = Color.blue;
                                 colorLabel.text = "Blue";
                                 break;
                             case 0:
                             case 11:
-                                t = t + "5";
                                 labelColor = new Color(0.5f, 0.0f, 1.0f);
                                 colorLabel.text = "Purple";
                                 break;
                             case 12:
                             case 13:
-                                t = t + "6";
                                 colorLabel.text = "White";
                                 break;
                             default:
-                                t = t + "?";
                                 break;
                         }
                     }
@@ -175,79 +149,14 @@ public class LightLabel : MonoBehaviour {
                         label2.color = label.color = Color.black;
                     }
 
-                    if(lh.lhd.style.isDualColor) {
-                        t = t + " C & ";
-                        if(transform.position.y < 0) {
-                            if(bit > 5) {
-                                t = t + "P10-";
-                            } else {
-                                t = t + "P9-";
-                            }
+                    label2.text = label.text = prefix + BarManager.GetWire(lh);
 
-                            switch(bit) {
-                                case 5:
-                                case 6:
-                                    t = t + "12";
-                                    break;
-                                case 4:
-                                case 7:
-                                    t = t + "11";
-                                    break;
-                                case 3:
-                                case 8:
-                                    t = t + "10";
-                                    break;
-                                case 2:
-                                case 9:
-                                    t = t + "9";
-                                    break;
-                                default:
-                                    t = t + "?";
-                                    break;
-                            }
-                        } else {
-                            if(bit > 5 && bit != 12) {
-                                t = t + "P8-";
-                            } else {
-                                t = t + "P3-";
-                            }
-
-                            switch(bit) {
-                                case 5:
-                                case 6:
-                                    t = t + (lh.FarWire ? "11" : "12");
-                                    break;
-                                case 4:
-                                case 7:
-                                    t = t + "10";
-                                    break;
-                                case 1:
-                                case 10:
-                                    t = t + "9";
-                                    break;
-                                case 0:
-                                case 11:
-                                    t = t + "8";
-                                    break;
-                                case 12:
-                                case 13:
-                                    t = t + "7";
-                                    break;
-                                default:
-                                    t = t + "?";
-                                    break;
-                            }
-                        }
-                        t = t + " W";
-                    }
                 } else {
-                    t = t + "\n\n";
-
                     label2.color = label.color = Color.black;
                     secondImage.color = background.color = Color.white;
-                }
 
-                label2.text = label.text = t;
+                    label2.text = label.text = prefix + "\n\n";
+                }
 
                 if(colorlessWire) {
                     label2.color = label.color = Color.black;
