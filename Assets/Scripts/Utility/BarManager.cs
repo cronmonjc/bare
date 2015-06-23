@@ -1794,7 +1794,6 @@ public class PDFExportJob : ThreadedJob {
                 progressStuff.Shown = true;
                 progressStuff.Progress = progressPercentage;
                 progressStuff.Text = progressText;
-                Debug.Log(progressPercentage);
             }
             return false;
         }
