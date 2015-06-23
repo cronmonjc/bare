@@ -25,6 +25,21 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public bool basicPhaseB2 = false;
 
+    private bool m_knowsIsRear = false;
+    private bool m_isRear = false;
+
+    public bool isRear {
+        get {
+            if(!m_knowsIsRear) {
+                m_isRear = transform.position.y < 0;
+                m_knowsIsRear = true;
+            }
+            return m_isRear;
+        }
+    }
+
+    public Dictionary<AdvFunction, Pattern> pattDict1, pattDict2;
+
     public bool GetCanEnable(AdvFunction fn) {
         switch(fn) {
             case AdvFunction.LEVEL1:
@@ -61,21 +76,21 @@ public class LightHead : MonoBehaviour {
     }
 
     public bool GetIsEnabled(AdvFunction fn, bool clr2 = false) {
-        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(transform, fn));
+        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
 
-        if(!patt.Contains("e" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")))
+        if(!patt.Contains("e" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")))
             return false;
         else
-            return (patt.Get<NbtShort>("e" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
+            return (patt.Get<NbtShort>("e" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
     }
 
     public bool GetPhaseB(AdvFunction fn, bool clr2 = false) {
-        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(transform, fn));
+        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
 
-        if(!patt.Contains("p" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")))
+        if(!patt.Contains("p" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")))
             return false;
         else
-            return (patt.Get<NbtShort>("p" + (transform.position.y < 0 ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
+            return (patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
     }
 
     public List<BasicFunction> CapableBasicFunctions {
@@ -163,6 +178,10 @@ public class LightHead : MonoBehaviour {
         for(Transform t = transform; soc == null && t != null; t = t.parent) {
             soc = t.GetComponent<SizeOptionControl>();
         }
+
+        if(isRear) {
+
+        }
     }
 
     void Update() {
@@ -202,7 +221,25 @@ public class LightHead : MonoBehaviour {
     //    return ((en & (0x1 << Bit)) > 0);
     //}
 
+    public void PrefetchPatterns() {
+        if(pattDict1 == null)
+            pattDict1 = new Dictionary<AdvFunction, Pattern>();
+        else
+            pattDict1.Clear();
+        if(pattDict2 == null)
+            pattDict2 = new Dictionary<AdvFunction, Pattern>();
+        else
+            pattDict2.Clear();
+
+        foreach(int i in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
+            pattDict1[(AdvFunction)i] = GetPattern((AdvFunction)i, false);
+            pattDict2[(AdvFunction)i] = GetPattern((AdvFunction)i, true);
+        }
+    }
+
     public Pattern GetPattern(AdvFunction f, bool clr2 = false) {
+        if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null;
+        if(clr2 && pattDict2 != null) return pattDict2.ContainsKey(f) ? pattDict2[f] : null;
         if(lhd.style == null) return null;
         if(LightDict.inst.steadyBurn.Contains(f)) {
             return LightDict.stdy;
