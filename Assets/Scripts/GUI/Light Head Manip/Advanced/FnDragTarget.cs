@@ -50,6 +50,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                     val[i] &= ~newFunc;
                 }
             }
+            inputMap.Value = val;
             BarManager.moddedBar = true;
             if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
         } else if(FnDragTarget.draggedItem != null) {
@@ -62,6 +63,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             } else {
                 val[key] = newFunc;
             }
+            inputMap.Value = val;
             BarManager.moddedBar = true;
             if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
         }
@@ -176,6 +178,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                     en |= traf[alpha].ShortValue;
                 }
                 break;
+            case 0x0:
             case 0x1000:
                 en = 1;
                 break;

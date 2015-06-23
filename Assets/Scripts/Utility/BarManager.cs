@@ -33,7 +33,7 @@ public class BarManager : MonoBehaviour {
                 FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
                                                       0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 };
             } else {
-                FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 };
+                FnDragTarget.inputMap.Value = new int[] { 1, 2, 3072, 4, 8, 512, 256, 32, 16, 128, 64, 4096, 0, 0, 0, 0, 0, 0, 0, 0 };
             }
         }
     }
@@ -141,7 +141,7 @@ public class BarManager : MonoBehaviour {
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
         }
 
-        FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0xC00, 0x1000, 0, 0, 0, 0, 0, 0, 0, 0 });
+        FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 1, 2, 3072, 4, 8, 512, 256, 32, 16, 128, 64, 4096, 0, 0, 0, 0, 0, 0, 0, 0 });
         patts.Add(FnDragTarget.inputMap);
     }
 
@@ -811,6 +811,7 @@ public class BarManager : MonoBehaviour {
         }
 
         patts = root.Get<NbtCompound>("pats");
+        FnDragTarget.inputMap = patts.Get<NbtIntArray>("map");
 
         foreach(NbtTag alpha in socList) {
             NbtCompound socCmpd = alpha as NbtCompound;
@@ -972,533 +973,6 @@ public class BarManager : MonoBehaviour {
             alpha.Refresh();
         }
 
-    }
-
-    public void OverviewPage(PdfPage p, Rect capRect) {
-        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
-        XTextFormatter tf = new XTextFormatter(gfx);
-
-        XFont courier = new XFont("Courier New", new XUnit(12, XGraphicsUnit.Point).Inch);
-        XFont courierSm = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
-        XFont caliLg = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
-        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
-        XFont caliSmBold = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
-        using(XImage descImg = XImage.FromFile("tempgen\\desc.png")) {
-            gfx.DrawImage(descImg, 0.5, 1.3, capRect.width * scale, capRect.height * scale);
-        }
-        using(XImage tl = XImage.FromFile("pdfassets\\TopLeft.png")) {
-            gfx.DrawImage(tl, 0.5, 0.5, 0.74, 0.9);
-        }
-        using(XImage tr = XImage.FromFile("pdfassets\\TopRight.png")) {
-            gfx.DrawImage(tr, ((float)p.Width.Inch) - 2.45, 0.5, 1.95, 0.75);
-        }
-
-        tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Star 1000", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-        tf.DrawString("Model " + BarModel, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
-
-        tf.Alignment = XParagraphAlignment.Left;
-
-        tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(1.4, 3.39, 2.0, 0.1));
-        tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(4.0, 3.39, 0.5, 0.1));
-        if(CameraControl.ShowPricing)
-            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, 3.39, 0.5, 0.1));
-
-        double top = 3.5;
-        if(LightLabel.alternateNumbering) {
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Driver Front", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "DF");
-            top += 0.1;
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Pass. Front", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "PF");
-            top += 0.1;
-            foreach(LightHead lh in headNumber) {
-                if(altHeadNumber[lh] == "DA") {
-                    tf.Alignment = XParagraphAlignment.Right;
-                    tf.DrawString("Driver Alley", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                    tf.Alignment = XParagraphAlignment.Left;
-                    PrintHead(tf, caliSm, courierSm, top, lh);
-                    break;
-                }
-            }
-            top += 0.1;
-            foreach(LightHead lh in headNumber) {
-                if(altHeadNumber[lh] == "PA") {
-                    tf.Alignment = XParagraphAlignment.Right;
-                    tf.DrawString("Pass. Alley", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                    tf.Alignment = XParagraphAlignment.Left;
-                    PrintHead(tf, caliSm, courierSm, top, lh);
-                    break;
-                }
-            }
-            top += 0.2;
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Driver Rear", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "DR");
-            top += 0.1;
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Pass. Rear", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "PR");
-        } else {
-            for(int i = 0; i < headNumber.Length; i++) {
-                LightHead lh = headNumber[i];
-                tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, top + (i * 0.10), 1.2, 0.10));
-                PrintHead(tf, caliSm, courierSm, top + (i * 0.10), lh);
-            }
-            top += headNumber.Length * 0.1;
-            top += 0.1;
-        }
-        top += 0.2;
-
-        XPen border = new XPen(XColors.Black, 0.025);
-
-        StringBuilder sb = new StringBuilder(1024);
-        foreach(IssueChecker issue in issues) {
-            if(issue.DoCheck()) {
-                sb.AppendLine(issue.text.text);
-            }
-        }
-        if(sb.Length > 0) {
-            tf.DrawString("Issues found:", caliSmBold, XBrushes.Black, new XRect(0.5, top, 1.2, 0.10));
-            tf.DrawString("Sign Off:", caliLg, XBrushes.Black, new XRect(3.2, top - .1, 0.6, 0.2));
-            gfx.DrawLine(border, 3.8, top + 0.1, 4.0, top - 0.1);
-            gfx.DrawLine(border, 3.8, top - 0.1, 4.0, top + 0.1);
-            gfx.DrawLine(border, 4.0, top + 0.1, 6.0, top + 0.1);
-            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.8, top + 0.10, p.Width.Inch - 1.3, 2.0));
-        }
-
-        top = p.Height.Inch - 2.5;
-        gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, p.Width.Inch - 1.0, 2.0));
-        gfx.DrawLine(border, 0.5, top + 0.5, p.Width.Inch - 0.5, top + 0.5);
-
-        tf.DrawString("Customer", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.01, 1.0, 0.15));
-        tf.DrawString("Order Number / PO", caliSm, XBrushes.DarkGray, new XRect(4, top + 0.01, 1.5, 0.15));
-        gfx.DrawLine(border, 3.95, top, 3.95, top + 0.5);
-        tf.DrawString("Order Date", caliSm, XBrushes.DarkGray, new XRect(6.2, top + 0.01, 1.0, 0.15));
-        gfx.DrawLine(border, 6.15, top, 6.15, top + 0.5);
-
-        tf.DrawString(custName.text, caliLg, XBrushes.Black, new XRect(0.6, top + 0.2, 3.0, 0.2));
-        tf.DrawString(orderNum.text, courier, XBrushes.Black, new XRect(4.05, top + 0.2, 1.75, 0.2));
-        tf.DrawString(System.DateTime.Now.ToString("MMM dd, yyyy"), courier, XBrushes.Black, new XRect(6.25, top + 0.2, 3.0, 0.2));
-
-        tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
-        tf.DrawString(notes.text, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
-
-        tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-    }
-
-    private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh) {
-        if(lh.lhd.style == null) {
-            tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
-        } else {
-            tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-            tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("F3"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
-            if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
-        }
-    }
-
-    private void SummaryPrintCorner(XTextFormatter tf, XFont courierSm, XFont caliSm, ref double top, string corner) {
-        byte number = 0;
-        while(true) {
-            number++;
-            top += 0.1;
-            LightHead head = null;
-            foreach(LightHead lh in headNumber) {
-                if(altHeadNumber[lh] == corner + number) {
-                    head = lh;
-                    break;
-                }
-            }
-            if(head == null) {
-                break;
-            }
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            PrintHead(tf, caliSm, courierSm, top, head);
-        }
-    }
-
-    public void PartsPage(PdfPage p, Rect capRect) {
-        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
-        XTextFormatter tf = new XTextFormatter(gfx);
-
-        XFont courier = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
-        XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
-        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
-        using(XImage partImg = XImage.FromFile("tempgen\\part.png")) {
-            gfx.DrawImage(partImg, 0.5, 1.0, capRect.width * scale, capRect.height * scale);
-        }
-
-        tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Model " + BarModel, new XFont("Courier New", new XUnit(24, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.5, p.Width.Inch - 1.0, 1.0));
-        tf.DrawString("Production Copy - Bill of Materials", caliBold, XBrushes.Black, new XRect(0.5, 0.8, p.Width.Inch - 1.0, 1.0));
-
-        tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, 3.3, 1.0, 0.2));
-        tf.Alignment = XParagraphAlignment.Left;
-        tf.DrawString("Component", caliBold, XBrushes.Black, new XRect(1.5, 3.3, 1.0, 0.2));
-        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 1.0, 0.2));
-
-        List<string> parts = new List<string>();
-        Dictionary<string, int> counts = new Dictionary<string, int>();
-        Dictionary<string, LightHead> descs = new Dictionary<string, LightHead>();
-        foreach(LightHead lh in BarManager.headNumber) {
-            if(lh.lhd.style != null) {
-                string part = lh.PartNumber;
-                if(counts.ContainsKey(part)) {
-                    counts[part]++;
-                } else {
-                    counts[part] = 1;
-                    descs[part] = lh;
-                    parts.Add(part);
-                }
-            }
-        }
-
-        double top = 3.5;
-        foreach(string part in parts) {
-            tf.Alignment = XParagraphAlignment.Center;
-            tf.DrawString(counts[part] + "", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
-            tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString(descs[part].PartNumber, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
-            tf.DrawString((descs[part].lhd.optic.styles.Count > 1 ? descs[part].lhd.style.name + " " : "") + descs[part].lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
-            top += 0.15;
-        }
-
-        tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-    }
-
-    public void WiringPage(PdfPage p, Rect capRect) {
-        p.Orientation = PageOrientation.Landscape;
-
-        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
-        XTextFormatter tf = new XTextFormatter(gfx);
-
-        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
-        using(XImage wireImg = XImage.FromFile("tempgen\\wire.png")) {
-            gfx.DrawImage(wireImg, 0.5, 1.2, capRect.width * scale, capRect.height * scale);
-        }
-
-        tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Wiring Diagram", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-
-        XImage circuit = XImage.FromFile("pdfassets\\Circuit.png");
-        scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (circuit.PixelWidth * 1.0f);
-        gfx.DrawImage(circuit, 0.5, 3.75, circuit.PixelWidth * scale, circuit.PixelHeight * scale);
-
-        tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-    }
-
-    public void PatternPage(PdfPage p, Rect capRect) {
-        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
-        XTextFormatter tf = new XTextFormatter(gfx);
-
-        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
-        XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
-
-        XPen border = new XPen(XColors.Black, 0.025);
-
-        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
-        using(XImage wireImg = XImage.FromFile("tempgen\\wireClrless.png")) {
-            gfx.DrawImage(wireImg, 0.5, 1.2, capRect.width * scale, capRect.height * scale);
-        }
-
-        tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Bar Programming", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-
-        if(patts.Contains("prog")) {
-            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(0.5, 3.25, 0.75, 0.7));
-            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 3.3, 0.75, 0.6));
-            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(p.Width.Inch - 1.25, 3.25, 0.75, 0.7));
-            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.6));
-        }
-
-        double top = 3.3;
-
-        tf.DrawString("Input Map", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
-        top += 0.2;
-        if(useCAN) {
-            PrintRow(tf, caliSm, GetFuncFromMap(0), GetFuncFromMap(12), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(13), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(2), GetFuncFromMap(14), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(15), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(16), ref top);
-
-            PrintRow(tf, caliSm, GetFuncFromMap(5), GetFuncFromMap(17), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(18), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(7), GetFuncFromMap(19), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(8), "POWER", ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(9), "GROUND", ref top);
-
-            PrintRow(tf, caliSm, GetFuncFromMap(10), "---", ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(11), "---", ref top);
-        } else {
-            PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(0), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(2), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(11), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(5), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(8), GetFuncFromMap(7), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(10), GetFuncFromMap(9), ref top);
-            PrintRow(tf, caliSm, "---", "---", ref top);
-        }
-
-        top += 0.2;
-
-        tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Function Definitions", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
-        top += 0.3;
-        gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.4));
-        tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(0.5, top + (useCAN ? 0.0 : 0.1), 1.25, 0.2));
-        if(useCAN) tf.DrawString("Break Out Box", caliBold, XBrushes.Black, new XRect(0.50, top + 0.2, 1.25, 0.2));
-        gfx.DrawLine(border, 1.75, top, 1.75, top + 0.4);
-        tf.DrawString("Positions", caliBold, XBrushes.Black, new XRect(1.8, top, 4.0, 0.1));
-        tf.DrawString("Phase A", caliBold, XBrushes.Black, new XRect(1.8, top + 0.2, 1.95, 0.1));
-        gfx.DrawLine(border, 3.8, top + 0.2, 3.8, top + 0.4);
-        tf.DrawString("Phase B", caliBold, XBrushes.Black, new XRect(3.85, top + 0.2, 1.95, 0.1));
-        gfx.DrawLine(border, 5.8, top, 5.8, top + 0.4);
-        tf.DrawString("Pattern(s)", caliBold, XBrushes.Black, new XRect(5.85, top + 0.1, p.Width.Inch - 6.4, 0.2));
-
-        top += 0.4;
-        foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
-            for(int i = 0; i < 20; i++) {
-                if((FnDragTarget.inputMap[i] & (int)func) > 0) {
-                    gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
-                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
-                    gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
-
-                    List<string> parts = new List<string>();
-                    AdvFunction advfunc = (AdvFunction)func;
-
-                    switch(func) {
-                        case 0x2: // LEVEL1
-                        case 0x4: // LEVEL2
-                        case 0x8: // LEVEL3
-                        case 0x100: // ICL
-                        case 0x400: // FTAKEDOWN
-                        case 0x800: // FALLEY
-                        case 0x40000: // LEVEL4
-                        case 0x80000: // LEVEL5
-                            List<string> partsB = new List<string>();
-                            foreach(LightHead alpha in headNumber) {
-                                if(alpha.lhd.style == null) continue;
-                                if(alpha.GetIsEnabled(advfunc, false)) {
-                                    if(alpha.GetPhaseB(advfunc, false)) {
-                                        partsB.Add(GetWireColor1(alpha));
-                                    } else {
-                                        parts.Add(GetWireColor1(alpha));
-                                    }
-                                }
-                                if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
-                                    if(alpha.GetPhaseB(advfunc, false)) {
-                                        partsB.Add(GetWireColor2(alpha));
-                                    } else {
-                                        parts.Add(GetWireColor2(alpha));
-                                    }
-                                }
-                            }
-
-                            foreach(string prefix in new string[] { "P3-", "P8-", "P9-", "P10-" }) {
-                                for(int wire = 0; wire < 13; wire++) {
-                                    if(parts.Contains(prefix + wire)) {
-                                        for(int part = 0; part < parts.Count; part++) {
-                                            if(parts[part].StartsWith(prefix) && parts[part].EndsWith("-" + (wire - 1))) {
-                                                parts[part] = parts[part].Split(' ')[0] + " thru -" + wire;
-                                                parts.Remove(prefix + wire);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if(partsB.Contains(prefix + wire)) {
-                                        for(int part = 0; part < partsB.Count; part++) {
-                                            if(partsB[part].StartsWith(prefix) && partsB[part].EndsWith("-" + (wire - 1))) {
-                                                partsB[part] = partsB[part].Split(' ')[0] + " thru -" + wire;
-                                                partsB.Remove(prefix + wire);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Write out Phase A, new XRect(1.8, top, 1.95, 0.1)
-                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.1));
-                            gfx.DrawLine(border, 3.8, top, 3.8, top + 0.2);
-                            // Write out Phase B, new XRect(3.85, top, 1.95, 0.1)
-                            tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.1));
-                            break;
-                        default:
-                            // Write out enabled, new XRect(1.8, top, 4.0, 0.1)
-                            foreach(LightHead alpha in headNumber) {
-                                if(alpha.lhd.style == null) continue;
-                                if(alpha.GetIsEnabled(advfunc, false)) {
-                                    parts.Add(GetWireColor1(alpha));
-                                }
-                                if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
-                                    parts.Add(GetWireColor2(alpha));
-                                }
-                            }
-
-                            foreach(string prefix in new string[] { "P3-", "P8-", "P9-", "P10-" }) {
-                                for(int wire = 0; wire < 13; wire++) {
-                                    if(parts.Contains(prefix + wire)) {
-                                        for(int part = 0; part < parts.Count; part++) {
-                                            if(parts[part].StartsWith(prefix) && parts[part].EndsWith("-" + (wire - 1))) {
-                                                parts[part] = parts[part].Split(' ')[0] + " thru -" + wire;
-                                                parts.Remove(prefix + wire);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.1));
-                            break;
-                    }
-                    gfx.DrawLine(border, 5.8, top, 5.8, top + 0.2);
-                    // Write out pattern(s), new XRect(5.85, top + 0.1, p.Width.Inch - 8.4, 0.2)
-                    switch(func) {
-                        case 0x2: // LEVEL1
-                        case 0x4: // LEVEL2
-                        case 0x8: // LEVEL3
-                        case 0x10: // TRAFFIC_LEFT
-                        case 0x20: // TRAFFIC_RIGHT
-                        case 0x100: // ICL
-                        case 0x400: // FTAKEDOWN
-                        case 0x800: // FALLEY
-                        case 0x40000: // LEVEL4
-                        case 0x80000: // LEVEL5
-                            List<string> patt = new List<string>(5);
-                            Pattern thisPatt;
-
-                            foreach(LightHead alpha in headNumber) {
-                                if(alpha.lhd.style == null) continue;
-                                if(alpha.GetIsEnabled(advfunc, false)) {
-                                    thisPatt = alpha.GetPattern(advfunc);
-                                    if(thisPatt != null) {
-                                        if(!patt.Contains(thisPatt.name)) {
-                                            patt.Add(thisPatt.name);
-                                        }
-                                    }
-                                }
-                                if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
-                                    thisPatt = alpha.GetPattern(advfunc, true);
-                                    if(thisPatt != null) {
-                                        if(!patt.Contains(thisPatt.name)) {
-                                            patt.Add(thisPatt.name);
-                                        }
-                                    }
-                                }
-                                thisPatt = null;
-                            }
-
-                            if(patt.Count > 0) {
-                                tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.2));
-                            }
-                            break;
-                        default:
-                            tf.DrawString("Steady Burn", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.2));
-                            break;
-                    }
-
-                    top += 0.2;
-                    break;
-                }
-            }
-        }
-
-
-        tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-    }
-
-    public string GetFuncFromInt(int num) {
-        switch(num) {
-            case 0x0: // Nothing
-                return "---";
-            case 0x1: // TAKEDOWN
-                return "Takedown / Work Lights";
-            case 0x2: // LEVEL1
-                return "Level 1";
-            case 0x4: // LEVEL2
-                return "Level 2";
-            case 0x8: // LEVEL3
-                return "Level 3";
-            case 0x10: // TRAFFIC_LEFT
-                return "Direct Left";
-            case 0x20: // TRAFFIC_RIGHT
-                return "Direct Right";
-            case 0x40: // ALLEY_LEFT
-                return "Left Alley";
-            case 0x80: // ALLEY_RIGHT
-                return "Right Alley";
-            case 0x100: // ICL
-                return "ICL";
-            case 0x200: // DIM
-                return "Dimmer";
-            case 0x400: // FTAKEDOWN
-                return "Flashing Pursuit";
-            case 0x800: // FALLEY
-                return "Flashing Alley";
-            case 0xC00: // FTAKEDOWN | FALLEY
-                return "Flashing Alley & Pursuit";
-            case 0x1000: // PATTERN
-                return "Pattern";
-            case 0x2000: // CRUISE
-                return "Cruise";
-            case 0x4000: // TURN_LEFT
-                return "Turn Left";
-            case 0x8000: // TURN_RIGHT
-                return "Turn Right";
-            case 0x10000: // TAIL
-                return "Brake Lights";
-            case 0x20000: // T13
-                return "California T13 Steady";
-            case 0x40000: // LEVEL4
-                return "Level 4";
-            case 0x80000: // LEVEL5
-                return "Level 5";
-            case 0x100000: // EMITTER
-                return "Emitter";
-            default:
-                return "???";
-        }
-    }
-
-    public string GetFuncFromMap(int which) {
-        return GetFuncFromInt(FnDragTarget.inputMap[which]);
-    }
-
-    public void PrintRow(XTextFormatter tf, XFont caliSm, string left, string right, ref double top) {
-        tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString(left, caliSm, XBrushes.Black, new XRect(3.0, top, 1.15, 0.1));
-        tf.Alignment = XParagraphAlignment.Left;
-        tf.DrawString(right, caliSm, XBrushes.Black, new XRect(4.35, top, 1.15, 0.1));
-        top += 0.1;
-    }
-
-    public static XPoint[] XPointArray(params Vector2[] vecs) {
-        XPoint[] rtn = new XPoint[vecs.Length];
-        for(int i = 0; i < vecs.Length; i++) {
-            rtn[i] = vecs[i].ToXPoint();
-        }
-        return rtn;
     }
 
     public void Clear() {
@@ -1781,7 +1255,7 @@ public class PDFExportJob : ThreadedJob {
         }
 
         capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
-        
+
         base.Start();
     }
 
@@ -2124,7 +1598,7 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.6));
         }
 
-        double top = 3.3;
+        double top = 3.0;
 
         tf.DrawString("Input Map", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
         top += 0.2;
@@ -2153,11 +1627,11 @@ public class PDFExportJob : ThreadedJob {
             PrintRow(tf, caliSm, "---", "---", ref top);
         }
 
-        top += 0.2;
+        top += 0.05;
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Function Definitions", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
-        top += 0.3;
+        top += 0.2;
         gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.4));
         tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(0.5, top + (useCAN ? 0.0 : 0.1), 1.25, 0.2));
         if(useCAN) tf.DrawString("Break Out Box", caliBold, XBrushes.Black, new XRect(0.50, top + 0.2, 1.25, 0.2));
@@ -2173,12 +1647,34 @@ public class PDFExportJob : ThreadedJob {
         foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
             for(int i = 0; i < 20; i++) {
                 if((FnDragTarget.inputMap[i] & (int)func) > 0) {
-                    gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
-                    tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
-                    gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
+
+                    switch(func) {
+                        case 0x2: // LEVEL1
+                        case 0x4: // LEVEL2
+                        case 0x8: // LEVEL3
+                        case 0x100: // ICL
+                        case 0x400: // FTAKEDOWN
+                        case 0x800: // FALLEY
+                        case 0x40000: // LEVEL4
+                        case 0x80000: // LEVEL5
+                            gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.3));
+                            gfx.DrawLine(border, 1.75, top, 1.75, top + 0.3);
+                            gfx.DrawLine(border, 3.8, top, 3.8, top + 0.3);
+                            gfx.DrawLine(border, 5.8, top, 5.8, top + 0.3);
+                            tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.075, 1.25, 0.1));
+                            break;
+                        default:
+                            gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
+                            gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
+                            gfx.DrawLine(border, 5.8, top, 5.8, top + 0.2);
+                            tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
+                            break;
+                    }
 
                     List<string> parts = new List<string>();
                     AdvFunction advfunc = (AdvFunction)func;
+
+                    PartComparer pc = new PartComparer();
 
                     switch(func) {
                         case 0x2: // LEVEL1
@@ -2208,8 +1704,11 @@ public class PDFExportJob : ThreadedJob {
                                 }
                             }
 
+                            parts.Sort(pc);
+                            partsB.Sort(pc);
+
                             foreach(string prefix in new string[] { "FD-", "FP-", "RD-", "RP-" }) {
-                                for(int wire = 0; wire < 13; wire++) {
+                                for(int wire = 1; wire < 14; wire++) {
                                     if(parts.Contains(prefix + wire)) {
                                         for(int part = 0; part < parts.Count; part++) {
                                             if(parts[part].StartsWith(prefix) && parts[part].EndsWith("-" + (wire - 1))) {
@@ -2232,10 +1731,9 @@ public class PDFExportJob : ThreadedJob {
                             }
 
                             // Write out Phase A, new XRect(1.8, top, 1.95, 0.1)
-                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.1));
-                            gfx.DrawLine(border, 3.8, top, 3.8, top + 0.2);
+                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.3));
                             // Write out Phase B, new XRect(3.85, top, 1.95, 0.1)
-                            tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.1));
+                            tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.3));
                             break;
                         default:
                             // Write out enabled, new XRect(1.8, top, 4.0, 0.1)
@@ -2249,7 +1747,9 @@ public class PDFExportJob : ThreadedJob {
                                 }
                             }
 
-                            foreach(string prefix in new string[] { "P3-", "P8-", "P9-", "P10-" }) {
+                            parts.Sort(pc);
+
+                            foreach(string prefix in new string[] { "FD-", "FP-", "RD-", "RP-" }) {
                                 for(int wire = 0; wire < 13; wire++) {
                                     if(parts.Contains(prefix + wire)) {
                                         for(int part = 0; part < parts.Count; part++) {
@@ -2266,7 +1766,6 @@ public class PDFExportJob : ThreadedJob {
                             tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.1));
                             break;
                     }
-                    gfx.DrawLine(border, 5.8, top, 5.8, top + 0.2);
                     // Write out pattern(s), new XRect(5.85, top + 0.1, p.Width.Inch - 8.4, 0.2)
                     switch(func) {
                         case 0x2: // LEVEL1
@@ -2304,7 +1803,7 @@ public class PDFExportJob : ThreadedJob {
                             }
 
                             if(patt.Count > 0) {
-                                tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.2));
+                                tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.3));
                             }
                             break;
                         default:
@@ -2312,7 +1811,21 @@ public class PDFExportJob : ThreadedJob {
                             break;
                     }
 
-                    top += 0.2;
+                    switch(func) {
+                        case 0x2: // LEVEL1
+                        case 0x4: // LEVEL2
+                        case 0x8: // LEVEL3
+                        case 0x100: // ICL
+                        case 0x400: // FTAKEDOWN
+                        case 0x800: // FALLEY
+                        case 0x40000: // LEVEL4
+                        case 0x80000: // LEVEL5
+                            top += 0.3;
+                            break;
+                        default:
+                            top += 0.2;
+                            break;
+                    }
                     break;
                 }
             }
@@ -2387,5 +1900,66 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString(right, caliSm, XBrushes.Black, new XRect(4.35, top, 1.15, 0.1));
         top += 0.1;
+    }
+
+    private class PartComparer : IComparer<string> {
+
+        public int Compare(string x, string y) {
+            string xl, yl;
+            string[] xBits = x.Split('-');
+            string[] yBits = y.Split('-');
+
+            xl = xBits[0];
+            yl = yBits[0];
+
+            if(xl.Equals(yl, StringComparison.CurrentCultureIgnoreCase)) {
+                int xOutput = int.Parse(xBits[1]), yOutput = int.Parse(yBits[1]);
+                if(xOutput == yOutput) return 0;
+                else if(xOutput < yOutput) return -1;
+                else return 1;
+            } else {
+                int xPort = 0, yPort = 0;
+
+                switch(xl) {
+                    case "FD":
+                        xPort = 1;
+                        break;
+                    case "FP":
+                        xPort = 2;
+                        break;
+                    case "RP":
+                        xPort = 3;
+                        break;
+                    case "RD":
+                        xPort = 4;
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid port");
+                }
+
+                switch(yl) {
+                    case "FD":
+                        yPort = 1;
+                        break;
+                    case "FP":
+                        yPort = 2;
+                        break;
+                    case "RP":
+                        yPort = 3;
+                        break;
+                    case "RD":
+                        yPort = 4;
+                        break;
+                    default:
+                        throw new ArgumentException("Invalid port");
+                }
+
+                if(xPort < yPort) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        }
     }
 }

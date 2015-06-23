@@ -232,14 +232,16 @@ public class LightHead : MonoBehaviour {
             pattDict2.Clear();
 
         foreach(int i in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
-            pattDict1[(AdvFunction)i] = GetPattern((AdvFunction)i, false);
-            pattDict2[(AdvFunction)i] = GetPattern((AdvFunction)i, true);
+            pattDict1[(AdvFunction)i] = GetPattern((AdvFunction)i, false, true);
+            pattDict2[(AdvFunction)i] = GetPattern((AdvFunction)i, true, true);
         }
     }
 
-    public Pattern GetPattern(AdvFunction f, bool clr2 = false) {
-        if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null;
-        if(clr2 && pattDict2 != null) return pattDict2.ContainsKey(f) ? pattDict2[f] : null;
+    public Pattern GetPattern(AdvFunction f, bool clr2 = false, bool forceFetch = false) {
+        if(!forceFetch) {
+            if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null;
+            if(clr2 && pattDict2 != null) return pattDict2.ContainsKey(f) ? pattDict2[f] : null;
+        }
         if(lhd.style == null) return null;
         if(LightDict.inst.steadyBurn.Contains(f)) {
             return LightDict.stdy;

@@ -3,24 +3,29 @@ using System.Collections.Generic;
 
 public class InUseDisabler : MonoBehaviour {
     List<FnDrag> draggables;
+    List<AdvFunction> funcsInUse;
 
     void Start() {
         draggables = new List<FnDrag>(transform.GetComponentsInChildren<FnDrag>());
+        funcsInUse = new List<AdvFunction>();
     }
 
     void Update() {
-        foreach(FnDrag alpha in draggables) {
-            alpha.gameObject.SetActive(true);
-        }
-
-        List<FnDrag> test = new List<FnDrag>(draggables);
+        funcsInUse.Clear();
 
         foreach(int i in FnDragTarget.inputMap.Value) {
-            foreach(FnDrag alpha in new List<FnDrag>(test)) {
-                if((((int)alpha.myFunc) & i) > 0) {
-                    alpha.gameObject.SetActive(false);
-                    test.Remove(alpha);
+            for(int func = 1; func < 0x140000; func = func << 1) {
+                if((i & func) > 0) {
+                    funcsInUse.Add((AdvFunction)func);
                 }
+            }
+        }
+
+        foreach(FnDrag alpha in draggables) {
+            if(!alpha.gameObject.activeInHierarchy && !funcsInUse.Contains(alpha.myFunc)) {
+                alpha.gameObject.SetActive(true);
+            } else if(alpha.gameObject.activeInHierarchy && funcsInUse.Contains(alpha.myFunc)) {
+                alpha.gameObject.SetActive(false);
             }
         }
     }
