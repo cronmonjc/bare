@@ -8,6 +8,7 @@ using System.Collections;
 [RequireComponent(typeof(LayoutElement))]
 [RequireComponent(typeof(Text))]
 public abstract class IssueChecker : MonoBehaviour {
+    [System.NonSerialized]
     public Text text;
     protected LayoutElement le;
     
