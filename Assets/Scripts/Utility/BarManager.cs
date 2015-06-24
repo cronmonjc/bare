@@ -481,8 +481,8 @@ public class BarManager : MonoBehaviour {
 
     public IEnumerator RefreshBits() {
         RefreshingBits = true;
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForFixedUpdate();
+        yield return new WaitForFixedUpdate();
         foreach(LightHead alpha in allHeads) {
             if(!alpha.gameObject.activeInHierarchy) continue;
             if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) {
@@ -548,6 +548,47 @@ public class BarManager : MonoBehaviour {
 
         List<LightHead> heads = new List<LightHead>(10);
         List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0)));
+        RaycastHit far; LightHead farHead;
+        switch(td) {
+            case TDOption.NONE:
+                far = test[0];
+                foreach(RaycastHit alpha in test) {
+                    if(far.transform != alpha.transform && far.distance < alpha.distance)
+                        far = alpha;
+                }
+
+                farHead = far.transform.GetComponent<LightHead>();
+                if(!farHead.isSmall) {
+                    farHead.myBit = 2;
+                    test.Remove(far);
+                }
+                break;
+            case TDOption.SM_SIX:
+                if(BarSize > 1) {
+                    far = test[0];
+                    foreach(RaycastHit alpha in test) {
+                        if(far.transform != alpha.transform && far.distance < alpha.distance)
+                            far = alpha;
+                    }
+
+                    farHead = far.transform.GetComponent<LightHead>();
+                    test.Remove(far);
+                    if(farHead.isSmall) {
+                        farHead.myBit = 1;
+                        far = test[0];
+                        foreach(RaycastHit alpha in test) {
+                            if(far.transform != alpha.transform && far.distance < alpha.distance)
+                                far = alpha;
+                        }
+                        farHead = far.transform.GetComponent<LightHead>();
+                        test.Remove(far);
+                    }
+                    farHead.myBit = 1;
+                }
+                break;
+            default:
+                break;
+        }
         byte bit = 5;
         RaycastHit center;
         if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) {
@@ -559,6 +600,7 @@ public class BarManager : MonoBehaviour {
                 alpha.myBit = 255;
             }
         }
+        if(BarSize == 0 && test.Count == 1) bit = 4;
         bool cont = true;
         while(cont && test.Count > 0) {
             for(int i = 0; i < test.Count; i++) {
@@ -594,7 +636,9 @@ public class BarManager : MonoBehaviour {
             } else if(bit == 1) {
                 heads[i].myBit = 1;
             } else {
-                if(heads.Count - i > bit) {
+                if(td == TDOption.SM_SIX && BarSize > 1) {
+                    heads[i].myBit = bit;
+                } else if(heads.Count - i > bit) {
                     heads[i].myBit = bit;
                     heads[++i].myBit = bit--;
                 } else {
@@ -614,6 +658,48 @@ public class BarManager : MonoBehaviour {
         heads.Clear();
         test.Clear();
         test.AddRange(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(1f, 0)));
+        switch(td) {
+            case TDOption.NONE:
+                far = test[0];
+                foreach(RaycastHit alpha in test) {
+                    if(far.transform != alpha.transform && far.distance < alpha.distance)
+                        far = alpha;
+                }
+
+                farHead = far.transform.GetComponent<LightHead>();
+                if(!farHead.isSmall) {
+                    farHead.myBit = 9;
+                    test.Remove(far);
+                }
+                break;
+            case TDOption.SM_SIX:
+                if(BarSize > 1) {
+                    far = test[0];
+                    foreach(RaycastHit alpha in test) {
+                        if(far.transform != alpha.transform && far.distance < alpha.distance)
+                            far = alpha;
+                    }
+
+                    farHead = far.transform.GetComponent<LightHead>();
+                    test.Remove(far);
+                    if(farHead.isSmall) {
+                        farHead.myBit = 10;
+                        far = test[0];
+                        foreach(RaycastHit alpha in test) {
+                            if(far.transform != alpha.transform && far.distance < alpha.distance)
+                                far = alpha;
+                        }
+                        farHead = far.transform.GetComponent<LightHead>();
+                        test.Remove(far);
+                    }
+                    farHead.myBit = 10;
+                }
+                break;
+            default:
+                break;
+        }
+        bit = 6;
+        if(BarSize < 2 && test.Count == 1) bit = 7;
         cont = true;
         while(cont && test.Count > 0) {
             for(int i = 0; i < test.Count; i++) {
@@ -639,7 +725,6 @@ public class BarManager : MonoBehaviour {
             test.Remove(center);
             heads.Add(center.transform.GetComponent<LightHead>());
         }
-        bit = 6;
         for(int i = 0; i < heads.Count; i++) {
             if(heads[i].lhd.style == null) {
                 heads[i].myBit = 255;
@@ -650,7 +735,9 @@ public class BarManager : MonoBehaviour {
             } else if(bit == 10) {
                 heads[i].myBit = 10;
             } else {
-                if(heads.Count - i > (11 - bit)) {
+                if(td == TDOption.SM_SIX && BarSize > 1) {
+                    heads[i].myBit = bit;
+                } else if(heads.Count - i > (11 - bit)) {
                     heads[i].myBit = bit;
                     heads[++i].myBit = bit++;
                 } else {

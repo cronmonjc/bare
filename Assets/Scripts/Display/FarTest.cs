@@ -16,7 +16,8 @@ public class FarTest : MonoBehaviour {
         if(bm == null) bm = FindObjectOfType<BarManager>();
         if(lh == null) lh = GetComponent<LightHead>();
         bool far = (lh.Bit == 1 || lh.Bit == 10);
-        if(canFarOnPos) { far |= bm.BarSize <= sizeForFar; }
+        if(canFarOnPos) 
+            far |= bm.BarSize >= sizeForFar; 
         if(lh.shouldBeTD) far = false;
         lh.loc = far ? Location.FAR_REAR : Location.REAR;
         if(far && lh.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
