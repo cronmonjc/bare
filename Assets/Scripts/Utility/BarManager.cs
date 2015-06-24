@@ -783,7 +783,6 @@ public class BarManager : MonoBehaviour {
             byte fn = lightCmpd["func"].ByteValue;
             lh.lhd.funcs.Clear();
             foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
-                if(bfn == BasicFunction.TRAFFIC) continue;
                 if(((byte)bfn & fn) != 0) {
                     lh.lhd.funcs.Add(bfn);
                 }

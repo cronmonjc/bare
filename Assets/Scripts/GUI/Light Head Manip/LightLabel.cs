@@ -485,6 +485,8 @@ public class LightLabel : MonoBehaviour {
                     bool en1 = (func["e" + (lh.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0,
                          en2 = (func["e" + (lh.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0;
 
+                    if(!lh.lhd.style.isDualColor) en2 = false;
+
                     if(en1 || en2) {
                         while(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
                             ticksPast = PattTimer.inst.passedTicks;
