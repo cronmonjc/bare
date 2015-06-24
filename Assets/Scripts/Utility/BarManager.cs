@@ -126,7 +126,7 @@ public class BarManager : MonoBehaviour {
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("ef1", 0), new NbtShort("ef2", 0), new NbtShort("er1", 0), new NbtShort("er2", 0) });
         }
 
-        patts.Get<NbtCompound>("dim").Add(new NbtShort("dimp", 0));
+        patts.Get<NbtCompound>("dim").Add(new NbtShort("dimp", 25));
 
         foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw" }) {
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("pf1", 0), new NbtShort("pf2", 0), new NbtShort("pr1", 0), new NbtShort("pr2", 0) });
@@ -593,19 +593,18 @@ public class BarManager : MonoBehaviour {
         RaycastHit center;
         if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) {
             LightHead alpha = center.transform.GetComponent<LightHead>();
-            if(alpha.lhd.style != null) {
+            if(alpha.hasRealHead) {
                 alpha.myBit = 5;
                 bit = 4;
             } else {
                 alpha.myBit = 255;
             }
         }
-        if(BarSize == 0 && test.Count == 1) bit = 4;
         bool cont = true;
         while(cont && test.Count > 0) {
             for(int i = 0; i < test.Count; i++) {
                 LightHead testHead = test[i].transform.GetComponent<LightHead>();
-                if(testHead.lhd.style == null) {
+                if(!testHead.hasRealHead) {
                     testHead.myBit = 255;
                     test.RemoveAt(i);
                     break;
@@ -616,6 +615,7 @@ public class BarManager : MonoBehaviour {
                 }
             }
         }
+        if(BarSize < 2 && test.Count == 1) bit = 4;
         while(test.Count > 0) {
             center = test[0];
             for(int i = 1; i < test.Count; i++) {
@@ -627,7 +627,7 @@ public class BarManager : MonoBehaviour {
             heads.Add(center.transform.GetComponent<LightHead>());
         }
         for(int i = 0; i < heads.Count; i++) {
-            if(heads[i].lhd.style == null) {
+            if(!heads[i].hasRealHead) {
                 heads[i].myBit = 255;
                 continue;
             }
@@ -699,12 +699,11 @@ public class BarManager : MonoBehaviour {
                 break;
         }
         bit = 6;
-        if(BarSize < 2 && test.Count == 1) bit = 7;
         cont = true;
         while(cont && test.Count > 0) {
             for(int i = 0; i < test.Count; i++) {
                 LightHead testHead = test[i].transform.GetComponent<LightHead>();
-                if(testHead.lhd.style == null) {
+                if(!testHead.hasRealHead) {
                     testHead.myBit = 255;
                     test.RemoveAt(i);
                     break;
@@ -715,6 +714,7 @@ public class BarManager : MonoBehaviour {
                 }
             }
         }
+        if(BarSize < 2 && test.Count == 1) bit = 7;
         while(test.Count > 0) {
             center = test[0];
             for(int i = 1; i < test.Count; i++) {
@@ -726,7 +726,7 @@ public class BarManager : MonoBehaviour {
             heads.Add(center.transform.GetComponent<LightHead>());
         }
         for(int i = 0; i < heads.Count; i++) {
-            if(heads[i].lhd.style == null) {
+            if(!heads[i].hasRealHead) {
                 heads[i].myBit = 255;
                 continue;
             }
@@ -1187,7 +1187,7 @@ public class BarManager : MonoBehaviour {
         }
 
         foreach(LightHead alpha in allHeads) {
-            if(alpha.gameObject.activeInHierarchy && alpha.lhd.style != null && alpha.lhd.funcs.Contains(BasicFunction.FLASHING)) {
+            if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead && alpha.lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 alpha.basicPhaseB = (alpha.lhd.style != AStyle);
             }
         }
@@ -1323,7 +1323,7 @@ public class PDFExportJob : ThreadedJob {
 
         foreach(LightHead alpha in headNumber) {
             alpha.PrefetchPatterns();
-            if(alpha.lhd.style != null) {
+            if(alpha.hasRealHead) {
                 color1Wire[alpha] = BarManager.GetWireColor1(alpha);
                 if(alpha.lhd.style.isDualColor) color2Wire[alpha] = BarManager.GetWireColor2(alpha);
             }
@@ -1773,7 +1773,7 @@ public class PDFExportJob : ThreadedJob {
                         case 0x80000: // LEVEL5
                             List<string> partsB = new List<string>();
                             foreach(LightHead alpha in headNumber) {
-                                if(alpha.lhd.style == null) continue;
+                                if(!alpha.hasRealHead) continue;
                                 if(alpha.GetIsEnabled(advfunc, false)) {
                                     if(alpha.GetPhaseB(advfunc, false)) {
                                         partsB.Add(color1Wire[alpha]);
@@ -1824,7 +1824,7 @@ public class PDFExportJob : ThreadedJob {
                         default:
                             // Write out enabled, new XRect(1.8, top, 4.0, 0.1)
                             foreach(LightHead alpha in headNumber) {
-                                if(alpha.lhd.style == null) continue;
+                                if(!alpha.hasRealHead) continue;
                                 if(alpha.GetIsEnabled(advfunc, false)) {
                                     parts.Add(color1Wire[alpha]);
                                 }
@@ -1868,7 +1868,7 @@ public class PDFExportJob : ThreadedJob {
                             Pattern thisPatt;
 
                             foreach(LightHead alpha in headNumber) {
-                                if(alpha.lhd.style == null) continue;
+                                if(!alpha.hasRealHead) continue;
                                 if(alpha.GetIsEnabled(advfunc, false)) {
                                     thisPatt = alpha.GetPattern(advfunc);
                                     if(thisPatt != null) {

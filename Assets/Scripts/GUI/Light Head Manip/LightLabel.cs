@@ -71,7 +71,7 @@ public class LightLabel : MonoBehaviour {
                 secondImage.color = background.color = Color.white;
             }
         } else if(showWire) {
-            if(lh.lhd.style != null) {
+            if(lh.hasRealHead) {
                 byte bit = lh.Bit;
 
                 Color labelColor = Color.white;
@@ -165,7 +165,7 @@ public class LightLabel : MonoBehaviour {
                 }
             }
         } else if(showPatt) {
-            if(lh.lhd.style != null) {
+            if(lh.hasRealHead) {
                 bool canEnable;
                 switch(FunctionEditPane.currFunc) {
                     case AdvFunction.LEVEL1:

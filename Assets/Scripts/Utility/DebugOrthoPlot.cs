@@ -20,7 +20,7 @@ public class DebugOrthoPlot : MonoBehaviour {
 
     public void Refresh() {
         foreach(Transform t in transform) {
-            DestroyImmediate(t.gameObject);
+            Destroy(t.gameObject);
         }
 
         concat = "";

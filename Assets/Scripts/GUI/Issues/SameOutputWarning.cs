@@ -29,7 +29,7 @@ public class SameOutputWarning : IssueChecker {
 
         LightHead[] front = new LightHead[16], rear = new LightHead[16];
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(alpha.gameObject.activeInHierarchy && alpha.lhd.style != null) {
+            if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead) {
                 if(alpha.myLabel != null) {
                     alpha.myLabel.DispError = false;
 
@@ -46,9 +46,9 @@ public class SameOutputWarning : IssueChecker {
                         alpha.myLabel.DispError = true;
                     } else {
                         LightHead vs = array[bit];
-                        if(vs.lhd.style == null && alpha.lhd.style != null) {
+                        if(!vs.hasRealHead && alpha.hasRealHead) {
                             array[bit] = alpha;
-                        } else if(vs.lhd.style != null && alpha.lhd.style != null) {
+                        } else if(vs.hasRealHead && alpha.hasRealHead) {
                             foreach(BasicFunction f in vs.lhd.funcs) {
                                 if(!alpha.lhd.funcs.Contains(f)) {
                                     vs.myLabel.DispError = true;

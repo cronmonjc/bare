@@ -16,7 +16,7 @@ public class DirectoryTree : MonoBehaviour {
             temp.Add(alpha);
         }
         foreach(Transform alpha in temp) {
-            DestroyImmediate(alpha.gameObject);
+            Destroy(alpha.gameObject);
         }
     }
 

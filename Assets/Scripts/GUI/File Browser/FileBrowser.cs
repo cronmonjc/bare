@@ -112,7 +112,7 @@ public class FileBrowser : MonoBehaviour {
             } else {
                 File.Delete(FileItem.SelectedFile.myPath);
             }
-            GameObject.DestroyImmediate(FileItem.SelectedFile.gameObject);
+            GameObject.Destroy(FileItem.SelectedFile.gameObject);
             FileItem.SelectedFile = null;
         }
     }

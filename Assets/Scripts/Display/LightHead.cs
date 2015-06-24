@@ -38,6 +38,12 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    public bool hasRealHead {
+        get {
+            return lhd.style != null && !lhd.optic.name.Equals("Block Off", System.StringComparison.CurrentCultureIgnoreCase);
+        }
+    }
+
     public Dictionary<AdvFunction, Pattern> pattDict1, pattDict2;
 
     public bool GetCanEnable(AdvFunction fn) {
@@ -202,7 +208,7 @@ public class LightHead : MonoBehaviour {
     }
 
     //public bool IsUsingFunction(AdvFunction f) {
-    //    if(!CapableAdvFunctions.Contains(f) || lhd.style == null) return false;
+    //    if(!CapableAdvFunctions.Contains(f) || !hasRealHead) return false;
     //    NbtCompound patts = FindObjectOfType<BarManager>().patts;
 
     //    string cmpdName = BarManager.GetFnString(transform, f);
@@ -242,7 +248,7 @@ public class LightHead : MonoBehaviour {
             if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null;
             if(clr2 && pattDict2 != null) return pattDict2.ContainsKey(f) ? pattDict2[f] : null;
         }
-        if(lhd.style == null) return null;
+        if(!hasRealHead) return null;
         if(LightDict.inst.steadyBurn.Contains(f)) {
             return LightDict.stdy;
         }

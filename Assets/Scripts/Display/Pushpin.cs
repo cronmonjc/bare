@@ -19,7 +19,7 @@ public class Pushpin : MonoBehaviour {
         if(lh == null) {
             lh = target.GetComponent<LightHead>();
         } else {
-            if(lh.lhd.style == null || !target.gameObject.activeInHierarchy) {
+            if(!lh.hasRealHead || !target.gameObject.activeInHierarchy) {
                 mr.enabled = false;
             } else {
                 mr.enabled = true;

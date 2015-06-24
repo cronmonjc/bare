@@ -224,7 +224,7 @@ public class FunctionEditPane : MonoBehaviour {
             }
         }
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(!alpha.gameObject.activeInHierarchy || alpha.lhd.style == null || alpha.Selected) continue;
+            if(!alpha.gameObject.activeInHierarchy || !alpha.hasRealHead || alpha.Selected) continue;
 
             byte bit = alpha.Bit;
             if(alpha.transform.position.y < 0) {

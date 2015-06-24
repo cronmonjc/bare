@@ -32,7 +32,7 @@ public class DropdownControl : MonoBehaviour {
         selected = -1;
 
         foreach(Transform t in new List<Transform>(menu.GetComponentsInChildren<Transform>())) {
-            DestroyImmediate(t.gameObject);
+            Destroy(t.gameObject);
         }
     }
 
