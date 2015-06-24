@@ -639,8 +639,12 @@ public class BarManager : MonoBehaviour {
                 if(td == TDOption.SM_SIX && BarSize > 1) {
                     heads[i].myBit = bit;
                 } else if(heads.Count - i > bit) {
-                    heads[i].myBit = bit;
-                    heads[++i].myBit = bit--;
+                    if(heads[i].isSmall ^ heads[i + 1].isSmall) {
+                        heads[i].myBit = bit--;
+                    } else {
+                        heads[i].myBit = bit;
+                        heads[++i].myBit = bit--;
+                    }
                 } else {
                     heads[i].myBit = bit--;
                 }
@@ -738,8 +742,12 @@ public class BarManager : MonoBehaviour {
                 if(td == TDOption.SM_SIX && BarSize > 1) {
                     heads[i].myBit = bit;
                 } else if(heads.Count - i > (11 - bit)) {
-                    heads[i].myBit = bit;
-                    heads[++i].myBit = bit++;
+                    if(heads[i].isSmall ^ heads[i + 1].isSmall) {
+                        heads[i].myBit = bit++;
+                    } else {
+                        heads[i].myBit = bit;
+                        heads[++i].myBit = bit++;
+                    }
                 } else {
                     heads[i].myBit = bit++;
                 }
