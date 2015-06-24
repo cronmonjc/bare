@@ -707,6 +707,9 @@ public class BarManager : MonoBehaviour {
                     break;
             }
             bit = 6;
+            if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1))) {
+                bit = 7;
+            }
             cont = true;
             while(cont && test.Count > 0) {
                 for(int i = 0; i < test.Count; i++) {
