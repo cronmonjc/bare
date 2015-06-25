@@ -1614,7 +1614,7 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, 3.3, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Component", caliBold, XBrushes.Black, new XRect(1.5, 3.3, 1.0, 0.2));
-        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 1.0, 0.2));
+        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 3.0, 0.2));
 
         List<string> parts = new List<string>();
         Dictionary<string, int> counts = new Dictionary<string, int>();
@@ -1800,7 +1800,7 @@ public class PDFExportJob : ThreadedJob {
                                     }
                                 }
                                 if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {
-                                    if(alpha.GetPhaseB(advfunc, false)) {
+                                    if(alpha.GetPhaseB(advfunc, true)) {
                                         partsB.Add(color2Wire[alpha]);
                                     } else {
                                         parts.Add(color2Wire[alpha]);
