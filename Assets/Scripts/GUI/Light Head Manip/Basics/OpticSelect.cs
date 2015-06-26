@@ -93,6 +93,13 @@ public class OpticSelect : MonoBehaviour {
                         continue;
                     }
 
+                    if(showLong && !ln.optics[keysArray[i]].fitsLg) {
+                        continue;
+                    }
+                    if(showShort && !ln.optics[keysArray[i]].fitsSm) {
+                        continue;
+                    }
+
                     GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
                     newbie.transform.SetParent(menu, false);
                     newbie.transform.localScale = Vector3.one;
