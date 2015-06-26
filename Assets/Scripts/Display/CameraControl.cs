@@ -145,6 +145,7 @@ public class CameraControl : MonoBehaviour {
                                 }
                             }
                         } else {
+                            int count = selected.Count;
                             foreach(LightHead alpha in sbc.Selected) {
                                 if(!selected.Contains(alpha)) {
                                     selected.Add(alpha);
@@ -154,6 +155,18 @@ public class CameraControl : MonoBehaviour {
                                 foreach(LightHead alpha in msbc.Selected) {
                                     if(!selected.Contains(alpha)) {
                                         selected.Add(alpha);
+                                    }
+                                }
+                            }
+                            if(selected.Count == count) {
+                                foreach(LightHead alpha in sbc.Selected) {
+                                    if(selected.Contains(alpha)) {
+                                        selected.Remove(alpha);
+                                    }
+                                }
+                                foreach(LightHead alpha in msbc.Selected) {
+                                    if(selected.Contains(alpha)) {
+                                        selected.Remove(alpha);
                                     }
                                 }
                             }
