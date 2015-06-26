@@ -1262,6 +1262,11 @@ public class BarManager : MonoBehaviour {
     }
 
     public void OnApplicationQuit() {
+        if(funcBeingTested != AdvFunction.NONE) {
+            Application.CancelQuit();
+            EndPreview();
+            return;
+        }
         if(!forceQuit && moddedBar) {
             Application.CancelQuit();
             quitDialog.SetActive(true);
@@ -1573,6 +1578,8 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
         tf.DrawString(notes, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
 
+        if(orderNumber.Length > 0)
+            tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
@@ -1662,6 +1669,8 @@ public class PDFExportJob : ThreadedJob {
 
         progressPercentage = 45;
 
+        if(orderNumber.Length > 0)
+            tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
@@ -1690,6 +1699,9 @@ public class PDFExportJob : ThreadedJob {
 
         progressPercentage = 70;
 
+        tf.Alignment = XParagraphAlignment.Left;
+        if(orderNumber.Length > 0)
+            tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
@@ -1954,6 +1966,9 @@ public class PDFExportJob : ThreadedJob {
         }
 
 
+        tf.Alignment = XParagraphAlignment.Left;
+        if(orderNumber.Length > 0)
+            tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
@@ -1972,6 +1987,9 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Output Usage Map", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
 
+        tf.Alignment = XParagraphAlignment.Left;
+        if(orderNumber.Length > 0)
+            tf.DrawString("Order Number: " + orderNumber, new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
 
