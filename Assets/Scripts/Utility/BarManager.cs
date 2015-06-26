@@ -1740,12 +1740,12 @@ public class PDFExportJob : ThreadedJob {
             PrintRow(tf, caliSm, GetFuncFromMap(10), "---", ref top);
             PrintRow(tf, caliSm, GetFuncFromMap(11), "---", ref top);
         } else {
-            PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(0), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(2), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(11), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(5), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(8), GetFuncFromMap(7), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(10), GetFuncFromMap(9), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(1) + " - White & Yellow", "White & Orange - " + GetFuncFromMap(0), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(3) + " - Brown", "White & Red - " + GetFuncFromMap(2), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(4) + " - Yellow", "Red & Green - " + GetFuncFromMap(11), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(6) + " - Blue", "Green - " + GetFuncFromMap(5), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(8) + " - Purple & White", "Gray - " + GetFuncFromMap(7), ref top);
+            PrintRow(tf, caliSm, GetFuncFromMap(10) + " - White & Pink", "Purple - " + GetFuncFromMap(9), ref top);
             PrintRow(tf, caliSm, "---", "---", ref top);
         }
 
@@ -2036,9 +2036,9 @@ public class PDFExportJob : ThreadedJob {
 
     public void PrintRow(XTextFormatter tf, XFont caliSm, string left, string right, ref double top) {
         tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString(left, caliSm, XBrushes.Black, new XRect(3.0, top, 1.15, 0.1));
+        tf.DrawString(left, caliSm, XBrushes.Black, new XRect(2.0, top, 2.15, 0.1));
         tf.Alignment = XParagraphAlignment.Left;
-        tf.DrawString(right, caliSm, XBrushes.Black, new XRect(4.35, top, 1.15, 0.1));
+        tf.DrawString(right, caliSm, XBrushes.Black, new XRect(4.35, top, 2.15, 0.1));
         top += 0.1;
     }
 

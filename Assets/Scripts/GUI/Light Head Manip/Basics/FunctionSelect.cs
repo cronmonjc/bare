@@ -139,5 +139,8 @@ public class FunctionSelect : MonoBehaviour {
         }
 
         FindObjectOfType<AdvPattDisp>().Refresh();
+        foreach(BasicPhase alpha in FindObjectsOfType<BasicPhase>()) {
+            alpha.Refresh();
+        }
     }
 }

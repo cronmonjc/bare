@@ -166,6 +166,8 @@ public class FunctionEditPane : MonoBehaviour {
             case AdvFunction.FTAKEDOWN:
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
+            case AdvFunction.TRAFFIC_LEFT:
+            case AdvFunction.TRAFFIC_RIGHT:
                 testFlashing.SetActive(true);
                 break;
             default:

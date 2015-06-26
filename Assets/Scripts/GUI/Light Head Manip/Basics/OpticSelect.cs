@@ -139,5 +139,8 @@ public class OpticSelect : MonoBehaviour {
         }
         if(change)
             styleSelect.Refresh();
+        foreach(BasicPhase alpha in FindObjectsOfType<BasicPhase>()) {
+            alpha.Refresh();
+        }
     }
 }

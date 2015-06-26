@@ -20,10 +20,120 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public SizeOptionControl soc;
 
-    [System.NonSerialized]
-    public bool basicPhaseB = false;
-    [System.NonSerialized]
-    public bool basicPhaseB2 = false;
+
+    public bool basicPhaseA {
+        get {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return false;
+            }
+            bool rtn = true;
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                rtn &= !GetPhaseB(f, false);
+            }
+            return rtn;
+        }
+        set {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return;
+            }
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
+
+                if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
+                    return;
+                else
+                    if(value)
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
+                    else
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
+            }
+        }
+    }
+    public bool basicPhaseA2 {
+        get {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return false;
+            }
+            bool rtn = true;
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                rtn &= !GetPhaseB(f, true);
+            }
+            return rtn;
+        }
+        set {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return;
+            }
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
+
+                if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
+                    return;
+                else
+                    if(value)
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                    else
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "2").EnableBit(Bit);
+            }
+        }
+    }
+
+    public bool basicPhaseB {
+        get {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return false;
+            }
+            bool rtn = true;
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                rtn &= GetPhaseB(f, false);
+            }
+            return rtn;
+        }
+        set {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return;
+            }
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
+
+                if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
+                    return;
+                else
+                    if(value)
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
+                    else
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
+            }
+        }
+    }
+    public bool basicPhaseB2 {
+        get {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return false;
+            }
+            bool rtn = true;
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                rtn &= GetPhaseB(f, true);
+            }
+            return rtn;
+        }
+        set {
+            if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                return;
+            }
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
+
+                if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
+                    return;
+                else
+                    if(value)
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "2").EnableBit(Bit);
+                    else
+                        patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+            }
+        }
+    }
 
     private bool m_knowsIsRear = false;
     private bool m_isRear = false;

@@ -389,12 +389,30 @@ public class LightLabel : MonoBehaviour {
 
                 NbtCompound func = patts.Get<NbtCompound>(cmpdName);
 
-                Pattern p1 = lh.GetPattern(BarManager.inst.funcBeingTested, false);
-                Pattern p2 = lh.GetPattern(BarManager.inst.funcBeingTested, true);
+                Pattern p1 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, false) : null;
+                Pattern p2 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, true) : null;
 
                 if(p1 != null) {
-                    bool phase1 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
-                         phase2 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+                    Debug.Log(lh.transform.GetPath() + " : " + p1.name);
+
+                    bool phase1 = false, phase2 = false;
+                    bool directLeft = (FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT);
+                    bool sixHeads = false;
+                    short[] list = new short[0];
+
+                    if(!(p1 is TraffPatt)) {
+                        phase1 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
+                        phase2 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+                    } else {
+                        byte count = 0;
+                        foreach(LightHead alpha in BarManager.inst.allHeads) {
+                            if(alpha.gameObject.activeInHierarchy && alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
+                                count++;
+                            }
+                        }
+                        sixHeads = count == 6;
+                        list = (directLeft ? (sixHeads ? ((TraffPatt)p1).left6 : ((TraffPatt)p1).left8) : (sixHeads ? ((TraffPatt)p1).right6 : ((TraffPatt)p1).right8));
+                    }
 
                     ulong p1period = 0, p2period = 0;
 
@@ -419,9 +437,30 @@ public class LightLabel : MonoBehaviour {
                                     break;
                             }
                         }
-                    } else {
+                    } else if(p1 is WarnPatt){
                         WarnPatt p = p1 as WarnPatt;
                         foreach(short b in p.definition) {
+                            byte time = (byte)(0x3 & (b >> 14));
+                            switch(time) {
+                                case 0:
+                                    p1period += p1.t0;
+                                    break;
+                                case 1:
+                                    p1period += p1.t1;
+                                    break;
+                                case 2:
+                                    p1period += p1.t2;
+                                    break;
+                                case 3:
+                                    p1period += p1.t3;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    } else if(p1 is TraffPatt) {
+                        TraffPatt p = p1 as TraffPatt;
+                        foreach(short b in list) {
                             byte time = (byte)(0x3 & (b >> 14));
                             switch(time) {
                                 case 0:
@@ -544,9 +583,52 @@ public class LightLabel : MonoBehaviour {
                                     }
                                     if(found) break;
                                 }
-                            } else {
+                            } else if(p1 is WarnPatt) {
                                 WarnPatt p = p1 as WarnPatt;
                                 foreach(short b in p.definition) {
+                                    thisT = (byte)(0x3 & (b >> 14));
+                                    found = false;
+                                    switch(thisT) {
+                                        case 0:
+                                            if(ticksThisPeriod < p.t0) {
+                                                enableC1 = (b & (0x1 << bit)) > 0;
+                                                found = true;
+                                            } else {
+                                                ticksThisPeriod -= p.t0;
+                                            }
+                                            break;
+                                        case 1:
+                                            if(ticksThisPeriod < p.t1) {
+                                                enableC1 = (b & (0x1 << bit)) > 0;
+                                                found = true;
+                                            } else {
+                                                ticksThisPeriod -= p.t1;
+                                            }
+                                            break;
+                                        case 2:
+                                            if(ticksThisPeriod < p.t2) {
+                                                enableC1 = (b & (0x1 << bit)) > 0;
+                                                found = true;
+                                            } else {
+                                                ticksThisPeriod -= p.t2;
+                                            }
+                                            break;
+                                        case 3:
+                                            if(ticksThisPeriod < p.t3) {
+                                                enableC1 = (b & (0x1 << bit)) > 0;
+                                                found = true;
+                                            } else {
+                                                ticksThisPeriod -= p.t3;
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                    if(found) break;
+                                }
+                            } else if(p1 is TraffPatt) {
+                                TraffPatt p = p1 as TraffPatt;
+                                foreach(short b in list) {
                                     thisT = (byte)(0x3 & (b >> 14));
                                     found = false;
                                     switch(thisT) {

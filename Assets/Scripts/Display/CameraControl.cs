@@ -31,7 +31,6 @@ public class CameraControl : MonoBehaviour {
     public Transform LabelParent;
 
     public GameObject FuncSelectRoot;
-    public AdvPattDisp advPattDisp;
 
     public GameObject FBrowser;
 
@@ -39,6 +38,8 @@ public class CameraControl : MonoBehaviour {
 
     public GameObject backButton;
     public GameObject timeSlider;
+
+    public RefreshCallback RefreshOnSelect;
 
     public List<LightHead> Selected {
         get {
@@ -85,6 +86,10 @@ public class CameraControl : MonoBehaviour {
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
         partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
 
+    }
+
+    public void InvokeRefresh() {
+        RefreshOnSelect.Invoke();
     }
 
     void Update() {
@@ -172,8 +177,7 @@ public class CameraControl : MonoBehaviour {
                         if(FunctionEditPane.currFunc != AdvFunction.NONE) {
                             FunctionEditPane.RetestStatic();
                         } else if(selected.Count > 0) {
-                            fs.Refresh();
-                            advPattDisp.Refresh();
+                            RefreshOnSelect.Invoke();
                         }
                     }
                 } else if(dragging) { // LMB held
@@ -238,4 +242,9 @@ public class CameraControl : MonoBehaviour {
             Directory.Delete(Directory.GetCurrentDirectory() + "\\tempgen", true);
         File.Delete(Directory.GetCurrentDirectory() + "\\HasOpen\\" + System.Environment.MachineName + ".txt");
     }
+}
+
+[System.Serializable]
+public class RefreshCallback : UnityEngine.Events.UnityEvent {
+
 }

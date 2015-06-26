@@ -121,5 +121,8 @@ public class StyleSelect : MonoBehaviour {
             if(lh.gameObject.activeInHierarchy && lh.Selected)
                 lh.SetStyle(node);
         }
+        foreach(BasicPhase alpha in FindObjectsOfType<BasicPhase>()) {
+            alpha.Refresh();
+        }
     }
 }
