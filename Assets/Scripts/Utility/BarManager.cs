@@ -1056,6 +1056,9 @@ public class BarManager : MonoBehaviour {
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
         }
+        foreach(SpriteRenderer sr in FindObjectsOfType<SpriteRenderer>()) {
+            sr.color = Color.white;
+        }
 
         yield return new WaitForEndOfFrame();
         tex.ReadPixels(capRect, 0, 0);
@@ -1069,6 +1072,9 @@ public class BarManager : MonoBehaviour {
         LightLabel.colorlessWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
+        }
+        foreach(SpriteRenderer sr in FindObjectsOfType<SpriteRenderer>()) {
+            sr.color = new Color32(116, 116, 116, 255);
         }
         LightLabel.colorlessWire = false;
         LightLabel.showWire = false;
