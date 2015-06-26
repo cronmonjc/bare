@@ -133,7 +133,22 @@ public class LightDict : MonoBehaviour {
                             rtnsn.selectable &= dln.optics[rtnon.name].styles[rtnsn.name].selectable;
                         }
                     }
-
+                } else if(dln.optics.ContainsKey(rtnon.smEquivalent)) {
+                    foreach(StyleNode rtnsn in new List<StyleNode>(rtnon.styles.Values)) {
+                        if(!(dln.optics[rtnon.smEquivalent].styles.ContainsKey(rtnsn.name) && dln.optics[rtnon.smEquivalent].styles[rtnsn.name] == rtnsn)) {
+                            rtnon.Remove(rtnsn);
+                        } else {
+                            rtnsn.selectable &= dln.optics[rtnon.smEquivalent].styles[rtnsn.name].selectable;
+                        }
+                    }
+                } else if(dln.optics.ContainsKey(rtnon.lgEquivalent)) {
+                    foreach(StyleNode rtnsn in new List<StyleNode>(rtnon.styles.Values)) {
+                        if(!(dln.optics[rtnon.lgEquivalent].styles.ContainsKey(rtnsn.name) && dln.optics[rtnon.lgEquivalent].styles[rtnsn.name] == rtnsn)) {
+                            rtnon.Remove(rtnsn);
+                        } else {
+                            rtnsn.selectable &= dln.optics[rtnon.lgEquivalent].styles[rtnsn.name].selectable;
+                        }
+                    }
                 } else {
                     rtn.Remove(rtnon);
                 }

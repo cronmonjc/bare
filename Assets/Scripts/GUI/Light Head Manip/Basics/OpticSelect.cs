@@ -60,7 +60,7 @@ public class OpticSelect : MonoBehaviour {
                 }
             }
         }
-        if((!showShort && !showLong) || (!showSingle && !showDual)) {
+        if((!showSingle && !showDual)) {
             return;
         }
         LocationNode ln = LightDict.inst.FetchLocation(locs.ToArray());
@@ -93,13 +93,11 @@ public class OpticSelect : MonoBehaviour {
                         continue;
                     }
 
-                    if((showLong && ln.optics[keysArray[i]].fitsLg) || (showShort && ln.optics[keysArray[i]].fitsSm)) {
-                        GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
-                        newbie.transform.SetParent(menu, false);
-                        newbie.transform.localScale = Vector3.one;
-                        newbie.GetComponent<LightOptionElement>().optNode = ln.optics[keysArray[i]];
-                        newbie.GetComponent<LightOptionElement>().optSel = this;
-                    }
+                    GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
+                    newbie.transform.SetParent(menu, false);
+                    newbie.transform.localScale = Vector3.one;
+                    newbie.GetComponent<LightOptionElement>().optNode = ln.optics[keysArray[i]];
+                    newbie.GetComponent<LightOptionElement>().optSel = this;
                 }
             }
         }
@@ -115,7 +113,11 @@ public class OpticSelect : MonoBehaviour {
             if(i == 0) {
                 on = selected[i].lhd.optic;
             } else if(on != selected[i].lhd.optic) {
-                on = null;
+                if(on.name == selected[i].lhd.optic.smEquivalent || on.name == selected[i].lhd.optic.lgEquivalent) continue;
+                else {
+                    on = null;
+                    break;
+                }
             }
         }
         styleSelect.selectedType = on;
@@ -130,13 +132,30 @@ public class OpticSelect : MonoBehaviour {
     public void SetSelection(OpticNode node) {
         styleSelect.selectedType = node;
         styleSelect.gameObject.SetActive(node != null);
-        bool change = false;
+        bool change = false, blank = false;
         foreach(LightHead lh in cam.OnlyCamSelected) {
             if(lh.gameObject.activeInHierarchy && lh.lhd.optic != node) {
-                lh.SetOptic(node);
-                change = true;
+                if(node == null) {
+                    lh.SetOptic("");
+                    blank = true;
+                } else if(node.fitsSm && !lh.isSmall) {
+                    if(node.lgEquivalent.Length > 0) {
+                        lh.SetOptic(node.lgEquivalent);
+                        change = true;
+                    }
+                } else if(node.fitsLg && lh.isSmall) {
+                    if(node.smEquivalent.Length > 0) {
+                        lh.SetOptic(node.smEquivalent);
+                        change = true;
+                    }
+                } else {
+                    lh.SetOptic(node);
+                    change = true;
+                }
             }
         }
+        if(blank)
+            FindObjectOfType<FunctionSelect>().Refresh();
         if(change)
             styleSelect.Refresh();
         foreach(BasicPhase alpha in FindObjectsOfType<BasicPhase>()) {

@@ -696,10 +696,6 @@ public class LightHead : MonoBehaviour {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(transform.position, Vector3.one);
         }
-        if(basicPhaseB) {
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.98f);
-        }
         Gizmos.color = Color.white;
     }
 
