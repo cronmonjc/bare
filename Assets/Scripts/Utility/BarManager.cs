@@ -476,6 +476,9 @@ public class BarManager : MonoBehaviour {
             ll.Refresh();
         }
 
+        patts.Get<NbtCompound>("traf").Get<NbtShort>("er1").Value = (short)(td == TDOption.NONE ? 0 : 1020);
+        patts.Get<NbtCompound>("traf").Get<NbtShort>("patt").Value = 7;
+
         yield return null;
     }
 
