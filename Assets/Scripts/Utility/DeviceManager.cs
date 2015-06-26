@@ -102,6 +102,6 @@ public class DeviceManager : MonoBehaviour {
     }
 
     void OnApplicationQuit() {
-        d.Dispose();
+        if(d != null) d.Dispose();
     }
 }
