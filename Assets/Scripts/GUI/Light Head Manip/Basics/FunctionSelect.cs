@@ -84,10 +84,12 @@ public class FunctionSelect : MonoBehaviour {
             newbie.GetComponent<LightOptionElement>().funcSel = this;
         }
 
+        selFuncs.AddRange(potential);
+
         foreach(LightHead alpha in cam.OnlyCamSelected) {
             foreach(BasicFunction f in potential) {
-                if(alpha.lhd.funcs.Contains(f) && !selFuncs.Contains(f)) {
-                    selFuncs.Add(f);
+                if(selFuncs.Contains(f) && !alpha.lhd.funcs.Contains(f)) {
+                    selFuncs.Remove(f);
                 }
             }
         }
@@ -120,13 +122,12 @@ public class FunctionSelect : MonoBehaviour {
             }
         }
 
-
         selFuncs.Clear();
-
+        selFuncs.AddRange(potential);
         foreach(LightHead alpha in cam.OnlyCamSelected) {
             foreach(BasicFunction f in potential) {
-                if(alpha.lhd.funcs.Contains(f) && !selFuncs.Contains(f)) {
-                    selFuncs.Add(f);
+                if(selFuncs.Contains(f) && !alpha.lhd.funcs.Contains(f)) {
+                    selFuncs.Remove(f);
                 }
             }
         }
