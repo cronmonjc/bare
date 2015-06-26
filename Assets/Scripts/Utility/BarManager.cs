@@ -1024,12 +1024,25 @@ public class BarManager : MonoBehaviour {
             imgOut.Write(imgbytes, 0, imgbytes.Length);
         }
 
+        LightLabel.showJustBit = true;
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+            alpha.Refresh(true);
+        }
+        LightLabel.showJustBit = false;
+        yield return new WaitForEndOfFrame();
+        tex.ReadPixels(capRect, 0, 0);
+        tex.Apply();
+
+        using(FileStream imgOut = new FileStream("tempgen\\bits.png", FileMode.OpenOrCreate)) {
+            byte[] imgbytes = tex.EncodeToPNG();
+            imgOut.Write(imgbytes, 0, imgbytes.Length);
+        }
+
         LightLabel.showParts = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
         }
         LightLabel.showParts = false;
-
         yield return new WaitForEndOfFrame();
         tex.ReadPixels(capRect, 0, 0);
         tex.Apply();
@@ -1403,25 +1416,30 @@ public class PDFExportJob : ThreadedJob {
         doc.Info.Creator = "1000 Lightbar Configurator";
         doc.Info.Title = "1000 Lightbar Configuration";
         lock(progressStuff) {
-            progressText = "Publishing Page 1/4: Overview...";
+            progressText = "Publishing Page 1/5: Overview...";
             progressPercentage = 10;
         }
         OverviewPage(doc.AddPage(), capRect);
         lock(progressStuff) {
-            progressText = "Publishing Page 2/4: BOM...";
+            progressText = "Publishing Page 2/5: BOM...";
             progressPercentage = 30;
         }
         PartsPage(doc.AddPage(), capRect);
         lock(progressStuff) {
-            progressText = "Publishing Page 3/4: Wiring...";
+            progressText = "Publishing Page 3/5: Wiring...";
             progressPercentage = 50;
         }
         WiringPage(doc.AddPage(), capRect);
         lock(progressStuff) {
-            progressText = "Publishing Page 4/4: Programming...";
+            progressText = "Publishing Page 4/5: Programming...";
             progressPercentage = 80;
         }
         PatternPage(doc.AddPage(), capRect);
+        lock(progressStuff) {
+            progressText = "Publishing Page 5/5: Output Map...";
+            progressPercentage = 90;
+        }
+        OutputMapPage(doc.AddPage(), capRect);
         lock(progressStuff) {
             progressText = "Saving...";
             progressPercentage = 99;
@@ -1933,12 +1951,30 @@ public class PDFExportJob : ThreadedJob {
                     break;
                 }
             }
-            progressPercentage++;
         }
 
 
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+    }
+
+    public void OutputMapPage(PdfPage p, Rect capRect) {
+        p.Orientation = PageOrientation.Landscape;
+
+        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+        XTextFormatter tf = new XTextFormatter(gfx);
+
+        float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
+        using(XImage wireImg = XImage.FromFile("tempgen\\bits.png")) {
+            gfx.DrawImage(wireImg, 0.5, 2.0, capRect.width * scale, capRect.height * scale);
+        }
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Output Usage Map", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+
     }
 
     public string GetFuncFromInt(int num) {

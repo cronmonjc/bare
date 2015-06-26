@@ -12,7 +12,7 @@ public class LightLabel : MonoBehaviour {
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showWire, colorlessWire, wireOverride, alternateNumbering, showPatt;
+    public static bool showParts, showBit, showJustBit, showWire, colorlessWire, wireOverride, alternateNumbering, showPatt;
     private OpticNode lastOptic;
     private StyleNode lastStyle;
 
@@ -28,7 +28,7 @@ public class LightLabel : MonoBehaviour {
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
-        showParts = showBit = showWire = colorlessWire = wireOverride = alternateNumbering = false;
+        showParts = showBit = showJustBit = showWire = colorlessWire = wireOverride = alternateNumbering = false;
         Refresh();
     }
 
@@ -69,6 +69,15 @@ public class LightLabel : MonoBehaviour {
                 label2.text = label.text = prefix + lh.PartNumber;
                 label2.color = label.color = Color.black;
                 secondImage.color = background.color = Color.white;
+            }
+        } else if(showJustBit) {
+            if(lh.hasRealHead) {
+                label2.text = label.text = ((lh.Bit != 255) ? (lh.Bit + 1) + "" : "None");
+                label2.color = label.color = Color.black;
+                secondImage.color = background.color = Color.white;
+            } else {
+                label2.text = label.text = "";
+                secondImage.color = background.color = new Color(0f, 0f, 0f, 0f);
             }
         } else if(showWire) {
             if(lh.hasRealHead) {
