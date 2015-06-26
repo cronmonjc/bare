@@ -36,7 +36,6 @@ public class SizeOptionControl : MonoBehaviour {
             if(lh != null) {
                 foreach(LightHead alpha in lhs) {
                     if(!alpha.Selected) {
-                        alpha.Selected = lh.Selected;
                         if(lh.lhd.optic != null) {
                             if(alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && alpha.shouldBeTD) {
                                 BarManager.inst.td = TDOption.NONE;
@@ -48,24 +47,17 @@ public class SizeOptionControl : MonoBehaviour {
                             foreach(BasicFunction f in lh.lhd.funcs) {
                                 alpha.AddBasicFunction(f, false);
                             }
-                            alpha.useSingle = lh.useSingle;
-                            alpha.useDual = lh.useDual;
+                            alpha.RefreshBasicFuncDefault();
 
-                            if(longGO.activeInHierarchy) {
-                                if(lh.lhd.optic.lgEquivalent.Length > 0) {
-                                    alpha.SetOptic(lh.lhd.optic.lgEquivalent, BasicFunction.NULL, false);
-                                    alpha.SetStyle(lh.lhd.style);
-                                }
-                            } else {
-                                if(lh.lhd.optic.smEquivalent.Length > 0) {
-                                    alpha.SetOptic(lh.lhd.optic.smEquivalent, BasicFunction.NULL, false);
-                                    alpha.SetStyle(lh.lhd.style);
-                                }
-                            }
+                            if(alpha.lhd.optic.styles[lh.lhd.style.name].selectable)
+                                alpha.SetStyle(lh.lhd.style);
+
                         }
                     }
                 }
-                lh.Selected = false;
+                foreach(LightHead alpha in lhs) {
+                    alpha.Selected = alpha.isSmall ^ value;
+                }
             }
         }
     }
