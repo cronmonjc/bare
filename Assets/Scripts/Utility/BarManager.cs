@@ -1344,7 +1344,7 @@ public class PDFExportJob : ThreadedJob {
         issues = new List<string>();
         foreach(IssueChecker issue in bm.issues) {
             if(issue.DoCheck()) {
-                issues.Add(issue.text.text);
+                issues.Add(issue.pdfText);
             }
         }
         headNumber = BarManager.headNumber;

@@ -14,4 +14,8 @@ public class LargeFSBSTT : IssueChecker {
 
         return false;
     }
+
+    public override string pdfText {
+        get { return "This bar is using long optics to handle the Steady Burn or Stop/Tail/Turn functions.  It is suggested to use a short optic for these functions for better directionality."; }
+    }
 }

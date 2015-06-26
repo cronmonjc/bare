@@ -78,4 +78,8 @@ public class SameOutputWarning : IssueChecker {
 
         return rtn;
     }
+
+    public override string pdfText {
+        get { return "This bar has two or more heads that share the same output from the central control circuit, but differ in either appearance or function - if that output is turned on for the one head, it will turn on for all that share the output.  Cross reference the image above against the one provided on the fifth page of this document to determine which ones are sharing."; }
+    }
 }

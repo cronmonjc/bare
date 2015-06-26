@@ -16,4 +16,8 @@ public class TooManyEmitters : IssueChecker {
         }
         return false;
     }
+
+    public override string pdfText {
+        get { return "This bar is using more than one Emitter head on it.  The extras should be removed."; }
+    }
 }

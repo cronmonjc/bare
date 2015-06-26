@@ -11,4 +11,8 @@ public class OddTD : IssueChecker {
         }
         return false;
     }
+
+    public override string pdfText {
+        get { return "This bar is using Traffic Director heads, however they seem to differ from the presets that are available.  It is suggested that one of the presets available from the Bar Menu are used for the best symmetry and functionality."; }
+    }
 }

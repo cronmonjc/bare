@@ -459,7 +459,6 @@ public class LightLabel : MonoBehaviour {
                             }
                         }
                     } else if(p1 is TraffPatt) {
-                        TraffPatt p = p1 as TraffPatt;
                         foreach(short b in list) {
                             byte time = (byte)(0x3 & (b >> 14));
                             switch(time) {
@@ -627,41 +626,40 @@ public class LightLabel : MonoBehaviour {
                                     if(found) break;
                                 }
                             } else if(p1 is TraffPatt) {
-                                TraffPatt p = p1 as TraffPatt;
                                 foreach(short b in list) {
                                     thisT = (byte)(0x3 & (b >> 14));
                                     found = false;
                                     switch(thisT) {
                                         case 0:
-                                            if(ticksThisPeriod < p.t0) {
+                                            if(ticksThisPeriod < p1.t0) {
                                                 enableC1 = (b & (0x1 << bit)) > 0;
                                                 found = true;
                                             } else {
-                                                ticksThisPeriod -= p.t0;
+                                                ticksThisPeriod -= p1.t0;
                                             }
                                             break;
                                         case 1:
-                                            if(ticksThisPeriod < p.t1) {
+                                            if(ticksThisPeriod < p1.t1) {
                                                 enableC1 = (b & (0x1 << bit)) > 0;
                                                 found = true;
                                             } else {
-                                                ticksThisPeriod -= p.t1;
+                                                ticksThisPeriod -= p1.t1;
                                             }
                                             break;
                                         case 2:
-                                            if(ticksThisPeriod < p.t2) {
+                                            if(ticksThisPeriod < p1.t2) {
                                                 enableC1 = (b & (0x1 << bit)) > 0;
                                                 found = true;
                                             } else {
-                                                ticksThisPeriod -= p.t2;
+                                                ticksThisPeriod -= p1.t2;
                                             }
                                             break;
                                         case 3:
-                                            if(ticksThisPeriod < p.t3) {
+                                            if(ticksThisPeriod < p1.t3) {
                                                 enableC1 = (b & (0x1 << bit)) > 0;
                                                 found = true;
                                             } else {
-                                                ticksThisPeriod -= p.t3;
+                                                ticksThisPeriod -= p1.t3;
                                             }
                                             break;
                                         default:

@@ -10,6 +10,7 @@ using System.Collections;
 public abstract class IssueChecker : MonoBehaviour {
     [System.NonSerialized]
     public Text text;
+    public abstract string pdfText { get; }
     protected LayoutElement le;
     
     void Start() {
