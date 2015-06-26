@@ -236,7 +236,8 @@ public class LightLabel : MonoBehaviour {
                     thisEnabled1 &= canEnable;
                     thisEnabled2 &= canEnable;
 
-                    Color clr = lh.lhd.style.color * (thisEnabled1 ? 1.0f : 0.25f);
+                    Color clr = lh.lhd.style.color;
+                    if(!thisEnabled1) clr.a = 0.25f;
                     background.color = clr;
                     if(!thisEnabled1 || clr.r + clr.g < clr.b) {
                         label.color = Color.white;
@@ -244,7 +245,8 @@ public class LightLabel : MonoBehaviour {
                         label.color = Color.black;
                     }
                     if(lh.lhd.style.isDualColor) {
-                        clr = lh.lhd.style.color2 * (thisEnabled2 ? 1.0f : 0.25f);
+                        clr = lh.lhd.style.color2;
+                        if(!thisEnabled2) clr.a = 0.25f;
                     }
                     if((!lh.lhd.style.isDualColor && !thisEnabled1) || (lh.lhd.style.isDualColor && !thisEnabled2) || clr.r + clr.g < clr.b) {
                         label2.color = Color.white;
@@ -287,10 +289,12 @@ public class LightLabel : MonoBehaviour {
                         }
                     }
                 } else {
-                    Color clr = lh.lhd.style.color * 0.25f;
+                    Color clr = lh.lhd.style.color;
+                    clr.a = 0.25f;
                     background.color = clr;
                     if(lh.lhd.style.isDualColor) {
-                        clr = lh.lhd.style.color2 * 0.25f;
+                        clr = lh.lhd.style.color2;
+                        clr.a = 0.25f;
                     }
                     secondImage.color = clr;
                     label2.color = label.color = Color.white;
@@ -437,7 +441,7 @@ public class LightLabel : MonoBehaviour {
                                     break;
                             }
                         }
-                    } else if(p1 is WarnPatt){
+                    } else if(p1 is WarnPatt) {
                         WarnPatt p = p1 as WarnPatt;
                         foreach(short b in p.definition) {
                             byte time = (byte)(0x3 & (b >> 14));
