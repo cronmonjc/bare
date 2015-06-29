@@ -71,15 +71,6 @@ public class FuncPattSelect : MonoBehaviour {
                 patt.patt = alpha;
                 patt.Refresh();
             }
-            foreach(Pattern alpha in LightDict.inst.warnPatts) {
-                GameObject newbie = GameObject.Instantiate<GameObject>(optionPrefab);
-                newbie.transform.SetParent(menu, false);
-                newbie.transform.localScale = Vector3.one;
-                FuncPatt patt = newbie.GetComponent<FuncPatt>();
-                patt.fps = this;
-                patt.patt = alpha;
-                patt.Refresh();
-            }
         }
     }
 

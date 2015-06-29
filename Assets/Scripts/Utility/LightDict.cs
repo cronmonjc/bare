@@ -9,7 +9,7 @@ public class LightDict : MonoBehaviour {
     public static SteadyPattern stdy;
     public Dictionary<Location, LocationNode> lights;
     public List<AdvFunction> steadyBurn;
-    public List<Pattern> flashPatts, warnPatts, tdPatts;
+    public List<Pattern> flashPatts, tdPatts;
     public short pattBase = 0;
 
     void Awake() {
@@ -68,16 +68,18 @@ public class LightDict : MonoBehaviour {
 
                 pattBase = pattstag["base"].ShortValue;
 
-                warnPatts = new List<Pattern>();
-                NbtList patlist = pattstag.Get<NbtList>("flash");
-                foreach(NbtTag alpha in patlist) {
-                    warnPatts.Add(new WarnPatt((NbtCompound)alpha));
-                }
-
                 flashPatts = new List<Pattern>();
-                patlist = pattstag.Get<NbtList>("sflsh");
+                NbtList patlist = pattstag.Get<NbtList>("sflsh");
                 foreach(NbtTag alpha in patlist) {
-                    flashPatts.Add(new FlashPatt((NbtCompound)alpha));
+                    if(((NbtCompound)alpha).Contains("ref")) { flashPatts.Add(new SingleFlashRefPattern((NbtCompound)alpha)); } else { flashPatts.Add(new FlashPatt((NbtCompound)alpha)); }
+                }
+                patlist = pattstag.Get<NbtList>("dcflash");
+                foreach(NbtTag alpha in patlist) {
+                    flashPatts.Add(new DoubleFlashRefPattern((NbtCompound)alpha));
+                }
+                patlist = pattstag.Get<NbtList>("flash");
+                foreach(NbtTag alpha in patlist) {
+                    flashPatts.Add(new WarnPatt((NbtCompound)alpha));
                 }
 
 
@@ -171,10 +173,17 @@ public abstract class Pattern {
 
     public ushort id;
     public ushort t0, t1, t2, t3;
+    public abstract ulong period { get; }
+    public abstract bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit);
 }
 
 public class WarnPatt : Pattern {
     public short[] definition;
+    private ulong _period = 0;
+    public override ulong period {
+        get { return _period; }
+    }
+
 
     public WarnPatt(NbtCompound cmpd) {
         name = cmpd["name"].StringValue;
@@ -189,14 +198,73 @@ public class WarnPatt : Pattern {
 
         definition = new short[vals.Length];
 
+        _period = 0uL;
+
         for(int i = 0; i < vals.Length; i++) {
             definition[i] = (short)(vals[i] & 0xFFFF);
+            switch((vals[i] >> 14) & 0x3) {
+                case 0:
+                    _period += t0;
+                    break;
+                case 1:
+                    _period += t1;
+                    break;
+                case 2:
+                    _period += t2;
+                    break;
+                case 3:
+                    _period += t3;
+                    break;
+            }
         }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        tick %= period;
+        foreach(short b in definition) {
+            switch(0x3 & (b >> 14)) {
+                case 0:
+                    if(tick < t0) {
+                        return (b & (0x1 << bit)) > 0;
+                    } else {
+                        tick -= t0;
+                    }
+                    break;
+                case 1:
+                    if(tick < t1) {
+                        return (b & (0x1 << bit)) > 0;
+                    } else {
+                        tick -= t1;
+                    }
+                    break;
+                case 2:
+                    if(tick < t2) {
+                        return (b & (0x1 << bit)) > 0;
+                    } else {
+                        tick -= t2;
+                    }
+                    break;
+                case 3:
+                    if(tick < t3) {
+                        return (b & (0x1 << bit)) > 0;
+                    } else {
+                        tick -= t3;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return false;
     }
 }
 
 public class FlashPatt : Pattern {
     public byte[] definition;
+    private ulong _period = 0;
+    public override ulong period {
+        get { return _period; }
+    }
 
     public FlashPatt(NbtCompound cmpd) {
         name = cmpd["name"].StringValue;
@@ -208,11 +276,77 @@ public class FlashPatt : Pattern {
 
         NbtByteArray patttag = cmpd.Get<NbtByteArray>("patt");
         definition = patttag.Value;
+
+        _period = 0uL;
+
+        for(int i = 0; i < definition.Length; i++) {
+            switch((definition[i] >> 2) & 0x3) {
+                case 0:
+                    _period += t0;
+                    break;
+                case 1:
+                    _period += t1;
+                    break;
+                case 2:
+                    _period += t2;
+                    break;
+                case 3:
+                    _period += t3;
+                    break;
+            }
+        }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        tick %= period;
+
+        foreach(byte b in definition) {
+            switch(0x3 & (b >> 2)) {
+                case 0:
+                    if(tick < t0) {
+                        return (b & (phaseB ? 0x2 : 0x1)) > 0;
+                    } else {
+                        tick -= t0;
+                    }
+                    break;
+                case 1:
+                    if(tick < t1) {
+                        return (b & (phaseB ? 0x2 : 0x1)) > 0;
+                    } else {
+                        tick -= t1;
+                    }
+                    break;
+                case 2:
+                    if(tick < t2) {
+                        return (b & (phaseB ? 0x2 : 0x1)) > 0;
+                    } else {
+                        tick -= t2;
+                    }
+                    break;
+                case 3:
+                    if(tick < t3) {
+                        return (b & (phaseB ? 0x2 : 0x1)) > 0;
+                    } else {
+                        tick -= t3;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return false;
     }
 }
 
 public class TraffPatt : Pattern {
+    public static bool directLeft = false, sixHeads = false;
+
     public short[] left6, right6, center6, left8, right8, center8;
+    public ulong period6, period8;
+    public override ulong period {
+        get { return (sixHeads ? period6 : period8); }
+    }
 
     public TraffPatt(NbtCompound cmpd) {
         name = cmpd["name"].StringValue;
@@ -252,12 +386,329 @@ public class TraffPatt : Pattern {
         for(int i = 0; i < patttag.Value.Length; i++) {
             right8[i] = (short)(patttag[i] & 0xFFFF);
         }
+
+        period6 = period8 = 0;
+
+        foreach(short alpha in center6) {
+            switch((alpha >> 14) & 0x3) {
+                case 0:
+                    period6 += t0;
+                    break;
+                case 1:
+                    period6 += t1;
+                    break;
+                case 2:
+                    period6 += t2;
+                    break;
+                case 3:
+                    period6 += t3;
+                    break;
+            }
+        }
+        foreach(short alpha in center8) {
+            switch((alpha >> 14) & 0x3) {
+                case 0:
+                    period8 += t0;
+                    break;
+                case 1:
+                    period8 += t1;
+                    break;
+                case 2:
+                    period8 += t2;
+                    break;
+                case 3:
+                    period8 += t3;
+                    break;
+            }
+        }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+
+        if(sixHeads) {
+            tick %= period6;
+            if(directLeft) {
+                foreach(short b in left6) {
+                    switch(0x3 & (b >> 14)) {
+                        case 0:
+                            if(tick < t0) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t0;
+                            }
+                            break;
+                        case 1:
+                            if(tick < t1) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t1;
+                            }
+                            break;
+                        case 2:
+                            if(tick < t2) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t2;
+                            }
+                            break;
+                        case 3:
+                            if(tick < t3) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t3;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                foreach(short b in right6) {
+                    switch(0x3 & (b >> 14)) {
+                        case 0:
+                            if(tick < t0) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t0;
+                            }
+                            break;
+                        case 1:
+                            if(tick < t1) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t1;
+                            }
+                            break;
+                        case 2:
+                            if(tick < t2) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t2;
+                            }
+                            break;
+                        case 3:
+                            if(tick < t3) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t3;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        } else {
+            tick %= period8;
+            if(directLeft) {
+                foreach(short b in left8) {
+                    switch(0x3 & (b >> 14)) {
+                        case 0:
+                            if(tick < t0) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t0;
+                            }
+                            break;
+                        case 1:
+                            if(tick < t1) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t1;
+                            }
+                            break;
+                        case 2:
+                            if(tick < t2) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t2;
+                            }
+                            break;
+                        case 3:
+                            if(tick < t3) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t3;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                foreach(short b in right8) {
+                    switch(0x3 & (b >> 14)) {
+                        case 0:
+                            if(tick < t0) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t0;
+                            }
+                            break;
+                        case 1:
+                            if(tick < t1) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t1;
+                            }
+                            break;
+                        case 2:
+                            if(tick < t2) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t2;
+                            }
+                            break;
+                        case 3:
+                            if(tick < t3) {
+                                return (b & (0x1 << bit)) > 0;
+                            } else {
+                                tick -= t3;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
 
 public class SteadyPattern : Pattern {
+    public override ulong period {
+        get {
+            return 1;
+        }
+    }
+
     public SteadyPattern() {
         name = "Steady Burn";
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        return true;
+    }
+}
+
+public class SingleFlashRefPattern : Pattern {
+    public ulong _period;
+
+    public override ulong period {
+        get { return _period; }
+    }
+
+    public struct Reference {
+        public Pattern patt;
+        public short count;
+
+        public ulong totalPeriod {
+            get {
+                return patt.period * (ulong)count;
+            }
+        }
+    }
+
+    public Reference[] definition;
+
+    public SingleFlashRefPattern(NbtCompound cmpd) {
+        id = (ushort)cmpd["id"].ShortValue;
+        name = cmpd["name"].StringValue;
+        _period = t0 = t1 = t2 = t3 = 0;
+
+        NbtList refs = cmpd.Get<NbtList>("ref");
+        definition = new Reference[refs.Count];
+        for(int i = 0; i < refs.Count; i++) {
+            NbtCompound alpha = refs.Get<NbtCompound>(i);
+            definition[i] = new Reference();
+            definition[i].count = alpha["cnt"].ShortValue;
+            short pattID = alpha["id"].ShortValue;
+
+            foreach(Pattern p in LightDict.inst.flashPatts) {
+                if(p.id == pattID) {
+                    definition[i].patt = p;
+                    break;
+                }
+            }
+
+            _period += definition[i].totalPeriod;
+        }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        tick %= period;
+
+        foreach(Reference r in definition) {
+            if(tick < r.totalPeriod) {
+                return r.patt.GetIsActive(tick, phaseB, color2, bit);
+            } else {
+                tick -= r.totalPeriod;
+            }
+        }
+
+        return false;
+    }
+}
+
+public class DoubleFlashRefPattern : Pattern {
+    public ulong _period;
+    public override ulong period {
+        get { return _period; }
+    }
+
+    public struct Reference {
+        public Pattern patt;
+        public bool forColor2;
+        public short count;
+
+        public ulong totalPeriod {
+            get {
+                return patt.period * (ulong)count;
+            }
+        }
+    }
+
+    public Reference[] definition;
+
+    public DoubleFlashRefPattern(NbtCompound cmpd) {
+        id = (ushort)cmpd["id"].ShortValue;
+        name = cmpd["name"].StringValue;
+        _period = t0 = t1 = t2 = t3 = 0;
+
+        NbtList refs = cmpd.Get<NbtList>("ref");
+        definition = new Reference[refs.Count];
+        for(int i = 0; i < refs.Count; i++) {
+            NbtCompound alpha = refs.Get<NbtCompound>(i);
+            definition[i] = new Reference();
+            definition[i].count = alpha["cnt"].ShortValue;
+            definition[i].forColor2 = alpha["clr"].ByteValue == 1;
+            short pattID = alpha["id"].ShortValue;
+
+            foreach(Pattern p in LightDict.inst.flashPatts) {
+                if(p.id == pattID) {
+                    definition[i].patt = p;
+                    break;
+                }
+            }
+
+            _period += definition[i].totalPeriod;
+        }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        tick %= period;
+
+        foreach(Reference r in definition) {
+            if(tick < r.totalPeriod) {
+                return (!(color2 ^ r.forColor2)) && r.patt.GetIsActive(tick, phaseB, color2, bit);
+            } else {
+                tick -= r.totalPeriod;
+            }
+        }
+
+        return false;
     }
 }
 

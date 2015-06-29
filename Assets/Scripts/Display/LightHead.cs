@@ -401,11 +401,6 @@ public class LightHead : MonoBehaviour {
                     return p;
                 }
             }
-            foreach(Pattern p in LightDict.inst.warnPatts) {
-                if(p.id == patID) {
-                    return p;
-                }
-            }
         }
         return null;
     }

@@ -121,23 +121,6 @@ public class PattSelect : MonoBehaviour {
                     }
                 }
             }
-            foreach(Pattern p in LightDict.inst.warnPatts) {
-                newbie = GameObject.Instantiate<GameObject>(prefab);
-                newbie.transform.SetParent(menu, false);
-                newbie.transform.localScale = Vector3.one;
-                newpse = newbie.GetComponent<PattSelectElement>();
-                newpse.selID = (short)p.id;
-                newpse.ps = this;
-                newpse.FuncText = p.name;
-                newpse.Retest();
-                if(TestPatternAny((short)p.id)) {
-                    if(selID == -2) {
-                        selID = (short)p.id;
-                    } else if(selID != -1 && selID != p.id) {
-                        selID = -1;
-                    }
-                }
-            }
             if(selID == -2) {
                 enableButton.text = "Cannot Enable, No Pattern";
                 enableButton.GetComponent<Button>().interactable = false;
@@ -162,17 +145,17 @@ public class PattSelect : MonoBehaviour {
                         break;
                     }
                 }
-                if(a == null)
-                    foreach(Pattern p in LightDict.inst.warnPatts) {
-                        if(p.id == selID) {
-                            a = p;
+                //if(a == null)
+                //    foreach(Pattern p in LightDict.inst.warnPatts) {
+                //        if(p.id == selID) {
+                //            a = p;
 
-                            PhaseA.GetComponent<Button>().interactable = false;
-                            PhaseB.GetComponent<Button>().interactable = false;
+                //            PhaseA.GetComponent<Button>().interactable = false;
+                //            PhaseB.GetComponent<Button>().interactable = false;
 
-                            break;
-                        }
-                    }
+                //            break;
+                //        }
+                //    }
                 if(a == null) {
                     enableButton.text = "Cannot Enable, No Pattern";
                     enableButton.GetComponent<Button>().interactable = false;
@@ -234,16 +217,16 @@ public class PattSelect : MonoBehaviour {
                     }
                 }
             }
-            foreach(Pattern p in LightDict.inst.warnPatts) {
-                if(TestPatternAny((short)p.id)) {
-                    if(!foundOne) {
-                        foundOne = true;
-                        a = p;
-                    } else {
-                        a = null;
-                    }
-                }
-            }
+            //foreach(Pattern p in LightDict.inst.warnPatts) {
+            //    if(TestPatternAny((short)p.id)) {
+            //        if(!foundOne) {
+            //            foundOne = true;
+            //            a = p;
+            //        } else {
+            //            a = null;
+            //        }
+            //    }
+            //}
             if(!foundOne) {
                 enableButton.text = "Cannot Enable, No Pattern";
                 enableButton.GetComponent<Button>().interactable = false;
