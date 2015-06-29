@@ -416,6 +416,20 @@ public class LightHead : MonoBehaviour {
             if(doDefault) RefreshBasicFuncDefault();
             TestSingleDual();
         }
+        switch(func) {
+            case BasicFunction.STT:
+                NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
+                taiCmpd.Get<NbtShort>("er1").EnableBit(Bit);
+                taiCmpd.Get<NbtShort>("er2").EnableBit(Bit);
+                break;
+            case BasicFunction.CRUISE:
+                NbtCompound cruCmpd = BarManager.inst.patts.Get<NbtCompound>("cru");
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").EnableBit(Bit);
+                break;
+            default:
+                break;
+        }
         BarManager.moddedBar = true;
     }
 
