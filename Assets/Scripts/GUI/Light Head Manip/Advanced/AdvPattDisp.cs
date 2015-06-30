@@ -29,11 +29,13 @@ public class AdvPattDisp : MonoBehaviour {
         }
 
         HashSet<AdvFunction> funcs = new HashSet<AdvFunction>();
-        funcs.Add(AdvFunction.DIM);
 
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 
+        color1.text = color2.text = "";
+
         foreach(LightHead alpha in cam.OnlyCamSelected) {
+            if(alpha.lhd.style == null) continue;
             foreach(BasicFunction beta in alpha.lhd.funcs) {
                 switch(beta) {
                     case BasicFunction.CAL_STEADY:
@@ -66,6 +68,21 @@ public class AdvPattDisp : MonoBehaviour {
                     default:
                         break;
                 }
+            }
+            funcs.Add(AdvFunction.DIM);
+
+            string[] colors = alpha.lhd.style.name.Split('/', '\\');
+            if(colors.Length == 2) {
+                if(color2.text.Equals("")) {
+                    color2.text = colors[1];
+                } else if(!color2.text.Equals(colors[1], System.StringComparison.CurrentCultureIgnoreCase)) {
+                    color2.text = "Color 2";
+                }
+            }
+            if(color1.text.Equals("")) {
+                color1.text = colors[0];
+            } else if(!color1.text.Equals(colors[0], System.StringComparison.CurrentCultureIgnoreCase)) {
+                color1.text = "Color 1";
             }
         }
 

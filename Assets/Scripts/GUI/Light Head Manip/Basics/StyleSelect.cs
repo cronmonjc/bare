@@ -124,5 +124,6 @@ public class StyleSelect : MonoBehaviour {
         foreach(BasicPhase alpha in FindObjectsOfType<BasicPhase>()) {
             alpha.Refresh();
         }
+        FindObjectOfType<AdvPattDisp>().Refresh();
     }
 }
