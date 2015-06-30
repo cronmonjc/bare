@@ -79,6 +79,8 @@ public class CameraControl : MonoBehaviour {
         myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 32f);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
         myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+
+        RefreshOnSelect.Invoke();
     }
 
     public void ResetView() {
@@ -189,7 +191,7 @@ public class CameraControl : MonoBehaviour {
 
                         if(FunctionEditPane.currFunc != AdvFunction.NONE) {
                             FunctionEditPane.RetestStatic();
-                        } else if(selected.Count > 0) {
+                        } else {
                             RefreshOnSelect.Invoke();
                         }
                     }
