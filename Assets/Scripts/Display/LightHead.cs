@@ -295,7 +295,7 @@ public class LightHead : MonoBehaviour {
             soc = t.GetComponent<SizeOptionControl>();
         }
 
-        if(isRear) {
+        if(isRear) { // Dummy if to get the head to recognize it's rearness.
 
         }
     }

@@ -4,11 +4,14 @@ using System.Collections;
 public class OddTD : IssueChecker {
 
     public override bool DoCheck() {
+        bool foundTraff = false;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy) {
+                foundTraff = false;
                 for(byte i = 0; i < alpha.lhd.funcs.Count; i++) {
-                    if(alpha.lhd.funcs[i] == BasicFunction.TRAFFIC && !alpha.shouldBeTD) return true;
+                    foundTraff |= alpha.lhd.funcs[i] == BasicFunction.TRAFFIC;
                 }
+                if(foundTraff ^ alpha.shouldBeTD) return true;
             }
         }
         return false;
