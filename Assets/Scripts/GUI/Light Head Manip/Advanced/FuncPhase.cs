@@ -38,7 +38,7 @@ public class FuncPhase : MonoBehaviour {
 
             Pattern patt = alpha.GetPattern(FunctionEditPane.currFunc, IsColor2);
 
-            bool thisSelectable = (patt != null && patt is FlashPatt && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual)));
+            bool thisSelectable = (alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && patt != null && (patt is FlashPatt || patt is SingleFlashRefPattern || patt is DoubleFlashRefPattern) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual)));
 
             if(thisSelectable) {
                 short ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
@@ -85,35 +85,13 @@ public class FuncPhase : MonoBehaviour {
                 case AdvFunction.ICL:
                     trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
                     break;
-                case AdvFunction.TAKEDOWN:
-                case AdvFunction.ALLEY_LEFT:
-                case AdvFunction.ALLEY_RIGHT:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STEADY);
-                    break;
-                case AdvFunction.TURN_LEFT:
-                case AdvFunction.TURN_RIGHT:
-                case AdvFunction.TAIL:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STT);
-                    break;
-                case AdvFunction.T13:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
-                    break;
-                case AdvFunction.EMITTER:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
-                    break;
-                case AdvFunction.CRUISE:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
-                    break;
-                case AdvFunction.TRAFFIC_LEFT:
-                case AdvFunction.TRAFFIC_RIGHT:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
-                    break;
-                case AdvFunction.DIM:
-                    trigger |= true;
-                    break;
                 default:
                     break;
             }
+
+            Pattern patt = alpha.GetPattern(FunctionEditPane.currFunc, IsColor2);
+
+            trigger &= (alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && patt != null && (patt is FlashPatt || patt is SingleFlashRefPattern || patt is DoubleFlashRefPattern) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual)));
 
             if(trigger) {
                 string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
