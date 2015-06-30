@@ -8,6 +8,7 @@ public class LightDict : MonoBehaviour {
     public static LightDict inst;
     public static SteadyPattern stdy;
     public Dictionary<Location, LocationNode> lights;
+    public List<Lens> lenses;
     public List<AdvFunction> steadyBurn;
     public List<Pattern> flashPatts, tdPatts;
     public short pattBase = 0;
@@ -16,6 +17,7 @@ public class LightDict : MonoBehaviour {
         if(inst == null) inst = this;
 
         lights = new Dictionary<Location, LocationNode>();
+        this.lenses = new List<Lens>();
         stdy = new SteadyPattern();
 
         if(File.Exists("lib.nbt")) {
@@ -89,6 +91,14 @@ public class LightDict : MonoBehaviour {
                     tdPatts.Add(new TraffPatt((NbtCompound)alpha));
                 }
 
+
+                NbtCompound lensCmpd = cat.RootTag.Get<NbtCompound>("lenses");
+                Lens.lgPrefix = lensCmpd["lgFix"].StringValue;
+                Lens.smPrefix = lensCmpd["smFix"].StringValue;
+                NbtList lenses = lensCmpd.Get<NbtList>("opts");
+                foreach(NbtTag alpha in lenses) {
+                    this.lenses.Add(new Lens(alpha as NbtCompound));
+                }
 
 
             } catch(NbtFormatException ex) {
@@ -977,6 +987,25 @@ public class StyleNode {
 
     public override int GetHashCode() {
         return base.GetHashCode();
+    }
+}
+
+public class Lens {
+    public static string smPrefix, lgPrefix;
+    public string name;
+    public string partSuffix;
+    public Color color;
+
+    public Lens() {
+        name = partSuffix = "";
+        color = Color.white;
+    }
+
+    public Lens(NbtCompound cmpd) {
+        name = cmpd["name"].StringValue;
+        partSuffix = cmpd["part"].StringValue;
+        byte[] clr = cmpd["clr"].ByteArrayValue;
+        color = new Color32(clr[0], clr[1], clr[2], clr[3]);
     }
 }
 

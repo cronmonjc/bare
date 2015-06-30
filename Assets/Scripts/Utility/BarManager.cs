@@ -1224,7 +1224,7 @@ public class BarManager : MonoBehaviour {
                 alphaStyles = alpha.lhd.style != null ? alpha.lhd.style.name.Split('\\', '/') : new string[2];
                 alpha.basicPhaseA = (alphaStyles[0].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase));
                 if(alphaStyles.Length > 1) {
-                    alpha.basicPhaseA2 = (alphaStyles[1].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase));
+                    alpha.basicPhaseA2 = !alpha.basicPhaseA;
                 }
             }
         }

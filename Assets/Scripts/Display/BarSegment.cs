@@ -4,6 +4,22 @@ using System.Collections;
 public class BarSegment : MonoBehaviour {
     private static BarManager man;
 
+    public Lens lens;
+
+    public string LensDescrip {
+        get {
+            if(lens == null) return "No Lens";
+            else return lens.name + " Lens";
+        }
+    }
+
+    public string LensPart {
+        get {
+            if(lens == null) return "";
+            else return (IsEnd ? Lens.lgPrefix : Lens.smPrefix) + lens.partSuffix;
+        }
+    }
+
     public bool IsEnd;
     public bool[] VisibleOn = new bool[] {false, false, false, false, true};
     public float[] XPosOn = new float[] { 0f, 0f, 0f, 0f, 0f };
