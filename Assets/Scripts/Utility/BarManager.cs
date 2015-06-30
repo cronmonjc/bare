@@ -1218,16 +1218,21 @@ public class BarManager : MonoBehaviour {
     }
 
     public void AutoPhase() {
-        StyleNode AStyle = first.lhd.style;
+        string AStyle = first.lhd.style != null ? first.lhd.style.name.Split('\\', '/')[0] : "";
 
-        if(AStyle == null) {
+        if(AStyle.Length == 0) {
             ErrorText.inst.DispError("Define the color that's using Phase A on the front driver's corner light, first.");
             return;
         }
 
+        string[] alphaStyles = new string[2];
         foreach(LightHead alpha in allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead && alpha.lhd.funcs.Contains(BasicFunction.FLASHING)) {
-                alpha.basicPhaseB = (alpha.lhd.style != AStyle);
+                alphaStyles = alpha.lhd.style != null ? alpha.lhd.style.name.Split('\\', '/') : new string[2];
+                alpha.basicPhaseA = (alphaStyles[0].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase));
+                if(alphaStyles.Length > 1) {
+                    alpha.basicPhaseA2 = (alphaStyles[1].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase));
+                }
             }
         }
     }
