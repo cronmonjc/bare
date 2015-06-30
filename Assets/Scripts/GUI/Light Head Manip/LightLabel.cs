@@ -402,9 +402,8 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     Debug.Log(lh.transform.GetPath() + " : " + p1.name);
 
                     bool phase1 = false, phase2 = false;
-                    bool directLeft = (FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT);
-                    bool sixHeads = false;
-                    short[] list = new short[0];
+                    TraffPatt.directLeft = (FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT);
+                    TraffPatt.sixHeads = false;
 
                     if(!(p1 is TraffPatt)) {
                         phase1 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
@@ -416,11 +415,8 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                 count++;
                             }
                         }
-                        sixHeads = count == 6;
-                        list = (directLeft ? (sixHeads ? ((TraffPatt)p1).left6 : ((TraffPatt)p1).left8) : (sixHeads ? ((TraffPatt)p1).right6 : ((TraffPatt)p1).right8));
+                        TraffPatt.sixHeads = count == 6;
                     }
-
-                    ulong p1period = p1.period, p2period = (p2 == null ? 0uL : p2.period);
 
                     ulong ticksPast;
                     byte bit = lh.Bit;
@@ -434,7 +430,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         while(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
                             ticksPast = PattTimer.inst.passedTicks;
 
-                            background.color = lh.lhd.style.color * ((en1 && p1.GetIsActive(ticksPast, phase2, true, bit)) ? 1.0f : 0.25f);
+                            background.color = lh.lhd.style.color * ((en1 && p1.GetIsActive(ticksPast, phase1, false, bit)) ? 1.0f : 0.25f);
                             if(lh.lhd.style.isDualColor) {
                                 secondImage.color = lh.lhd.style.color2 * ((en2 && p2 != null && p2.GetIsActive(ticksPast, phase2, true, bit)) ? 1.0f : 0.25f);
                             } else {
