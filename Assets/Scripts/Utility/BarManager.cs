@@ -484,8 +484,8 @@ public class BarManager : MonoBehaviour {
 
     public IEnumerator RefreshBits() {
         RefreshingBits = true;
-        yield return new WaitForFixedUpdate();
-        yield return new WaitForFixedUpdate();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
         foreach(LightHead alpha in allHeads) {
             if(!alpha.gameObject.activeInHierarchy) continue;
             alpha.myBit = 255;
@@ -504,96 +504,89 @@ public class BarManager : MonoBehaviour {
                 }
             } else {
                 if(BarSize > 1 && alpha.transform.position.y < 0) continue;
-                string path = alpha.transform.GetPath();
-                if(path.StartsWith("/Bar/DE/FO")) {
-                    alpha.myBit = 1;
-                } else if(path.StartsWith("/Bar/DE/FI")) {
-                    alpha.myBit = 4;
-                } else if(path.StartsWith("/Bar/PE/FO")) {
-                    alpha.myBit = 10;
-                } else if(path.StartsWith("/Bar/PE/FI")) {
-                    alpha.myBit = 7;
-                } else if(path.StartsWith("/Bar/DF/F")) {
-                    if(BarSize == 2) {
-                        if(alpha.isSmall) {
-                            alpha.FarWire = path.EndsWith("DS/L");
-                            alpha.myBit = (byte)(alpha.FarWire ? 5 : 6);
-                        } else {
-                            alpha.myBit = 5;
-                            alpha.FarWire = true;
+                string[] path = alpha.transform.GetPath().Split('/');
+
+                switch(path[2]) {
+                    case "DE":
+                        switch(path[3]) {
+                            case "FO":  alpha.myBit = 1; break;
+                            case "FI":  alpha.myBit = 4; break;
+                            case "RO":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break;
+                            case "RI":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
+                            default:    break;
                         }
-                    } else {
-                        alpha.myBit = 5;
-                        alpha.FarWire = true;
-                    }
-                } else if(path.StartsWith("/Bar/PF/F")) {
-                    if(BarSize == 2) {
-                        if(alpha.isSmall) {
-                            alpha.FarWire = path.EndsWith("DS/R");
-                            alpha.myBit = (byte)(alpha.FarWire ? 6 : 5);
-                        } else {
-                            alpha.myBit = 6;
-                            alpha.FarWire = true;
+                        break;
+                    case "DF":
+                        switch(path[3]) {
+                            #region /Bar/DF/F
+                            case "F":
+                                if(BarSize == 2) {
+                                    if(alpha.isSmall) {
+                                        alpha.FarWire = path[5] == "L";
+                                        alpha.myBit = (byte)(alpha.FarWire ? 5 : 6);
+                                    } else {
+                                        alpha.myBit = 5;
+                                        alpha.FarWire = true;
+                                    }
+                                } else {
+                                    alpha.myBit = 5;
+                                    alpha.FarWire = true;
+                                }
+                                break;
+                            #endregion
+                            default:    break;
                         }
-                    } else {
-                        alpha.myBit = 6;
-                        alpha.FarWire = true;
-                    }
-                } else if(path.StartsWith("/Bar/DN/F")) {
-                    alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
-                    alpha.FarWire = (BarSize == 1);
-                } else if(path.StartsWith("/Bar/PN/F")) {
-                    alpha.myBit = 6;
-                } else {
-                    switch(path) {
-                        case "/Bar/DE/RO/L":
-                            alpha.myBit = 2;
-                            break;
-                        case "/Bar/DE/RI/L":
-                            alpha.myBit = 4;
-                            break;
-                        case "/Bar/DN/R/L":
-                            alpha.myBit = 5;
-                            break;
-                        case "/Bar/PE/RI/L":
-                            alpha.myBit = 7;
-                            break;
-                        case "/Bar/PE/RO/L":
-                            alpha.myBit = 9;
-                            break;
-                        case "/Bar/DE/RO/DS/L":
-                            alpha.myBit = (byte)(2 - BarSize);
-                            break;
-                        case "/Bar/DE/RO/DS/R":
-                            alpha.myBit = (byte)(3 - BarSize);
-                            break;
-                        case "/Bar/DE/RI/DS/L":
-                            alpha.myBit = (byte)(4 - BarSize);
-                            break;
-                        case "/Bar/DE/RI/DS/R":
-                            alpha.myBit = (byte)(5 - BarSize);
-                            break;
-                        case "/Bar/DN/R/DS/L":
-                            alpha.myBit = 5;
-                            break;
-                        case "/Bar/DN/R/DS/R":
-                            alpha.myBit = 6;
-                            break;
-                        case "/Bar/PE/RI/DS/L":
-                            alpha.myBit = (byte)(6 + BarSize);
-                            break;
-                        case "/Bar/PE/RI/DS/R":
-                            alpha.myBit = (byte)(7 + BarSize);
-                            break;
-                        case "/Bar/PE/RO/DS/L":
-                            alpha.myBit = (byte)(8 + BarSize);
-                            break;
-                        case "/Bar/PE/RO/DS/R":
-                            alpha.myBit = (byte)(9 + BarSize);
-                            break;
-                        default:
-                            break;
-                    }
+                        break;
+                    case "DN":
+                        switch(path[3]) {
+                            #region /Bar/DN/F
+                            case "F":
+                                alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
+                                alpha.FarWire = (BarSize == 1);
+                                break;
+                            #endregion
+                            case "R":   alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break;
+                            default:    break;
+                        }
+                        break;
+                    case "PN":
+                        switch(path[3]) {
+                            case "F":   alpha.myBit = 6; break;
+                            default:    break;
+                        }
+                        break;
+                    case "PF":
+                        switch(path[3]) {
+                            #region /Bar/PF/F
+                            case "F":
+                                if(BarSize == 2) {
+                                    if(alpha.isSmall) {
+                                        alpha.FarWire = path[5] == "R";
+                                        alpha.myBit = (byte)(alpha.FarWire ? 6 : 5);
+                                    } else {
+                                        alpha.myBit = 6;
+                                        alpha.FarWire = true;
+                                    }
+                                } else {
+                                    alpha.myBit = 6;
+                                    alpha.FarWire = true;
+                                }
+                                break;
+                            #endregion
+                            default:    break;
+                        }
+                        break;
+                    case "PE":
+                        switch(path[3]) {
+                            case "FO":  alpha.myBit = 10; break;
+                            case "FI":  alpha.myBit = 7; break;
+                            case "RO":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 9); break;
+                            case "RI":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 7); break;
+                            default:    break;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }

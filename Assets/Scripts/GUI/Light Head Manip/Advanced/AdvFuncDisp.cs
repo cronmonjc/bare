@@ -14,92 +14,115 @@ public class AdvFuncDisp : MonoBehaviour {
         if(cam == null) { cam = FindObjectOfType<CameraControl>(); }
 
         NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(cam.OnlyCamSelected[0].transform, func));
-        c2enable.enabled = c1enable.enabled = true;
-        if(c1phase != null) c1phase.text = "";
-        if(c2phase != null) c2phase.text = "";
+        bool c1anyEnabled = false, c1allEnabled = true;
+        bool c2anyEnabled = false, c2allEnabled = true;
+        string c1ph = "", c2ph = "";
+
+        //c2enable.enabled = c1enable.enabled = true;
+        //if(c1phase != null) c1phase.text = "";
+        //if(c2phase != null) c2phase.text = "";
 
         foreach(LightHead alpha in cam.OnlyCamSelected) {
             if(!alpha.gameObject.activeInHierarchy) continue;
 
             byte bit = alpha.Bit;
 
+            bool thisEnabled = false;
+
             if(cmpd.Contains("e" + (alpha.transform.position.y < 0 ? "r" : "f") + "1")) {
-                c1enable.enabled &= (cmpd["e" + (alpha.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0;
+                thisEnabled = (cmpd["e" + (alpha.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0;
+                c1allEnabled &= thisEnabled;
+                c1anyEnabled |= thisEnabled;
             }
             if(cmpd.Contains("e" + (alpha.transform.position.y < 0 ? "r" : "f") + "2")) {
-                c2enable.enabled &= (cmpd["e" + (alpha.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0;
+                thisEnabled = (cmpd["e" + (alpha.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0;
+                c2allEnabled &= thisEnabled;
+                c2anyEnabled |= thisEnabled;
             }
 
             if(c1phase != null) {
                 bool b = (cmpd.Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << bit)) > 0;
 
-                if(c1phase.text == "") {
-                    c1phase.text = "( Phase " + (b ? "B" : "A") + " )";
-                } else if((b && c1phase.text.EndsWith("A )")) || (!b && c1phase.text.EndsWith("B )"))) {
-                    c1phase.text = "( Mixed Phase )";
+                if(c1ph == "") {
+                    c1ph = "( Phase " + (b ? "B" : "A") + " )";
+                } else if((b && c1ph.EndsWith("A )")) || (!b && c1ph.EndsWith("B )"))) {
+                    c1ph = "( Mixed Phase )";
                 }
             }
 
             if(c2phase != null) {
                 bool b = (cmpd.Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << bit)) > 0;
 
-                if(c2phase.text == "") {
-                    c2phase.text = "( Phase " + (b ? "B" : "A") + " )";
-                } else if((b && c2phase.text.EndsWith("A )")) || (!b && c2phase.text.EndsWith("B )"))) {
-                    c2phase.text = "( Mixed Phase )";
+                if(c2ph == "") {
+                    c2ph = "( Phase " + (b ? "B" : "A") + " )";
+                } else if((b && c2ph.EndsWith("A )")) || (!b && c2ph.EndsWith("B )"))) {
+                    c2ph = "( Mixed Phase )";
                 }
             }
         }
 
+        c1enable.enabled = c1allEnabled;
+        c2enable.enabled = c2allEnabled;
+        if(c1phase != null) c1phase.text = (c1anyEnabled ? c1ph : "");
+        if(c2phase != null) c2phase.text = (c2anyEnabled ? c2ph : "");
+
         if(c1patt != null) {
-            bool foundOne = false;
-            Pattern p = null;
+            if(c1anyEnabled) {
+                bool foundOne = false;
+                Pattern p = null;
 
-            foreach(LightHead alpha in cam.OnlyCamSelected) {
-                if(!alpha.gameObject.activeInHierarchy) continue;
+                foreach(LightHead alpha in cam.OnlyCamSelected) {
+                    if(!alpha.gameObject.activeInHierarchy) continue;
 
-                Pattern ap = alpha.GetPattern(func, false);
-                if(!foundOne) {
-                    p = ap;
-                    foundOne = true;
-                } else if(p != ap) {
-                    p = null;
-                    break;
+                    Pattern ap = alpha.GetPattern(func, false);
+                    if(!foundOne) {
+                        p = ap;
+                        foundOne = true;
+                    } else if(p != ap) {
+                        p = null;
+                        break;
+                    }
                 }
-            }
 
-            if(!foundOne) {
-                c1patt.text = "";
-            } else if(p == null) {
-                c1patt.text = "Multiple Patterns";
+                if(!foundOne) {
+                    c1patt.text = "";
+                } else if(p == null) {
+                    c1patt.text = "Multiple Patterns";
+                } else {
+                    c1patt.text = p.name;
+                }
             } else {
-                c1patt.text = p.name;
+                c1patt.text = "";
             }
         }
 
         if(c2patt != null) {
-            bool foundOne = false;
-            Pattern p = null;
+            if(c2anyEnabled) {
+                bool foundOne = false;
+                Pattern p = null;
 
-            foreach(LightHead alpha in cam.OnlyCamSelected) {
-                if(!alpha.gameObject.activeInHierarchy) continue;
+                foreach(LightHead alpha in cam.OnlyCamSelected) {
+                    if(!alpha.gameObject.activeInHierarchy) continue;
 
-                Pattern ap = alpha.GetPattern(func, true);
-                if(!foundOne) {
-                    p = ap;
-                    foundOne = true;
-                } else if(p != ap) {
-                    p = null;
-                    break;
+                    Pattern ap = alpha.GetPattern(func, true);
+                    if(!foundOne) {
+                        p = ap;
+                        foundOne = true;
+                    } else if(p != ap) {
+                        p = null;
+                        break;
+                    }
                 }
-            }
 
-            if(!foundOne) {
-                c2patt.text = "";
-            } else if(p == null) {
-                c2patt.text = "Multiple Patterns";
+                if(!foundOne) {
+                    c2patt.text = "";
+                } else if(p == null) {
+                    c2patt.text = "Multiple Patterns";
+                } else {
+                    c2patt.text = p.name;
+                }
             } else {
-                c2patt.text = p.name;
+                c2patt.text = "";
             }
         }
 
