@@ -2,14 +2,15 @@
 using System.Collections;
 
 public class TooManyEmitters : IssueChecker {
+    private int count;
 
     public override bool DoCheck() {
-        int count = 0;
+        count = 0;
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy) {
-                if(alpha.lhd.funcs.Contains(BasicFunction.EMITTER)) {
-                    count++;
+                for(byte i = 0; i < alpha.lhd.funcs.Count; i++) {
+                    if(alpha.lhd.funcs[i] == BasicFunction.EMITTER) count++;
                     if(count == 2) return true;
                 }
             }

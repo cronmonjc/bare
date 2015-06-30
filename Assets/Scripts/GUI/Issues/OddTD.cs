@@ -5,8 +5,10 @@ public class OddTD : IssueChecker {
 
     public override bool DoCheck() {
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(alpha.gameObject.activeInHierarchy && alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && !alpha.shouldBeTD) {
-                return true;
+            if(alpha.gameObject.activeInHierarchy) {
+                for(byte i = 0; i < alpha.lhd.funcs.Count; i++) {
+                    if(alpha.lhd.funcs[i] == BasicFunction.TRAFFIC && !alpha.shouldBeTD) return true;
+                }
             }
         }
         return false;
