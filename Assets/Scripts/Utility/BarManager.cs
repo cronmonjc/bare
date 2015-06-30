@@ -592,7 +592,6 @@ public class BarManager : MonoBehaviour {
                             alpha.myBit = (byte)(9 + BarSize);
                             break;
                         default:
-                            Debug.LogError("Tried to assign static byte to head at " + path + ", but no valid byte to assign exists.");
                             break;
                     }
                 }

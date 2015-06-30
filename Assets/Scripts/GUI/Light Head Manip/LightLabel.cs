@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 using fNbt;
 using System.Text;
 
-public class LightLabel : MonoBehaviour {
+public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     public Transform target;
     public Text label, label2, colorLabel;
     public Image background, secondImage, selectionImage, warnImage;
@@ -13,6 +14,7 @@ public class LightLabel : MonoBehaviour {
 
     public static CameraControl cam;
     public static bool showParts, showBit, showJustBit, showWire, colorlessWire, wireOverride, alternateNumbering, showPatt;
+    public static LabelTooltip tooltip;
     private OpticNode lastOptic;
     private StyleNode lastStyle;
 
@@ -474,5 +476,15 @@ public class LightLabel : MonoBehaviour {
             selectionImage.gameObject.SetActive(false);
             selectionImage.transform.rotation = Quaternion.identity;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        if(tooltip == null) tooltip = FindObjectOfType<LabelTooltip>();
+        if(label.text.Length > 0)
+            tooltip.Show(label.text);
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        tooltip.Hide();
     }
 }

@@ -49,9 +49,13 @@ public class SizeOptionControl : MonoBehaviour {
                             }
                             alpha.RefreshBasicFuncDefault();
 
-                            if(alpha.lhd.optic.styles[lh.lhd.style.name].selectable)
-                                alpha.SetStyle(lh.lhd.style);
-
+                            if(alpha.lhd.optic.styles.ContainsKey(lh.lhd.style.name)) {
+                                if(alpha.lhd.optic.styles[lh.lhd.style.name].selectable)
+                                    alpha.SetStyle(lh.lhd.style);
+                            } else {
+                                alpha.SetOptic(value ? lh.lhd.optic.lgEquivalent : lh.lhd.optic.smEquivalent, doDefault: false);
+                                alpha.SetStyle(lh.lhd.style.name);
+                            }
                         }
                     }
                 }
