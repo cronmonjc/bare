@@ -155,6 +155,16 @@ public class BarManager : MonoBehaviour {
         allSegs.AddRange(transform.GetComponentsInChildren<BarSegment>(true));
         StartCoroutine(RefreshBits());
         progressStuff.Shown = false;
+
+
+
+        foreach(Lens opt in LightDict.inst.lenses) {
+            if(opt.partSuffix == "C") {
+                foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true)) {
+                    seg.lens = opt;
+                }
+            }
+        }
     }
 
     public static string GetFnString(bool left, AdvFunction f) {
@@ -825,6 +835,15 @@ public class BarManager : MonoBehaviour {
             }
             root.Add(socList);
 
+            NbtList lensList = new NbtList("lens");
+            foreach(BarSegment seg in allSegs) {
+                NbtCompound segCmpd = new NbtCompound();
+                segCmpd.Add(new NbtString("path", seg.transform.GetPath()));
+                segCmpd.Add(new NbtString("part", seg.lens.partSuffix));
+                lensList.Add(segCmpd);
+            }
+            root.Add(lensList);
+
             NbtFile file = new NbtFile(root);
             if(!filename.EndsWith(".bar.nbt")) {
                 filename = filename + ".bar.nbt";
@@ -868,6 +887,7 @@ public class BarManager : MonoBehaviour {
 
         NbtList lightList = (NbtList)root["lite"];
         NbtList socList = (NbtList)root["soc"];
+        NbtList lensList = (NbtList)root["lens"];
         Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
         Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
 
@@ -944,6 +964,21 @@ public class BarManager : MonoBehaviour {
             }
 
             yield return StartCoroutine(RefreshBits());
+        }
+
+        foreach(NbtTag alpha in lensList) {
+            NbtCompound lensCmpd = alpha as NbtCompound;
+            foreach(BarSegment seg in allSegs) {
+                if(seg.transform.GetPath() == lensCmpd["path"].StringValue) {
+                    foreach(Lens opt in LightDict.inst.lenses) {
+                        if(opt.partSuffix == lensCmpd["part"].StringValue) {
+                            seg.lens = opt;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
         }
 
         moddedBar = false;
@@ -1121,8 +1156,13 @@ public class BarManager : MonoBehaviour {
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
             soc.ShowLong = true;
-        foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true))
-            seg.lens = null;
+        foreach(Lens opt in LightDict.inst.lenses) {
+            if(opt.partSuffix == "C") {
+                foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true)) {
+                    seg.lens = opt;
+                }
+            }
+        }
 
         RefreshBits();
 

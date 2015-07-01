@@ -178,7 +178,8 @@ public class FunctionEditPane : MonoBehaviour {
 
     private void Set() {
         flashing.SetActive(state == ShowState.FLASHING);
-        dimmer.SetActive(state == ShowState.DIMMER);
+        //dimmer.SetActive(state == ShowState.DIMMER);
+        dimmer.SetActive(false);
         traffic.SetActive(state == ShowState.TRAFFIC);
     }
 

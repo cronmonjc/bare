@@ -267,6 +267,13 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             else {
                                 t = t + pat.name + (pat is FlashPatt ? (thisPhase ? " B" : " A") : "");
                             }
+                        } else if(func.Contains("patt")) {
+                            Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, false);
+                            if(pat == null)
+                                t = t + "No Patt";
+                            else {
+                                t = t + pat.name;
+                            }
                         } else {
                             t = t + "Enabled";
                         }
@@ -285,6 +292,13 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                     t = t + " / " + pat.name + (pat is FlashPatt ? (thisPhase ? " B" : " A") : "");
                             } else {
                                 t = t + " / Enabled";
+                            }
+                        } else if(func.Contains("patt")) {
+                            Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, true);
+                            if(pat == null)
+                                t = t + "No Patt";
+                            else {
+                                t = t + pat.name;
                             }
                         } else {
                             t = t + " / Disabled";

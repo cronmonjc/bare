@@ -99,6 +99,9 @@ public class FuncEnable : MonoBehaviour {
             label.text = "Cannot Enable Color " + (IsColor2 ? "2" : "1");
         } else {
             checkmark.enabled = !disabled;
+            ColorBlock cb = button.colors;
+            cb.normalColor = (!disabled ? new Color(0.8f, 1.0f, 0.8f, 1.0f) : (!enabled ? new Color(1.0f, 0.8f, 0.8f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 1.0f)));
+            button.colors = cb;
 
             if(enabled && disabled) {
                 label.text = "Color " + (IsColor2 ? "2" : "1") + " Partly Enabled";
