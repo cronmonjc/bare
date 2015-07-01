@@ -42,5 +42,9 @@ public class TDPulldown : PulldownItem {
 
     public override void Clicked() {
         BarManager.moddedBar = true;
+
+        BOMCables bomc = FindObjectOfType<BOMCables>();
+        if(bomc != null)
+            bomc.Refresh();
     }
 }

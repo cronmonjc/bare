@@ -1362,6 +1362,7 @@ public class PDFExportJob : ThreadedJob {
     public LightHead[] headNumber;
     public Dictionary<LightHead, string> altHeadNumber;
     public Dictionary<LightHead, string> color1Wire, color2Wire;
+    public BOMCables bomcables;
 
     public void Start(string fname) {
         BarManager bm = BarManager.inst;
@@ -1384,6 +1385,9 @@ public class PDFExportJob : ThreadedJob {
         altHeadNumber = BarManager.altHeadNumber;
         color1Wire = new Dictionary<LightHead, string>();
         color2Wire = new Dictionary<LightHead, string>();
+        bomcables = GameObject.FindObjectOfType<BOMCables>();
+        if(bomcables == null)
+            Debug.LogError("Couldn't find BOMCable Object");
 
         foreach(LightHead alpha in headNumber) {
             alpha.PrefetchPatterns();
@@ -1667,7 +1671,7 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, 3.3, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Component", caliBold, XBrushes.Black, new XRect(1.5, 3.3, 1.0, 0.2));
-        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 3.0, 0.2));
+        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 4.0, 0.2));
 
         List<string> parts = new List<string>();
         Dictionary<string, int> counts = new Dictionary<string, int>();
@@ -1686,12 +1690,18 @@ public class PDFExportJob : ThreadedJob {
         }
 
         double top = 3.5;
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("S8070-454-" + ((bomcables.dualLCount + bomcables.dualRCount) > 0 ? "2" : "1"), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("Control Circuit - " + ((bomcables.dualLCount + bomcables.dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only"), caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        top += 0.25;
         foreach(string part in parts) {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString(counts[part] + "", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString((descs[part] as LightHead).PartNumber, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
-            tf.DrawString(((descs[part] as LightHead).lhd.optic.styles.Count > 1 ? (descs[part] as LightHead).lhd.style.name + " " : "") + (descs[part] as LightHead).lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
+            tf.DrawString(((descs[part] as LightHead).lhd.optic.styles.Count > 1 ? (descs[part] as LightHead).lhd.style.name + " " : "") + (descs[part] as LightHead).lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
 
@@ -1699,10 +1709,11 @@ public class PDFExportJob : ThreadedJob {
 
         top += 0.2;
 
+        tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
-        tf.DrawString("Lens", caliBold, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
-        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, top, 3.0, 0.2));
+        tf.DrawString("Lenses", caliBold, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
 
         parts.Clear();
         counts.Clear();
@@ -1726,7 +1737,63 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString(counts[part] + "", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString((descs[part] as BarSegment).LensPart, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
-            tf.DrawString((descs[part] as BarSegment).LensDescrip, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
+            tf.DrawString((descs[part] as BarSegment).LensDescrip, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+
+        top += 0.2;
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("Cables", caliBold, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+
+        top += 0.2;
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("SWH-" + (BarManager.useCAN ? "CAN" : "1000BAR") + (BarManager.cableLength == 1 ? "25" : "17"), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("External Control Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        top += 0.15;
+        if(BarManager.cableType == 1 || BarManager.useCAN) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("S271-POWER10-" + (BarManager.cableLength == 1 ? "25" : "17"), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("10 Gauge Power Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(bomcables.singleLCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + bomcables.singleLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "L", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Single Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(bomcables.singleRCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + bomcables.singleRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "R", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Single Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(bomcables.dualLCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + bomcables.dualLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "DL", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Dual Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(bomcables.dualRCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + bomcables.dualRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "DR", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Dual Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
 

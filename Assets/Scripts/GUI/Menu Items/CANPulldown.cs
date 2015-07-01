@@ -10,5 +10,9 @@ public class CANPulldown : PulldownItem {
         BarManager.useCAN = (number == 0);
         BarManager.moddedBar = true;
         if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
+
+        BOMCables bomc = FindObjectOfType<BOMCables>();
+        if(bomc != null)
+            bomc.Refresh();
     }
 }

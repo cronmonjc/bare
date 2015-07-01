@@ -9,5 +9,9 @@ public class TypePulldown : PulldownItem {
     public override void Clicked() {
         BarManager.cableType = number;
         BarManager.moddedBar = true;
+
+        BOMCables bomc = FindObjectOfType<BOMCables>();
+        if(bomc != null)
+            bomc.Refresh();
     }
 }

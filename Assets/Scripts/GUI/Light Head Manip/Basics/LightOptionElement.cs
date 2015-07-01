@@ -138,7 +138,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
             t.image.color = Color.white;
             t.interactable = true;
             text.color = Color.black;
-            text.text = lens.name + " Lens";
+            text.text = "Clear Coated " + lens.name + " Lens";
         }
 
     }

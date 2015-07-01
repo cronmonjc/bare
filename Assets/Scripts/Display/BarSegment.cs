@@ -16,7 +16,7 @@ public class BarSegment : MonoBehaviour {
     public string LensDescrip {
         get {
             if(lens == null) return "No Lens";
-            else return lens.name + " Lens";
+            else return "Clear Coated " + lens.name + (IsEnd ? " End" : " Center") + " Lens";
         }
     }
 
