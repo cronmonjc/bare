@@ -413,8 +413,6 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 Pattern p2 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, true) : null;
 
                 if(p1 != null) {
-                    Debug.Log(lh.transform.GetPath() + " : " + p1.name);
-
                     bool phase1 = false, phase2 = false;
                     TraffPatt.directLeft = (FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT);
                     TraffPatt.sixHeads = false;
