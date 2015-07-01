@@ -3054,7 +3054,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -50, y: -16}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &68980089
 MonoBehaviour:
@@ -3932,6 +3932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff50121ac9d8e848bf88feb82411849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  affected: []
   labelPrefab: {fileID: 170468, guid: 8e8686d57a7d71b47be8fe053b080e78, type: 2}
   myLabel: {fileID: 0}
   IsEnd: 0
@@ -7038,6 +7039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff50121ac9d8e848bf88feb82411849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  affected: []
   labelPrefab: {fileID: 170468, guid: 8e8686d57a7d71b47be8fe053b080e78, type: 2}
   myLabel: {fileID: 0}
   IsEnd: 0
@@ -19988,10 +19990,10 @@ RectTransform:
   - {fileID: 1777113867}
   m_Father: {fileID: 1254402927}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 136, y: -68}
-  m_SizeDelta: {x: 256, y: 128}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &464540791
 MonoBehaviour:
@@ -20617,6 +20619,105 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 1
+--- !u!1 &471612814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 471612815}
+  - 222: {fileID: 471612819}
+  - 114: {fileID: 471612818}
+  - 114: {fileID: 471612817}
+  - 114: {fileID: 471612816}
+  m_Layer: 5
+  m_Name: AmberOverCoolWhite
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &471612815
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 471612814}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 542738552}
+  m_RootOrder: 8
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 513.000732, y: -135.000305}
+  m_SizeDelta: {x: 1018, y: 32}
+  m_Pivot: {x: .5, y: .5}
+--- !u!114 &471612816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 471612814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdbd239883cdef346adbb047a1c6db42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &471612817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 471612814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+--- !u!114 &471612818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 471612814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: .882352948, b: 0, a: 1}
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: You appear to be using an Amber lens over a Cool White light head. While
+    this will work as intended, we suggest you use a Warm White light head instead
+    to help the light shine through more brightly.
+--- !u!222 &471612819
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 471612814}
 --- !u!1 &472553816
 GameObject:
   m_ObjectHideFlags: 0
@@ -24459,6 +24560,9 @@ RectTransform:
   - {fileID: 1560165398}
   - {fileID: 499016818}
   - {fileID: 1920734703}
+  - {fileID: 471612815}
+  - {fileID: 1109985625}
+  - {fileID: 1077998122}
   m_Father: {fileID: 1704303448}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
@@ -48143,6 +48247,104 @@ MonoBehaviour:
   menu: {fileID: 1053764425}
   optionPrefab: {fileID: 110134, guid: b6fdd26b2ab7f2a4bb01908dbf9a9a50, type: 2}
   cam: {fileID: 830525226}
+--- !u!1 &1077998121
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 1077998122}
+  - 222: {fileID: 1077998126}
+  - 114: {fileID: 1077998125}
+  - 114: {fileID: 1077998124}
+  - 114: {fileID: 1077998123}
+  m_Layer: 5
+  m_Name: LensEndColorIssue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1077998122
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1077998121}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 542738552}
+  m_RootOrder: 10
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 513.000732, y: -135.000305}
+  m_SizeDelta: {x: 1018, y: 32}
+  m_Pivot: {x: .5, y: .5}
+--- !u!114 &1077998123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1077998121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3aa2d1ca3d0868e41a0c1a65e3979967, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1077998124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1077998121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+--- !u!114 &1077998125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1077998121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: .882352948, b: 0, a: 1}
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: You appear to be using colored end lenses as well as Cool White alley heads.  We
+    suggest you utilize a Clear lens instead so your alleys are white as intended.
+--- !u!222 &1077998126
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1077998121}
 --- !u!1 &1084816055
 GameObject:
   m_ObjectHideFlags: 0
@@ -49093,6 +49295,105 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!1 &1109985624
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 1109985625}
+  - 222: {fileID: 1109985629}
+  - 114: {fileID: 1109985628}
+  - 114: {fileID: 1109985627}
+  - 114: {fileID: 1109985626}
+  m_Layer: 5
+  m_Name: LensColorIssue
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1109985625
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1109985624}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 542738552}
+  m_RootOrder: 9
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 513.000732, y: -135.000305}
+  m_SizeDelta: {x: 1018, y: 32}
+  m_Pivot: {x: .5, y: .5}
+--- !u!114 &1109985626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1109985624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51232a198e6ed9f408b8c03ffc7679a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1109985627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1109985624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+--- !u!114 &1109985628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1109985624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: .882352948, b: 0, a: 1}
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: You have lenses on your bar whose colors confict with the colors of the
+    light heads they cover.  Consider using either matching color lights, a white
+    light, or a clear lens.
+--- !u!222 &1109985629
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1109985624}
 --- !u!1 &1110672991
 GameObject:
   m_ObjectHideFlags: 0
@@ -55136,7 +55437,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: .000213623047}
-  m_SizeDelta: {x: 0, y: 136}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &1254402928
 MonoBehaviour:
@@ -58125,6 +58426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff50121ac9d8e848bf88feb82411849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  affected: []
   labelPrefab: {fileID: 170468, guid: 8e8686d57a7d71b47be8fe053b080e78, type: 2}
   myLabel: {fileID: 0}
   IsEnd: 1
@@ -58684,7 +58986,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1348022907
 RectTransform:
   m_ObjectHideFlags: 0
@@ -73160,6 +73462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff50121ac9d8e848bf88feb82411849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  affected: []
   labelPrefab: {fileID: 170468, guid: 8e8686d57a7d71b47be8fe053b080e78, type: 2}
   myLabel: {fileID: 0}
   IsEnd: 0
@@ -75723,6 +76026,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff50121ac9d8e848bf88feb82411849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  affected: []
   labelPrefab: {fileID: 170468, guid: 8e8686d57a7d71b47be8fe053b080e78, type: 2}
   myLabel: {fileID: 0}
   IsEnd: 1
@@ -90214,6 +90518,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eff50121ac9d8e848bf88feb82411849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  affected: []
   labelPrefab: {fileID: 170468, guid: 8e8686d57a7d71b47be8fe053b080e78, type: 2}
   myLabel: {fileID: 0}
   IsEnd: 0

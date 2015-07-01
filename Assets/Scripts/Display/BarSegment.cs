@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BarSegment : MonoBehaviour {
     private static CameraControl cam;
 
     public Lens lens;
 
+    public LightHead[] affected;
+
     public GameObject labelPrefab;
     public LensLabel myLabel;
 
     public bool Visible {
-        get { return IsEnd || VisibleOn[BarManager.inst.BarSize];}
+        get { return IsEnd || VisibleOn[BarManager.inst.BarSize]; }
     }
 
     public string LensDescrip {
@@ -50,5 +53,18 @@ public class BarSegment : MonoBehaviour {
             myLabel.transform.localScale = Vector3.one;
         }
         myLabel.gameObject.SetActive(IsEnd || VisibleOn[BarManager.inst.BarSize]);
+    }
+
+    public List<LightHead> AffectedLights {
+        get {
+            if(affected == null) {
+                affected = GetComponentsInChildren<LightHead>(true);
+            }
+            List<LightHead> rtn = new List<LightHead>();
+            foreach(LightHead head in affected) {
+                if(head.gameObject.activeInHierarchy) rtn.Add(head);
+            }
+            return rtn;
+        }
     }
 }

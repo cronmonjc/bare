@@ -1008,6 +1008,11 @@ public class Lens {
         byte[] clr = cmpd["clr"].ByteArrayValue;
         color = new Color32(clr[0], clr[1], clr[2], clr[3]);
     }
+
+    public bool Test(Color testAgainst) {
+        float r = Mathf.Min(color.r, testAgainst.r), b = Mathf.Min(color.b, testAgainst.b), g = Mathf.Min(color.g, testAgainst.g);
+        return r + b + g >= 1f;
+    }
 }
 
 public enum Location {
