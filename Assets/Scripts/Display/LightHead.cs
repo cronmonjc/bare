@@ -263,13 +263,13 @@ public class LightHead : MonoBehaviour {
             if(cam == null) {
                 cam = FindObjectOfType<CameraControl>();
             }
-            return cam.OnlyCamSelected.Contains(this);
+            return cam.OnlyCamSelectedHead.Contains(this);
         }
         set {
             if(value && !Selected) {
-                cam.OnlyCamSelected.Add(this);
+                cam.OnlyCamSelectedHead.Add(this);
             } else if(!value && Selected) {
-                cam.OnlyCamSelected.Remove(this);
+                cam.OnlyCamSelectedHead.Remove(this);
             }
         }
     }

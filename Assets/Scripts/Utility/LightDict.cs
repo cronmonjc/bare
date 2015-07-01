@@ -994,6 +994,7 @@ public class Lens {
     public static string smPrefix, lgPrefix;
     public string name;
     public string partSuffix;
+    public uint cost;
     public Color color;
 
     public Lens() {

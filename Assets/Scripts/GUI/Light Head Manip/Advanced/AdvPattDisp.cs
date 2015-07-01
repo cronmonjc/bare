@@ -34,7 +34,7 @@ public class AdvPattDisp : MonoBehaviour {
 
         color1.text = color2.text = "";
 
-        foreach(LightHead alpha in cam.OnlyCamSelected) {
+        foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
             if(alpha.lhd.style == null) continue;
             foreach(BasicFunction beta in alpha.lhd.funcs) {
                 switch(beta) {

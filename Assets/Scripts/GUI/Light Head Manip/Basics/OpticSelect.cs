@@ -140,7 +140,7 @@ public class OpticSelect : MonoBehaviour {
         styleSelect.selectedType = node;
         styleSelect.gameObject.SetActive(node != null);
         bool change = false, blank = false;
-        foreach(LightHead lh in cam.OnlyCamSelected) {
+        foreach(LightHead lh in cam.OnlyCamSelectedHead) {
             if(lh.gameObject.activeInHierarchy && lh.lhd.optic != node) {
                 if(node == null) {
                     lh.SetOptic("");

@@ -25,7 +25,8 @@ public class BOMControl : MonoBehaviour {
     private Dictionary<string, BOMElement> elements;
 
     private Dictionary<string, int> counts;
-    private Dictionary<string, LightHead> descs; 
+    private Dictionary<string, LightHead> descsHead;
+    private Dictionary<string, BarSegment> descsLens;
 
     /// <summary>
     /// The "unconfigured" element.
@@ -43,7 +44,9 @@ public class BOMControl : MonoBehaviour {
         elements = new Dictionary<string, BOMElement>();
         counts = new Dictionary<string, int>();
         if(type == BOMType.Lights) {
-            descs = new Dictionary<string, LightHead>();
+            descsHead = new Dictionary<string, LightHead>();
+        } else if(type == BOMType.Lenses) {
+            descsLens = new Dictionary<string, BarSegment>();
         }
         parts = new List<string>();
     }
@@ -55,8 +58,8 @@ public class BOMControl : MonoBehaviour {
         }
 
         if(type == BOMType.Lights) {
-            foreach(string alpha in new List<string>(descs.Keys)) {
-                descs[alpha] = null;
+            foreach(string alpha in new List<string>(descsHead.Keys)) {
+                descsHead[alpha] = null;
             }
             int unconfig = 0;
             foreach(LightHead lh in BarManager.inst.allHeads) {
@@ -67,7 +70,7 @@ public class BOMControl : MonoBehaviour {
                             counts[part]++;
                         } else {
                             counts[part] = 1;
-                            descs[part] = lh;
+                            descsHead[part] = lh;
                             parts.Add(part);
                         }
                     } else {
@@ -82,11 +85,11 @@ public class BOMControl : MonoBehaviour {
             foreach(string alpha in parts) {
                 if(elements.ContainsKey(alpha)) {
                     elements[alpha].quantity = counts[alpha];
-                    elements[alpha].headToDescribe = descs[alpha];
+                    elements[alpha].headToDescribe = descsHead[alpha];
                 } else {
                     BOMElement newbie = AddItem(alpha);
                     newbie.type = type;
-                    newbie.headToDescribe = descs[alpha];
+                    newbie.headToDescribe = descsHead[alpha];
                     newbie.quantity = counts[alpha];
                 }
             }
@@ -95,47 +98,47 @@ public class BOMControl : MonoBehaviour {
                     RemoveItem(alpha);
                 }
             }
-        //} else if(type == BOMType.Lenses) {
-        //    LightLensControl[] llcs = GameObject.FindObjectsOfType<LightLensControl>();
+        } else if(type == BOMType.Lenses) {
+            foreach(string alpha in new List<string>(descsLens.Keys)) {
+                descsLens[alpha] = null;
+            }
+            int unconfig = 0;
+            foreach(BarSegment seg in BarManager.inst.allSegs) {
+                if(seg.Visible) {
+                    if(seg.lens != null) {
+                        string part = seg.LensPart;
+                        if(parts.Contains(part)) {
+                            counts[part]++;
+                        } else {
+                            counts[part] = 1;
+                            descsLens[part] = seg;
+                            parts.Add(part);
+                        }
+                    } else {
+                        unconfig++;
+                    }
+                }
+            }
 
-        //    Dictionary<string, LightLensControl> descs = new Dictionary<string, LightLensControl>();
-        //    int unconfig = 0;
-        //    foreach(LightLensControl llc in llcs) {
-        //        if(llc.GetComponent<Renderer>().enabled) {
-        //            if(llc.myLensOption != null) {
-        //                string part = (llc.side ? MainCameraControl.sideLensPart : MainCameraControl.midLensPart) + llc.myLensOption.part + (MainCameraControl.clearCoat ? "-C" : "");
-        //                if(counts.ContainsKey(part)) {
-        //                    counts[part]++;
-        //                } else {
-        //                    counts[part] = 1;
-        //                    descs[part] = llc;
-        //                    parts.Add(part);
-        //                }
-        //            } else {
-        //                unconfig++;
-        //            }
-        //        }
-        //    }
+            unconfigured.quantity = unconfig;
+            unconfigured.gameObject.SetActive(unconfig > 0);
 
-        //    unconfigured.quantity = unconfig;
-        //    unconfigured.gameObject.SetActive(unconfig > 0);
-
-        //    foreach(string alpha in parts) {
-        //        if(elements.ContainsKey(alpha)) {
-        //            elements[alpha].quantity = counts[alpha];
-        //            elements[alpha].lensToDescribe = descs[alpha];
-        //        } else {
-        //            BOMElement newbie = AddItem(alpha);
-        //            newbie.type = type;
-        //            newbie.lensToDescribe = descs[alpha];
-        //            newbie.quantity = counts[alpha];
-        //        }
-        //    }
-        //    foreach(string alpha in new List<string>(elements.Keys)) {
-        //        if(!counts.ContainsKey(alpha)) {
-        //            RemoveItem(alpha);
-        //        }
-        //    }
+            foreach(string alpha in parts) {
+                if(elements.ContainsKey(alpha)) {
+                    elements[alpha].quantity = counts[alpha];
+                    elements[alpha].lensToDescribe = descsLens[alpha];
+                } else {
+                    BOMElement newbie = AddItem(alpha);
+                    newbie.type = type;
+                    newbie.lensToDescribe = descsLens[alpha];
+                    newbie.quantity = counts[alpha];
+                }
+            }
+            foreach(string alpha in new List<string>(elements.Keys)) {
+                if(!counts.ContainsKey(alpha) || counts[alpha] == 0) {
+                    RemoveItem(alpha);
+                }
+            }
         //} else if(type == BOMType.FlasherBundles) {
         //    string[] wireClusters = MainCameraControl.GetFlasherBundles();
         //    HashSet<string> uniqueClusters = new HashSet<string>(wireClusters);
@@ -177,7 +180,7 @@ public class BOMControl : MonoBehaviour {
         if(elements.ContainsKey(partNum)) {
             return elements[partNum];
         } else {
-            int childIndex = transform.GetSiblingIndex() + 2 + elements.Count; // Always place the new element at the bottom of the section
+            int childIndex = transform.GetSiblingIndex() + 3 + elements.Count; // Always place the new element at the bottom of the section
             GameObject newbie = GameObject.Instantiate(elementPrefab) as GameObject;
             newbie.transform.SetParent(transform.parent, false);
             newbie.transform.SetSiblingIndex(childIndex);

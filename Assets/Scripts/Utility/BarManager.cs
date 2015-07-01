@@ -43,6 +43,7 @@ public class BarManager : MonoBehaviour {
 
     public static BarManager inst;
     public List<LightHead> allHeads;
+    public List<BarSegment> allSegs;
     public static LightHead[] headNumber;
     public static Dictionary<LightHead, string> altHeadNumber;
 
@@ -151,6 +152,7 @@ public class BarManager : MonoBehaviour {
 
     void Start() {
         allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true));
+        allSegs.AddRange(transform.GetComponentsInChildren<BarSegment>(true));
         StartCoroutine(RefreshBits());
         progressStuff.Shown = false;
     }
@@ -384,7 +386,7 @@ public class BarManager : MonoBehaviour {
             foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                 soc.ShowLong = true;
             }
-            FindObjectOfType<CameraControl>().OnlyCamSelected.Clear();
+            FindObjectOfType<CameraControl>().OnlyCamSelectedHead.Clear();
         }
         StartCoroutine(RefreshBits());
     }
@@ -1008,6 +1010,9 @@ public class BarManager : MonoBehaviour {
             alpha.DispError = false;
             alpha.Refresh(true);
         }
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+            alpha.Refresh();
+        }
         Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
         yield return new WaitForEndOfFrame();
         tex.ReadPixels(capRect, 0, 0);
@@ -1023,6 +1028,9 @@ public class BarManager : MonoBehaviour {
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
         }
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+            alpha.Refresh();
+        }
         LightLabel.showJustBit = false;
         yield return new WaitForEndOfFrame();
         tex.ReadPixels(capRect, 0, 0);
@@ -1037,6 +1045,9 @@ public class BarManager : MonoBehaviour {
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
         }
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+            alpha.Refresh();
+        }
         LightLabel.showParts = false;
         yield return new WaitForEndOfFrame();
         tex.ReadPixels(capRect, 0, 0);
@@ -1050,6 +1061,9 @@ public class BarManager : MonoBehaviour {
         LightLabel.showWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
+        }
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+            alpha.Refresh();
         }
         foreach(SpriteRenderer sr in FindObjectsOfType<SpriteRenderer>()) {
             sr.color = Color.white;
@@ -1067,6 +1081,9 @@ public class BarManager : MonoBehaviour {
         LightLabel.colorlessWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
+        }
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+            alpha.Refresh();
         }
         foreach(SpriteRenderer sr in FindObjectsOfType<SpriteRenderer>()) {
             sr.color = new Color32(116, 116, 116, 255);
@@ -1090,6 +1107,9 @@ public class BarManager : MonoBehaviour {
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh();
         }
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+            alpha.Refresh();
+        }
 
     }
 
@@ -1101,6 +1121,8 @@ public class BarManager : MonoBehaviour {
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
             soc.ShowLong = true;
+        foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true))
+            seg.lens = null;
 
         RefreshBits();
 
@@ -1242,7 +1264,7 @@ public class BarManager : MonoBehaviour {
 
     public void BeginPreview() {
         funcBeingTested = FunctionEditPane.currFunc;
-        FindObjectOfType<CameraControl>().OnlyCamSelected.Clear();
+        FindObjectOfType<CameraControl>().OnlyCamSelectedHead.Clear();
         CameraControl.ShowWhole = true;
         CanvasDisabler.CanvasEnabled = false;
         PattTimer.inst.StartTimer();
@@ -1649,7 +1671,7 @@ public class PDFExportJob : ThreadedJob {
 
         List<string> parts = new List<string>();
         Dictionary<string, int> counts = new Dictionary<string, int>();
-        Dictionary<string, LightHead> descs = new Dictionary<string, LightHead>();
+        Dictionary<string, object> descs = new Dictionary<string, object>();
         foreach(LightHead lh in BarManager.headNumber) {
             if(lh.lhd.style != null) {
                 string part = lh.PartNumber;
@@ -1668,12 +1690,46 @@ public class PDFExportJob : ThreadedJob {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString(counts[part] + "", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString(descs[part].PartNumber, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
-            tf.DrawString((descs[part].lhd.optic.styles.Count > 1 ? descs[part].lhd.style.name + " " : "") + descs[part].lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
+            tf.DrawString((descs[part] as LightHead).PartNumber, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString(((descs[part] as LightHead).lhd.optic.styles.Count > 1 ? (descs[part] as LightHead).lhd.style.name + " " : "") + (descs[part] as LightHead).lhd.optic.name, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
             top += 0.15;
         }
 
         progressPercentage = 45;
+
+        top += 0.2;
+
+        tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("Lens", caliBold, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, top, 3.0, 0.2));
+
+        parts.Clear();
+        counts.Clear();
+        descs.Clear();
+        foreach(BarSegment seg in BarManager.inst.allSegs) {
+            if(seg.Visible && seg.lens != null) {
+                string part = seg.LensPart;
+                if(counts.ContainsKey(part)) {
+                    counts[part]++;
+                } else {
+                    counts[part] = 1;
+                    descs[part] = seg;
+                    parts.Add(part);
+                }
+            }
+        }
+
+        top += 0.2;
+        foreach(string part in parts) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(counts[part] + "", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString((descs[part] as BarSegment).LensPart, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString((descs[part] as BarSegment).LensDescrip, caliSm, XBrushes.Black, new XRect(3.0, top, 1.0, 0.2));
+            top += 0.15;
+        }
+
 
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));

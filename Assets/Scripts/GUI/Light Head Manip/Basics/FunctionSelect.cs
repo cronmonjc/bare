@@ -58,7 +58,7 @@ public class FunctionSelect : MonoBehaviour {
         for(int i = 0; i < potential.Count; i++) {
             if(potential[i] == BasicFunction.CRUISE) continue;
             if(potential[i] == BasicFunction.EMITTER) {
-                if(cam.OnlyCamSelected.Count > 1) continue;
+                if(cam.OnlyCamSelectedHead.Count > 1) continue;
                 bool found = false;
                 foreach(LightHead alpha in BarManager.inst.allHeads) {
                     if(alpha.gameObject.activeInHierarchy && !alpha.Selected && alpha.lhd.funcs.Contains(BasicFunction.EMITTER)) {
@@ -86,7 +86,7 @@ public class FunctionSelect : MonoBehaviour {
 
         selFuncs.AddRange(potential);
 
-        foreach(LightHead alpha in cam.OnlyCamSelected) {
+        foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
             foreach(BasicFunction f in potential) {
                 if(selFuncs.Contains(f) && !alpha.lhd.funcs.Contains(f)) {
                     selFuncs.Remove(f);
@@ -124,7 +124,7 @@ public class FunctionSelect : MonoBehaviour {
 
         selFuncs.Clear();
         selFuncs.AddRange(potential);
-        foreach(LightHead alpha in cam.OnlyCamSelected) {
+        foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
             foreach(BasicFunction f in potential) {
                 if(selFuncs.Contains(f) && !alpha.lhd.funcs.Contains(f)) {
                     selFuncs.Remove(f);

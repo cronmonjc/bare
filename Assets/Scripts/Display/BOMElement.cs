@@ -29,7 +29,7 @@ public class BOMElement : MonoBehaviour {
     /// <summary>
     /// If this is a <see cref="BOMControl.BOMType.FlasherBundles"/> element, the part number of the flasher bundle it's showing.
     /// </summary>
-    public string bundleToDescribe;
+    public BarSegment lensToDescribe;
     
     public Text qty, desc, amp, cost;
     
@@ -45,12 +45,18 @@ public class BOMElement : MonoBehaviour {
                 } else {
                     cost.text = "";
                 }
-            //} else if(type == BOMControl.BOMType.Lenses && lensToDescribe != null) {
-            //    // This massive line displays the entire description of the lens.  Blame long names for the length of this line.
-            //    desc.text = (lensToDescribe.side ? MainCameraControl.sideLensPart : MainCameraControl.midLensPart) +
-            //        lensToDescribe.myLensOption.part + (MainCameraControl.clearCoat ? "-C" : "") + " -- " +
-            //        lensToDescribe.myLensOption.name + (lensToDescribe.side ? " End" : " Mid") + " Lens" +
-            //        (MainCameraControl.clearCoat ? " with Clear Coating" : "");
+            } else if(type == BOMControl.BOMType.Lenses && lensToDescribe != null) {
+                desc.text = lensToDescribe.LensPart + " -- " + lensToDescribe.LensDescrip;
+
+                if(amp != null) {
+                    Destroy(amp);
+                    amp = null;
+                }
+                if(CameraControl.ShowPricing) {
+                    cost.text = "$" + (lensToDescribe.lens.cost * quantity * 0.01f).ToString("F2");
+                } else {
+                    cost.text = "";
+                }
             //} else if(type == BOMControl.BOMType.FlasherBundles) {
             //    desc.text = bundleToDescribe + " -- " + cam.flasherBundles[bundleToDescribe].description;
             //    if(MainCameraControl.ShowPricing) {

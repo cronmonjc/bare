@@ -3,7 +3,7 @@ using System.Collections;
 
 public class LightInteractionPanel : MonoBehaviour {
     public enum ShowState {
-        SUMMARY, OPTICS, FUNCASSIGN, FUNCEDIT
+        SUMMARY, OPTICS, FUNCASSIGN, FUNCEDIT, LENSES
     }
     private static CameraControl cam;
     public static bool EditingFunc = false;
@@ -12,7 +12,7 @@ public class LightInteractionPanel : MonoBehaviour {
         set { _state = value; Set(); }
         get { return _state; }
     }
-    public GameObject SummaryPane, OpticPane, FuncAssignPane, FuncEditPane;
+    public GameObject SummaryPane, LensPane, OpticPane, FuncAssignPane, FuncEditPane;
     public UnityEngine.UI.Text PattEditButton;
 
     // Update is called once per frame
@@ -24,15 +24,28 @@ public class LightInteractionPanel : MonoBehaviour {
 
         switch(state) {
             case ShowState.SUMMARY:
-                if(cam.OnlyCamSelected.Count > 0) {
+                if(cam.OnlyCamSelectedHead.Count > 0) {
                     state = ShowState.OPTICS;
+                } else if(cam.SelectedLens.Count > 0) {
+                    state = ShowState.LENSES;
                 } else if(EditingFunc) {
                     state = ShowState.FUNCASSIGN;
                 }
                 break;
             case ShowState.OPTICS:
-                if(cam.OnlyCamSelected.Count == 0) {
+                if(cam.OnlyCamSelectedHead.Count == 0) {
                     state = ShowState.SUMMARY;
+                } else if(cam.SelectedLens.Count > 0) {
+                    state = ShowState.LENSES;
+                } else if(EditingFunc) {
+                    state = ShowState.FUNCASSIGN;
+                }
+                break;
+            case ShowState.LENSES:
+                if(cam.SelectedLens.Count == 0) {
+                    state = ShowState.SUMMARY;
+                } else if(cam.OnlyCamSelectedHead.Count > 0) {
+                    state = ShowState.OPTICS;
                 } else if(EditingFunc) {
                     state = ShowState.FUNCASSIGN;
                 }
@@ -61,6 +74,7 @@ public class LightInteractionPanel : MonoBehaviour {
     private void Set() {
         SummaryPane.SetActive(state == ShowState.SUMMARY);
         OpticPane.SetActive(state == ShowState.OPTICS);
+        LensPane.SetActive(state == ShowState.LENSES);
         FuncAssignPane.SetActive(state == ShowState.FUNCASSIGN);
         FuncEditPane.SetActive(state == ShowState.FUNCEDIT);
     }

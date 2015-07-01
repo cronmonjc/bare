@@ -156,7 +156,7 @@ public class FunctionEditPane : MonoBehaviour {
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 
-        paneParent.SetActive(cam.OnlyCamSelected.Count > 0);
+        paneParent.SetActive(cam.OnlyCamSelectedHead.Count > 0);
         switch(currFunc) {
             case AdvFunction.LEVEL1:
             case AdvFunction.LEVEL2:

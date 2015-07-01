@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SelBoxCollider : MonoBehaviour {
-
-    public List<LightHead> Selected;
+    public List<LightHead> SelectedHead;
+    public List<BarSegment> SelectedLens;
 
     void Start() {
-        Selected = new List<LightHead>();
+        SelectedHead = new List<LightHead>();
+        SelectedLens = new List<BarSegment>();
     }
 
     void Update() {
@@ -22,16 +23,33 @@ public class SelBoxCollider : MonoBehaviour {
 
     void OnCollisionEnter(Collision coll) {
         LightHead lh = coll.gameObject.GetComponent<LightHead>();
-        if(lh != null && !Selected.Contains(lh)) {
-            Selected.Add(lh);
+        if(lh != null) {
+            if(!SelectedHead.Contains(lh)) {
+                SelectedHead.Add(lh);
+            }
+        } else {
+            BarSegment seg = coll.gameObject.GetComponent<BarSegment>();
+            if(seg != null) {
+                if(!SelectedLens.Contains(seg)) {
+                    SelectedLens.Add(seg);
+                }
+            }
         }
     }
 
     void OnCollisionExit(Collision coll) {
         LightHead lh = coll.gameObject.GetComponent<LightHead>();
-        if(lh != null && Selected.Contains(lh)) {
-            Selected.Remove(lh);
+        if(lh != null) {
+            if(SelectedHead.Contains(lh)) {
+                SelectedHead.Remove(lh);
+            }
+        } else {
+            BarSegment seg = coll.gameObject.GetComponent<BarSegment>();
+            if(seg != null) {
+                if(SelectedLens.Contains(seg)) {
+                    SelectedLens.Remove(seg);
+                }
+            }
         }
     }
-
 }

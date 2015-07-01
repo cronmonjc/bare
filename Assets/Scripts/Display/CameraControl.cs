@@ -34,31 +34,39 @@ public class CameraControl : MonoBehaviour {
 
     public GameObject FBrowser;
 
-    private List<LightHead> selected;
+    private List<LightHead> selectedHead;
+    private List<BarSegment> selectedLens;
 
     public GameObject backButton;
     public GameObject timeSlider;
 
     public RefreshCallback RefreshOnSelect;
 
-    public List<LightHead> Selected {
+    public List<LightHead> SelectedHead {
         get {
             if(dragging) {
-                return sbc.Selected;
+                return sbc.SelectedHead;
             } else {
-                return this.selected;
+                return this.selectedHead;
             }
         }
     }
 
-    public List<LightHead> OnlyCamSelected {
+    public List<LightHead> OnlyCamSelectedHead {
         get {
-            return this.selected;
+            return this.selectedHead;
+        }
+    }
+
+    public List<BarSegment> SelectedLens {
+        get {
+            return this.selectedLens;
         }
     }
 
     void Awake() {
-        selected = new List<LightHead>();
+        selectedHead = new List<LightHead>();
+        selectedLens = new List<BarSegment>();
     }
 
     void Start() {
@@ -108,7 +116,7 @@ public class CameraControl : MonoBehaviour {
             timeSlider.SetActive(BarManager.inst.funcBeingTested != AdvFunction.NONE);
 
             if(ShowWhole || lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) {
-                selected.Clear();
+                selectedHead.Clear();
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height);
                 float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
                 myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
@@ -135,47 +143,84 @@ public class CameraControl : MonoBehaviour {
                 } else if(Input.GetMouseButtonUp(0) && (BarManager.inst.funcBeingTested == AdvFunction.NONE)) { // LMB released
                     if(dragging) {
                         if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
-                            selected.Clear();
+                            selectedHead.Clear();
+                            selectedLens.Clear();
                         }
 
-                        if(Selected.Count == 0) { // There isn't anything in the selection box.  Test if there was a light under the cursor?
-                            RaycastHit hit;
-                            if(Physics.Raycast(myCam.ScreenPointToRay(Input.mousePosition), out hit)) { // There WAS something!
-                                LightHead head = hit.transform.GetComponent<LightHead>();
-                                if(head != null) {
-                                    selected.Add(head);
+                        if(SelectedHead.Count == 0) { // There isn't any heads in the selection box.
+                            if(sbc.SelectedLens.Count == 0) { // No Lenses either.
+                                RaycastHit hit;  // Test if there's a light under the cursor?
+                                if(Physics.Raycast(myCam.ScreenPointToRay(Input.mousePosition), out hit)) { // There WAS something!
+                                    LightHead head = hit.transform.GetComponent<LightHead>();
+                                    if(head != null) {
+                                        selectedHead.Add(head);
+                                    }
+                                }
+                            } else {
+                                selectedHead.Clear();
+                                int count = selectedLens.Count;
+                                foreach(BarSegment alpha in sbc.SelectedLens) {
+                                    if(!selectedLens.Contains(alpha)) {
+                                        selectedLens.Add(alpha);
+                                    }
+                                }
+                                if(sm.On) {
+                                    foreach(BarSegment alpha in msbc.SelectedLens) {
+                                        if(!selectedLens.Contains(alpha)) {
+                                            selectedLens.Add(alpha);
+                                        }
+                                    }
+                                }
+                                if(selectedLens.Count == count) {
+                                    foreach(BarSegment alpha in sbc.SelectedLens) {
+                                        if(selectedLens.Contains(alpha)) {
+                                            selectedLens.Remove(alpha);
+                                        }
+                                    }
+                                    if(sm.On) {
+                                        foreach(BarSegment alpha in msbc.SelectedLens) {
+                                            if(selectedLens.Contains(alpha)) {
+                                                selectedLens.Remove(alpha);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         } else {
-                            int count = selected.Count;
-                            foreach(LightHead alpha in sbc.Selected) {
-                                if(!selected.Contains(alpha)) {
-                                    selected.Add(alpha);
+                            selectedLens.Clear();
+                            int count = selectedHead.Count;
+                            foreach(LightHead alpha in sbc.SelectedHead) {
+                                if(!selectedHead.Contains(alpha)) {
+                                    selectedHead.Add(alpha);
                                 }
                             }
                             if(sm.On) {
-                                foreach(LightHead alpha in msbc.Selected) {
-                                    if(!selected.Contains(alpha)) {
-                                        selected.Add(alpha);
+                                foreach(LightHead alpha in msbc.SelectedHead) {
+                                    if(!selectedHead.Contains(alpha)) {
+                                        selectedHead.Add(alpha);
                                     }
                                 }
                             }
-                            if(selected.Count == count) {
-                                foreach(LightHead alpha in sbc.Selected) {
-                                    if(selected.Contains(alpha)) {
-                                        selected.Remove(alpha);
+                            if(selectedHead.Count == count) {
+                                foreach(LightHead alpha in sbc.SelectedHead) {
+                                    if(selectedHead.Contains(alpha)) {
+                                        selectedHead.Remove(alpha);
                                     }
                                 }
-                                foreach(LightHead alpha in msbc.Selected) {
-                                    if(selected.Contains(alpha)) {
-                                        selected.Remove(alpha);
+                                if(sm.On) {
+                                    foreach(LightHead alpha in msbc.SelectedHead) {
+                                        if(selectedHead.Contains(alpha)) {
+                                            selectedHead.Remove(alpha);
+                                        }
                                     }
                                 }
                             }
                         }
 
-                        sbc.Selected.Clear();
-                        msbc.Selected.Clear();
+                        sbc.SelectedHead.Clear();
+                        sbc.SelectedLens.Clear();
+                        msbc.SelectedHead.Clear();
+                        msbc.SelectedLens.Clear();
                         sbc.gameObject.SetActive(false);
                         msbc.gameObject.SetActive(false);
                         dragging = false;
@@ -231,7 +276,7 @@ public class CameraControl : MonoBehaviour {
                             ((RectTransform)msbc.transform).sizeDelta = size;
                         }
                     } else {
-                        sbc.Selected.Clear();
+                        sbc.SelectedHead.Clear();
                         SelBox.gameObject.SetActive(false);
                     }
                 }
