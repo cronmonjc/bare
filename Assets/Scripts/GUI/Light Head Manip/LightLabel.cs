@@ -35,6 +35,8 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     public void Refresh(bool showHeadNumber = false) {
+        if(lh == null) lh = target.GetComponent<LightHead>();
+
         colorLabel.text = "";
 
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {

@@ -497,7 +497,6 @@ public class BarManager : MonoBehaviour {
     public IEnumerator RefreshBits() {
         RefreshingBits = true;
         yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
         foreach(LightHead alpha in allHeads) {
             if(!alpha.gameObject.activeInHierarchy) continue;
             alpha.myBit = 255;
@@ -592,8 +591,8 @@ public class BarManager : MonoBehaviour {
                         switch(path[3]) {
                             case "FO":  alpha.myBit = 10; break;
                             case "FI":  alpha.myBit = 7; break;
-                            case "RO":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 9); break;
-                            case "RI":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 7); break;
+                            case "RO":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break;
+                            case "RI":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
                             default:    break;
                         }
                         break;
