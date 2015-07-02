@@ -1016,7 +1016,7 @@ public class Lens {
 }
 
 public enum Location {
-    FRONT, FRONT_CORNER, ALLEY, REAR_CORNER, REAR, FAR_REAR
+    FRONT = 0x1, FRONT_CORNER = 0x2, ALLEY = 0x4, REAR_CORNER = 0x8, REAR = 0x10, FAR_REAR = 0x20
 }
 
 public enum BasicFunction {

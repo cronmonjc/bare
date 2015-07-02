@@ -48,6 +48,8 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
 
     public bool recommended;
 
+    private CameraControl cam;
+
     void Start() {
         Update();
     }
@@ -64,7 +66,53 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                     name = "Flashing";
                     break;
                 case BasicFunction.STEADY:
-                    name = "Steady Burn";
+                    if(cam == null) cam = FindObjectOfType<CameraControl>();
+
+                    byte locs = 0x0;
+                    foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+                        locs |= (byte)alpha.loc;
+                    }
+
+                    switch(locs) {
+                        case 0x1:
+                        case 0x2:
+                        case 0x3:
+                            name = "Takedown";
+                            break;
+                        case 0x4:
+                            byte side = 0x0;
+                            foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+                                if(alpha.Bit == 12) {
+                                    side |= 0x1;
+                                } else if(alpha.Bit == 13) {
+                                    side |= 0x2;
+                                }
+                            }
+                            switch(side) {
+                                case 0x1:
+                                    name = "Left Alley";
+                                    break;
+                                case 0x2:
+                                    name = "Right Alley";
+                                    break;
+                                default:
+                                    name = "Alley";
+                                    break;
+                            }
+                            break;
+                        case 0x8:
+                        case 0x10:
+                        case 0x18:
+                        case 0x20:
+                        case 0x28:
+                        case 0x30:
+                        case 0x38:
+                            name = "Work Light";
+                            break;
+                        default:
+                            name = "Steady Burn";
+                            break;
+                    }
                     break;
                 case BasicFunction.EMITTER:
                     name = "Emitter";
