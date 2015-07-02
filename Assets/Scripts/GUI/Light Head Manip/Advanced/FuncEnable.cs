@@ -100,7 +100,7 @@ public class FuncEnable : MonoBehaviour {
         } else {
             checkmark.enabled = !disabled;
             ColorBlock cb = button.colors;
-            cb.normalColor = (!disabled ? new Color(0.8f, 1.0f, 0.8f, 1.0f) : (!enabled ? new Color(1.0f, 0.8f, 0.8f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 1.0f)));
+            cb.highlightedColor = cb.normalColor = (!disabled ? new Color(0.8f, 1.0f, 0.8f, 1.0f) : (!enabled ? new Color(1.0f, 0.8f, 0.8f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 1.0f)));
             button.colors = cb;
 
             if(enabled && disabled) {
