@@ -127,7 +127,7 @@ public class BarManager : MonoBehaviour {
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("ef1", 0), new NbtShort("ef2", 0), new NbtShort("er1", 0), new NbtShort("er2", 0) });
         }
 
-        patts.Get<NbtCompound>("dim").Add(new NbtShort("dimp", 25));
+        patts.Get<NbtCompound>("dim").Add(new NbtShort("dimp", 15));
 
         foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw" }) {
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("pf1", 0), new NbtShort("pf2", 0), new NbtShort("pr1", 0), new NbtShort("pr2", 0) });

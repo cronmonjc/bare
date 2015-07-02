@@ -220,10 +220,6 @@ public class LightHead : MonoBehaviour {
                     rtn.Add(BasicFunction.CAL_STEADY);
                     if(!isSmall) rtn.Add(BasicFunction.EMITTER);
                     break;
-                case Location.FRONT_CORNER:
-                case Location.REAR_CORNER:
-                    rtn.Add(BasicFunction.CRUISE);
-                    break;
                 case Location.REAR:
                     rtn.Add(BasicFunction.TRAFFIC);
                     break;
@@ -234,6 +230,7 @@ public class LightHead : MonoBehaviour {
                     return new List<BasicFunction>();
             }
 
+            rtn.Add(BasicFunction.CRUISE);
             rtn.Add(BasicFunction.BLOCK_OFF);
             return rtn;
         }
