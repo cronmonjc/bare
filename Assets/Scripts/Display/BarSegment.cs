@@ -7,6 +7,7 @@ public class BarSegment : MonoBehaviour {
 
     public Lens lens;
 
+    [System.NonSerialized]
     public LightHead[] affected;
 
     public GameObject labelPrefab;
@@ -57,7 +58,7 @@ public class BarSegment : MonoBehaviour {
 
     public List<LightHead> AffectedLights {
         get {
-            if(affected == null) {
+            if(affected == null || affected.Length == 0) {
                 affected = GetComponentsInChildren<LightHead>(true);
             }
             List<LightHead> rtn = new List<LightHead>();
