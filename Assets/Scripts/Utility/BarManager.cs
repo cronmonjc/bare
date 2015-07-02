@@ -99,7 +99,7 @@ public class BarManager : MonoBehaviour {
                 case 3:
                     return "1550";
                 case 4:
-                    return "16xx";
+                    return "1600";
                 default:
                     return "????";
             }

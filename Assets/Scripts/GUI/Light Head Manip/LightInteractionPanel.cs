@@ -88,7 +88,7 @@ public class LightInteractionPanel : MonoBehaviour {
             ll.Refresh();
         }
         if(PattEditButton != null) {
-            PattEditButton.text = (EditingFunc ? "Light Editing" : "Pattern Editing");
+            PattEditButton.text = (EditingFunc ? "Go to Light Editing" : "Go to Pattern Editing");
         }
     }
 }
