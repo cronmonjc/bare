@@ -29429,6 +29429,10 @@ Prefab:
       propertyPath: m_AnchoredPosition.x
       value: 277.5
       objectReference: {fileID: 0}
+    - target: {fileID: 11418830, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
   m_IsPrefabParent: 0
@@ -58374,7 +58378,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2076613981}
   m_Direction: 2
   m_Value: 1
-  m_Size: .663186967
+  m_Size: .740110099
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
