@@ -215,6 +215,8 @@ public class LightHead : MonoBehaviour {
 
             switch(loc) {
                 case Location.ALLEY:
+                case Location.FRONT_CORNER:
+                case Location.REAR_CORNER:
                     break;
                 case Location.FRONT:
                     rtn.Add(BasicFunction.CAL_STEADY);
