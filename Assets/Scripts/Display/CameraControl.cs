@@ -92,10 +92,10 @@ public class CameraControl : MonoBehaviour {
     }
 
     public void ResetView() {
+        if(lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) return;
         transform.position = new Vector3(0, 0, -10);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
         partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
-
     }
 
     public void InvokeRefresh() {
