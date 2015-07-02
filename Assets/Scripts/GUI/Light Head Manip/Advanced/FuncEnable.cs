@@ -5,7 +5,8 @@ using fNbt;
 
 public class FuncEnable : MonoBehaviour {
     public static FuncEnable clr1, clr2;
-    private Image checkmark;
+    public GameObject tip;
+    private bool funcEnabled;
     private Text label;
     private Button button;
     public bool IsColor2 = false;
@@ -13,7 +14,6 @@ public class FuncEnable : MonoBehaviour {
     void Start() {
         button = GetComponent<Button>();
         label = transform.FindChild("Label").GetComponent<Text>();
-        checkmark = transform.FindChild("Checkmark").GetComponent<Image>();
         if(IsColor2) clr2 = this;
         else clr1 = this;
         Retest();
@@ -95,13 +95,14 @@ public class FuncEnable : MonoBehaviour {
         button.interactable = selectable;
 
         if(!selectable) {
-            checkmark.enabled = false;
             label.text = "Cannot Enable Color " + (IsColor2 ? "2" : "1");
+            tip.gameObject.SetActive(true);
         } else {
-            checkmark.enabled = !disabled;
+            funcEnabled = !disabled;
             ColorBlock cb = button.colors;
             cb.highlightedColor = cb.normalColor = (!disabled ? new Color(0.8f, 1.0f, 0.8f, 1.0f) : (!enabled ? new Color(1.0f, 0.8f, 0.8f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 1.0f)));
             button.colors = cb;
+            tip.gameObject.SetActive(false);
 
             if(enabled && disabled) {
                 label.text = "Color " + (IsColor2 ? "2" : "1") + " Partly Enabled";
@@ -242,7 +243,7 @@ public class FuncEnable : MonoBehaviour {
                 }
                 NbtShort en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1"));
 
-                if(checkmark.enabled) {
+                if(funcEnabled) {
                     en.DisableBit(alpha.Bit);
                 } else {
                     en.EnableBit(alpha.Bit);

@@ -4,9 +4,9 @@ using System.Collections;
 
 public class OrderDisable : MonoBehaviour {
     public Button b;
-    public InputField name, po;
+    public InputField nameField, poField;
 
     public void Test() {
-        b.interactable = (name.text != "" && po.text != "");
+        b.interactable = (nameField.text != "" && poField.text != "");
     }
 }
