@@ -991,11 +991,15 @@ public class BarManager : MonoBehaviour {
 
     public void JustSavePDF() {
         Directory.CreateDirectory(Application.dataPath + "\\..\\output");
-        StartCoroutine(SavePDF(Application.dataPath + "\\..\\output\\output " + DateTime.Now.ToString("MMddyy HHmmssf") + ".pdf"));
+        StartCoroutine(SavePDF(Application.dataPath + "\\..\\output\\" + orderNum.text + " (" + DateTime.Now.ToString("MMddyy") + ").pdf"));
     }
 
     public IEnumerator SavePDF(string filename) {
         if(!filename.EndsWith(".pdf")) filename = filename + ".pdf";
+
+        savePDF = false;
+        Save(filename.Substring(0, filename.Length - 4) + ".bar.nbt");
+        savePDF = true;
         progressStuff.Shown = false;
         progressStuff.Progress = 0;
         CameraControl.ShowWhole = true;

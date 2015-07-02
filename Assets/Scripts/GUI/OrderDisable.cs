@@ -7,6 +7,6 @@ public class OrderDisable : MonoBehaviour {
     public InputField nameField, poField;
 
     public void Test() {
-        b.interactable = (nameField.text != "" && poField.text != "");
+        b.interactable = (nameField.text.Trim() != "" && poField.text.Trim() != "");
     }
 }
