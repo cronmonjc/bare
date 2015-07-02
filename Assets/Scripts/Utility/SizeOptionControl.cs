@@ -36,7 +36,7 @@ public class SizeOptionControl : MonoBehaviour {
             if(lh != null) {
                 foreach(LightHead alpha in lhs) {
                     if(!alpha.Selected) {
-                        if(lh.lhd.optic != null) {
+                        if(lh.lhd.optic != null && lh.lhd.style != null) {
                             if(alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && alpha.shouldBeTD) {
                                 BarManager.inst.td = TDOption.NONE;
                                 foreach(LightHead beta in BarManager.inst.allHeads) {
