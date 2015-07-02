@@ -295,7 +295,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             } else if(func.Contains("patt")) {
                                 Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, true);
                                 if(pat == null) {
-                                    t = t + "No Patt";
+                                    t = t + " / No Patt";
                                 } else {
                                     t = t + " / " + pat.name;
                                 }
