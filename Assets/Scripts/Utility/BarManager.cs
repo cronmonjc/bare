@@ -981,6 +981,7 @@ public class BarManager : MonoBehaviour {
             }
         }
 
+        FindObjectOfType<CameraControl>().RefreshOnSelect.Invoke();
         moddedBar = false;
     }
 
