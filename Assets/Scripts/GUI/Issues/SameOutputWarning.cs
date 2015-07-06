@@ -5,13 +5,11 @@ using UnityEngine.UI;
 public class SameOutputWarning : IssueChecker {
 
     private Image icon;
-    private LayoutElement iconLe;
 
     void Start() {
         text = GetComponentInChildren<Text>();
-        le = text.GetComponent<LayoutElement>();
+        le = GetComponent<LayoutElement>();
         icon = GetComponentInChildren<Image>();
-        iconLe = icon.GetComponent<LayoutElement>();
     }
 
     void Update() {
@@ -19,7 +17,6 @@ public class SameOutputWarning : IssueChecker {
         text.enabled = enable;
         le.ignoreLayout = !enable;
         icon.enabled = enable;
-        iconLe.ignoreLayout = !enable;
     }
 
     public override bool DoCheck() {

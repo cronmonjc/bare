@@ -223,10 +223,8 @@ public class LightHead : MonoBehaviour {
                     if(!isSmall) rtn.Add(BasicFunction.EMITTER);
                     break;
                 case Location.REAR:
-                    rtn.Add(BasicFunction.TRAFFIC);
-                    break;
-                case Location.FAR_REAR:
                     rtn.Add(BasicFunction.STT);
+                    rtn.Add(BasicFunction.TRAFFIC);
                     break;
                 default:
                     return new List<BasicFunction>();
