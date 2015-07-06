@@ -34235,6 +34235,7 @@ GameObject:
   - 114: {fileID: 789356588}
   - 114: {fileID: 789356587}
   - 114: {fileID: 789356590}
+  - 225: {fileID: 789356591}
   m_Layer: 5
   m_Name: Revision
   m_TagString: Untagged
@@ -34319,6 +34320,17 @@ MonoBehaviour:
   text: {fileID: 0}
   countdown: 0
   loopTime: 10
+--- !u!225 &789356591
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 789356585}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &790747990
 GameObject:
   m_ObjectHideFlags: 0

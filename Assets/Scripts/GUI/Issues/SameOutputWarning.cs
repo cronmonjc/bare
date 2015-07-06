@@ -13,7 +13,7 @@ public class SameOutputWarning : IssueChecker {
     }
 
     void Update() {
-        bool enable = DoCheck();
+        bool enable = BarManager.moddedBar && DoCheck();
         text.enabled = enable;
         le.ignoreLayout = !enable;
         icon.enabled = enable;
