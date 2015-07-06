@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: ffafbc1e1a25d774e9e71399198ae6aa
-timeCreated: 1434457584
+timeCreated: 1436204479
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -40,6 +40,7 @@ TextureImporter:
     21300066: newcam
     21300068: StarLantern
     21300070: help
+    21300072: Circle32
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -442,6 +443,16 @@ TextureImporter:
         y: 76
         width: 16
         height: 16
+      alignment: 0
+      pivot: {x: .5, y: .5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+    - name: Circle32
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 60
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: .5, y: .5}
       border: {x: 0, y: 0, z: 0, w: 0}
