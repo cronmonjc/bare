@@ -147,7 +147,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
 
                     secondImage.color = background.color = labelColor;
-                    if(labelColor.r + labelColor.g < labelColor.b) {
+                    if(labelColor.r + labelColor.g < labelColor.b || (labelColor.r + labelColor.g + labelColor.b) < 1.0f) {
                         label2.color = label.color = Color.white;
                     } else {
                         label2.color = label.color = Color.black;
@@ -234,7 +234,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     Color clr = lh.lhd.style.color;
                     if(!thisEnabled1) clr.a = 0.25f;
                     background.color = clr;
-                    if(!thisEnabled1 || clr.r + clr.g < clr.b) {
+                    if(!thisEnabled1 || clr.r + clr.g < clr.b || (clr.r + clr.g + clr.b) < 1.0f) {
                         label.color = Color.white;
                     } else {
                         label.color = Color.black;
@@ -243,7 +243,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         clr = lh.lhd.style.color2;
                         if(!thisEnabled2) clr.a = 0.25f;
                     }
-                    if((!lh.lhd.style.isDualColor && !thisEnabled1) || (lh.lhd.style.isDualColor && !thisEnabled2) || clr.r + clr.g < clr.b) {
+                    if((!lh.lhd.style.isDualColor && !thisEnabled1) || (lh.lhd.style.isDualColor && !thisEnabled2) || clr.r + clr.g < clr.b || (clr.r + clr.g + clr.b) < 1.0f) {
                         label2.color = Color.white;
                     } else {
                         label2.color = Color.black;
@@ -358,7 +358,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + sb.ToString() + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
                 Color clr = lh.lhd.style.color;
                 background.color = clr;
-                if(clr.r + clr.g < clr.b) {
+                if(clr.r + clr.g < clr.b || (clr.r + clr.g + clr.b) < 1.0f) {
                     label.color = Color.white;
                 } else {
                     label.color = Color.black;
@@ -366,7 +366,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 if(lh.lhd.style.isDualColor) {
                     clr = lh.lhd.style.color2;
                 }
-                if(clr.r + clr.g < clr.b) {
+                if(clr.r + clr.g < clr.b || (clr.r + clr.g + clr.b) < 1.0f) {
                     label2.color = Color.white;
                 } else {
                     label2.color = Color.black;
