@@ -11,6 +11,7 @@ public class FunctionEditPane : MonoBehaviour {
         NONE, FLASHING, DIMMER, TRAFFIC
     }
     public Text funcName, funcType;
+    private Text previewText;
     public GameObject paneParent, flashing, dimmer, traffic, otherHeadsWarn, testFlashing;
     private ShowState _state, funcState;
     public ShowState state {
@@ -25,6 +26,9 @@ public class FunctionEditPane : MonoBehaviour {
 
     void OnEnable() {
         RetestStatic();
+        if(previewText == null) {
+            previewText = testFlashing.GetComponentInChildren<Text>();
+        }
 
         paneParent.SetActive(false);
         switch(currFunc) {
@@ -60,6 +64,7 @@ public class FunctionEditPane : MonoBehaviour {
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
                 funcType.text = "Flashing";
+                testFlashing.SetActive(true);
                 break;
             case AdvFunction.TAKEDOWN:
             case AdvFunction.ALLEY_LEFT:
@@ -70,19 +75,24 @@ public class FunctionEditPane : MonoBehaviour {
             case AdvFunction.T13:
             case AdvFunction.EMITTER:
                 funcType.text = "Steady Burn";
+                testFlashing.SetActive(false);
                 break;
             case AdvFunction.CRUISE:
                 funcType.text = "Cruise";
+                testFlashing.SetActive(false);
                 break;
             case AdvFunction.TRAFFIC_LEFT:
             case AdvFunction.TRAFFIC_RIGHT:
                 funcType.text = "Traffic Director";
+                testFlashing.SetActive(true);
                 break;
             case AdvFunction.DIM:
                 funcType.text = "Dimmer";
+                testFlashing.SetActive(false);
                 break;
             default:
                 funcType.text = "???";
+                testFlashing.SetActive(false);
                 break;
         }
 
@@ -151,29 +161,23 @@ public class FunctionEditPane : MonoBehaviour {
                 funcName.text = "???";
                 break;
         }
+
+        if(testFlashing.activeInHierarchy) {
+            previewText.text = "Preview " + funcName.text;
+            if(currFunc == AdvFunction.FTAKEDOWN || currFunc == AdvFunction.FALLEY) {
+                for(byte i = 0; i < 20; i++) {
+                    if(FnDragTarget.inputMap.Value[i] == 0xC00) {
+                        previewText.text = "Preview Flashing\nAlley & Pursuit";
+                    }
+                }
+            }
+        }
     }
 
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 
         paneParent.SetActive(cam.OnlyCamSelectedHead.Count > 0);
-        switch(currFunc) {
-            case AdvFunction.LEVEL1:
-            case AdvFunction.LEVEL2:
-            case AdvFunction.LEVEL3:
-            case AdvFunction.LEVEL4:
-            case AdvFunction.LEVEL5:
-            case AdvFunction.FTAKEDOWN:
-            case AdvFunction.FALLEY:
-            case AdvFunction.ICL:
-            case AdvFunction.TRAFFIC_LEFT:
-            case AdvFunction.TRAFFIC_RIGHT:
-                testFlashing.SetActive(true);
-                break;
-            default:
-                testFlashing.SetActive(false);
-                break;
-        }
     }
 
     private void Set() {

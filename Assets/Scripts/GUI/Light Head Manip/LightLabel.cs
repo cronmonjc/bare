@@ -429,6 +429,25 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     bool en1 = (func["e" + (lh.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0,
                          en2 = (func["e" + (lh.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0;
 
+                    if(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN || BarManager.inst.funcBeingTested == AdvFunction.FALLEY) {
+                        for(byte i = 0; i < 20; i++) {
+                            if(FnDragTarget.inputMap.Value[i] == 0xC00) {
+                                NbtCompound otherFunc = patts.Get<NbtCompound>(BarManager.GetFnString(lh.transform, BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN));
+
+                                if(!en1) {
+                                    p1 = lh.GetPattern(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, false);
+                                    en1 |= (otherFunc["e" + (lh.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0;
+                                }
+
+                                if(!en2) {
+                                    p2 = lh.GetPattern(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, true);
+                                    en2 |= (otherFunc["e" + (lh.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0; 
+                                }
+
+                            }
+                        }
+                    }
+
                     if(!lh.lhd.style.isDualColor) en2 = false;
 
                     if(en1 || en2) {
