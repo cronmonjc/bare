@@ -24606,7 +24606,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flashing: Level 4'
+  m_Text: 'Flashing: Priority 4'
 --- !u!222 &543431446
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -25123,7 +25123,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flashing: Level 2'
+  m_Text: 'Flashing: Priority 2'
 --- !u!222 &569840443
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -27492,7 +27492,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 1
+  m_Text: Priority 1
 --- !u!222 &622280727
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -32144,7 +32144,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 1
+  m_Text: Priority 1
 --- !u!222 &748153650
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -35823,7 +35823,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 5
+  m_Text: Priority 5
 --- !u!222 &816671886
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -39893,7 +39893,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flashing: Level 5'
+  m_Text: 'Flashing: Priority 5'
 --- !u!222 &909559496
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -40226,7 +40226,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 3
+  m_Text: Priority 3
 --- !u!222 &923540701
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -72519,7 +72519,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 4
+  m_Text: Priority 4
 --- !u!222 &1659869222
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -74207,7 +74207,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flashing: Level 1'
+  m_Text: 'Flashing: Priority 1'
 --- !u!222 &1694994849
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -88247,7 +88247,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Level 2
+  m_Text: Priority 2
 --- !u!222 &2031663372
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -92851,7 +92851,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Flashing: Level 3'
+  m_Text: 'Flashing: Priority 3'
 --- !u!222 &2125506665
 CanvasRenderer:
   m_ObjectHideFlags: 0

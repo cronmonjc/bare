@@ -183,15 +183,15 @@ public class BarManager : MonoBehaviour {
                 return "tdp";
             case AdvFunction.ICL:
                 return "icl";
-            case AdvFunction.LEVEL1:
+            case AdvFunction.PRIO1:
                 return "l1";
-            case AdvFunction.LEVEL2:
+            case AdvFunction.PRIO2:
                 return "l2";
-            case AdvFunction.LEVEL3:
+            case AdvFunction.PRIO3:
                 return "l3";
-            case AdvFunction.LEVEL4:
+            case AdvFunction.PRIO4:
                 return "l4";
-            case AdvFunction.LEVEL5:
+            case AdvFunction.PRIO5:
                 return "l5";
             case AdvFunction.TURN_LEFT:
                 return "ltai";
@@ -1837,14 +1837,14 @@ public class PDFExportJob : ThreadedJob {
                 if((FnDragTarget.inputMap[i] & (int)func) > 0) {
 
                     switch(func) {
-                        case 0x2: // LEVEL1
-                        case 0x4: // LEVEL2
-                        case 0x8: // LEVEL3
+                        case 0x2: // PRIO1
+                        case 0x4: // PRIO2
+                        case 0x8: // PRIO3
                         case 0x100: // ICL
                         case 0x400: // FTAKEDOWN
                         case 0x800: // FALLEY
-                        case 0x40000: // LEVEL4
-                        case 0x80000: // LEVEL5
+                        case 0x40000: // PRIO4
+                        case 0x80000: // PRIO5
                             gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.3));
                             gfx.DrawLine(border, 1.75, top, 1.75, top + 0.3);
                             gfx.DrawLine(border, 3.8, top, 3.8, top + 0.3);
@@ -1865,14 +1865,14 @@ public class PDFExportJob : ThreadedJob {
                     PartComparer pc = new PartComparer();
 
                     switch(func) {
-                        case 0x2: // LEVEL1
-                        case 0x4: // LEVEL2
-                        case 0x8: // LEVEL3
+                        case 0x2: // PRIO1
+                        case 0x4: // PRIO2
+                        case 0x8: // PRIO3
                         case 0x100: // ICL
                         case 0x400: // FTAKEDOWN
                         case 0x800: // FALLEY
-                        case 0x40000: // LEVEL4
-                        case 0x80000: // LEVEL5
+                        case 0x40000: // PRIO4
+                        case 0x80000: // PRIO5
                             List<string> partsB = new List<string>();
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
@@ -1956,16 +1956,16 @@ public class PDFExportJob : ThreadedJob {
                     }
                     // Write out pattern(s), new XRect(5.85, top + 0.1, p.Width.Inch - 8.4, 0.2)
                     switch(func) {
-                        case 0x2: // LEVEL1
-                        case 0x4: // LEVEL2
-                        case 0x8: // LEVEL3
+                        case 0x2: // PRIO1
+                        case 0x4: // PRIO2
+                        case 0x8: // PRIO3
                         case 0x10: // TRAFFIC_LEFT
                         case 0x20: // TRAFFIC_RIGHT
                         case 0x100: // ICL
                         case 0x400: // FTAKEDOWN
                         case 0x800: // FALLEY
-                        case 0x40000: // LEVEL4
-                        case 0x80000: // LEVEL5
+                        case 0x40000: // PRIO4
+                        case 0x80000: // PRIO5
                             List<string> patt = new List<string>(5);
                             Pattern thisPatt;
 
@@ -2000,14 +2000,14 @@ public class PDFExportJob : ThreadedJob {
                     }
 
                     switch(func) {
-                        case 0x2: // LEVEL1
-                        case 0x4: // LEVEL2
-                        case 0x8: // LEVEL3
+                        case 0x2: // PRIO1
+                        case 0x4: // PRIO2
+                        case 0x8: // PRIO3
                         case 0x100: // ICL
                         case 0x400: // FTAKEDOWN
                         case 0x800: // FALLEY
-                        case 0x40000: // LEVEL4
-                        case 0x80000: // LEVEL5
+                        case 0x40000: // PRIO4
+                        case 0x80000: // PRIO5
                             top += 0.3;
                             break;
                         default:
@@ -2055,12 +2055,12 @@ public class PDFExportJob : ThreadedJob {
                 return "---";
             case 0x1: // TAKEDOWN
                 return "Takedown / Work Lights";
-            case 0x2: // LEVEL1
-                return "Level 1";
-            case 0x4: // LEVEL2
-                return "Level 2";
-            case 0x8: // LEVEL3
-                return "Level 3";
+            case 0x2: // PRIO1
+                return "Priority 1";
+            case 0x4: // PRIO2
+                return "Priority 2";
+            case 0x8: // PRIO3
+                return "Priority 3";
             case 0x10: // TRAFFIC_LEFT
                 return "Direct Left";
             case 0x20: // TRAFFIC_RIGHT
@@ -2091,10 +2091,10 @@ public class PDFExportJob : ThreadedJob {
                 return "Brake Lights";
             case 0x20000: // T13
                 return "California T13 Steady";
-            case 0x40000: // LEVEL4
-                return "Level 4";
-            case 0x80000: // LEVEL5
-                return "Level 5";
+            case 0x40000: // PRIO4
+                return "Priority 4";
+            case 0x80000: // PRIO5
+                return "Priority 5";
             case 0x100000: // EMITTER
                 return "Emitter";
             default:

@@ -51,20 +51,20 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
             case AdvFunction.EMITTER:
                 t = "Emitter";
                 break;
-            case AdvFunction.LEVEL1:
-                t = "Level 1";
+            case AdvFunction.PRIO1:
+                t = "Priority 1";
                 break;
-            case AdvFunction.LEVEL2:
-                t = "Level 2";
+            case AdvFunction.PRIO2:
+                t = "Priority 2";
                 break;
-            case AdvFunction.LEVEL3:
-                t = "Level 3";
+            case AdvFunction.PRIO3:
+                t = "Priority 3";
                 break;
-            case AdvFunction.LEVEL4:
-                t = "Level 4";
+            case AdvFunction.PRIO4:
+                t = "Priority 4";
                 break;
-            case AdvFunction.LEVEL5:
-                t = "Level 5";
+            case AdvFunction.PRIO5:
+                t = "Priority 5";
                 break;
             case AdvFunction.FTAKEDOWN:
                 t = "Flashing Pursuit";

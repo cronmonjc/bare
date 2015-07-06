@@ -32,11 +32,11 @@ public class FunctionEditPane : MonoBehaviour {
 
         paneParent.SetActive(false);
         switch(currFunc) {
-            case AdvFunction.LEVEL1:
-            case AdvFunction.LEVEL2:
-            case AdvFunction.LEVEL3:
-            case AdvFunction.LEVEL4:
-            case AdvFunction.LEVEL5:
+            case AdvFunction.PRIO1:
+            case AdvFunction.PRIO2:
+            case AdvFunction.PRIO3:
+            case AdvFunction.PRIO4:
+            case AdvFunction.PRIO5:
             case AdvFunction.FTAKEDOWN:
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
@@ -55,11 +55,11 @@ public class FunctionEditPane : MonoBehaviour {
         }
 
         switch(currFunc) {
-            case AdvFunction.LEVEL1:
-            case AdvFunction.LEVEL2:
-            case AdvFunction.LEVEL3:
-            case AdvFunction.LEVEL4:
-            case AdvFunction.LEVEL5:
+            case AdvFunction.PRIO1:
+            case AdvFunction.PRIO2:
+            case AdvFunction.PRIO3:
+            case AdvFunction.PRIO4:
+            case AdvFunction.PRIO5:
             case AdvFunction.FTAKEDOWN:
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
@@ -121,20 +121,20 @@ public class FunctionEditPane : MonoBehaviour {
             case AdvFunction.EMITTER:
                 funcName.text = "Emitter";
                 break;
-            case AdvFunction.LEVEL1:
-                funcName.text = "Level 1";
+            case AdvFunction.PRIO1:
+                funcName.text = "Priority 1";
                 break;
-            case AdvFunction.LEVEL2:
-                funcName.text = "Level 2";
+            case AdvFunction.PRIO2:
+                funcName.text = "Priority 2";
                 break;
-            case AdvFunction.LEVEL3:
-                funcName.text = "Level 3";
+            case AdvFunction.PRIO3:
+                funcName.text = "Priority 3";
                 break;
-            case AdvFunction.LEVEL4:
-                funcName.text = "Level 4";
+            case AdvFunction.PRIO4:
+                funcName.text = "Priority 4";
                 break;
-            case AdvFunction.LEVEL5:
-                funcName.text = "Level 5";
+            case AdvFunction.PRIO5:
+                funcName.text = "Priority 5";
                 break;
             case AdvFunction.FTAKEDOWN:
                 funcName.text = "Flashing Pursuit";

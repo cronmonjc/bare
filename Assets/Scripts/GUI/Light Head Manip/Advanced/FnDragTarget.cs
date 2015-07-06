@@ -93,14 +93,14 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             case 0x1: // TAKEDOWN
                 display.text = "Takedown / Work Lights";
                 break;
-            case 0x2: // LEVEL1
-                display.text = "Level 1";
+            case 0x2: // PRIO1
+                display.text = "Priority 1";
                 break;
-            case 0x4: // LEVEL2
-                display.text = "Level 2";
+            case 0x4: // PRIO2
+                display.text = "Priority 2";
                 break;
-            case 0x8: // LEVEL3
-                display.text = "Level 3";
+            case 0x8: // PRIO3
+                display.text = "Priority 3";
                 break;
             case 0x10: // TRAFFIC_LEFT
                 display.text = "Direct Left";
@@ -147,11 +147,11 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             case 0x20000: // T13
                 display.text = "California T13 Steady";
                 break;
-            case 0x40000: // LEVEL4
-                display.text = "Level 4";
+            case 0x40000: // PRIO4
+                display.text = "Priority 4";
                 break;
-            case 0x80000: // LEVEL5
-                display.text = "Level 5";
+            case 0x80000: // PRIO5
+                display.text = "Priority 5";
                 break;
             case 0x100000: // EMITTER
                 display.text = "Emitter";

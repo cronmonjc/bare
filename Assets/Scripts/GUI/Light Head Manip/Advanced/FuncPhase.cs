@@ -75,11 +75,11 @@ public class FuncPhase : MonoBehaviour {
             bool trigger = false;
 
             switch(FunctionEditPane.currFunc) {
-                case AdvFunction.LEVEL1:
-                case AdvFunction.LEVEL2:
-                case AdvFunction.LEVEL3:
-                case AdvFunction.LEVEL4:
-                case AdvFunction.LEVEL5:
+                case AdvFunction.PRIO1:
+                case AdvFunction.PRIO2:
+                case AdvFunction.PRIO3:
+                case AdvFunction.PRIO4:
+                case AdvFunction.PRIO5:
                 case AdvFunction.FTAKEDOWN:
                 case AdvFunction.FALLEY:
                 case AdvFunction.ICL:

@@ -27,7 +27,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 rtn &= !GetPhaseB(f, false);
             }
             return rtn;
@@ -36,7 +36,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
@@ -55,7 +55,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 rtn &= !GetPhaseB(f, true);
             }
             return rtn;
@@ -64,7 +64,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
@@ -84,7 +84,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 rtn &= GetPhaseB(f, false);
             }
             return rtn;
@@ -93,7 +93,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
@@ -112,7 +112,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 rtn &= GetPhaseB(f, true);
             }
             return rtn;
@@ -121,7 +121,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.LEVEL1, AdvFunction.LEVEL2, AdvFunction.LEVEL3, AdvFunction.LEVEL4, AdvFunction.LEVEL5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
@@ -158,11 +158,11 @@ public class LightHead : MonoBehaviour {
 
     public bool GetCanEnable(AdvFunction fn) {
         switch(fn) {
-            case AdvFunction.LEVEL1:
-            case AdvFunction.LEVEL2:
-            case AdvFunction.LEVEL3:
-            case AdvFunction.LEVEL4:
-            case AdvFunction.LEVEL5:
+            case AdvFunction.PRIO1:
+            case AdvFunction.PRIO2:
+            case AdvFunction.PRIO3:
+            case AdvFunction.PRIO4:
+            case AdvFunction.PRIO5:
             case AdvFunction.FTAKEDOWN:
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
