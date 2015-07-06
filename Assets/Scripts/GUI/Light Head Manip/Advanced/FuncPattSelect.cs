@@ -113,6 +113,29 @@ public class FuncPattSelect : MonoBehaviour {
                 }
 
                 patCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
+
+                switch(FunctionEditPane.currFunc) {
+                    case AdvFunction.FTAKEDOWN:
+                    case AdvFunction.FALLEY:
+                    case AdvFunction.ICL:
+                        if(!alpha.GetIsEnabled(FunctionEditPane.currFunc, !IsColor2)) {
+                            NbtCompound otherPatCmpd = ((NbtCompound)patCmpd.Parent).Get<NbtCompound>("pat" + (IsColor2 ? "1" : "2"));
+
+                            otherPatCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
+
+                            NbtShort thisPhase = ((NbtCompound)patCmpd.Parent).Get<NbtShort>("p" + (alpha.isRear ? "r" : "f") + (IsColor2 ? "2" : "1")),
+                                    otherPhase = ((NbtCompound)patCmpd.Parent).Get<NbtShort>("p" + (alpha.isRear ? "r" : "f") + (IsColor2 ? "1" : "2"));
+
+                            if((thisPhase.Value & (0x1 << alpha.Bit)) > 0) {
+                                otherPhase.DisableBit(alpha.Bit);
+                            } else {
+                                otherPhase.EnableBit(alpha.Bit);
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
 
             foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
