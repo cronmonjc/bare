@@ -22,6 +22,7 @@ public class NewVersionChecker : MonoBehaviour {
                 if(File.Exists(path)) {
                     text.text = "A new build is ready!\n" + File.ReadAllText(path) + "\nPlease close this application at your earliest convenience.";
                     text.color = Color.red;
+                    fired = true;
                 }
             }
         }

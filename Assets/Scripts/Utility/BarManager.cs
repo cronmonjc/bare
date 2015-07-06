@@ -45,7 +45,6 @@ public class BarManager : MonoBehaviour {
     public List<LightHead> allHeads;
     public List<BarSegment> allSegs;
     public static LightHead[] headNumber;
-    public static Dictionary<LightHead, string> altHeadNumber;
 
     public LightHead first;
 
@@ -110,7 +109,6 @@ public class BarManager : MonoBehaviour {
         CreatePatts();
 
         allHeads = new List<LightHead>();
-        altHeadNumber = new Dictionary<LightHead, string>();
         inst = this;
     }
 
@@ -521,11 +519,11 @@ public class BarManager : MonoBehaviour {
                 switch(path[2]) {
                     case "DE":
                         switch(path[3]) {
-                            case "FO":  alpha.myBit = 1; break;
-                            case "FI":  alpha.myBit = 4; break;
-                            case "RO":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break;
-                            case "RI":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
-                            default:    break;
+                            case "FO": alpha.myBit = 1; break;
+                            case "FI": alpha.myBit = 4; break;
+                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break;
+                            case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
+                            default: break;
                         }
                         break;
                     case "DF":
@@ -546,7 +544,7 @@ public class BarManager : MonoBehaviour {
                                 }
                                 break;
                             #endregion
-                            default:    break;
+                            default: break;
                         }
                         break;
                     case "DN":
@@ -557,14 +555,14 @@ public class BarManager : MonoBehaviour {
                                 alpha.FarWire = (BarSize == 1);
                                 break;
                             #endregion
-                            case "R":   alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break;
-                            default:    break;
+                            case "R": alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break;
+                            default: break;
                         }
                         break;
                     case "PN":
                         switch(path[3]) {
-                            case "F":   alpha.myBit = 6; break;
-                            default:    break;
+                            case "F": alpha.myBit = 6; break;
+                            default: break;
                         }
                         break;
                     case "PF":
@@ -585,16 +583,16 @@ public class BarManager : MonoBehaviour {
                                 }
                                 break;
                             #endregion
-                            default:    break;
+                            default: break;
                         }
                         break;
                     case "PE":
                         switch(path[3]) {
-                            case "FO":  alpha.myBit = 10; break;
-                            case "FI":  alpha.myBit = 7; break;
-                            case "RO":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break;
-                            case "RI":  alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
-                            default:    break;
+                            case "FO": alpha.myBit = 10; break;
+                            case "FI": alpha.myBit = 7; break;
+                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break;
+                            case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
+                            default: break;
                         }
                         break;
                     default:
@@ -1100,7 +1098,7 @@ public class BarManager : MonoBehaviour {
 
         LightLabel.showWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
-            alpha.Refresh(true);
+            alpha.Refresh(false);
         }
         foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
             alpha.Refresh();
@@ -1120,7 +1118,7 @@ public class BarManager : MonoBehaviour {
 
         LightLabel.colorlessWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
-            alpha.Refresh(true);
+            alpha.Refresh(false);
         }
         foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
             alpha.Refresh();
@@ -1223,58 +1221,6 @@ public class BarManager : MonoBehaviour {
         }
 
         headNumber = headList.ToArray();
-
-
-
-        altHeadNumber.Clear();
-        foreach(LightHead alpha in allHeads) {
-            if(!alpha.gameObject.activeInHierarchy) continue;
-
-            bool goRight = false;
-            string prefix = "";
-            byte headNum = 0;
-
-            switch(alpha.loc) {
-                case Location.ALLEY:
-                    altHeadNumber[alpha] = alpha.transform.position.x < 0 ? "DA" : "PA";
-                    continue;
-                case Location.FRONT_CORNER:
-                    goRight = alpha.transform.position.x < 0;
-                    prefix = goRight ? "DF" : "PF";
-                    headNum = 1;
-                    altHeadNumber[alpha] = prefix + headNum;
-                    if(Physics.Raycast(new Ray(alpha.transform.position, new Vector3(goRight ? 1 : -1, 0.25f)), out info)) {
-                        LightHead curr = info.transform.GetComponent<LightHead>();
-                        while((goRight && curr.transform.position.x <= 0) || (!goRight && curr.transform.position.x > 0)) {
-                            headNum++;
-                            altHeadNumber[curr] = prefix + headNum;
-                            if(Physics.Raycast(new Ray(curr.transform.position, new Vector3(goRight ? 1 : -1, 0)), out info)) {
-                                curr = info.transform.GetComponent<LightHead>();
-                            } else break;
-                        }
-                    }
-                    continue;
-                case Location.REAR_CORNER:
-                    goRight = alpha.transform.position.x < 0;
-                    prefix = goRight ? "DR" : "PR";
-                    headNum = 1;
-                    altHeadNumber[alpha] = prefix + headNum;
-                    if(Physics.Raycast(new Ray(alpha.transform.position, new Vector3(goRight ? 1 : -1, -0.25f)), out info)) {
-                        LightHead curr = info.transform.GetComponent<LightHead>();
-                        while((goRight && curr.transform.position.x <= 0) || (!goRight && curr.transform.position.x > 0)) {
-                            headNum++;
-                            altHeadNumber[curr] = prefix + headNum;
-                            if(Physics.Raycast(new Ray(curr.transform.position, new Vector3(goRight ? 1 : -1, 0)), out info)) {
-                                curr = info.transform.GetComponent<LightHead>();
-                            } else break;
-                        }
-                    }
-
-                    continue;
-                default:
-                    continue;
-            }
-        }
     }
 
     public void AutoPhase() {
@@ -1405,7 +1351,6 @@ public class PDFExportJob : ThreadedJob {
     public List<String> issues;
     public BarManager.ProgressStuff progressStuff;
     public LightHead[] headNumber;
-    public Dictionary<LightHead, string> altHeadNumber;
     public Dictionary<LightHead, string> color1Wire, color2Wire;
     public BOMCables bomcables;
 
@@ -1427,7 +1372,6 @@ public class PDFExportJob : ThreadedJob {
             }
         }
         headNumber = BarManager.headNumber;
-        altHeadNumber = BarManager.altHeadNumber;
         color1Wire = new Dictionary<LightHead, string>();
         color2Wire = new Dictionary<LightHead, string>();
         bomcables = GameObject.FindObjectOfType<BOMCables>();
@@ -1572,55 +1516,13 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, 3.39, 0.5, 0.1));
 
         double top = 3.5;
-        if(LightLabel.alternateNumbering) {
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Driver Front", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "DF");
-            top += 0.1;
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Pass. Front", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "PF");
-            top += 0.1;
-            foreach(LightHead lh in headNumber) {
-                if(altHeadNumber[lh] == "DA") {
-                    tf.Alignment = XParagraphAlignment.Right;
-                    tf.DrawString("Driver Alley", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                    tf.Alignment = XParagraphAlignment.Left;
-                    PrintHead(tf, caliSm, courierSm, top, lh);
-                    break;
-                }
-            }
-            top += 0.1;
-            foreach(LightHead lh in headNumber) {
-                if(altHeadNumber[lh] == "PA") {
-                    tf.Alignment = XParagraphAlignment.Right;
-                    tf.DrawString("Pass. Alley", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-                    tf.Alignment = XParagraphAlignment.Left;
-                    PrintHead(tf, caliSm, courierSm, top, lh);
-                    break;
-                }
-            }
-            top += 0.2;
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Driver Rear", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "DR");
-            top += 0.1;
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Pass. Rear", courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            SummaryPrintCorner(tf, courierSm, caliSm, ref top, "PR");
-        } else {
-            for(int i = 0; i < headNumber.Length; i++) {
-                LightHead lh = headNumber[i];
-                tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, top + (i * 0.10), 1.2, 0.10));
-                PrintHead(tf, caliSm, courierSm, top + (i * 0.10), lh);
-            }
-            top += headNumber.Length * 0.1;
-            top += 0.1;
+        for(int i = 0; i < headNumber.Length; i++) {
+            LightHead lh = headNumber[i];
+            tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, top + (i * 0.10), 1.2, 0.10));
+            PrintHead(tf, caliSm, courierSm, top + (i * 0.10), lh);
         }
+        top += headNumber.Length * 0.1;
+        top += 0.1;
         top += 0.2;
 
         XPen border = new XPen(XColors.Black, 0.025);
@@ -1669,28 +1571,6 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("F3"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
             if(CameraControl.ShowPricing)
                 tf.DrawString("$" + (lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
-        }
-    }
-
-    private void SummaryPrintCorner(XTextFormatter tf, XFont courierSm, XFont caliSm, ref double top, string corner) {
-        byte number = 0;
-        while(true) {
-            number++;
-            top += 0.1;
-            LightHead head = null;
-            foreach(LightHead lh in headNumber) {
-                if(altHeadNumber[lh] == corner + number) {
-                    head = lh;
-                    break;
-                }
-            }
-            if(head == null) {
-                break;
-            }
-            tf.Alignment = XParagraphAlignment.Right;
-            tf.DrawString("Position " + corner + number, courierSm, XBrushes.Black, new XRect(0.3, top, 1.0, 0.10));
-            tf.Alignment = XParagraphAlignment.Left;
-            PrintHead(tf, caliSm, courierSm, top, head);
         }
     }
 

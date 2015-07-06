@@ -13,7 +13,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showJustBit, showWire, colorlessWire, wireOverride, alternateNumbering, showPatt;
+    public static bool showParts, showBit, showJustBit, showWire, colorlessWire, wireOverride, showPatt;
     public static LabelTooltip tooltip;
     private OpticNode lastOptic;
     private StyleNode lastStyle;
@@ -30,7 +30,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
-        showParts = showBit = showJustBit = showWire = colorlessWire = wireOverride = alternateNumbering = false;
+        showParts = showBit = showJustBit = showWire = colorlessWire = wireOverride = false;
         Refresh();
     }
 
@@ -47,24 +47,15 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         string prefix = "";
 
         if(showHeadNumber) {
-            if(alternateNumbering) {
-                if(BarManager.altHeadNumber.ContainsKey(lh))
-                    prefix = "(" + BarManager.altHeadNumber[lh] + ") ";
-                else {
-                    Debug.LogError("Failed to find a head ID for " + lh.transform.GetPath());
-                    prefix = "(?) ";
+            for(int i = 0; i < BarManager.headNumber.Length; i++) {
+                if(BarManager.headNumber[i] == lh) {
+                    prefix = "(" + (i + 1) + ") ";
+                    break;
                 }
-            } else {
-                for(int i = 0; i < BarManager.headNumber.Length; i++) {
-                    if(BarManager.headNumber[i] == lh) {
-                        prefix = "(" + (i + 1) + ") ";
-                        break;
-                    }
-                }
-                if(prefix == "") {
-                    Debug.LogError("Failed to find a head number for " + lh.transform.GetPath());
-                    prefix = "(?) ";
-                }
+            }
+            if(prefix == "") {
+                Debug.LogError("Failed to find a head number for " + lh.transform.GetPath());
+                prefix = "(?) ";
             }
         }
 
