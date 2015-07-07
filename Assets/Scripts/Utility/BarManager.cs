@@ -1693,7 +1693,7 @@ public class PDFExportJob : ThreadedJob {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("" + bomcables.singleLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "L", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "65" : "51") + "L", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString("Internal Control Cable - Single Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
@@ -1701,7 +1701,7 @@ public class PDFExportJob : ThreadedJob {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("" + bomcables.singleRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "R", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "65" : "51") + "R", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString("Internal Control Cable - Single Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
@@ -1709,7 +1709,7 @@ public class PDFExportJob : ThreadedJob {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("" + bomcables.dualLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "DL", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "65" : "51") + "DL", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString("Internal Control Cable - Dual Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
@@ -1717,7 +1717,7 @@ public class PDFExportJob : ThreadedJob {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("" + bomcables.dualRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "64" : "51") + "DR", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("SWH-1000-" + (BarManager.inst.BarSize > 2 ? "65" : "51") + "DR", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString("Internal Control Cable - Dual Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
