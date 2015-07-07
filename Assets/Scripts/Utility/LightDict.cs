@@ -20,13 +20,13 @@ public class LightDict : MonoBehaviour {
         this.lenses = new List<Lens>();
         stdy = new SteadyPattern();
 
-        if(File.Exists("lib.nbt")) {
+        if(File.Exists(Application.dataPath + "\\..\\lib.nbt")) {
             foreach(Location l in new Location[] { Location.FRONT, Location.FRONT_CORNER, Location.ALLEY, Location.REAR_CORNER, Location.FAR_REAR, Location.REAR }) {
                 lights[l] = new LocationNode();
             }
 
             try {
-                NbtFile cat = new NbtFile("lib.nbt");
+                NbtFile cat = new NbtFile(Application.dataPath + "\\..\\lib.nbt");
 
                 if(!cat.RootTag.Contains("pric")) {
                     Destroy(FindObjectOfType<DispPricing>().gameObject);

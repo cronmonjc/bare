@@ -783,8 +783,6 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Save(string filename) {
-        if(savePDF) { StartCoroutine(SavePDF(filename)); return; }
-
         try {
             NbtCompound root = new NbtCompound("root");
 
@@ -843,15 +841,13 @@ public class BarManager : MonoBehaviour {
             root.Add(lensList);
 
             NbtFile file = new NbtFile(root);
-            if(!filename.EndsWith(".bar.nbt")) {
-                filename = filename + ".bar.nbt";
-            }
-            file.SaveToFile(filename, NbtCompression.None);
+            file.SaveToFile(filename + (!filename.EndsWith(".bar.nbt") ? ".bar.nbt" : ""), NbtCompression.None);
 
             moddedBar = false;
-            if(quitAfterSave) {
-                Application.Quit();
-            }
+
+            if(quitAfterSave) { Application.Quit(); }
+
+            if(savePDF) { StartCoroutine(SavePDF(filename)); }
         } catch(Exception ex) {
             ErrorText.inst.DispError("Problem saving: " + ex.Message);
             Debug.LogException(ex);
@@ -994,11 +990,6 @@ public class BarManager : MonoBehaviour {
     }
 
     public IEnumerator SavePDF(string filename) {
-        if(!filename.EndsWith(".pdf")) filename = filename + ".pdf";
-
-        savePDF = false;
-        Save(filename.Substring(0, filename.Length - 4) + ".bar.nbt");
-        savePDF = true;
         progressStuff.Shown = false;
         progressStuff.Progress = 0;
         CameraControl.ShowWhole = true;
@@ -1028,7 +1019,7 @@ public class BarManager : MonoBehaviour {
 
         PDFExportJob pej = new PDFExportJob();
 
-        pej.Start(filename);
+        pej.Start(filename + (!filename.EndsWith(".pdf") ? ".pdf" : ""));
         while(!pej.Update()) {
             yield return null;
         }
