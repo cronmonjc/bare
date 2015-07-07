@@ -991,7 +991,6 @@ public class BarManager : MonoBehaviour {
         Directory.CreateDirectory(DirRoot + "Lightbar Drawings");
         fb.currFile = "";
         fb.Navigate(DirRoot + "Lightbar Drawings");
-        Debug.Log(fb.currDir);
         fb.fileFieldText = custName.text + "_" + (System.Environment.MachineName) + "_" + DateTime.Now.ToString("yyMMddHHmmssf");
     }
 
@@ -1001,38 +1000,48 @@ public class BarManager : MonoBehaviour {
     }
 
     public IEnumerator SavePDF(string filename) {
-        progressStuff.Shown = false;
-        progressStuff.Progress = 0;
-        CameraControl.ShowWhole = true;
-        CanvasDisabler.CanvasEnabled = false;
-
-        Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
-
-        cam.transform.position = new Vector3(0f, 0f, -10f);
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-
-        Vector3 tl = Vector3.zero, br = Vector3.zero;
-        foreach(ReferencePoint rp in FindObjectsOfType<ReferencePoint>()) {
-            if(rp.gameObject.name == "tl") {
-                tl = cam.WorldToScreenPoint(rp.transform.position);
-            } else if(rp.gameObject.name == "br") {
-                br = cam.WorldToScreenPoint(rp.transform.position);
-            }
+        bool attempt = true;
+        try {
+            File.Delete(filename + (!filename.EndsWith(".pdf") ? ".pdf" : ""));
+        } catch(IOException) {
+            ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
+            attempt = false;
         }
 
-        Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
+        if(attempt) {
+            progressStuff.Shown = false;
+            progressStuff.Progress = 0;
+            CameraControl.ShowWhole = true;
+            CanvasDisabler.CanvasEnabled = false;
 
-        yield return StartCoroutine(CapImages(capRect));
+            Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
 
-        progressStuff.Shown = true;
-        progressStuff.Text = "Finished capturing images.";
+            cam.transform.position = new Vector3(0f, 0f, -10f);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
 
-        PDFExportJob pej = new PDFExportJob();
+            Vector3 tl = Vector3.zero, br = Vector3.zero;
+            foreach(ReferencePoint rp in FindObjectsOfType<ReferencePoint>()) {
+                if(rp.gameObject.name == "tl") {
+                    tl = cam.WorldToScreenPoint(rp.transform.position);
+                } else if(rp.gameObject.name == "br") {
+                    br = cam.WorldToScreenPoint(rp.transform.position);
+                }
+            }
 
-        pej.Start(filename + (!filename.EndsWith(".pdf") ? ".pdf" : ""));
-        while(!pej.Update()) {
-            yield return null;
+            Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
+
+            yield return StartCoroutine(CapImages(capRect));
+
+            progressStuff.Shown = true;
+            progressStuff.Text = "Finished capturing images.";
+
+            PDFExportJob pej = new PDFExportJob();
+
+            pej.Start(filename + (!filename.EndsWith(".pdf") ? ".pdf" : ""));
+            while(!pej.Update()) {
+                yield return null;
+            }
         }
 
         yield return null;
@@ -1782,40 +1791,40 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Bar Programming", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
 
         if(patts.Contains("prog")) {
-            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(0.5, 3.25, 0.75, 0.7));
-            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 3.3, 0.75, 0.6));
-            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(p.Width.Inch - 1.25, 3.25, 0.75, 0.7));
-            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 3.3, 0.75, 0.6));
+            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(0.5, 0.65, 0.75, 0.7));
+            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 0.7, 0.75, 0.6));
+            gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(p.Width.Inch - 1.25, 0.65, 0.75, 0.7));
+            tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 0.7, 0.75, 0.6));
         }
 
         double top = 3.0;
 
-        tf.DrawString("Input Map", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
-        top += 0.2;
-        if(useCAN) {
-            PrintRow(tf, caliSm, GetFuncFromMap(0), GetFuncFromMap(12), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(13), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(2), GetFuncFromMap(14), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(15), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(16), ref top);
+        //tf.DrawString("Input Map", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
+        //top += 0.2;
+        //if(useCAN) {
+        //    PrintRow(tf, caliSm, GetFuncFromMap(0), GetFuncFromMap(12), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(1), GetFuncFromMap(13), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(2), GetFuncFromMap(14), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(3), GetFuncFromMap(15), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(4), GetFuncFromMap(16), ref top);
 
-            PrintRow(tf, caliSm, GetFuncFromMap(5), GetFuncFromMap(17), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(18), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(7), GetFuncFromMap(19), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(8), "POWER", ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(9), "GROUND", ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(5), GetFuncFromMap(17), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(6), GetFuncFromMap(18), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(7), GetFuncFromMap(19), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(8), "POWER", ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(9), "GROUND", ref top);
 
-            PrintRow(tf, caliSm, GetFuncFromMap(10), "---", ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(11), "---", ref top);
-        } else {
-            PrintRow(tf, caliSm, GetFuncFromMap(1) + " - White & Yellow", "White & Orange - " + GetFuncFromMap(0), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(3) + " - Brown", "White & Red - " + GetFuncFromMap(2), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(4) + " - Yellow", "Red & Green - " + GetFuncFromMap(11), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(6) + " - Blue", "Green - " + GetFuncFromMap(5), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(8) + " - Purple & White", "Gray - " + GetFuncFromMap(7), ref top);
-            PrintRow(tf, caliSm, GetFuncFromMap(10) + " - White & Pink", "Purple - " + GetFuncFromMap(9), ref top);
-            PrintRow(tf, caliSm, "---", "---", ref top);
-        }
+        //    PrintRow(tf, caliSm, GetFuncFromMap(10), "---", ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(11), "---", ref top);
+        //} else {
+        //    PrintRow(tf, caliSm, GetFuncFromMap(1) + " - White & Yellow", "White & Orange - " + GetFuncFromMap(0), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(3) + " - Brown", "White & Red - " + GetFuncFromMap(2), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(4) + " - Yellow", "Red & Green - " + GetFuncFromMap(11), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(6) + " - Blue", "Green - " + GetFuncFromMap(5), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(8) + " - Purple & White", "Gray - " + GetFuncFromMap(7), ref top);
+        //    PrintRow(tf, caliSm, GetFuncFromMap(10) + " - White & Pink", "Purple - " + GetFuncFromMap(9), ref top);
+        //    PrintRow(tf, caliSm, "---", "---", ref top);
+        //}
 
         top += 0.05;
 
@@ -1838,6 +1847,11 @@ public class PDFExportJob : ThreadedJob {
             for(int i = 0; i < 20; i++) {
                 if((FnDragTarget.inputMap[i] & (int)func) > 0) {
 
+                    gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.3));
+                    gfx.DrawLine(border, 1.75, top, 1.75, top + 0.3);
+                    gfx.DrawLine(border, 5.8, top, 5.8, top + 0.3);
+                    tf.DrawString(GetFuncFromInt(func) + "\n" + GetInput(i), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
+
                     switch(func) {
                         case 0x2: // PRIO1
                         case 0x4: // PRIO2
@@ -1847,17 +1861,9 @@ public class PDFExportJob : ThreadedJob {
                         case 0x800: // FALLEY
                         case 0x40000: // PRIO4
                         case 0x80000: // PRIO5
-                            gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.3));
-                            gfx.DrawLine(border, 1.75, top, 1.75, top + 0.3);
                             gfx.DrawLine(border, 3.8, top, 3.8, top + 0.3);
-                            gfx.DrawLine(border, 5.8, top, 5.8, top + 0.3);
-                            tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.075, 1.25, 0.1));
                             break;
                         default:
-                            gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.2));
-                            gfx.DrawLine(border, 1.75, top, 1.75, top + 0.2);
-                            gfx.DrawLine(border, 5.8, top, 5.8, top + 0.2);
-                            tf.DrawString(GetFuncFromInt(func), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
                             break;
                     }
 
@@ -1920,13 +1926,13 @@ public class PDFExportJob : ThreadedJob {
                                 }
                             }
 
-                            // Write out Phase A, new XRect(1.8, top, 1.95, 0.1)
+                            // Write out Phase A
                             tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.3));
-                            // Write out Phase B, new XRect(3.85, top, 1.95, 0.1)
+                            // Write out Phase B
                             tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.3));
                             break;
                         default:
-                            // Write out enabled, new XRect(1.8, top, 4.0, 0.1)
+                            // Write out enable
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
                                 if(alpha.GetIsEnabled(advfunc, false)) {
@@ -1953,10 +1959,10 @@ public class PDFExportJob : ThreadedJob {
                                 }
                             }
 
-                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.1));
+                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.3));
                             break;
                     }
-                    // Write out pattern(s), new XRect(5.85, top + 0.1, p.Width.Inch - 8.4, 0.2)
+                    // Write out pattern(s)
                     switch(func) {
                         case 0x2: // PRIO1
                         case 0x4: // PRIO2
@@ -2001,21 +2007,7 @@ public class PDFExportJob : ThreadedJob {
                             break;
                     }
 
-                    switch(func) {
-                        case 0x2: // PRIO1
-                        case 0x4: // PRIO2
-                        case 0x8: // PRIO3
-                        case 0x100: // ICL
-                        case 0x400: // FTAKEDOWN
-                        case 0x800: // FALLEY
-                        case 0x40000: // PRIO4
-                        case 0x80000: // PRIO5
-                            top += 0.3;
-                            break;
-                        default:
-                            top += 0.2;
-                            break;
-                    }
+                    top += 0.3;
                     break;
                 }
             }
@@ -2101,6 +2093,41 @@ public class PDFExportJob : ThreadedJob {
                 return "Emitter";
             default:
                 return "???";
+        }
+    }
+
+    public string GetInput(int which) {
+        if(useCAN) {
+            return (which > 11 ? "P5" : "P4") + ", Pin " + ((which % 12) + 1);
+        } else {
+            switch(which) {
+                case 0:
+                    return "White & Orange";
+                case 1:
+                    return "White & Yellow";
+                case 2:
+                    return "White & Red";
+                case 3:
+                    return "Brown";
+                case 4:
+                    return "Yellow";
+                case 5:
+                    return "Green";
+                case 6:
+                    return "Blue";
+                case 7:
+                    return "Gray";
+                case 8:
+                    return "Purple & White";
+                case 9:
+                    return "Purple";
+                case 10:
+                    return "White & Pink";
+                case 11:
+                    return "Red & Green";
+                default:
+                    return "???";
+            }
         }
     }
 
