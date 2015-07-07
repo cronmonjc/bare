@@ -848,11 +848,11 @@ public class BarManager : MonoBehaviour {
             NbtFile file = new NbtFile(root);
             file.SaveToFile(filename + (!filename.EndsWith(".bar.nbt") ? ".bar.nbt" : ""), NbtCompression.None);
 
-            moddedBar = false;
-
             if(quitAfterSave) { Application.Quit(); }
 
             if(savePDF) { StartCoroutine(SavePDF(filename)); }
+
+            moddedBar = false;
         } catch(Exception ex) {
             ErrorText.inst.DispError("Problem saving: " + ex.Message);
             Debug.LogException(ex);
@@ -1538,17 +1538,19 @@ public class PDFExportJob : ThreadedJob {
 
         XPen border = new XPen(XColors.Black, 0.025);
 
-        StringBuilder sb = new StringBuilder(1024);
-        foreach(string issue in issues) {
-            sb.AppendLine(issue);
-        }
-        if(sb.Length > 0) {
-            tf.DrawString("Issues found:", caliSmBold, XBrushes.Black, new XRect(0.5, top, 1.2, 0.10));
-            tf.DrawString("Sign Off:", caliLg, XBrushes.Black, new XRect(3.2, top - .1, 0.6, 0.2));
-            gfx.DrawLine(border, 3.8, top + 0.1, 4.0, top - 0.1);
-            gfx.DrawLine(border, 3.8, top - 0.1, 4.0, top + 0.1);
-            gfx.DrawLine(border, 4.0, top + 0.1, 6.0, top + 0.1);
-            tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.8, top + 0.10, p.Width.Inch - 1.3, 2.0));
+        if(BarManager.moddedBar) {
+            StringBuilder sb = new StringBuilder(1024);
+            foreach(string issue in issues) {
+                sb.AppendLine(issue);
+            }
+            if(sb.Length > 0) {
+                tf.DrawString("Issues found:", caliSmBold, XBrushes.Black, new XRect(0.5, top, 1.2, 0.10));
+                tf.DrawString("Sign Off:", caliLg, XBrushes.Black, new XRect(3.2, top - .1, 0.6, 0.2));
+                gfx.DrawLine(border, 3.8, top + 0.1, 4.0, top - 0.1);
+                gfx.DrawLine(border, 3.8, top - 0.1, 4.0, top + 0.1);
+                gfx.DrawLine(border, 4.0, top + 0.1, 6.0, top + 0.1);
+                tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.8, top + 0.10, p.Width.Inch - 1.3, 2.0));
+            }
         }
 
         top = p.Height.Inch - 2.5;
@@ -1831,7 +1833,7 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Function Definitions", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
         top += 0.2;
-        gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.4));
+        gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.3, 0.4));
         tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(0.5, top + (useCAN ? 0.0 : 0.1), 1.25, 0.2));
         if(useCAN) tf.DrawString("Break Out Box", caliBold, XBrushes.Black, new XRect(0.50, top + 0.2, 1.25, 0.2));
         gfx.DrawLine(border, 1.75, top, 1.75, top + 0.4);
@@ -1840,7 +1842,7 @@ public class PDFExportJob : ThreadedJob {
         gfx.DrawLine(border, 3.8, top + 0.2, 3.8, top + 0.4);
         tf.DrawString("Phase B", caliBold, XBrushes.Black, new XRect(3.85, top + 0.2, 1.95, 0.1));
         gfx.DrawLine(border, 5.8, top, 5.8, top + 0.4);
-        tf.DrawString("Pattern(s)", caliBold, XBrushes.Black, new XRect(5.85, top + 0.1, p.Width.Inch - 6.4, 0.2));
+        tf.DrawString("Pattern(s)", caliBold, XBrushes.Black, new XRect(5.85, top + 0.1, p.Width.Inch - 6.7, 0.2));
 
         top += 0.4;
         foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
@@ -1850,6 +1852,7 @@ public class PDFExportJob : ThreadedJob {
                     gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.3));
                     gfx.DrawLine(border, 1.75, top, 1.75, top + 0.3);
                     gfx.DrawLine(border, 5.8, top, 5.8, top + 0.3);
+                    gfx.DrawLine(border, p.Width.Inch - 0.8, top, p.Width.Inch - 0.8, top + 0.3);
                     tf.DrawString(GetFuncFromInt(func) + "\n" + GetInput(i), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
 
                     switch(func) {
@@ -1999,11 +2002,11 @@ public class PDFExportJob : ThreadedJob {
                             }
 
                             if(patt.Count > 0) {
-                                tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.3));
+                                tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.3));
                             }
                             break;
                         default:
-                            tf.DrawString("Steady Burn", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.4, 0.2));
+                            tf.DrawString("Steady Burn", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.2));
                             break;
                     }
 
@@ -2013,6 +2016,13 @@ public class PDFExportJob : ThreadedJob {
             }
         }
 
+        top += 0.025;
+        gfx.DrawLine(border, p.Width.Inch - 0.65, top, p.Width.Inch - 0.8, top + 0.15);
+        gfx.DrawLine(border, p.Width.Inch - 0.65, top, p.Width.Inch - 0.5, top + 0.15);
+        gfx.DrawLine(border, p.Width.Inch - 0.65, top, p.Width.Inch - 0.65, top + 0.2);
+        tf.Alignment = XParagraphAlignment.Right;
+        tf.DrawString("Tested for Accuracy", caliSm, XBrushes.Black, new XRect(p.Width.Inch - 2.0, top + 0.025, 1.1, 0.2));
+        gfx.DrawLines(border, p.Width.Inch - 2.0, top + 0.2, p.Width.Inch - 0.65, top + 0.2);
 
         tf.Alignment = XParagraphAlignment.Left;
         if(orderNumber.Length > 0)
