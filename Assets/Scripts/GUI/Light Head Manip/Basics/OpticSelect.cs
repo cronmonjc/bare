@@ -144,6 +144,7 @@ public class OpticSelect : MonoBehaviour {
             if(lh.gameObject.activeInHierarchy && lh.lhd.optic != node) {
                 if(node == null) {
                     lh.SetOptic("");
+                    lh.lhd.funcs.Clear();
                     blank = true;
                 } else if(node.fitsSm && !lh.isSmall) {
                     if(node.lgEquivalent.Length > 0) {

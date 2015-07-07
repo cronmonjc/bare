@@ -920,7 +920,7 @@ public class BarManager : MonoBehaviour {
 
                 foreach(OpticNode on in ln.optics.Values) {
                     if(on.partNumber == partNum) {
-                        lh.SetOptic(on.name, BasicFunction.NULL, false);
+                        lh.SetOptic(on.name, false);
                         lh.SetStyle(lightCmpd["styl"].StringValue);
                         break;
                     }
@@ -952,7 +952,7 @@ public class BarManager : MonoBehaviour {
 
                     foreach(OpticNode on in ln.optics.Values) {
                         if(on.partNumber == partNum) {
-                            lh.SetOptic(on.name, BasicFunction.NULL, false);
+                            lh.SetOptic(on.name, false);
                             lh.SetStyle(lightCmpd["styl"].StringValue);
                             break;
                         }

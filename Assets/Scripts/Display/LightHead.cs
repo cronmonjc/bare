@@ -412,12 +412,29 @@ public class LightHead : MonoBehaviour {
             case BasicFunction.STT:
                 NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
                 taiCmpd.Get<NbtShort>("er1").EnableBit(Bit);
-                taiCmpd.Get<NbtShort>("er2").EnableBit(Bit);
+                taiCmpd.Get<NbtShort>("er2").DisableBit(Bit);
                 break;
             case BasicFunction.CRUISE:
                 NbtCompound cruCmpd = BarManager.inst.patts.Get<NbtCompound>("cru");
                 cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
-                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").EnableBit(Bit);
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                break;
+            case BasicFunction.EMITTER:
+                NbtCompound emiCmpd = BarManager.inst.patts.Get<NbtCompound>("emi");
+                emiCmpd.Get<NbtShort>("ef1").EnableBit(Bit);
+                emiCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+                break;
+            case BasicFunction.CAL_STEADY:
+                NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
+                calCmpd.Get<NbtShort>("ef1").EnableBit(Bit);
+                calCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+                break;
+            case BasicFunction.STEADY:
+                if(loc == Location.ALLEY || loc == Location.FRONT) {
+                    NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                }
                 break;
             default:
                 break;
@@ -447,12 +464,8 @@ public class LightHead : MonoBehaviour {
             case 1:
                 useSingle = true;
                 switch(lhd.funcs[0]) {
-                    case BasicFunction.CAL_STEADY:
-                    case BasicFunction.TRAFFIC:
                     case BasicFunction.FLASHING:
-                        if(lhd.funcs[0] == BasicFunction.FLASHING) {
-                            useDual = true;
-                        }
+                        useDual = true;
                         return;
                     default:
                         return;
@@ -501,18 +514,19 @@ public class LightHead : MonoBehaviour {
                     case BasicFunction.STT:
                     case BasicFunction.STEADY:
                         if(isSmall) {
-                            SetOptic("Starburst", lhd.funcs[0]);
+                            SetOptic("Starburst");
                         } else {
-                            SetOptic("Lineum", lhd.funcs[0]);
+                            SetOptic("Lineum");
                         }
                         return;
                     case BasicFunction.CAL_STEADY:
                     case BasicFunction.TRAFFIC:
                     case BasicFunction.FLASHING:
+                    case BasicFunction.CRUISE:
                         if(isSmall) {
-                            SetOptic("Small Lineum", lhd.funcs[0]);
+                            SetOptic("Small Lineum");
                         } else {
-                            SetOptic("Lineum", lhd.funcs[0]);
+                            SetOptic("Lineum");
                         }
                         return;
                     default:
@@ -532,7 +546,7 @@ public class LightHead : MonoBehaviour {
                     }
 
                     if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
-                        SetOptic("Lineum", test);
+                        SetOptic("Lineum");
                         return;
                     } else {
                         SetOptic("");
@@ -540,9 +554,9 @@ public class LightHead : MonoBehaviour {
                     }
                 } else {
                     if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
-                        SetOptic(isSmall ? "Starburst" : "Lineum", BasicFunction.STEADY);
+                        SetOptic(isSmall ? "Starburst" : "Lineum");
                     } else {
-                        SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
+                        SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
                     }
                 }
                 return;
@@ -551,7 +565,7 @@ public class LightHead : MonoBehaviour {
                     lhd.funcs.RemoveRange(0, 2);
                     RefreshBasicFuncDefault();
                 } else {
-                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum", BasicFunction.STEADY);
+                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
                 }
                 return;
             case 4:
@@ -573,7 +587,7 @@ public class LightHead : MonoBehaviour {
         } else SetOptic(newOptic.name);
     }
 
-    public void SetOptic(string newOptic, BasicFunction fn = BasicFunction.NULL, bool doDefault = true) {
+    public void SetOptic(string newOptic, bool doDefault = true) {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) {
@@ -594,89 +608,24 @@ public class LightHead : MonoBehaviour {
                         SetStyle("");
                     }
                 }
-
-                //AdvFunction highFunction = AdvFunction.LEVEL1;
-                //foreach(AdvFunction f in CapableFunctions) {
-                //    if(!IsUsingFunction(f)) continue;
-                //    switch(f) {
-                //        case AdvFunction.ALLEY:
-                //        case AdvFunction.TAKEDOWN:
-                //            highFunction = f;
-                //            break;
-                //        case AdvFunction.TRAFFIC:
-                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN) {
-                //                highFunction = f;
-                //            }
-                //            break;
-                //        case AdvFunction.STT_AND_TAIL:
-                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC) {
-                //                highFunction = f;
-                //            }
-                //            break;
-                //        case AdvFunction.ICL:
-                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL) {
-                //                highFunction = f;
-                //            }
-                //            break;
-                //        case AdvFunction.T13:
-                //            if(highFunction != AdvFunction.ALLEY || highFunction != AdvFunction.TAKEDOWN || highFunction != AdvFunction.TRAFFIC || highFunction != AdvFunction.STT_AND_TAIL || highFunction != AdvFunction.ICL) {
-                //                highFunction = f;
-                //            }
-                //            break;
-                //        default: break;
-                //    }
-                //}
-
-                //switch(highFunction) {
-                //    case AdvFunction.T13:
-                //        foreach(StyleNode alpha in styles) {
-                //            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("rc", System.StringComparison.CurrentCultureIgnoreCase)) {
-                //                styleToSet = alpha;
-                //                break;
-                //            }
-                //        }
-                //        break;
-                //    case AdvFunction.TRAFFIC:
-                //        foreach(StyleNode alpha in styles) {
-                //            if(alpha.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
-                //                styleToSet = alpha;
-                //                break;
-                //            }
-                //        }
-                //        break;
-                //    case AdvFunction.STT_AND_TAIL:
-                //        foreach(StyleNode alpha in styles) {
-                //            if(alpha.partSuffix.Equals("r", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("ar", System.StringComparison.CurrentCultureIgnoreCase)) {
-                //                styleToSet = alpha;
-                //                break;
-                //            }
-                //        }
-                //        break;
-                //    case AdvFunction.ALLEY:
-                //    case AdvFunction.TAKEDOWN:
-                //    case AdvFunction.ICL:
-                //        foreach(StyleNode alpha in styles) {
-                //            if(alpha.partSuffix.Equals("c", System.StringComparison.CurrentCultureIgnoreCase) || alpha.partSuffix.Equals("cc", System.StringComparison.CurrentCultureIgnoreCase)) {
-                //                styleToSet = alpha;
-                //                break;
-                //            }
-                //        }
-                //        break;
-                //    default:
-                //        break;
-                //}
             } else {
                 SetStyle("");
             }
+            if(!lhd.optic.dual) {
+                string shortName = "e" + (isRear ? "r" : "f") + "2";
+                foreach(string patt in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
+                    NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(patt);
+                    if(cmpd.Contains(shortName)) {
+                        cmpd.Get<NbtShort>(shortName).DisableBit(Bit);
+                    }
+                }
+            }
             BarManager.moddedBar = true;
         } else {
-            lhd.funcs.Clear();
             lhd.optic = null;
             SetStyle("");
             BarManager.moddedBar = true;
         }
-
-
     }
 
     public void SetStyle(string newStyle) {
