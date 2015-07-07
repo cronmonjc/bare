@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class ErrorText : MonoBehaviour {
     public static ErrorText inst;
+    private Coroutine fader;
     private Text t;
 
     void Awake() {
@@ -14,7 +15,8 @@ public class ErrorText : MonoBehaviour {
     }
 
     public void DispError(string msg) {
-        StartCoroutine(DispErrorThenFade(msg));
+        if(fader != null) StopCoroutine(fader);
+        fader = StartCoroutine(DispErrorThenFade(msg));
     }
 
     public IEnumerator DispErrorThenFade(string msg) {
@@ -33,6 +35,7 @@ public class ErrorText : MonoBehaviour {
         t.text = "";
         c.a = 255;
         t.color = c;
+        fader = null;
     }
     
 }
