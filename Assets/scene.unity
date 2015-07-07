@@ -29306,37 +29306,37 @@ Prefab:
       propertyPath: OnOpen.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2146742786}
-    - target: {fileID: 22419978, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 277.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 22408022, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 1261
-      objectReference: {fileID: 0}
-    - target: {fileID: 22416302, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 530.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 22410796, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 1129
-      objectReference: {fileID: 0}
     - target: {fileID: 22468156, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 277.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 22436734, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 277.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 22410536, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
-      propertyPath: m_AnchoredPosition.x
-      value: 277.5
+      value: 277.600006
       objectReference: {fileID: 0}
     - target: {fileID: 22421638, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 277.5
+      value: 277.600006
+      objectReference: {fileID: 0}
+    - target: {fileID: 22436734, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 277.600006
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410536, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 277.600006
+      objectReference: {fileID: 0}
+    - target: {fileID: 22419978, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 277.600006
+      objectReference: {fileID: 0}
+    - target: {fileID: 22416302, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 530.400024
+      objectReference: {fileID: 0}
+    - target: {fileID: 22410796, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 1128.80005
+      objectReference: {fileID: 0}
+    - target: {fileID: 22408022, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchoredPosition.x
+      value: 1260.80005
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
@@ -32815,8 +32815,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2071053578}
   m_RootOrder: 0
-  m_AnchorMin: {x: .75, y: 0}
-  m_AnchorMax: {x: .75, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: .5, y: .5}
@@ -54338,8 +54338,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2146742786}
-        m_MethodName: StartPDF
+      - m_Target: {fileID: 1711378410}
+        m_MethodName: BeginSaveAs
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -54350,8 +54350,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1711378410}
-        m_MethodName: BeginSaveAs
+      - m_Target: {fileID: 2146742786}
+        m_MethodName: StartPDF
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -79070,7 +79070,7 @@ RectTransform:
   m_Father: {fileID: 1112150343}
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: .75, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: .5, y: .5}
@@ -90790,8 +90790,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 689202723}
   m_RootOrder: 0
-  m_AnchorMin: {x: 0, y: .302072644}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: .5}

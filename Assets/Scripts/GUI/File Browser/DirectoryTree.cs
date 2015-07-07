@@ -23,7 +23,9 @@ public class DirectoryTree : MonoBehaviour {
     public void Refresh() {
         Clear();
 
-        FileBrowser fb = FindObjectOfType<FileBrowser>();
+        FileBrowser fb = transform.parent.GetComponent<FileBrowser>();
+        if(fb.drives == null || fb.drives.Length == 0)
+            fb.drives = System.IO.Directory.GetLogicalDrives();
         string[] drives = fb.drives;
         string currDir = fb.currDir;
 

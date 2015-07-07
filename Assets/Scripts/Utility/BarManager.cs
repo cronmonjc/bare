@@ -13,6 +13,8 @@ using System;
 using System.Text;
 
 public class BarManager : MonoBehaviour {
+    public static string DirRoot;
+
     public AdvFunction funcBeingTested = AdvFunction.NONE;
 
     [NonSerialized]
@@ -110,6 +112,9 @@ public class BarManager : MonoBehaviour {
 
         allHeads = new List<LightHead>();
         inst = this;
+
+        string[] parts = Application.dataPath.Split('/', '\\');
+        DirRoot = string.Join("/", parts, 0, parts.Length - 1) + "/";
     }
 
     private void CreatePatts() {
@@ -982,11 +987,17 @@ public class BarManager : MonoBehaviour {
     public void StartPDF() {
         savePDF = true;
         barFilePath = fb.currFile;
+
+        Directory.CreateDirectory(DirRoot + "Lightbar Drawings");
+        fb.currFile = "";
+        fb.Navigate(DirRoot + "Lightbar Drawings");
+        Debug.Log(fb.currDir);
+        fb.fileFieldText = custName.text + "_" + (System.Environment.MachineName) + "_" + DateTime.Now.ToString("yyMMddHHmmssf");
     }
 
     public void JustSavePDF() {
-        Directory.CreateDirectory(Application.dataPath + "\\..\\output");
-        StartCoroutine(SavePDF(Application.dataPath + "\\..\\output\\" + orderNum.text + " (" + DateTime.Now.ToString("MMddyy") + ").pdf"));
+        Directory.CreateDirectory(DirRoot + "output");
+        StartCoroutine(SavePDF(DirRoot + "output/" + (System.Environment.MachineName) + " Preview.pdf"));
     }
 
     public IEnumerator SavePDF(string filename) {

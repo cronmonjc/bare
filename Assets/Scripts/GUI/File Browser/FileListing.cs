@@ -31,7 +31,7 @@ public class FileListing : MonoBehaviour {
     public void Refresh() {
         Clear();
 
-        FileBrowser fb = FindObjectOfType<FileBrowser>();
+        FileBrowser fb = transform.parent.GetComponent<FileBrowser>();
         string currDir = fb.currDir;
 
         string[] directories = Directory.GetDirectories(currDir); // Get all the directories and files that reside at this spot

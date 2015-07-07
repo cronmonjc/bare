@@ -29,7 +29,7 @@ public class PresetList : MonoBehaviour {
     void OnEnable() {
         Clear();
 
-        string[] presets = Directory.GetFiles(Application.dataPath + "\\..\\Presets");
+        string[] presets = Directory.GetFiles(BarManager.DirRoot + "Presets");
 
         foreach(string preset in presets) {
             GameObject newbie = Instantiate<GameObject>(prefab);

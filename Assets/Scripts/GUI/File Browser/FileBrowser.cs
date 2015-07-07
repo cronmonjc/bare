@@ -6,6 +6,8 @@ using System;
 using UnityEngine.UI;
 
 public class FileBrowser : MonoBehaviour {
+    public InputField fileField;
+
     public enum State {
         OPEN, SAVE
     }
@@ -19,6 +21,11 @@ public class FileBrowser : MonoBehaviour {
     [NonSerialized]
     public string currDir = "";
 
+    public string fileFieldText {
+        get { return fileField.text; }
+        set { fileField.text = value; }
+    }
+
     private FileListing fl;
 
     public bool IsOpen {
@@ -31,8 +38,6 @@ public class FileBrowser : MonoBehaviour {
     public FileEvent OnOpen;
 
     void Awake() {
-        drives = Directory.GetLogicalDrives();
-
         if(Application.isWebPlayer) {
             Navigate(Application.persistentDataPath);
         } else {
@@ -76,7 +81,7 @@ public class FileBrowser : MonoBehaviour {
         if(Directory.Exists(str)) {
             currDir = str;
         }
-        FindObjectOfType<DirectoryTree>().Refresh();
+        transform.FindChild("DirectoryTree").GetComponent<DirectoryTree>().Refresh();
         if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
         fl.Refresh();
     }
