@@ -5,15 +5,21 @@ using System.Collections;
 [RequireComponent(typeof(Text))]
 public class TitleText : MonoBehaviour {
 
+    public static TitleText inst;
+
     private Text t;
-    public FileBrowser fb;
+    public string currFile;
     public string preset;
+
+    void Start() {
+        inst = this;
+    }
 
     void Update() {
         if(t == null) t = GetComponent<Text>();
 
-        if(fb.currFile.Length > 1) {
-            t.text = fb.currFile + (BarManager.moddedBar ? "**" : "");
+        if(currFile.Length > 1) {
+            t.text = currFile + (BarManager.moddedBar ? "**" : "");
         } else if(preset.Length > 1) {
             t.text = "New " + preset + (BarManager.moddedBar ? "**" : "");
         } else {

@@ -857,6 +857,7 @@ public class BarManager : MonoBehaviour {
             if(savePDF) { StartCoroutine(SavePDF(filename)); }
 
             moddedBar = false;
+            TitleText.inst.currFile = filename;
         } catch(Exception ex) {
             ErrorText.inst.DispError("Problem saving: " + ex.Message);
             Debug.LogException(ex);
@@ -986,6 +987,7 @@ public class BarManager : MonoBehaviour {
 
         FindObjectOfType<CameraControl>().RefreshOnSelect.Invoke();
         moddedBar = false;
+        TitleText.inst.currFile = filename;
     }
 
     public void StartPDF() {
@@ -1182,8 +1184,8 @@ public class BarManager : MonoBehaviour {
             }
         }
 
-        FindObjectOfType<TitleText>().preset = "";
-        fb.currFile = "";
+        TitleText.inst.currFile = "";
+        TitleText.inst.preset = "";
 
         moddedBar = false;
 
