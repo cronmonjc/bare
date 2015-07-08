@@ -41,9 +41,8 @@ public class PresetList : MonoBehaviour {
                 transform.parent.gameObject.SetActive(false);
 
                 BarManager.inst.Clear();
-                BarManager.inst.Open(string.Join("\\", bits));
-
                 FindObjectOfType<TitleText>().preset = bits[bits.Length - 1].Split('.')[0];
+                BarManager.inst.Open(string.Join("\\", bits));
             });
         }
     }
