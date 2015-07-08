@@ -8,6 +8,7 @@ public class FollowMouse : MonoBehaviour {
     public Vector2 mouseDelta;
 
     public static bool BlockMouseInput = false;
+    public static bool AppHasFocus = true;
 
     void Update() {
         Vector2 currMousePos = Input.mousePosition;
@@ -24,6 +25,10 @@ public class FollowMouse : MonoBehaviour {
         }
 
         if(group == null) group = GetComponent<CanvasGroup>();
-        group.blocksRaycasts = BlockMouseInput = (mouseDelta.sqrMagnitude > 0.15f);
+        group.blocksRaycasts = BlockMouseInput = !(AppHasFocus && (mouseDelta.sqrMagnitude < 0.15f));
+    }
+
+    void OnApplicationFocus(bool focus) {
+        AppHasFocus = focus;
     }
 }
