@@ -450,13 +450,37 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                     if(!lh.lhd.style.isDualColor) en2 = false;
 
+                    bool light1 = en1, light2 = en2;
+
                     if(en1 || en2) {
                         while(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
                             ticksPast = PattTimer.inst.passedTicks;
 
-                            background.color = lh.lhd.style.color * ((en1 && p1.GetIsActive(ticksPast, phase1, false, bit)) ? 1.0f : 0.25f);
+                            light1 = en1;
+                            light2 = en2 && p2 != null;
+
+                            if(light1) {
+                                if(p1 is DCCirclePattern) {
+                                    light1 &= ((DCCirclePattern)p1).GetIsActive(ticksPast, phase1, false, bit, lh.isRear);
+                                } else if(p1 is DCDoubleRotatorPattern) {
+                                    light1 &= ((DCDoubleRotatorPattern)p1).GetIsActive(ticksPast, phase1, false, bit, lh.isRear);
+                                } else {
+                                    light1 &= p1.GetIsActive(ticksPast, phase1, false, bit);
+                                } 
+                            }
+                            if(light2) {
+                                if(p2 is DCCirclePattern) {
+                                    light2 &= ((DCCirclePattern)p2).GetIsActive(ticksPast, phase2, true, bit, lh.isRear);
+                                } else if(p2 is DCDoubleRotatorPattern) {
+                                    light2 &= ((DCDoubleRotatorPattern)p2).GetIsActive(ticksPast, phase2, true, bit, lh.isRear);
+                                } else {
+                                    light2 &= p2.GetIsActive(ticksPast, phase2, true, bit);
+                                }
+                            }
+
+                            background.color = lh.lhd.style.color * (light1 ? 1.0f : 0.25f);
                             if(lh.lhd.style.isDualColor) {
-                                secondImage.color = lh.lhd.style.color2 * ((en2 && p2 != null && p2.GetIsActive(ticksPast, phase2, true, bit)) ? 1.0f : 0.25f);
+                                secondImage.color = lh.lhd.style.color2 * (light2 ? 1.0f : 0.25f);
                             } else {
                                 secondImage.color = background.color;
                             }

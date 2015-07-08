@@ -83,6 +83,8 @@ public class LightDict : MonoBehaviour {
                 foreach(NbtTag alpha in patlist) {
                     flashPatts.Add(new WarnPatt((NbtCompound)alpha));
                 }
+                flashPatts.Add(new DCCirclePattern());
+                flashPatts.Add(new DCDoubleRotatorPattern());
 
 
                 tdPatts = new List<Pattern>();
@@ -719,6 +721,182 @@ public class DoubleFlashRefPattern : Pattern {
         }
 
         return false;
+    }
+}
+
+public class DCCirclePattern : Pattern {
+    public DCCirclePattern() {
+        name = "DC Circle";
+        id = 34;
+        t0 = 5;
+        t1 = t2 = t3 = 0;
+    }
+
+    public override ulong period {
+        get { return 120; }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        throw new NotImplementedException();
+    }
+
+    public bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit, bool isRear) {
+        byte frame = (byte)((tick % 120) / 5);
+        if(isRear) {
+            switch(frame) {
+                case 0:
+                    return ((color2 ? 0x0C00 : 0x0003) & (0x1 << bit)) > 0;
+                case 1:
+                    return ((color2 ? 0x0800 : 0x0001) & (0x1 << bit)) > 0;
+                case 12:
+                    return ((color2 ? 0x0001 : 0x0800) & (0x1 << bit)) > 0;
+                case 13:
+                    return ((color2 ? 0x0003 : 0x0C00) & (0x1 << bit)) > 0;
+                case 14:
+                    return ((color2 ? 0x0007 : 0x0E00) & (0x1 << bit)) > 0;
+                case 15:
+                    return ((color2 ? 0x000E : 0x0700) & (0x1 << bit)) > 0;
+                case 16:
+                    return ((color2 ? 0x001C : 0x0380) & (0x1 << bit)) > 0;
+                case 17:
+                    return ((color2 ? 0x0038 : 0x01C0) & (0x1 << bit)) > 0;
+                case 18:
+                    return ((color2 ? 0x0070 : 0x00E0) & (0x1 << bit)) > 0;
+                case 19:
+                    return ((color2 ? 0x00E0 : 0x0070) & (0x1 << bit)) > 0;
+                case 20:
+                    return ((color2 ? 0x01C0 : 0x0038) & (0x1 << bit)) > 0;
+                case 21:
+                    return ((color2 ? 0x0380 : 0x001C) & (0x1 << bit)) > 0;
+                case 22:
+                    return ((color2 ? 0x0700 : 0x000E) & (0x1 << bit)) > 0;
+                case 23:
+                    return ((color2 ? 0x0E00 : 0x0007) & (0x1 << bit)) > 0;
+                default:
+                    return false;
+            }
+        } else {
+            switch(frame) {
+                case 0:
+                    return ((color2 ? 0x2000 : 0x1000) & (0x1 << bit)) > 0;
+                case 1:
+                    return ((color2 ? 0x2800 : 0x1001) & (0x1 << bit)) > 0;
+                case 2:
+                    return ((color2 ? 0x2C00 : 0x1003) & (0x1 << bit)) > 0;
+                case 3:
+                    return ((color2 ? 0x0700 : 0x000E) & (0x1 << bit)) > 0;
+                case 4:
+                    return ((color2 ? 0x0380 : 0x001C) & (0x1 << bit)) > 0;
+                case 5:
+                    return ((color2 ? 0x01C0 : 0x0038) & (0x1 << bit)) > 0;
+                case 6:
+                    return ((color2 ? 0x00E0 : 0x0070) & (0x1 << bit)) > 0;
+                case 7:
+                    return ((color2 ? 0x0070 : 0x00E0) & (0x1 << bit)) > 0;
+                case 8:
+                    return ((color2 ? 0x0038 : 0x01C0) & (0x1 << bit)) > 0;
+                case 9:
+                    return ((color2 ? 0x001C : 0x0380) & (0x1 << bit)) > 0;
+                case 10:
+                    return ((color2 ? 0x000E : 0x0700) & (0x1 << bit)) > 0;
+                case 11:
+                    return ((color2 ? 0x1003 : 0x2C00) & (0x1 << bit)) > 0;
+                case 12:
+                    return ((color2 ? 0x1001 : 0x2800) & (0x1 << bit)) > 0;
+                case 13:
+                    return ((color2 ? 0x1000 : 0x2000) & (0x1 << bit)) > 0;
+                default:
+                    return false;
+            }
+        }
+    }
+}
+
+public class DCDoubleRotatorPattern : Pattern {
+    public DCDoubleRotatorPattern() {
+        name = "DC Double Rotator";
+        id = 35;
+        t0 = 5;
+        t1 = t2 = t3 = 0;
+    }
+
+    public override ulong period {
+        get { return 70; }
+    }
+
+    public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
+        throw new NotImplementedException();
+    }
+
+    public bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit, bool isRear) {
+        byte frame = (byte)((tick % 70) / 5);
+        if(isRear) {
+            switch(frame) {
+                case 0:
+                    return ((color2 ? 0x1041 : 0x2030) & (0x1 << bit)) > 0;
+                case 1:
+                    return ((color2 ? 0x10C0 : 0x2820) & (0x1 << bit)) > 0;
+                case 2:
+                    return ((color2 ? 0x01C0 : 0x2C00) & (0x1 << bit)) > 0;
+                case 3:
+                    return ((color2 ? 0x0380 : 0x0E00) & (0x1 << bit)) > 0;
+                case 4:
+                    return ((color2 ? 0x0700 : 0x0700) & (0x1 << bit)) > 0;
+                case 5:
+                    return ((color2 ? 0x0E00 : 0x0380) & (0x1 << bit)) > 0;
+                case 6:
+                    return ((color2 ? 0x2C00 : 0x01C0) & (0x1 << bit)) > 0;
+                case 7:
+                    return ((color2 ? 0x2820 : 0x10C0) & (0x1 << bit)) > 0;
+                case 8:
+                    return ((color2 ? 0x2030 : 0x1041) & (0x1 << bit)) > 0;
+                case 9:
+                    return ((color2 ? 0x0038 : 0x1003) & (0x1 << bit)) > 0;
+                case 10:
+                    return ((color2 ? 0x001C : 0x0007) & (0x1 << bit)) > 0;
+                case 11:
+                    return ((color2 ? 0x000E : 0x000E) & (0x1 << bit)) > 0;
+                case 12:
+                    return ((color2 ? 0x0007 : 0x001C) & (0x1 << bit)) > 0;
+                case 13:
+                    return ((color2 ? 0x0003 : 0x0038) & (0x1 << bit)) > 0;
+                default:
+                    return false;
+            }
+        } else {
+            switch(frame) {
+                case 0:
+                    return ((color2 ? 0x10C0 : 0x2820) & (0x1 << bit)) > 0;
+                case 1:
+                    return ((color2 ? 0x1041 : 0x2030) & (0x1 << bit)) > 0;
+                case 2:
+                    return ((color2 ? 0x1003 : 0x0038) & (0x1 << bit)) > 0;
+                case 3:
+                    return ((color2 ? 0x0007 : 0x001C) & (0x1 << bit)) > 0;
+                case 4:
+                    return ((color2 ? 0x000E : 0x000E) & (0x1 << bit)) > 0;
+                case 5:
+                    return ((color2 ? 0x001C : 0x0007) & (0x1 << bit)) > 0;
+                case 6:
+                    return ((color2 ? 0x0038 : 0x1003) & (0x1 << bit)) > 0;
+                case 7:
+                    return ((color2 ? 0x2030 : 0x1041) & (0x1 << bit)) > 0;
+                case 8:
+                    return ((color2 ? 0x2820 : 0x10C0) & (0x1 << bit)) > 0;
+                case 9:
+                    return ((color2 ? 0x2C00 : 0x01C0) & (0x1 << bit)) > 0;
+                case 10:
+                    return ((color2 ? 0x0E00 : 0x0380) & (0x1 << bit)) > 0;
+                case 11:
+                    return ((color2 ? 0x0700 : 0x0700) & (0x1 << bit)) > 0;
+                case 12:
+                    return ((color2 ? 0x0380 : 0x0E00) & (0x1 << bit)) > 0;
+                case 13:
+                    return ((color2 ? 0x01C0 : 0x2C00) & (0x1 << bit)) > 0;
+                default:
+                    return false;
+            }
+        }
     }
 }
 
