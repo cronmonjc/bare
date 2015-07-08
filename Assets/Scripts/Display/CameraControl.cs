@@ -84,7 +84,7 @@ public class CameraControl : MonoBehaviour {
         sm = FindObjectOfType<SymmMode>();
 
         myCam = GetComponent<Camera>();
-        myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 32f);
+        myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 52f);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
         myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
 
@@ -121,7 +121,7 @@ public class CameraControl : MonoBehaviour {
                 float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
                 myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
             } else {
-                myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 32f);
+                myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 52f);
 
                 Vector2 mousePos = Input.mousePosition;
                 if(Input.GetMouseButtonDown(0) && (BarManager.inst.funcBeingTested == AdvFunction.NONE)) { // LMB pressed

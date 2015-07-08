@@ -787,6 +787,10 @@ public class BarManager : MonoBehaviour {
         yield return null;
     }
 
+    public void BeginSave() {
+        savePDF = false;
+    }
+
     public void Save(string filename) {
         try {
             NbtCompound root = new NbtCompound("root");
@@ -1177,6 +1181,11 @@ public class BarManager : MonoBehaviour {
                 }
             }
         }
+
+        FindObjectOfType<TitleText>().preset = "";
+        fb.currFile = "";
+
+        moddedBar = false;
 
         RefreshBits();
 

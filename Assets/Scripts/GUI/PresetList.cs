@@ -42,6 +42,8 @@ public class PresetList : MonoBehaviour {
 
                 BarManager.inst.Clear();
                 BarManager.inst.Open(string.Join("\\", bits));
+
+                FindObjectOfType<TitleText>().preset = bits[bits.Length - 1].Split('.')[0];
             });
         }
     }
