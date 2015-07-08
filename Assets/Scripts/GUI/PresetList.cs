@@ -29,6 +29,7 @@ public class PresetList : MonoBehaviour {
     void OnEnable() {
         Clear();
 
+        TitleText tt = FindObjectOfType<TitleText>();
         string[] presets = Directory.GetFiles(BarManager.DirRoot + "Presets");
 
         foreach(string preset in presets) {
@@ -40,9 +41,8 @@ public class PresetList : MonoBehaviour {
             newbie.GetComponent<Button>().onClick.AddListener(delegate() {
                 transform.parent.gameObject.SetActive(false);
 
-                BarManager.inst.Clear();
-                FindObjectOfType<TitleText>().preset = bits[bits.Length - 1].Split('.')[0];
                 BarManager.inst.Open(string.Join("\\", bits));
+                tt.preset = bits[bits.Length - 1].Split('.')[0];
             });
         }
     }
