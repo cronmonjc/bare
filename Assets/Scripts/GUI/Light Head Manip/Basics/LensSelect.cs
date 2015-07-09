@@ -49,5 +49,7 @@ public class LensSelect : MonoBehaviour {
                 seg.lens = l;
             }
         }
+
+        BarManager.moddedBar = true;
     }
 }
