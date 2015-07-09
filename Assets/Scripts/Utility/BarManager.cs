@@ -987,7 +987,11 @@ public class BarManager : MonoBehaviour {
 
         FindObjectOfType<CameraControl>().RefreshOnSelect.Invoke();
         moddedBar = false;
-        TitleText.inst.currFile = filename;
+        if(TitleText.inst.preset.Length > 0) {
+            TitleText.inst.currFile = "";
+        } else {
+            TitleText.inst.currFile = filename;
+        }
     }
 
     public void StartPDF() {
