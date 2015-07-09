@@ -41,6 +41,7 @@ public class PresetList : MonoBehaviour {
 
                 BarManager.inst.Open(string.Join("\\", bits));
                 TitleText.inst.preset = bits[bits.Length - 1].Split('.')[0];
+                TitleText.inst.currFile = "";
             });
         }
     }
