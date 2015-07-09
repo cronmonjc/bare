@@ -120,7 +120,7 @@ public class OpticSelect : MonoBehaviour {
             if(i == 0) {
                 on = selected[i].lhd.optic;
             } else if(on != selected[i].lhd.optic) {
-                if(on != null && (on.name == selected[i].lhd.optic.smEquivalent || on.name == selected[i].lhd.optic.lgEquivalent)) continue;
+                if(on != null && selected[i].lhd.optic != null && (on.name == selected[i].lhd.optic.smEquivalent || on.name == selected[i].lhd.optic.lgEquivalent)) continue;
                 else {
                     on = null;
                     break;
