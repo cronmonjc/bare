@@ -461,6 +461,8 @@ public class LightHead : MonoBehaviour {
     public void TestSingleDual() {
         useSingle = useDual = false;
         switch(lhd.funcs.Count) {
+            case 0:
+                return;
             case 1:
                 useSingle = true;
                 switch(lhd.funcs[0]) {
@@ -471,24 +473,18 @@ public class LightHead : MonoBehaviour {
                         return;
                 }
             case 2:
-                if(lhd.funcs.Contains(BasicFunction.CRUISE)) {
-                    BasicFunction test = BasicFunction.NULL;
-                    if(lhd.funcs[0] == BasicFunction.CRUISE) {
-                        test = lhd.funcs[1];
-                    } else {
-                        test = lhd.funcs[0];
-                    }
-
-                    if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
-                        useSingle = true;
-                        useDual = (test == BasicFunction.FLASHING);
-                    }
-                    return;
-                } else {
-                    useDual = true;
-                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && (lhd.funcs.Contains(BasicFunction.STEADY) || lhd.funcs.Contains(BasicFunction.TRAFFIC))) {
-                        useSingle = true;
-                    }
+                byte funcs = 0x0;
+                foreach(BasicFunction fn in lhd.funcs)
+                    funcs |= (byte)fn;
+                switch(funcs) {
+                    case 0x3:
+                    case 0x11:
+                    case 0x41:
+                        useSingle = useDual = true;
+                        break;
+                    default:
+                        useDual = true;
+                        break;
                 }
                 return;
             case 3:
@@ -496,13 +492,23 @@ public class LightHead : MonoBehaviour {
                 if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true;
                 return;
             default:
+                useDual = true;
                 return;
         }
 
     }
 
     public void RefreshBasicFuncDefault() {
+        if(lhd.funcs.Count > 1 && (lhd.funcs.Contains(BasicFunction.EMITTER) || lhd.funcs.Contains(BasicFunction.BLOCK_OFF))) {
+            lhd.funcs.RemoveRange(0, lhd.funcs.Count - 1);
+            RefreshBasicFuncDefault();
+            return;
+        }
+
         switch(lhd.funcs.Count) {
+            case 0:
+                SetOptic("");
+                return;
             case 1:
                 switch(lhd.funcs[0]) {
                     case BasicFunction.BLOCK_OFF:
@@ -534,46 +540,36 @@ public class LightHead : MonoBehaviour {
                         return;
                 }
             case 2:
-                if(lhd.funcs.Contains(BasicFunction.EMITTER) | lhd.funcs.Contains(BasicFunction.BLOCK_OFF)) {
-                    lhd.funcs.RemoveAt(0);
-                    RefreshBasicFuncDefault();
-                } else if(lhd.funcs.Contains(BasicFunction.CRUISE)) {
-                    BasicFunction test = BasicFunction.NULL;
-                    if(lhd.funcs[0] == BasicFunction.CRUISE) {
-                        test = lhd.funcs[1];
-                    } else {
-                        test = lhd.funcs[0];
-                    }
-
-                    if(test == BasicFunction.FLASHING || test == BasicFunction.STEADY) {
-                        SetOptic("Lineum");
-                        return;
-                    } else {
-                        SetOptic("");
-                        return;
-                    }
-                } else {
-                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
-                        SetOptic(isSmall ? "Starburst" : "Lineum");
-                    } else {
-                        SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
-                    }
+                byte funcs = 0x0;
+                foreach(BasicFunction fn in lhd.funcs)
+                    funcs |= (byte)fn;
+                switch(funcs) {
+                    case 0x3:
+                        if(isSmall) {
+                            SetOptic("Starburst");
+                        } else {
+                            SetOptic("Lineum");
+                        }
+                        break;
+                    case 0x11:
+                    case 0x41:
+                        if(isSmall) {
+                            SetOptic("Small Lineum");
+                        } else {
+                            SetOptic("Lineum");
+                        }
+                        break;
+                    default:
+                        if(isSmall) {
+                            SetOptic("Small Lineum");
+                        } else {
+                            SetOptic("Lineum");
+                        }
+                        break;
                 }
-                return;
-            case 3:
-                if(lhd.funcs[2] == BasicFunction.EMITTER | lhd.funcs[2] == BasicFunction.BLOCK_OFF) {
-                    lhd.funcs.RemoveRange(0, 2);
-                    RefreshBasicFuncDefault();
-                } else {
-                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
-                }
-                return;
-            case 4:
-                lhd.funcs.RemoveRange(0, 3);
-                RefreshBasicFuncDefault();
                 return;
             default:
-                SetOptic("");
+                SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
                 return;
         }
     }
@@ -611,7 +607,7 @@ public class LightHead : MonoBehaviour {
             } else {
                 SetStyle("");
             }
-            if(!lhd.optic.dual) {
+            if(lhd.optic == null || !lhd.optic.dual) {
                 string shortName = "e" + (isRear ? "r" : "f") + "2";
                 foreach(string patt in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
                     NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(patt);
