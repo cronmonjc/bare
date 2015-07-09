@@ -1187,6 +1187,10 @@ public class BarManager : MonoBehaviour {
         TitleText.inst.currFile = "";
         TitleText.inst.preset = "";
 
+        td = TDOption.NONE;
+        useCAN = false;
+        cableLength = cableType = 0;
+
         moddedBar = false;
 
         RefreshBits();

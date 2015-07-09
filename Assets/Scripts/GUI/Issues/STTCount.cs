@@ -10,6 +10,7 @@ public class STTCount : IssueChecker {
     public override bool DoCheck() {
         byte count = 0;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(!alpha.gameObject.activeInHierarchy) continue;
             for(byte i = 0; i < alpha.lhd.funcs.Count; i++) {
                 if(alpha.lhd.funcs[i] == BasicFunction.STT) {
                     count++;

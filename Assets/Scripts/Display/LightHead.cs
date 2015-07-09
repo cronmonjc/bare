@@ -486,7 +486,7 @@ public class LightHead : MonoBehaviour {
                     return;
                 } else {
                     useDual = true;
-                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && lhd.funcs.Contains(BasicFunction.STEADY)) {
+                    if(lhd.funcs.Contains(BasicFunction.FLASHING) && (lhd.funcs.Contains(BasicFunction.STEADY) || lhd.funcs.Contains(BasicFunction.TRAFFIC))) {
                         useSingle = true;
                     }
                 }
