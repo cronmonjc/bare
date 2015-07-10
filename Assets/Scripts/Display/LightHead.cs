@@ -20,6 +20,14 @@ public class LightHead : MonoBehaviour {
     [System.NonSerialized]
     public SizeOptionControl soc;
 
+    private string m_path = "";
+    public string Path {
+        get {
+            if(m_path.Length == 0) m_path = transform.GetPath();
+            return m_path;
+        }
+    }
+
 
     public bool basicPhaseA {
         get {
@@ -148,9 +156,11 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    private bool m_hasRealHead = false;
+
     public bool hasRealHead {
         get {
-            return lhd.style != null && !lhd.optic.name.Equals("Block Off", System.StringComparison.CurrentCultureIgnoreCase);
+            return m_hasRealHead;
         }
     }
 
@@ -191,13 +201,23 @@ public class LightHead : MonoBehaviour {
         }
     }
 
-    public bool GetIsEnabled(AdvFunction fn, bool clr2 = false) {
-        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
+    private Dictionary<AdvFunction, byte> cachedEnables;
 
-        if(!patt.Contains("e" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")))
-            return false;
-        else
-            return (patt.Get<NbtShort>("e" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
+    public bool GetIsEnabled(AdvFunction fn, bool clr2 = false) {
+        if(!cachedEnables.ContainsKey(fn)) {
+            NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
+
+            string tag = "e" + (isRear ? "r" : "f");
+            if(patt.Contains(tag)) {
+                cachedEnables[fn] = (byte)(((patt.Get<NbtShort>(tag + "1").ShortValue & (0x1 << Bit)) > 0) ? 1 : 0);
+                cachedEnables[fn] |= (byte)(((patt.Get<NbtShort>(tag + "2").ShortValue & (0x1 << Bit)) > 0) ? 2 : 0);
+            } else {
+                cachedEnables[fn] = 0;
+            }
+
+        }
+
+        return (cachedEnables[fn] & (clr2 ? 2 : 1)) > 0;
     }
 
     public bool GetPhaseB(AdvFunction fn, bool clr2 = false) {
@@ -255,12 +275,19 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    private bool m_knowsSelectedThisFrame = false;
+    private bool m_selected = false;
+
     public bool Selected {
         get {
-            if(cam == null) {
-                cam = FindObjectOfType<CameraControl>();
+            if(!m_knowsSelectedThisFrame) {
+                m_knowsSelectedThisFrame = true;
+                if(cam == null) {
+                    cam = FindObjectOfType<CameraControl>();
+                }
+                m_selected = cam.OnlyCamSelectedHead.Contains(this);
             }
-            return cam.OnlyCamSelectedHead.Contains(this);
+            return m_selected;
         }
         set {
             if(value && !Selected) {
@@ -268,11 +295,15 @@ public class LightHead : MonoBehaviour {
             } else if(!value && Selected) {
                 cam.OnlyCamSelectedHead.Remove(this);
             }
+            m_knowsSelectedThisFrame = true;
+            m_selected = value;
         }
     }
 
     void Awake() {
         lhd = new LightHeadDefinition();
+
+        cachedEnables = new Dictionary<AdvFunction, byte>();
     }
 
     void Start() {
@@ -314,6 +345,11 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    void LateUpdate() {
+        m_knowsSelectedThisFrame = false;
+        cachedEnables.Clear();
+    }
+
     //public bool IsUsingFunction(AdvFunction f) {
     //    if(!CapableAdvFunctions.Contains(f) || !hasRealHead) return false;
     //    NbtCompound patts = FindObjectOfType<BarManager>().patts;
@@ -350,6 +386,16 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    public void PrefetchPatterns(AdvFunction which) {
+        if(pattDict1 == null)
+            pattDict1 = new Dictionary<AdvFunction, Pattern>();
+        if(pattDict2 == null)
+            pattDict2 = new Dictionary<AdvFunction, Pattern>();
+
+        pattDict1[which] = GetPattern(which, false, true);
+        pattDict2[which] = GetPattern(which, true, true);
+    }
+
     public Pattern GetPattern(AdvFunction f, bool clr2 = false, bool forceFetch = false) {
         if(!forceFetch) {
             if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null;
@@ -377,7 +423,7 @@ public class LightHead : MonoBehaviour {
             NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1"));
 
             string tagname = transform.position.y < 0 ? "r" : "f";
-            string path = transform.GetPath();
+            string path = Path;
 
             if(path.Contains("C") || path.Contains("A")) {
                 tagname = tagname + "cor";
@@ -630,6 +676,7 @@ public class LightHead : MonoBehaviour {
         } else {
             lhd.style = null;
         }
+        m_hasRealHead = (lhd.style != null && !lhd.optic.name.Equals("Block Off", System.StringComparison.CurrentCultureIgnoreCase));
         BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
         BarManager.moddedBar = true;
     }

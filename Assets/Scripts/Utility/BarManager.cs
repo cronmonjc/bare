@@ -519,7 +519,7 @@ public class BarManager : MonoBehaviour {
                 }
             } else {
                 if(BarSize > 1 && alpha.transform.position.y < 0) continue;
-                string[] path = alpha.transform.GetPath().Split('/');
+                string[] path = alpha.Path.Split('/');
 
                 switch(path[2]) {
                     case "DE":
@@ -813,7 +813,7 @@ public class BarManager : MonoBehaviour {
             foreach(LightHead lh in allHeads) {
                 if(!lh.gameObject.activeInHierarchy) continue;
                 NbtCompound lightCmpd = new NbtCompound();
-                lightCmpd.Add(new NbtString("path", lh.transform.GetPath()));
+                lightCmpd.Add(new NbtString("path", lh.Path));
                 if(lh.lhd.style != null) {
                     lightCmpd.Add(new NbtString("optc", lh.lhd.optic.partNumber));
                     lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
@@ -896,7 +896,7 @@ public class BarManager : MonoBehaviour {
         Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
 
         foreach(LightHead lh in allHeads) {
-            lights[lh.transform.GetPath()] = lh;
+            lights[lh.Path] = lh;
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
             socs[soc.transform.GetPath()] = soc;

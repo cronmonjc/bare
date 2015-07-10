@@ -190,8 +190,19 @@ public class FunctionEditPane : MonoBehaviour {
     public void Retest() {
         otherHeadsWarn.SetActive(false);
 
-        foreach(FuncPattSelect fps in transform.GetComponentsInChildren<FuncPattSelect>(true)) {
-            fps.Refresh();
+        switch(state) {
+            case ShowState.FLASHING:
+                foreach(FuncPattSelect fps in flashing.GetComponentsInChildren<FuncPattSelect>(true)) {
+                    fps.Refresh();
+                }
+                break;
+            case ShowState.TRAFFIC:
+                foreach(FuncPattSelect fps in traffic.GetComponentsInChildren<FuncPattSelect>(true)) {
+                    fps.Refresh();
+                }
+                break;
+            default:
+                break;
         }
 
         List<byte> front = new List<byte>(), back = new List<byte>();
@@ -211,7 +222,7 @@ public class FunctionEditPane : MonoBehaviour {
             }
 
             string tagname = alpha.transform.position.y < 0 ? "r" : "f";
-            string path = alpha.transform.GetPath();
+            string path = alpha.Path;
 
             if(path.Contains("C") || path.Contains("A")) {
                 tagname = tagname + "cor";
@@ -247,7 +258,7 @@ public class FunctionEditPane : MonoBehaviour {
             }
 
             string tagname = alpha.transform.position.y < 0 ? "r" : "f";
-            string path = alpha.transform.GetPath();
+            string path = alpha.Path;
 
             if(path.Contains("C") || path.Contains("A")) {
                 tagname = tagname + "cor";

@@ -179,8 +179,20 @@ public class FuncEnable : MonoBehaviour {
             ll.Refresh();
         }
 
-        foreach(FuncPattSelect fps in transform.parent.GetComponentsInChildren<FuncPattSelect>(true)) {
-            fps.Refresh();
+        FunctionEditPane fep = transform.GetComponentInParent<FunctionEditPane>();
+        switch(fep.state) {
+            case FunctionEditPane.ShowState.FLASHING:
+                foreach(FuncPattSelect fps in fep.flashing.GetComponentsInChildren<FuncPattSelect>(true)) {
+                    fps.Refresh();
+                }
+                break;
+            case FunctionEditPane.ShowState.TRAFFIC:
+                foreach(FuncPattSelect fps in fep.traffic.GetComponentsInChildren<FuncPattSelect>(true)) {
+                    fps.Refresh();
+                }
+                break;
+            default:
+                break;
         }
 
         BarManager.moddedBar = true;

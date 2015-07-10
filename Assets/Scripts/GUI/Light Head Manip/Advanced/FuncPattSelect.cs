@@ -10,6 +10,7 @@ public class FuncPattSelect : MonoBehaviour {
     public CameraControl cam;
     public bool IsTD = false;
     public bool IsColor2 = false;
+    public bool refreshedThisFrame = false;
 
     public void Clear() {
         List<Transform> temp = new List<Transform>();
@@ -21,8 +22,35 @@ public class FuncPattSelect : MonoBehaviour {
         }
     }
 
-    public void Refresh() {
+    public void CreateButtons() {
         Clear();
+
+        if(IsTD) {
+            foreach(Pattern alpha in LightDict.inst.tdPatts) {
+                GameObject newbie = GameObject.Instantiate<GameObject>(optionPrefab);
+                newbie.transform.SetParent(menu, false);
+                newbie.transform.localScale = Vector3.one;
+                FuncPatt patt = newbie.GetComponent<FuncPatt>();
+                patt.fps = this;
+                patt.patt = alpha;
+            }
+        } else {
+            foreach(Pattern alpha in LightDict.inst.flashPatts) {
+                GameObject newbie = GameObject.Instantiate<GameObject>(optionPrefab);
+                newbie.transform.SetParent(menu, false);
+                newbie.transform.localScale = Vector3.one;
+                FuncPatt patt = newbie.GetComponent<FuncPatt>();
+                patt.fps = this;
+                patt.patt = alpha;
+            }
+        }
+    }
+
+    public void Refresh() {
+        if(refreshedThisFrame) return;
+        if(menu.childCount == 0) {
+            CreateButtons();
+        }
 
         bool showPatts = false;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
@@ -46,32 +74,19 @@ public class FuncPattSelect : MonoBehaviour {
                 default:
                     break;
             }
+
+            if(showPatts)
+                alpha.PrefetchPatterns(FunctionEditPane.currFunc);
         }
 
-        if(!showPatts) return;
+        menu.gameObject.SetActive(showPatts);
 
-        if(IsTD) {
-            foreach(Pattern alpha in LightDict.inst.tdPatts) {
-                GameObject newbie = GameObject.Instantiate<GameObject>(optionPrefab);
-                newbie.transform.SetParent(menu, false);
-                newbie.transform.localScale = Vector3.one;
-                FuncPatt patt = newbie.GetComponent<FuncPatt>();
-                patt.fps = this;
-                patt.patt = alpha;
-                patt.Refresh();
-            }
-
-        } else {
-            foreach(Pattern alpha in LightDict.inst.flashPatts) {
-                GameObject newbie = GameObject.Instantiate<GameObject>(optionPrefab);
-                newbie.transform.SetParent(menu, false);
-                newbie.transform.localScale = Vector3.one;
-                FuncPatt patt = newbie.GetComponent<FuncPatt>();
-                patt.fps = this;
-                patt.patt = alpha;
-                patt.Refresh();
+        if(showPatts) {
+            foreach(FuncPatt alpha in menu.GetComponentsInChildren<FuncPatt>(true)) {
+                alpha.Refresh();
             }
         }
+        refreshedThisFrame = true;
     }
 
     public void SetSelection(Pattern p) {
@@ -97,7 +112,7 @@ public class FuncPattSelect : MonoBehaviour {
 
             foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
                 string tagname = alpha.transform.position.y < 0 ? "r" : "f";
-                string path = alpha.transform.GetPath();
+                string path = alpha.Path;
 
                 if(path.Contains("C") || path.Contains("A")) {
                     tagname = tagname + "cor";
@@ -152,5 +167,9 @@ public class FuncPattSelect : MonoBehaviour {
         FunctionEditPane.RetestStatic();
         BarManager.moddedBar = true;
         if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
+    }
+
+    void LateUpdate() {
+        refreshedThisFrame = false;
     }
 }

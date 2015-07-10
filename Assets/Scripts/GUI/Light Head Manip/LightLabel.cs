@@ -54,7 +54,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
             }
             if(prefix == "") {
-                Debug.LogError("Failed to find a head number for " + lh.transform.GetPath());
+                Debug.LogError("Failed to find a head number for " + lh.Path);
                 prefix = "(?) ";
             }
         }
