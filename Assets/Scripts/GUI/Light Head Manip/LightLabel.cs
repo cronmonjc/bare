@@ -13,7 +13,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private LightHead lh;
 
     public static CameraControl cam;
-    public static bool showParts, showBit, showJustBit, showWire, colorlessWire, wireOverride, showPatt;
+    public static bool showParts = false, showBit = false, showJustBit = false, showWire = false, colorlessWire = false, wireOverride = false, showPatt = false;
     public static LabelTooltip tooltip;
     private OpticNode lastOptic;
     private StyleNode lastStyle;
@@ -30,7 +30,6 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if(lh.isSmall) {
             ((RectTransform)transform).sizeDelta = new Vector2(65, 48);
         }
-        showParts = showBit = showJustBit = showWire = colorlessWire = wireOverride = false;
         Refresh();
     }
 

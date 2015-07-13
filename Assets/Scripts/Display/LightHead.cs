@@ -608,9 +608,9 @@ public class LightHead : MonoBehaviour {
                         break;
                     default:
                         if(isSmall) {
-                            SetOptic("Small Lineum");
+                            SetOptic("Dual Small Lineum");
                         } else {
-                            SetOptic("Lineum");
+                            SetOptic("Dual Lineum");
                         }
                         break;
                 }
@@ -678,6 +678,19 @@ public class LightHead : MonoBehaviour {
             lhd.style = null;
         }
         m_hasRealHead = (lhd.style != null && !lhd.optic.name.Equals("Block Off", System.StringComparison.CurrentCultureIgnoreCase));
+
+        if(lhd.style != null && lhd.style.isDualColor && lhd.funcs.Contains(BasicFunction.CAL_STEADY)) {
+            NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
+
+            if(newStyle.Equals("Amber/Red", System.StringComparison.CurrentCultureIgnoreCase)) {
+                calCmpd.Get<NbtShort>("ef1").DisableBit(Bit);
+                calCmpd.Get<NbtShort>("ef2").EnableBit(Bit);
+            } else {
+                calCmpd.Get<NbtShort>("ef1").EnableBit(Bit);
+                calCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+            }
+        }
+
         BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
         BarManager.moddedBar = true;
     }
