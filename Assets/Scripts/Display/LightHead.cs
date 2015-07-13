@@ -173,6 +173,7 @@ public class LightHead : MonoBehaviour {
             case AdvFunction.PRIO3:
             case AdvFunction.PRIO4:
             case AdvFunction.PRIO5:
+                return lhd.funcs.Contains(BasicFunction.FLASHING) || lhd.funcs.Contains(BasicFunction.TRAFFIC);
             case AdvFunction.FTAKEDOWN:
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
