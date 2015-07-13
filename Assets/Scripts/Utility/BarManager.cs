@@ -621,7 +621,6 @@ public class BarManager : MonoBehaviour {
                     farHead = far.transform.GetComponent<LightHead>();
                     if(!farHead.isSmall) {
                         farHead.myBit = 2;
-                        test.Remove(far);
                     }
                     break;
                 default:
@@ -672,10 +671,12 @@ public class BarManager : MonoBehaviour {
                     heads[i].myBit = bit--;
                 } else if(bit == 1) {
                     heads[i].myBit = 1;
+                    if(heads[i].lhd.style.isDualColor) {
+                        heads[i].SetOptic("");
+                        heads[i].useDual = false;
+                    }
                 } else {
-                    if(td == TDOption.SM_SIX) {
-                        heads[i].myBit = bit;
-                    } else if(heads.Count - i > bit) {
+                    if(heads.Count - i > bit) {
                         if(heads[i].isSmall ^ heads[i + 1].isSmall) {
                             heads[i].myBit = bit--;
                         } else {
@@ -710,7 +711,6 @@ public class BarManager : MonoBehaviour {
                     farHead = far.transform.GetComponent<LightHead>();
                     if(!farHead.isSmall) {
                         farHead.myBit = 9;
-                        test.Remove(far);
                     }
                     break;
                 default:
@@ -754,10 +754,12 @@ public class BarManager : MonoBehaviour {
                     heads[i].myBit = bit++;
                 } else if(bit == 10) {
                     heads[i].myBit = 10;
+                    if(heads[i].lhd.style.isDualColor) {
+                        heads[i].SetOptic("");
+                        heads[i].useDual = false;
+                    }
                 } else {
-                    if(td == TDOption.SM_SIX) {
-                        heads[i].myBit = bit;
-                    } else if(heads.Count - i > (11 - bit)) {
+                    if(heads.Count - i > (11 - bit)) {
                         if(heads[i].isSmall ^ heads[i + 1].isSmall) {
                             heads[i].myBit = bit++;
                         } else {

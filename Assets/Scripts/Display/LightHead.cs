@@ -452,8 +452,8 @@ public class LightHead : MonoBehaviour {
     public void AddBasicFunction(BasicFunction func, bool doDefault = true) {
         if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {
             lhd.funcs.Add(func);
-            if(doDefault) RefreshBasicFuncDefault();
             TestSingleDual();
+            if(doDefault) RefreshBasicFuncDefault();
         }
         switch(func) {
             case BasicFunction.STT:
@@ -499,8 +499,8 @@ public class LightHead : MonoBehaviour {
                 }
                 BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
             }
-            RefreshBasicFuncDefault();
             TestSingleDual();
+            RefreshBasicFuncDefault();
         }
         BarManager.moddedBar = true;
     }
@@ -509,16 +509,17 @@ public class LightHead : MonoBehaviour {
         useSingle = useDual = false;
         switch(lhd.funcs.Count) {
             case 0:
-                return;
+                break;
             case 1:
                 useSingle = true;
                 switch(lhd.funcs[0]) {
                     case BasicFunction.FLASHING:
                         useDual = true;
-                        return;
+                        break;
                     default:
-                        return;
+                        break;
                 }
+                break;
             case 2:
                 byte funcs = 0x0;
                 foreach(BasicFunction fn in lhd.funcs)
@@ -533,16 +534,16 @@ public class LightHead : MonoBehaviour {
                         useDual = true;
                         break;
                 }
-                return;
+                break;
             case 3:
                 useDual = true;
                 if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true;
-                return;
+                break;
             default:
                 useDual = true;
-                return;
+                break;
         }
-
+        useDual &= !(Bit == 1 || Bit == 10);
     }
 
     public void RefreshBasicFuncDefault() {
@@ -607,16 +608,19 @@ public class LightHead : MonoBehaviour {
                         }
                         break;
                     default:
-                        if(isSmall) {
-                            SetOptic("Dual Small Lineum");
-                        } else {
-                            SetOptic("Dual Lineum");
+                        if(useDual) {
+                            if(isSmall) {
+                                SetOptic("Dual Small Lineum");
+                            } else {
+                                SetOptic("Dual Lineum");
+                            }
                         }
                         break;
                 }
                 return;
             default:
-                SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
+                if(useDual)
+                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
                 return;
         }
     }
