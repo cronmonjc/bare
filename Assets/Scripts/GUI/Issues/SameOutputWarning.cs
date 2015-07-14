@@ -70,6 +70,9 @@ public class SameOutputWarning : IssueChecker {
                         }
                     }
                 }
+            } else {
+                if(alpha.myLabel != null)
+                    alpha.myLabel.DispError = false;
             }
         }
 
