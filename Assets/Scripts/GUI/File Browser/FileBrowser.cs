@@ -17,6 +17,8 @@ public class FileBrowser : MonoBehaviour {
     [NonSerialized]
     public string[] drives;
     [NonSerialized]
+    public string savingFile = "";
+    [NonSerialized]
     public string currFile = "";
     [NonSerialized]
     public string currDir = "";
@@ -49,10 +51,12 @@ public class FileBrowser : MonoBehaviour {
         if(!gameObject.activeInHierarchy) {
             BrowserState = State.SAVE;
             gameObject.SetActive(true);
-            transform.FindChild("FileField").FindChild("Act").FindChild("Text").GetComponent<Text>().text = "Save";
+            transform.Find("MainArea/FileArea/FileField/Act/Text").GetComponent<Text>().text = "Save";
 
-            if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+            if(fl == null) fl = transform.Find("MainArea/FileArea/FileListing").GetComponent<FileListing>();
             fl.Refresh();
+
+            transform.Find("MainArea/DirHide/Button").GetComponent<DirHide>().DirShown = false;
         }
     }
 
@@ -70,29 +74,32 @@ public class FileBrowser : MonoBehaviour {
         if(!gameObject.activeInHierarchy) {
             BrowserState = State.OPEN;
             gameObject.SetActive(true);
-            transform.FindChild("FileField").FindChild("Act").FindChild("Text").GetComponent<Text>().text = "Open";
+            transform.Find("MainArea/FileArea/FileField/Act/Text").GetComponent<Text>().text = "Open";
 
-            if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+            if(fl == null) fl = transform.Find("MainArea/FileArea/FileListing/FileListing").GetComponent<FileListing>();
             fl.Refresh();
+
+            transform.Find("MainArea/DirHide/Button").GetComponent<DirHide>().DirShown = false;
         }
     }
 
     public void Navigate(string str) {
+        str = string.Join("\\", str.Split(new char[] {'/', '\\'}, System.StringSplitOptions.RemoveEmptyEntries )) + "\\";
         if(Directory.Exists(str)) {
             currDir = str;
         }
-        transform.FindChild("DirectoryTree").GetComponent<DirectoryTree>().Refresh();
-        if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+        transform.Find("MainArea/DirectoryTree").GetComponent<DirectoryTree>().Refresh();
+        if(fl == null) fl = transform.Find("MainArea/FileArea/FileListing/FileListing").GetComponent<FileListing>();
         fl.Refresh();
     }
 
     public void NewFolder() {
-        string cleanCurrDir = string.Join("/", currDir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries));
+        string cleanCurrDir = string.Join("\\", currDir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries));
         if(!Directory.Exists(cleanCurrDir + "/New Folder")) {
             Directory.CreateDirectory(cleanCurrDir + "/New Folder");
         }
-        FindObjectOfType<DirectoryTree>().Refresh();
-        if(fl == null) fl = transform.FindChild("FileListing").GetComponent<FileListing>();
+        transform.Find("MainArea/DirectoryTree").GetComponent<DirectoryTree>().Refresh();
+        if(fl == null) fl = transform.Find("MainArea/FileArea/FileListing/FileListing").GetComponent<FileListing>();
         fl.Refresh();
     }
 
@@ -104,9 +111,9 @@ public class FileBrowser : MonoBehaviour {
 
     public void DeleteFile() {
         if(FileItem.SelectedFile != null) {
-            Transform deleteconfirm = transform.FindChild("DeleteConfirm");
+            Transform deleteconfirm = transform.Find("DeleteConfirm");
             deleteconfirm.gameObject.SetActive(true);
-            deleteconfirm.FindChild("head").FindChild("pathlabel").GetComponent<Text>().text = FileItem.SelectedFile.myPath;
+            deleteconfirm.Find("head/pathlabel").GetComponent<Text>().text = FileItem.SelectedFile.myPath;
         }
     }
 
@@ -131,20 +138,35 @@ public class FileBrowser : MonoBehaviour {
         }
     }
 
+    public void InvokeSave(bool force) {
+        if(!force && File.Exists(currFile)) {
+            Transform overconfirm = transform.Find("OverwriteConfirm");
+            overconfirm.gameObject.SetActive(true);
+            overconfirm.Find("head/pathlabel").GetComponent<Text>().text = savingFile;
+        } else {
+            currFile = savingFile;
+            OnSave.Invoke(currFile);
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void CancelSave() {
+        savingFile = "";
+    }
+
     public void ActOnFile(string name, bool isFullPath = false) {
         if(!isFullPath) {
-            name = string.Join("/", currDir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries)) + "/" + name;
+            name = string.Join("\\", currDir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries)) + "/" + name;
         }
-
-        currFile = name;
 
         if(BrowserState == State.OPEN) {
+            currFile = name;
             OnOpen.Invoke(name);
+            gameObject.SetActive(false);
         } else { // State.SAVE
-            OnSave.Invoke(name);
+            savingFile = name;
+            InvokeSave(false);
         }
-
-        gameObject.SetActive(false);
     }
 
     public void ActOnFile(FileItem fileItem) {

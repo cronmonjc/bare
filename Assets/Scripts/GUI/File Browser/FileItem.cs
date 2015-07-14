@@ -28,15 +28,20 @@ public class FileItem : Selectable, IPointerClickHandler {
     void Update() {
         if(myPath.Length > 0 && label.text.Length == 0) {
             string[] pathParts = myPath.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries);
-            label.textComponent.text = pathParts[pathParts.Length - 1];
+            label.textComponent.text = label.text = pathParts[pathParts.Length - 1];
         }
+        label.textComponent.fontSize = Mathf.RoundToInt(6f + (((RectTransform)transform).sizeDelta.x / 48f) * 4f);
+    }
+
+    public void RefreshLabel() {
+        label.textComponent.text = label.text;
     }
 
     public void OnPointerClick(PointerEventData eventData) {
         if(eventData.clickCount > 1) {
             FileBrowser fb = FindObjectOfType<FileBrowser>();
             if(IsDir) {
-                fb.Navigate(myPath + "/");
+                fb.Navigate(myPath);
             } else {
                 fb.ActOnFile(this);
             }
@@ -77,7 +82,7 @@ public class FileItem : Selectable, IPointerClickHandler {
         label.interactable = false;
         label.enabled = false;
         if(!label.wasCanceled) {
-            string newpath = string.Join("/", FindObjectOfType<FileBrowser>().currDir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries)) + "/" + to;
+            string newpath = string.Join("\\", FindObjectOfType<FileBrowser>().currDir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries)) + "\\" + to;
             if(IsDir) {
                 Directory.Move(myPath, newpath);
             } else {

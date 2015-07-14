@@ -23,7 +23,7 @@ public class DirectoryTree : MonoBehaviour {
     public void Refresh() {
         Clear();
 
-        FileBrowser fb = transform.parent.GetComponent<FileBrowser>();
+        FileBrowser fb = FindObjectOfType<FileBrowser>();
         if(fb.drives == null || fb.drives.Length == 0)
             fb.drives = System.IO.Directory.GetLogicalDrives();
         string[] drives = fb.drives;
@@ -54,13 +54,13 @@ public class DirectoryTree : MonoBehaviour {
                         newbie.transform.SetParent(pathList.transform, false);
                         newbie.transform.SetAsLastSibling();
                         newpl = newbie.GetComponent<PathLink>();
-                        newpl.Path = string.Join("/", pathParts, 0, i + 1);
+                        newpl.Path = string.Join("\\", pathParts, 0, i + 1);
                     }
                 }
             }
         }
 
-        DirInput.text = string.Join("/", currDir.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries));
+        DirInput.text = string.Join("\\", currDir.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)) + "\\";
 
         LayoutRebuilder.MarkLayoutForRebuild(driveRoot);
     }

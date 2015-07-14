@@ -31,7 +31,7 @@ public class FileListing : MonoBehaviour {
     public void Refresh() {
         Clear();
 
-        FileBrowser fb = transform.parent.GetComponent<FileBrowser>();
+        FileBrowser fb = FindObjectOfType<FileBrowser>();
         string currDir = fb.currDir;
 
         string[] directories = Directory.GetDirectories(currDir); // Get all the directories and files that reside at this spot
@@ -44,7 +44,7 @@ public class FileListing : MonoBehaviour {
             newbie.transform.SetAsLastSibling();
             FileItem newf = newbie.GetComponent<FileItem>();
             newf.icon.sprite = dirIco;
-            newf.myPath = string.Join("/", dir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries));
+            newf.myPath = string.Join("\\", dir.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries));
             newf.IsDir = true;
         }
 
@@ -54,7 +54,7 @@ public class FileListing : MonoBehaviour {
             newbie.transform.SetParent(fileRoot, false);
             newbie.transform.SetAsLastSibling();
             FileItem newf = newbie.GetComponent<FileItem>();
-            newf.myPath = string.Join("/", file.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries));
+            newf.myPath = string.Join("\\", file.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries));
             newf.icon.sprite = defaultFile;
             foreach(Icon i in specialIcons) {
                 if(newf.myPath.EndsWith(i.name)) {

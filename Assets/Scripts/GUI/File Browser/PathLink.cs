@@ -6,7 +6,7 @@ public class PathLink : DirectoryLink {
     public string Path;
 
     public override void Navigate(FileBrowser fb) {
-        fb.Navigate(string.Join("/", Path.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)) + "/");
+        fb.Navigate(string.Join("\\", Path.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)));
     }
 
     void Update() {
