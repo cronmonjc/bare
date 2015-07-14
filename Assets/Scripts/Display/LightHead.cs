@@ -209,7 +209,7 @@ public class LightHead : MonoBehaviour {
             NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
 
             string tag = "e" + (isRear ? "r" : "f");
-            if(patt.Contains(tag)) {
+            if(patt.Contains(tag + "1")) {
                 cachedEnables[fn] = (byte)(((patt.Get<NbtShort>(tag + "1").ShortValue & (0x1 << Bit)) > 0) ? 1 : 0);
                 cachedEnables[fn] |= (byte)(((patt.Get<NbtShort>(tag + "2").ShortValue & (0x1 << Bit)) > 0) ? 2 : 0);
             } else {

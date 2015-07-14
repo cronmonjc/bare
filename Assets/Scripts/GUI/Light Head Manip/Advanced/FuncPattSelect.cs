@@ -129,6 +129,10 @@ public class FuncPattSelect : MonoBehaviour {
 
                 patCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
 
+                if(p is WarnPatt || p is DCCirclePattern || p is DCDoubleRotatorPattern) {
+                    ((NbtCompound)patCmpd.Parent).Get<NbtShort>("p" + (alpha.isRear ? "r" : "f") + (IsColor2 ? "2" : "1")).DisableBit(alpha.Bit);
+                }
+
                 switch(FunctionEditPane.currFunc) {
                     case AdvFunction.FTAKEDOWN:
                     case AdvFunction.FALLEY:

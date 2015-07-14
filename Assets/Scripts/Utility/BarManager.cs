@@ -794,6 +794,13 @@ public class BarManager : MonoBehaviour {
     }
 
     public void Save(string filename) {
+        if(filename.EndsWith(".bar.nbt")) {
+            filename = filename.Substring(0, filename.Length - 8);
+        }
+        if(filename.EndsWith(".pdf")) {
+            filename = filename.Substring(0, filename.Length - 4);
+        }
+
         try {
             NbtCompound root = new NbtCompound("root");
 
@@ -852,11 +859,16 @@ public class BarManager : MonoBehaviour {
             root.Add(lensList);
 
             NbtFile file = new NbtFile(root);
-            file.SaveToFile(filename + (!filename.EndsWith(".bar.nbt") ? ".bar.nbt" : ""), NbtCompression.None);
+
+            if(savePDF) {
+                Directory.CreateDirectory(filename);
+                file.SaveToFile(filename + "\\Bar Savefile.bar.nbt", NbtCompression.None);
+                StartCoroutine(SavePDF(filename + "\\Bar Information.pdf"));
+            } else {
+                file.SaveToFile(filename + ".bar.nbt", NbtCompression.None);
+            }
 
             if(quitAfterSave) { Application.Quit(); }
-
-            if(savePDF) { StartCoroutine(SavePDF(filename)); }
 
             moddedBar = false;
             TitleText.inst.currFile = filename;
@@ -1014,7 +1026,7 @@ public class BarManager : MonoBehaviour {
     public IEnumerator SavePDF(string filename) {
         bool attempt = true;
         try {
-            File.Delete(filename + (!filename.EndsWith(".pdf") ? ".pdf" : ""));
+            File.Delete(filename);
         } catch(IOException) {
             ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
             attempt = false;
@@ -1050,7 +1062,7 @@ public class BarManager : MonoBehaviour {
 
             PDFExportJob pej = new PDFExportJob();
 
-            pej.Start(filename + (!filename.EndsWith(".pdf") ? ".pdf" : ""));
+            pej.Start(filename);
             while(!pej.Update()) {
                 yield return null;
             }
@@ -1329,7 +1341,7 @@ public class BarManager : MonoBehaviour {
 public class ThreadedJob {
     private bool m_IsDone = false;
     private object m_Handle = new object();
-    private System.Threading.Thread m_Thread = null;
+    protected System.Threading.Thread m_Thread = null;
     public bool IsDone {
         get {
             bool tmp;
@@ -1374,7 +1386,6 @@ public class PDFExportJob : ThreadedJob {
     public string custName, orderNumber, notes;
     public string progressText = "...";
     public float progressPercentage = 0f;
-    public bool failed = false;
     public NbtCompound patts;
     public bool useCAN = false;
     public string BarModel = "";
@@ -1386,12 +1397,13 @@ public class PDFExportJob : ThreadedJob {
     public Dictionary<LightHead, string> color1Wire, color2Wire;
     public BOMCables bomcables;
 
+    public Exception thrownExcep;
+
     public void Start(string fname) {
         BarManager bm = BarManager.inst;
         custName = bm.custName.text;
         orderNumber = bm.orderNum.text;
         notes = bm.notes.text;
-        failed = false;
         useCAN = BarManager.useCAN;
         patts = bm.patts.Clone() as NbtCompound;
         progressStuff = bm.progressStuff;
@@ -1432,6 +1444,7 @@ public class PDFExportJob : ThreadedJob {
         capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
 
         base.Start();
+        m_Thread.Name = "PDF Export Thread";
     }
 
     public override bool Update() {
@@ -1449,8 +1462,16 @@ public class PDFExportJob : ThreadedJob {
     }
 
     protected override void OnFinished() {
-        if(failed) {
-            ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
+        if(thrownExcep != null) {
+            try {
+                throw thrownExcep;
+            } catch(IOException) {
+                ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
+            } catch(Exception) {
+                ErrorText.inst.DispError("Problem saving the PDF.  Something happened that wasn't accounted for.");
+                Debug.LogException(thrownExcep);
+            }
+
         } else {
             Application.OpenURL("file://" + filename);
         }
@@ -1467,46 +1488,49 @@ public class PDFExportJob : ThreadedJob {
     }
 
     protected override void ThreadFunction() {
-        progressText = "Finished capturing images.";
+        lock(progressStuff) {
+            progressText = "Finished capturing images.";
+        }
 
         PdfDocument doc = new PdfDocument();
-        doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
-        doc.Info.Creator = "1000 Lightbar Configurator";
-        doc.Info.Title = "1000 Lightbar Configuration";
-        lock(progressStuff) {
-            progressText = "Publishing Page 1/5: Overview...";
-            progressPercentage = 10;
-        }
-        OverviewPage(doc.AddPage(), capRect);
-        lock(progressStuff) {
-            progressText = "Publishing Page 2/5: BOM...";
-            progressPercentage = 30;
-        }
-        PartsPage(doc.AddPage(), capRect);
-        lock(progressStuff) {
-            progressText = "Publishing Page 3/5: Wiring...";
-            progressPercentage = 50;
-        }
-        WiringPage(doc.AddPage(), capRect);
-        lock(progressStuff) {
-            progressText = "Publishing Page 4/5: Programming...";
-            progressPercentage = 80;
-        }
-        PatternPage(doc.AddPage(), capRect);
-        lock(progressStuff) {
-            progressText = "Publishing Page 5/5: Output Map...";
-            progressPercentage = 90;
-        }
-        OutputMapPage(doc.AddPage(), capRect);
-        lock(progressStuff) {
-            progressText = "Saving...";
-            progressPercentage = 99;
-        }
 
         try {
+            doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
+            doc.Info.Creator = "1000 Lightbar Configurator";
+            doc.Info.Title = "1000 Lightbar Configuration";
+            lock(progressStuff) {
+                progressText = "Publishing Page 1/5: Overview...";
+                progressPercentage = 10;
+            }
+            OverviewPage(doc.AddPage(), capRect);
+            lock(progressStuff) {
+                progressText = "Publishing Page 2/5: BOM...";
+                progressPercentage = 30;
+            }
+            PartsPage(doc.AddPage(), capRect);
+            lock(progressStuff) {
+                progressText = "Publishing Page 3/5: Wiring...";
+                progressPercentage = 50;
+            }
+            WiringPage(doc.AddPage(), capRect);
+            lock(progressStuff) {
+                progressText = "Publishing Page 4/5: Programming...";
+                progressPercentage = 80;
+            }
+            PatternPage(doc.AddPage(), capRect);
+            lock(progressStuff) {
+                progressText = "Publishing Page 5/5: Output Map...";
+                progressPercentage = 90;
+            }
+            OutputMapPage(doc.AddPage(), capRect);
+            lock(progressStuff) {
+                progressText = "Saving...";
+                progressPercentage = 99;
+            }
+
             doc.Save(filename);
-        } catch(IOException) {
-            failed = true;
+        } catch(Exception ex) {
+            thrownExcep = ex;
         } finally {
             doc.Close();
             doc.Dispose();
@@ -1876,21 +1900,6 @@ public class PDFExportJob : ThreadedJob {
                     gfx.DrawLine(border, p.Width.Inch - 0.8, top, p.Width.Inch - 0.8, top + 0.3);
                     tf.DrawString(GetFuncFromInt(func) + "\n" + GetInput(i), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
 
-                    switch(func) {
-                        case 0x2: // PRIO1
-                        case 0x4: // PRIO2
-                        case 0x8: // PRIO3
-                        case 0x100: // ICL
-                        case 0x400: // FTAKEDOWN
-                        case 0x800: // FALLEY
-                        case 0x40000: // PRIO4
-                        case 0x80000: // PRIO5
-                            gfx.DrawLine(border, 3.8, top, 3.8, top + 0.3);
-                            break;
-                        default:
-                            break;
-                    }
-
                     List<string> parts = new List<string>();
                     AdvFunction advfunc = (AdvFunction)func;
 
@@ -1950,10 +1959,21 @@ public class PDFExportJob : ThreadedJob {
                                 }
                             }
 
-                            // Write out Phase A
-                            tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.3));
-                            // Write out Phase B
-                            tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.3));
+                            if(partsB.Count > 0) {
+                                // Both phases used
+
+                                gfx.DrawLine(border, 3.8, top, 3.8, top + 0.3);
+                                // Write out Phase A
+                                tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 1.95, 0.3));
+                                // Write out Phase B
+                                tf.DrawString(string.Join(", ", partsB.ToArray()), caliSm, XBrushes.Black, new XRect(3.85, top + 0.025, 1.95, 0.3));
+                            } else {
+                                // Only Phase A used
+
+                                // Write out enabled
+                                tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.3));
+                            }
+
                             break;
                         default:
                             // Write out enable

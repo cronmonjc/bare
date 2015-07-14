@@ -12,6 +12,9 @@ public abstract class IssueChecker : MonoBehaviour {
     public Text text;
     public abstract string pdfText { get; }
     protected LayoutElement le;
+
+    public bool IgnoreSuppression;
+
     
     void Start() {
         text = GetComponent<Text>();
@@ -19,7 +22,7 @@ public abstract class IssueChecker : MonoBehaviour {
     }
     
     void Update() {
-        bool enable = BarManager.moddedBar && DoCheck();
+        bool enable = (IgnoreSuppression || BarManager.moddedBar) && DoCheck();
         text.enabled = enable;
         le.ignoreLayout = !enable;
     }

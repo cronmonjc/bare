@@ -6091,6 +6091,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 613cb3d0b77cdf04997193bad7ec24a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 1
 --- !u!224 &122500390
 RectTransform:
   m_ObjectHideFlags: 0
@@ -20907,7 +20908,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 542738552}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -325}
@@ -20924,6 +20925,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdbd239883cdef346adbb047a1c6db42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!114 &471612817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21920,6 +21922,26 @@ Prefab:
       propertyPath: OnOpen.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2146742786}
+    - target: {fileID: 22403174, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchorMin.x
+      value: .333333343
+      objectReference: {fileID: 0}
+    - target: {fileID: 22403174, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchorMax.x
+      value: .333333343
+      objectReference: {fileID: 0}
+    - target: {fileID: 22403174, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400596, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 22400596, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7c2c305f10e6c5342b91fdcc5442badb, type: 2}
   m_IsPrefabParent: 0
@@ -22768,7 +22790,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 542738552}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -233}
@@ -22838,6 +22860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76d2f37504b43ac44bf53565f3ee86ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!1 &499694635
 GameObject:
   m_ObjectHideFlags: 0
@@ -24909,6 +24932,7 @@ RectTransform:
   - {fileID: 1109985625}
   - {fileID: 1384534821}
   - {fileID: 591305115}
+  - {fileID: 1135897831}
   - {fileID: 1554624609}
   - {fileID: 1560165398}
   - {fileID: 499016818}
@@ -26764,7 +26788,7 @@ GameObject:
   - 114: {fileID: 591305119}
   - 114: {fileID: 591305118}
   m_Layer: 5
-  m_Name: FSBSTT
+  m_Name: LongSB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26812,8 +26836,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: You appear to be using Steady Burn or Stop/Tail/Turn on a long optic. We
-    suggest you use a short optic to handle that function instead for better directionality.
+  m_Text: You appear to be using Steady Burn on a long optic. We suggest you use a
+    short optic to handle that function instead for better directionality.
 --- !u!222 &591305117
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -26831,6 +26855,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b09799954836741ba83b052bdb545a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
+  IsSteadyBurn: 1
 --- !u!114 &591305119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48384,7 +48410,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 542738552}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -355}
@@ -48401,6 +48427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aa2d1ca3d0868e41a0c1a65e3979967, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!114 &1077998124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49449,6 +49476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51232a198e6ed9f408b8c03ffc7679a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 1
 --- !u!114 &1109985627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50574,6 +50602,106 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1132865606}
+--- !u!1 &1135897830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 224: {fileID: 1135897831}
+  - 222: {fileID: 1135897835}
+  - 114: {fileID: 1135897834}
+  - 114: {fileID: 1135897833}
+  - 114: {fileID: 1135897832}
+  m_Layer: 5
+  m_Name: LongSTT
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1135897831
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1135897830}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 542738552}
+  m_RootOrder: 6
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 512.999695, y: -143.000122}
+  m_SizeDelta: {x: 1018, y: 16}
+  m_Pivot: {x: .5, y: .5}
+--- !u!114 &1135897832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1135897830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97b09799954836741ba83b052bdb545a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
+  IsSteadyBurn: 0
+--- !u!114 &1135897833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1135897830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1679637790, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+--- !u!114 &1135897834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1135897830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: .882352948, b: 0, a: 1}
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: You appear to be using Stop/Tail/Turn on a long optic. We suggest you use
+    a short optic to handle that function instead for better directionality.
+--- !u!222 &1135897835
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1135897830}
 --- !u!1 &1137278750
 GameObject:
   m_ObjectHideFlags: 0
@@ -60015,6 +60143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9955b388df916c4b997effd3fecfeef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!114 &1384534823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67371,7 +67500,7 @@ RectTransform:
   - {fileID: 496091642}
   - {fileID: 1245910286}
   m_Father: {fileID: 542738552}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -165}
@@ -67408,6 +67537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9ea6970c2822854fa9c92c517604fb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!114 &1554624612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67814,7 +67944,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 542738552}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -195}
@@ -67831,6 +67961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca01e0864e1de34a83d38f917104a42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!114 &1560165400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79655,6 +79786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f3a13128fef9ae4d85a6d1777cc4fef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 1
 --- !u!114 &1812889755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82217,7 +82349,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 542738552}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -377}
@@ -82285,6 +82417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7f41102cc7673b46b17f129f074eadd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!1 &1883910920
 GameObject:
   m_ObjectHideFlags: 0
@@ -84520,7 +84653,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 542738552}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 513, y: -279}
@@ -84537,6 +84670,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0932459b11f15ad4ab61612184c98b2f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IgnoreSuppression: 0
 --- !u!114 &1920734705
 MonoBehaviour:
   m_ObjectHideFlags: 0
