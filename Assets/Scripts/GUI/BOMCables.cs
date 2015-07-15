@@ -7,10 +7,16 @@ public class BOMCables : MonoBehaviour {
     [System.Serializable]
     public struct CableObject {
         public GameObject Gameobject;
-        public Text descrip, price;
+        public Text qty, descrip, price;
 
         public void SetActive(bool to) {
             Gameobject.SetActive(to);
+        }
+
+        public byte quantity {
+            set {
+                qty.text = value + "x";
+            }
         }
 
         public string text {
@@ -26,14 +32,20 @@ public class BOMCables : MonoBehaviour {
         }
     }
 
-    public CableObject singleL, singleR, dualL, dualR, power, bar, circuit;
+    public CableObject singleL, singleR, dualL, dualR, yCable, power, bar, circuit;
 
     [System.NonSerialized]
-    public byte flags, singleLCount, singleRCount, dualLCount, dualRCount;
+    public byte flags, singleLCount, singleRCount, dualLCount, dualRCount, yCount;
     [System.NonSerialized]
-    public string internLongPrefix, internShortPrefix, circuitPrefix, externPowerPrefix, externCanPrefix, externHardPrefix;
+    public uint consumed;
     [System.NonSerialized]
-    public uint extCanS, extCanL, extHardS, extHardL, intSingL, intSingS, intDualL, intDualS, crtSing, crtDual, pwrShrt, pwrLong;
+    public bool second5, second6;
+    [System.NonSerialized]
+    public string internLongPrefix, internShortPrefix, internSplitPart, circuitPrefix, externPowerPrefix, externCanPrefix, externHardPrefix;
+    [System.NonSerialized]
+    public uint extCanS, extCanL, extHardS, extHardL, intSingL, intSingS, intDualL, intDualS, intSplit, crtSing, crtDual, pwrShrt, pwrLong;
+    [System.NonSerialized]
+    public uint totalCost;
 
     private bool showingPricing = false;
     
@@ -42,6 +54,7 @@ public class BOMCables : MonoBehaviour {
 
         internLongPrefix = internCmpd["long"].StringValue;
         internShortPrefix = internCmpd["shrt"].StringValue;
+        internSplitPart = internCmpd["split"].StringValue;
 
         circuitPrefix = externCmpd["circuit"].StringValue;
         externPowerPrefix = externCmpd["power"].StringValue;
@@ -60,6 +73,7 @@ public class BOMCables : MonoBehaviour {
         intSingL = (uint)priceSubCmpd["singL"].IntValue;
         intDualS = (uint)priceSubCmpd["dualS"].IntValue;
         intDualL = (uint)priceSubCmpd["dualL"].IntValue;
+        intSplit = (uint)priceSubCmpd["split"].IntValue;
 
         priceSubCmpd = priceCmpd.Get<NbtCompound>("circuit");
         crtSing = (uint)priceSubCmpd["sing"].IntValue;
@@ -72,10 +86,34 @@ public class BOMCables : MonoBehaviour {
 
     public void Refresh() {
         flags = 0; // Bit Field:  trDual, trSingle, brDual, brSingle, tlDual, tlSingle, blDual, blSingle
+        yCount = 0;
+        consumed = 0;
+        second5 = second6 = false;
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy) continue;
             if(alpha.Bit == 255 || !alpha.hasRealHead) continue;
+
+            uint bit = (uint)(0x1 << (alpha.Bit + (alpha.isRear ? 16 : 0)));
+            if((consumed & bit) > 0) {
+                if(alpha.Bit == 5) {
+                    if(second5) {
+                        yCount++;
+                    } else {
+                        second5 = true;
+                    }
+                } else if(alpha.Bit == 6) {
+                    if(second6) {
+                        yCount++;
+                    } else {
+                        second6 = true;
+                    }
+                } else {
+                    yCount++;
+                }
+            } else {
+                consumed |= bit;
+            }
 
             switch(alpha.loc) {
                 case Location.FRONT_CORNER:
@@ -144,29 +182,41 @@ public class BOMCables : MonoBehaviour {
         singleR.SetActive(singleRCount > 0);
         dualL.SetActive(dualLCount > 0);
         dualR.SetActive(dualRCount > 0);
+        yCable.SetActive(yCount > 0);
 
         bool useLong = BarManager.inst.BarSize > 2;
 
-        singleL.text = singleLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "SL -- Internal Control Cable - Single Color, Left";
-        singleL.cost = singleLCount * (useLong ? intSingL : intSingS);
-        singleR.text = singleRCount + "x " + internShortPrefix + "SR -- Internal Control Cable - Single Color, Right";
-        singleR.cost = singleRCount * intSingS;
-        dualL.text = dualLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "DL -- Internal Control Cable - Dual Color, Left";
-        dualL.cost = dualLCount * (useLong ? intDualL : intDualS);
-        dualR.text = dualRCount + "x " + internShortPrefix + "DR -- Internal Control Cable - Dual Color, Right";
-        dualR.cost = dualRCount * intDualS;
+        totalCost = 0;
+
+        singleL.quantity = singleLCount;
+        singleL.text = (useLong ? internLongPrefix : internShortPrefix) + "SL -- Internal Control Cable - Single Color, Left";
+        totalCost += singleL.cost = singleLCount * (useLong ? intSingL : intSingS);
+        singleR.quantity = singleRCount;
+        singleR.text = internShortPrefix + "SR -- Internal Control Cable - Single Color, Right";
+        totalCost += singleR.cost = singleRCount * intSingS;
+        dualL.quantity = dualLCount;
+        dualL.text = (useLong ? internLongPrefix : internShortPrefix) + "DL -- Internal Control Cable - Dual Color, Left";
+        totalCost += dualL.cost = dualLCount * (useLong ? intDualL : intDualS);
+        dualR.quantity = dualRCount;
+        dualR.text = internShortPrefix + "DR -- Internal Control Cable - Dual Color, Right";
+        totalCost += dualR.cost = dualRCount * intDualS;
+        yCable.quantity = yCount;
+        yCable.text = internSplitPart + " -- Internal Output Splitter";
+        totalCost += yCable.cost = yCount * intSplit;
 
         circuit.text = circuitPrefix + ((dualLCount + dualRCount) > 0 ? "2" : "1") + " -- Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only");
-        circuit.cost = ((dualLCount + dualRCount) > 0 ? crtDual : crtSing);
+        totalCost += circuit.cost = ((dualLCount + dualRCount) > 0 ? crtDual : crtSing);
 
         CableLengthOption opt = LightDict.inst.cableLengths[BarManager.cableLength];
-        bar.text = "1x " + (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (opt.length) + " -- External Control Cable - " + (opt.length) + "'";
-        bar.cost = (BarManager.useCAN ? opt.canPrice : opt.hardPrice);
+        bar.quantity = 1;
+        bar.text = (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (opt.length) + " -- External Control Cable - " + (opt.length) + "'";
+        totalCost += bar.cost = (BarManager.useCAN ? opt.canPrice : opt.hardPrice);
         
         if(BarManager.useCAN || BarManager.cableType == 1) {
             power.SetActive(true);
-            power.text = "1x " + externPowerPrefix + (opt.length) + " -- 10 Gauge Power Cable - " + (opt.length) + "'";
-            power.cost = opt.pwrPrice;
+            power.quantity = 1;
+            power.text = externPowerPrefix + (opt.length) + " -- 10 Gauge Power Cable - " + (opt.length) + "'";
+            totalCost += power.cost = opt.pwrPrice;
         } else {
             power.SetActive(false);
         }
