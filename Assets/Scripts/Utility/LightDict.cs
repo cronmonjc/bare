@@ -108,6 +108,8 @@ public class LightDict : MonoBehaviour {
                 NbtCompound optsCmpd = cat.RootTag.Get<NbtCompound>("opts");
                 BomCableRef.Initialize(optsCmpd.Get<NbtCompound>("cables"));
 
+                FindObjectOfType<BarManager>().Initialize(optsCmpd.Get<NbtCompound>("base"));
+
 
             } catch(NbtFormatException ex) {
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");

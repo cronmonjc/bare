@@ -88,23 +88,34 @@ public class BarManager : MonoBehaviour {
 
     public ProgressStuff progressStuff;
 
+    public string[] models;
+    public uint[] prices;
+
     public string BarModel {
         get {
-            switch(BarSize) {
-                case 0:
-                    return "1300";
-                case 1:
-                    return "1400";
-                case 2:
-                    return "1500";
-                case 3:
-                    return "1550";
-                case 4:
-                    return "1600";
-                default:
-                    return "????";
+            try {
+                return models[BarSize];
+            } catch(Exception) {
+                return "????";
             }
         }
+    }
+
+    public uint BarPrice {
+        get {
+            try {
+                return prices[BarSize];
+            } catch(Exception) {
+                return 999999;
+            }
+        }
+    }
+
+    public void Initialize(NbtCompound cmpd) {
+        NbtCompound partCmpd = cmpd.Get<NbtCompound>("part");
+        models = new string[] { partCmpd["0"].StringValue, partCmpd["1"].StringValue, partCmpd["2"].StringValue, partCmpd["3"].StringValue, partCmpd["4"].StringValue };
+        NbtCompound priceCmpd = cmpd.Get<NbtCompound>("price");
+        prices = new uint[] { (uint)priceCmpd["0"].IntValue, (uint)priceCmpd["1"].IntValue, (uint)priceCmpd["2"].IntValue, (uint)priceCmpd["3"].IntValue, (uint)priceCmpd["4"].IntValue };
     }
 
     void Awake() {

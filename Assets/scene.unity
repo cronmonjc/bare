@@ -10898,12 +10898,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prefix: 
   Suffix: ' Bar Base Subassembly'
-  Parts:
-  - 1300
-  - 1400
-  - 1500
-  - 1550
-  - 1600
+  priceText: {fileID: 1610245391}
 --- !u!1 &235821829
 GameObject:
   m_ObjectHideFlags: 0
@@ -38447,12 +38442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Prefix: = S
   Suffix: 
-  Parts:
-  - 1300
-  - 1400
-  - 1500
-  - 1550
-  - 1600
+  priceText: {fileID: 0}
 --- !u!1 &871866287
 GameObject:
   m_ObjectHideFlags: 0
@@ -95131,6 +95121,8 @@ MonoBehaviour:
     progressBar: {fileID: 1530264473}
     progressGO: {fileID: 15383900}
     progressText: {fileID: 2102807278}
+  models: []
+  prices: 
 --- !u!114 &2146742787
 MonoBehaviour:
   m_ObjectHideFlags: 0

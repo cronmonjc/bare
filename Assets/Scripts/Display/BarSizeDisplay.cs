@@ -3,9 +3,10 @@ using System.Collections;
 
 public class BarSizeDisplay : MonoBehaviour {
     public string Prefix, Suffix;
-    public string[] Parts = new string[5];
+    public UnityEngine.UI.Text priceText;
 
-    public void SetSize(float to) {
-        GetComponent<UnityEngine.UI.Text>().text = Prefix + Parts[Mathf.RoundToInt(to)] + Suffix;
+    public void SetSize() {
+        GetComponent<UnityEngine.UI.Text>().text = Prefix + BarManager.inst.BarModel + Suffix;
+        if(priceText != null) priceText.text = "$" + (BarManager.inst.BarPrice * 0.01f).ToString("F2");
     }
 }
