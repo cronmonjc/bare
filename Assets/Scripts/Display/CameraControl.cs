@@ -86,7 +86,7 @@ public class CameraControl : MonoBehaviour {
         myCam = GetComponent<Camera>();
         myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 52f);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
-        myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+        myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.88f * Mathf.Pow(aspRatio, -0.99787f)));
 
         RefreshOnSelect.Invoke();
     }
@@ -95,7 +95,7 @@ public class CameraControl : MonoBehaviour {
         if(lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) return;
         transform.position = new Vector3(0, 0, -10);
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
-        partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+        partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.88f * Mathf.Pow(aspRatio, -0.99787f)));
     }
 
     public void InvokeRefresh() {
@@ -119,7 +119,7 @@ public class CameraControl : MonoBehaviour {
                 selectedHead.Clear();
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height);
                 float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
-                myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+                myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.88f * Mathf.Pow(aspRatio, -0.99787f)));
             } else {
                 myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 52f);
 
