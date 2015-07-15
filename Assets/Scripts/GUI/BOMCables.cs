@@ -26,9 +26,8 @@ public class BOMCables : MonoBehaviour {
         }
     }
 
-    public CableObject singleL, singleR, dualL, dualR, power, bar;
+    public CableObject singleL, singleR, dualL, dualR, power, bar, circuit;
 
-    public Text circuit, barCable;
     [System.NonSerialized]
     public byte flags, singleLCount, singleRCount, dualLCount, dualRCount;
     [System.NonSerialized]
@@ -147,11 +146,16 @@ public class BOMCables : MonoBehaviour {
         bool useLong = BarManager.inst.BarSize > 2;
 
         singleL.text = singleLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "SL -- Internal Control Cable - Single Color, Left";
+        singleL.cost = singleLCount * (useLong ? intSingL : intSingS);
         singleR.text = singleRCount + "x " + internShortPrefix + "SR -- Internal Control Cable - Single Color, Right";
+        singleL.cost = singleRCount * intSingS;
         dualL.text = dualLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "DL -- Internal Control Cable - Dual Color, Left";
+        dualL.cost = dualLCount * (useLong ? intDualL : intDualS);
         dualR.text = dualRCount + "x " + internShortPrefix + "DR -- Internal Control Cable - Dual Color, Right";
+        dualR.cost = dualRCount * intDualS;
 
         circuit.text = circuitPrefix + ((dualLCount + dualRCount) > 0 ? "2" : "1") + " -- Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only");
+        circuit.cost = ((dualLCount + dualRCount) > 0 ? crtDual : crtSing);
 
         bar.text = "1x " + (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (BarManager.cableLength == 1 ? "25" : "17") + " -- External Control Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
         

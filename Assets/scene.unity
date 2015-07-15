@@ -25010,7 +25010,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 11.9998932}
+  m_AnchoredPosition: {x: 0, y: 9.15527344e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &542738553
@@ -35191,7 +35191,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 45.3999634}
+  m_AnchoredPosition: {x: 0, y: 1.52587891e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &803718311
@@ -46303,8 +46303,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1976200899}
   m_HandleRect: {fileID: 1976200898}
   m_Direction: 2
-  m_Value: 1.34438596e-06
-  m_Size: .874585569
+  m_Value: .999998629
+  m_Size: .874585509
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -58522,8 +58522,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2076613982}
   m_HandleRect: {fileID: 2076613981}
   m_Direction: 2
-  m_Value: .916318297
-  m_Size: .64852941
+  m_Value: .999999702
+  m_Size: .648529351
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -73146,7 +73146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   steadyBurn: 01000000400000008000000000400000008000000000010000000200000010000002000000200000
-  pattBase: 0
+  BomCableRef: {fileID: 0}
 --- !u!4 &1652103867
 Transform:
   m_ObjectHideFlags: 0
@@ -83924,13 +83924,14 @@ MonoBehaviour:
     Gameobject: {fileID: 454111833}
     descrip: {fileID: 2102609506}
     price: {fileID: 246770326}
-  circuit: {fileID: 217757741}
-  barCable: {fileID: 2143325841}
-  flags: 0
-  singleLCount: 0
-  singleRCount: 0
-  dualLCount: 0
-  dualRCount: 0
+  bar:
+    Gameobject: {fileID: 1007204980}
+    descrip: {fileID: 2143325841}
+    price: {fileID: 1668570861}
+  circuit:
+    Gameobject: {fileID: 1440233918}
+    descrip: {fileID: 217757741}
+    price: {fileID: 1709862148}
 --- !u!114 &1905512028
 MonoBehaviour:
   m_ObjectHideFlags: 0
