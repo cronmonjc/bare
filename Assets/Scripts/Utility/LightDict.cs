@@ -11,7 +11,9 @@ public class LightDict : MonoBehaviour {
     public List<Lens> lenses;
     public List<AdvFunction> steadyBurn;
     public List<Pattern> flashPatts, tdPatts;
+    [System.NonSerialized]
     public short pattBase = 0;
+    public BOMCables BomCableRef;
 
     void Awake() {
         if(inst == null) inst = this;
@@ -103,6 +105,10 @@ public class LightDict : MonoBehaviour {
                 }
 
 
+                NbtCompound optsCmpd = cat.RootTag.Get<NbtCompound>("opts");
+                BomCableRef.Initialize(optsCmpd.Get<NbtCompound>("cables"));
+
+
             } catch(NbtFormatException ex) {
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");
                 Debug.LogException(ex);
@@ -179,6 +185,8 @@ public class LightDict : MonoBehaviour {
             return null;
     }
 }
+
+#region Patterns
 
 public abstract class Pattern {
     public string name;
@@ -898,7 +906,11 @@ public class DCDoubleRotatorPattern : Pattern {
             }
         }
     }
-}
+} 
+
+#endregion
+
+#region Optics
 
 public class LocationNode {
     public Dictionary<string, OpticNode> optics;
@@ -1166,7 +1178,9 @@ public class StyleNode {
     public override int GetHashCode() {
         return base.GetHashCode();
     }
-}
+} 
+
+#endregion
 
 public class Lens {
     public static string smPrefix, lgPrefix;

@@ -1,11 +1,73 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using fNbt;
 
 public class BOMCables : MonoBehaviour {
-    public GameObject singleLGO, singleRGO, dualLGO, dualRGO, powerGO;
-    public Text circuit, singleL, singleR, dualL, dualR, barCable, powerCable;
+    [System.Serializable]
+    public struct CableObject {
+        public GameObject Gameobject;
+        public Text descrip, price;
+
+        public void SetActive(bool to) {
+            Gameobject.SetActive(to);
+        }
+
+        public string text {
+            get { return descrip.text; }
+            set { descrip.text = value; }
+        }
+
+        public uint cost {
+            set {
+                price.gameObject.SetActive(CameraControl.ShowPricing);
+                price.text = "$" + (value * 0.01f).ToString("2F");
+            }
+        }
+    }
+
+    public CableObject singleL, singleR, dualL, dualR, power, bar;
+
+    public Text circuit, barCable;
+    [System.NonSerialized]
     public byte flags, singleLCount, singleRCount, dualLCount, dualRCount;
+    [System.NonSerialized]
+    public string internLongPrefix, internShortPrefix, circuitPrefix, externPowerPrefix, externCanPrefix, externHardPrefix;
+    [System.NonSerialized]
+    public uint extCanS, extCanL, extHardS, extHardL, intSingL, intSingS, intDualL, intDualS, crtSing, crtDual, pwrShrt, pwrLong;
+    
+    public void Initialize(NbtCompound cmpd) {
+        NbtCompound internCmpd = cmpd.Get<NbtCompound>("intern"), externCmpd = cmpd.Get<NbtCompound>("extern"), priceCmpd = cmpd.Get<NbtCompound>("prices");
+
+        internLongPrefix = internCmpd["long"].StringValue;
+        internShortPrefix = internCmpd["shrt"].StringValue;
+
+        circuitPrefix = externCmpd["circuit"].StringValue;
+        externPowerPrefix = externCmpd["power"].StringValue;
+        externCanPrefix = externCmpd["CanPre"].StringValue;
+        externHardPrefix = externCmpd["HardPre"].StringValue;
+
+
+        NbtCompound priceSubCmpd = priceCmpd.Get<NbtCompound>("barCable");
+        extHardS = (uint)priceSubCmpd["hardS"].IntValue;
+        extHardL = (uint)priceSubCmpd["hardL"].IntValue;
+        extCanS = (uint)priceSubCmpd["canS"].IntValue;
+        extCanL = (uint)priceSubCmpd["canL"].IntValue;
+
+        priceSubCmpd = priceCmpd.Get<NbtCompound>("intern");
+        intSingS = (uint)priceSubCmpd["canS"].IntValue;
+        intSingL = (uint)priceSubCmpd["canL"].IntValue;
+        intDualS = (uint)priceSubCmpd["hardS"].IntValue;
+        intDualL = (uint)priceSubCmpd["hardL"].IntValue;
+
+        priceSubCmpd = priceCmpd.Get<NbtCompound>("circuit");
+        crtSing = (uint)priceSubCmpd["sing"].IntValue;
+        crtDual = (uint)priceSubCmpd["dual"].IntValue;
+
+        priceSubCmpd = priceCmpd.Get<NbtCompound>("power");
+        pwrShrt = (uint)priceSubCmpd["shrt"].IntValue;
+        pwrLong = (uint)priceSubCmpd["long"].IntValue;
+    }
 
     public void Refresh() {
         flags = 0; // Bit Field:  trDual, trSingle, brDual, brSingle, tlDual, tlSingle, blDual, blSingle
@@ -77,25 +139,27 @@ public class BOMCables : MonoBehaviour {
             singleLCount++;
         }
 
-        singleLGO.SetActive(singleLCount > 0);
-        singleRGO.SetActive(singleRCount > 0);
-        dualLGO.SetActive(dualLCount > 0);
-        dualRGO.SetActive(dualRCount > 0);
+        singleL.SetActive(singleLCount > 0);
+        singleR.SetActive(singleRCount > 0);
+        dualL.SetActive(dualLCount > 0);
+        dualR.SetActive(dualRCount > 0);
 
-        singleL.text = singleLCount + "x SWH-1000-51L -- Internal Control Cable - Single Color, Left";
-        singleR.text = singleRCount + "x SWH-1000-51R -- Internal Control Cable - Single Color, Right";
-        dualL.text = dualLCount + "x SWH-1000-51DL -- Internal Control Cable - Dual Color, Left";
-        dualR.text = dualRCount + "x SWH-1000-51DR -- Internal Control Cable - Dual Color, Right";
+        bool useLong = BarManager.inst.BarSize > 2;
 
-        circuit.text = "S8070-454-" + ((dualLCount + dualRCount) > 0 ? "2" : "1") + " -- Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only");
+        singleL.text = singleLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "SL -- Internal Control Cable - Single Color, Left";
+        singleR.text = singleRCount + "x " + internShortPrefix + "SR -- Internal Control Cable - Single Color, Right";
+        dualL.text = dualLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "DL -- Internal Control Cable - Dual Color, Left";
+        dualR.text = dualRCount + "x " + internShortPrefix + "DR -- Internal Control Cable - Dual Color, Right";
 
-        barCable.text = "1x SWH-" + (BarManager.useCAN ? "CAN" : "1000BAR") + (BarManager.cableLength == 1 ? "25" : "17") + " -- External Control Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
+        circuit.text = circuitPrefix + ((dualLCount + dualRCount) > 0 ? "2" : "1") + " -- Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only");
+
+        bar.text = "1x " + (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (BarManager.cableLength == 1 ? "25" : "17") + " -- External Control Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
         
         if(BarManager.useCAN || BarManager.cableType == 1) {
-            powerGO.SetActive(true);
-            powerCable.text = "1x S271-POWER10-" + (BarManager.cableLength == 1 ? "25" : "17") + " -- 10 Gauge Power Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
+            power.SetActive(true);
+            power.text = "1x " + externPowerPrefix + (BarManager.cableLength == 1 ? "25" : "17") + " -- 10 Gauge Power Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
         } else {
-            powerGO.SetActive(false);
+            power.SetActive(false);
         }
     }
 }
