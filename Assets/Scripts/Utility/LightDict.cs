@@ -14,6 +14,10 @@ public class LightDict : MonoBehaviour {
     [System.NonSerialized]
     public short pattBase = 0;
     public BOMCables BomCableRef;
+    [System.NonSerialized]
+    public uint bracketPrice = 0;
+    [System.NonSerialized]
+    public CableLengthOption[] cableLengths;
 
     void Awake() {
         if(inst == null) inst = this;
@@ -110,6 +114,20 @@ public class LightDict : MonoBehaviour {
 
                 FindObjectOfType<BarManager>().Initialize(optsCmpd.Get<NbtCompound>("base"));
 
+                bracketPrice = (uint)optsCmpd["bracket"].IntValue;
+
+                NbtList lenOpts = optsCmpd.Get<NbtList>("cableLength");
+                cableLengths = new CableLengthOption[lenOpts.Count];
+
+                for(int i = 0; i < cableLengths.Length; i++) {
+                    NbtCompound opt = lenOpts[i] as NbtCompound;
+                    cableLengths[i] = new CableLengthOption() {
+                        length = opt["len"].ByteValue,
+                        canPrice = (uint)opt["can"].IntValue,
+                        hardPrice = (uint)opt["hard"].IntValue,
+                        pwrPrice = (uint)opt["pwr"].IntValue
+                    };
+                }
 
             } catch(NbtFormatException ex) {
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");
@@ -1229,6 +1247,11 @@ public enum AdvFunction {
 
 public enum TDOption {
     NONE = 0, LG_SEVEN = 1, SM_EIGHT = 2, SM_SIX = 3, LG_EIGHT = 4, LG_SIX = 5
+}
+
+public struct CableLengthOption {
+    public byte length;
+    public uint pwrPrice, canPrice, hardPrice;
 }
 
 public static class Extensions {

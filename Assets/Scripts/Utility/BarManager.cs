@@ -126,6 +126,7 @@ public class BarManager : MonoBehaviour {
 
         string[] parts = Application.dataPath.Split('/', '\\');
         DirRoot = string.Join("/", parts, 0, parts.Length - 1) + "/";
+        Debug.Log(DirRoot);
     }
 
     private void CreatePatts() {

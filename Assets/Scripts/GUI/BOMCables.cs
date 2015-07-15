@@ -21,7 +21,7 @@ public class BOMCables : MonoBehaviour {
         public uint cost {
             set {
                 price.gameObject.SetActive(CameraControl.ShowPricing);
-                price.text = "$" + (value * 0.01f).ToString("2F");
+                price.text = "$" + (value * 0.01f).ToString("F2");
             }
         }
     }
@@ -34,6 +34,8 @@ public class BOMCables : MonoBehaviour {
     public string internLongPrefix, internShortPrefix, circuitPrefix, externPowerPrefix, externCanPrefix, externHardPrefix;
     [System.NonSerialized]
     public uint extCanS, extCanL, extHardS, extHardL, intSingL, intSingS, intDualL, intDualS, crtSing, crtDual, pwrShrt, pwrLong;
+
+    private bool showingPricing = false;
     
     public void Initialize(NbtCompound cmpd) {
         NbtCompound internCmpd = cmpd.Get<NbtCompound>("intern"), externCmpd = cmpd.Get<NbtCompound>("extern"), priceCmpd = cmpd.Get<NbtCompound>("prices");
@@ -54,10 +56,10 @@ public class BOMCables : MonoBehaviour {
         extCanL = (uint)priceSubCmpd["canL"].IntValue;
 
         priceSubCmpd = priceCmpd.Get<NbtCompound>("intern");
-        intSingS = (uint)priceSubCmpd["canS"].IntValue;
-        intSingL = (uint)priceSubCmpd["canL"].IntValue;
-        intDualS = (uint)priceSubCmpd["hardS"].IntValue;
-        intDualL = (uint)priceSubCmpd["hardL"].IntValue;
+        intSingS = (uint)priceSubCmpd["singS"].IntValue;
+        intSingL = (uint)priceSubCmpd["singL"].IntValue;
+        intDualS = (uint)priceSubCmpd["dualS"].IntValue;
+        intDualL = (uint)priceSubCmpd["dualL"].IntValue;
 
         priceSubCmpd = priceCmpd.Get<NbtCompound>("circuit");
         crtSing = (uint)priceSubCmpd["sing"].IntValue;
@@ -148,7 +150,7 @@ public class BOMCables : MonoBehaviour {
         singleL.text = singleLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "SL -- Internal Control Cable - Single Color, Left";
         singleL.cost = singleLCount * (useLong ? intSingL : intSingS);
         singleR.text = singleRCount + "x " + internShortPrefix + "SR -- Internal Control Cable - Single Color, Right";
-        singleL.cost = singleRCount * intSingS;
+        singleR.cost = singleRCount * intSingS;
         dualL.text = dualLCount + "x " + (useLong ? internLongPrefix : internShortPrefix) + "DL -- Internal Control Cable - Dual Color, Left";
         dualL.cost = dualLCount * (useLong ? intDualL : intDualS);
         dualR.text = dualRCount + "x " + internShortPrefix + "DR -- Internal Control Cable - Dual Color, Right";
@@ -157,13 +159,23 @@ public class BOMCables : MonoBehaviour {
         circuit.text = circuitPrefix + ((dualLCount + dualRCount) > 0 ? "2" : "1") + " -- Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only");
         circuit.cost = ((dualLCount + dualRCount) > 0 ? crtDual : crtSing);
 
-        bar.text = "1x " + (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (BarManager.cableLength == 1 ? "25" : "17") + " -- External Control Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
+        CableLengthOption opt = LightDict.inst.cableLengths[BarManager.cableLength];
+        bar.text = "1x " + (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (opt.length) + " -- External Control Cable - " + (opt.length) + "'";
+        bar.cost = (BarManager.useCAN ? opt.canPrice : opt.hardPrice);
         
         if(BarManager.useCAN || BarManager.cableType == 1) {
             power.SetActive(true);
-            power.text = "1x " + externPowerPrefix + (BarManager.cableLength == 1 ? "25" : "17") + " -- 10 Gauge Power Cable - " + (BarManager.cableLength == 1 ? "25" : "17") + "'";
+            power.text = "1x " + externPowerPrefix + (opt.length) + " -- 10 Gauge Power Cable - " + (opt.length) + "'";
+            power.cost = opt.pwrPrice;
         } else {
             power.SetActive(false);
+        }
+    }
+
+    void Update() {
+        if(showingPricing ^ CameraControl.ShowPricing) {
+            showingPricing = CameraControl.ShowPricing;
+            Refresh();
         }
     }
 }
