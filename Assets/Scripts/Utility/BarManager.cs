@@ -1,16 +1,15 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using fNbt;
 using PdfSharp;
 using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.IO;
-using System.Collections.Generic;
-using System.IO;
 using PdfSharp.Drawing.Layout;
-using System;
-using System.Text;
+using PdfSharp.Pdf;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class BarManager : MonoBehaviour {
     public static string DirRoot;
@@ -1615,6 +1614,13 @@ public class PDFExportJob : ThreadedJob {
         top += 0.1;
         bomcables.PDFExportSummary(ref top, tf, courierSm, caliSm, caliSmBold);
 
+        top += 0.1;
+        tf.DrawString("Totals:", caliSmBold, XBrushes.Black, new XRect(1.4, top - 0.01, 2.0, 0.1));
+        tf.DrawString(string.Format("{0:F3}A max", ampTotal * 0.001f), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
+        tf.DrawString(string.Format("{0:F3}A avg", ampTotal * 0.0005f), courierSm, XBrushes.Black, new XRect(4.0, top + 0.1, 1.0, 0.10));
+        if(CameraControl.ShowPricing)
+            tf.DrawString(string.Format("${0:F2}", costTotal * 0.01f), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+
         top += 0.3;
 
         XPen border = new XPen(XColors.Black, 0.025);
@@ -1662,7 +1668,7 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
         } else {
             tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-            tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("F3"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
+            tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("0.000A"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
             if(CameraControl.ShowPricing)
                 tf.DrawString("$" + (lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
         }

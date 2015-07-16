@@ -39,4 +39,10 @@ public class CostTotaler : MonoBehaviour {
             TotalObject.SetActive(false);
         }
     }
+
+    public void Update() {
+        if(TotalObject.activeInHierarchy ^ CameraControl.ShowPricing) {
+            Refresh();
+        }
+    }
 }
