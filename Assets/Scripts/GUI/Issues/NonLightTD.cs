@@ -4,7 +4,8 @@ using System.Collections;
 public class NonLightTD : IssueChecker {
 
     public override bool DoCheck() {
-        foreach(LightHead alpha in BarManager.inst.allHeads) {
+        for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
+            LightHead alpha = BarManager.inst.allHeads[h];
             if(alpha.gameObject.activeInHierarchy && alpha.shouldBeTD && !alpha.hasRealHead) return true;
         }
         return false;

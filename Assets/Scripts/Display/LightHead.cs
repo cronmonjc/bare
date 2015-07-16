@@ -543,7 +543,7 @@ public class LightHead : MonoBehaviour {
                 useDual = true;
                 break;
         }
-        useDual &= !(Bit == 1 || Bit == 10);
+        useDual &= !(isRear && (Bit == 1 || Bit == 10));
     }
 
     public void RefreshBasicFuncDefault() {

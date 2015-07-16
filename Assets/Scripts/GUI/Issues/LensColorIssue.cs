@@ -1,14 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// GUI Item, Issue.  Checks that no lens mismatches with any head it's over.
 /// </summary>
 public class LensColorIssue : IssueChecker {
     public override bool DoCheck() {
-        foreach(BarSegment seg in BarManager.inst.allSegs) {
+        for(byte s = 0; s < BarManager.inst.allSegs.Count; s++) {
+            BarSegment seg = BarManager.inst.allSegs[s];
             if(seg.Visible && seg.lens != null) {
-                foreach(LightHead head in seg.AffectedLights) {
+                for(byte h = 0; h < seg.AffectedLights.Count; h++) {
+                    LightHead head = seg.AffectedLights[h];
                     if(head.hasRealHead) {
                         if(!seg.lens.Test(head.lhd.style.color)) {
                             return true;

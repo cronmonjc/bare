@@ -8,7 +8,9 @@ public class BarSegment : MonoBehaviour {
     public Lens lens;
 
     [System.NonSerialized]
-    public LightHead[] affected;
+    private LightHead[] affected;
+    [System.NonSerialized]
+    private List<LightHead> liveAffected;
 
     public GameObject labelPrefab;
     public LensLabel myLabel;
@@ -54,18 +56,22 @@ public class BarSegment : MonoBehaviour {
             myLabel.transform.localScale = Vector3.one;
         }
         myLabel.gameObject.SetActive(IsEnd || VisibleOn[BarManager.inst.BarSize]);
+        if(affected == null || affected.Length == 0) {
+            affected = GetComponentsInChildren<LightHead>(true);
+        }
+        if(liveAffected == null) {
+            liveAffected = new List<LightHead>();
+        } else {
+            liveAffected.Clear();
+        }
+        for(byte h = 0; h < affected.Length; h++) {
+            if(affected[h].gameObject.activeInHierarchy) liveAffected.Add(affected[h]);
+        }
     }
 
     public List<LightHead> AffectedLights {
         get {
-            if(affected == null || affected.Length == 0) {
-                affected = GetComponentsInChildren<LightHead>(true);
-            }
-            List<LightHead> rtn = new List<LightHead>();
-            foreach(LightHead head in affected) {
-                if(head.gameObject.activeInHierarchy) rtn.Add(head);
-            }
-            return rtn;
+            return (liveAffected == null ? new List<LightHead>() : liveAffected);
         }
     }
 }

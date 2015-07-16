@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// GUI Item, Issue.  Checks to make sure that there isn't a Cool White head under an Amber lens.
 /// </summary>
 public class AmberOverCoolWhiteIssue : IssueChecker {
     public override bool DoCheck() {
-        foreach(BarSegment seg in BarManager.inst.allSegs) {
+        for(byte s = 0; s < BarManager.inst.allSegs.Count; s++) {
+            BarSegment seg = BarManager.inst.allSegs[s];
             if(seg.lens != null && seg.lens.partSuffix.Equals("a", System.StringComparison.CurrentCultureIgnoreCase)) {
-                foreach(LightHead head in seg.AffectedLights) {
+                for(byte h = 0; h < seg.AffectedLights.Count; h++) {
+                    LightHead head = seg.AffectedLights[h];
                     if(head.gameObject.activeInHierarchy && head.hasRealHead) {
                         if(head.lhd.style.partSuffix.Contains("C")) {
                             return true;

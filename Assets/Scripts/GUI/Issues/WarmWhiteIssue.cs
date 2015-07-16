@@ -7,7 +7,8 @@ public class WarmWhiteIssue : IssueChecker {
     }
 
     public override bool DoCheck() {
-        foreach(LightHead alpha in BarManager.inst.allHeads) {
+        for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
+            LightHead alpha = BarManager.inst.allHeads[h];
             if(alpha.gameObject.activeInHierarchy && alpha.lhd.style != null && alpha.lhd.style.partSuffix.Contains("W")) {
                 foreach(BarSegment seg in BarManager.inst.allSegs) {
                     if(seg.AffectedLights.Contains(alpha) && seg.lens.partSuffix != "A") {

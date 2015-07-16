@@ -5,7 +5,8 @@ public class LargeFSBSTT : IssueChecker {
     public bool IsSteadyBurn;
 
     public override bool DoCheck() {
-        foreach(LightHead lh in BarManager.inst.allHeads) {
+        for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
+            LightHead lh = BarManager.inst.allHeads[h];
             if(!lh.gameObject.activeInHierarchy) continue;
             if(lh.isSmall) continue;
             if(lh.loc == Location.FRONT_CORNER || lh.loc == Location.REAR_CORNER) continue;

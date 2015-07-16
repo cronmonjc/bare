@@ -7,7 +7,8 @@ public class TooManyEmitters : IssueChecker {
     public override bool DoCheck() {
         count = 0;
 
-        foreach(LightHead alpha in BarManager.inst.allHeads) {
+        for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
+            LightHead alpha = BarManager.inst.allHeads[h];
             if(alpha.gameObject.activeInHierarchy) {
                 for(byte i = 0; i < alpha.lhd.funcs.Count; i++) {
                     if(alpha.lhd.funcs[i] == BasicFunction.EMITTER) count++;

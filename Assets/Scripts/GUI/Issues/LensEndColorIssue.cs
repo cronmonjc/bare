@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 /// <summary>
 /// GUI Item, Issue.  Checks that no end lens is colored and over a Cool White Alley.
 /// </summary>
 public class LensEndColorIssue : IssueChecker {
     public override bool DoCheck() {
-        foreach(BarSegment seg in BarManager.inst.allSegs) {
+        for(byte s = 0; s < BarManager.inst.allSegs.Count; s++) {
+            BarSegment seg = BarManager.inst.allSegs[s];
             if(seg.Visible && seg.lens != null && seg.IsEnd && seg.lens.color != Color.white) {
-                foreach(LightHead head in seg.AffectedLights) {
+                for(byte h = 0; h < seg.AffectedLights.Count; h++) {
+                    LightHead head = seg.AffectedLights[h];
                     if(head.hasRealHead && head.loc == Location.ALLEY && head.lhd.style.partSuffix.Equals("C", System.StringComparison.CurrentCultureIgnoreCase)) {
                         return true;
                     }

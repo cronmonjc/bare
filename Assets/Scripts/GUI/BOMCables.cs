@@ -2,6 +2,11 @@
 using UnityEngine.UI;
 using System.Collections;
 using fNbt;
+using PdfSharp;
+using PdfSharp.Drawing;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+using PdfSharp.Drawing.Layout;
 
 public class BOMCables : MonoBehaviour {
     [System.Serializable]
@@ -48,7 +53,7 @@ public class BOMCables : MonoBehaviour {
     public uint totalCost;
 
     private bool showingPricing = false;
-    
+
     public void Initialize(NbtCompound cmpd) {
         NbtCompound internCmpd = cmpd.Get<NbtCompound>("intern"), externCmpd = cmpd.Get<NbtCompound>("extern"), priceCmpd = cmpd.Get<NbtCompound>("prices");
 
@@ -211,7 +216,7 @@ public class BOMCables : MonoBehaviour {
         bar.quantity = 1;
         bar.text = (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (opt.length) + " -- External Control Cable - " + (opt.length) + "'";
         totalCost += bar.cost = (BarManager.useCAN ? opt.canPrice : opt.hardPrice);
-        
+
         if(BarManager.useCAN || BarManager.cableType == 1) {
             power.SetActive(true);
             power.quantity = 1;
@@ -220,6 +225,155 @@ public class BOMCables : MonoBehaviour {
         } else {
             power.SetActive(false);
         }
+    }
+
+    public void PDFExportSummary(ref double top, XTextFormatter tf, XFont courierSm, XFont caliSm, XFont caliSmBold) {
+        CableLengthOption opt = LightDict.inst.cableLengths[BarManager.cableLength];
+        bool useLong = BarManager.inst.BarSize > 2;
+
+        tf.DrawString("Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only"), caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+        if(CameraControl.ShowPricing)
+            tf.DrawString("$" + (((dualLCount + dualRCount) > 0 ? crtDual : crtSing) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+
+        top += 0.2;
+
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("Quantity", caliSmBold, XBrushes.Black, new XRect(0.5, top - 0.01, 0.9, 0.1));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("Cables", caliSmBold, XBrushes.Black, new XRect(1.4, top - 0.01, 2.0, 0.1));
+        if(CameraControl.ShowPricing)
+            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, top - 0.01, 0.5, 0.1));
+
+        top += 0.1;
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("External Control Cable - " + (opt.length) + "'", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+        if(CameraControl.ShowPricing)
+            tf.DrawString("$" + ((BarManager.useCAN ? opt.canPrice : opt.hardPrice) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+
+        if(BarManager.useCAN || BarManager.cableType == 1) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("1", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("10 Gauge Power Cable - " + (opt.length) + "'", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (opt.pwrPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+        }
+
+        if(singleLCount > 0) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(singleLCount + "", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("Internal Control Cable - Single Color, Left", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (singleLCount * (useLong ? intSingL : intSingS) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+        }
+
+        if(dualLCount > 0) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(dualLCount + "", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("Internal Control Cable - Dual Color, Left", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (dualLCount * (useLong ? intDualL : intDualS) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+        }
+
+        if(singleRCount > 0) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(singleRCount + "", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("Internal Control Cable - Single Color, Right", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (singleRCount * intSingS * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+        }
+
+        if(dualRCount > 0) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(dualRCount + "", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("Internal Control Cable - Dual Color, Right", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (dualRCount * intDualS * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+        }
+
+        if(yCount > 0) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString(yCount + "", courierSm, XBrushes.Black, new XRect(0.5, top, 0.9, 0.10));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString("Internal Output Splitter", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (yCount * intSplit * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+        }
+    }
+
+    public void PDFExportParts(ref double top, XTextFormatter tf, XFont courier, XFont caliSm) {
+        bool useLong = BarManager.inst.BarSize > 2;
+        CableLengthOption opt = LightDict.inst.cableLengths[BarManager.cableLength];
+
+        top += 0.2;
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString((BarManager.useCAN ? externCanPrefix : externHardPrefix) + (opt.length), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("External Control Cable - " + (opt.length) + "'", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        top += 0.15;
+        if(BarManager.cableType == 1 || BarManager.useCAN) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString(externPowerPrefix + (opt.length), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("10 Gauge Power Cable - " + (opt.length) + "'", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(singleLCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + singleLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString((useLong ? internLongPrefix : internShortPrefix) + "SL", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Single Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(singleRCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + singleRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString(internShortPrefix + "SR", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Single Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(dualLCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + dualLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString((useLong ? internLongPrefix : internShortPrefix) + "DL", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Dual Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+        if(dualRCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + dualRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString(internShortPrefix + "DR", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Control Cable - Dual Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+
+        if(yCount > 0) {
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("" + yCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString(internSplitPart, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString("Internal Output Splitter", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+            top += 0.15;
+        }
+
     }
 
     void Update() {

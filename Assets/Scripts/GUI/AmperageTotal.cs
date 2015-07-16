@@ -4,10 +4,12 @@ using UnityEngine.UI;
 
 public class AmperageTotal : MonoBehaviour {
     public Text text;
+    public uint totalAmp;
 
     void Update() {
-        uint totalAmp = 0;
-        foreach(LightHead alpha in BarManager.inst.allHeads) {
+        totalAmp = 0;
+        for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
+            LightHead alpha = BarManager.inst.allHeads[h];
             if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead) {
                 totalAmp += alpha.lhd.optic.amperage;
             }

@@ -25,7 +25,8 @@ public class SameOutputWarning : IssueChecker {
         if(BarManager.RefreshingBits) return false;
 
         LightHead[] front = new LightHead[16], rear = new LightHead[16];
-        foreach(LightHead alpha in BarManager.inst.allHeads) {
+        for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
+            LightHead alpha = BarManager.inst.allHeads[h];
             if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead) {
                 if(alpha.myLabel != null) {
                     alpha.myLabel.DispError = false;
@@ -46,16 +47,16 @@ public class SameOutputWarning : IssueChecker {
                         if(!vs.hasRealHead && alpha.hasRealHead) {
                             array[bit] = alpha;
                         } else if(vs.hasRealHead && alpha.hasRealHead) {
-                            foreach(BasicFunction f in vs.lhd.funcs) {
-                                if(!alpha.lhd.funcs.Contains(f)) {
+                            for(byte f = 0; f < vs.lhd.funcs.Count; f++) {
+                                if(!alpha.lhd.funcs.Contains(vs.lhd.funcs[f])) {
                                     vs.myLabel.DispError = true;
                                     alpha.myLabel.DispError = true;
                                     rtn = true;
                                 }
                             }
                             if(vs.myLabel.DispError) continue;
-                            foreach(BasicFunction f in alpha.lhd.funcs) {
-                                if(!vs.lhd.funcs.Contains(f)) {
+                            for(byte f = 0; f < alpha.lhd.funcs.Count; f++) {
+                                if(!vs.lhd.funcs.Contains(alpha.lhd.funcs[f])) {
                                     vs.myLabel.DispError = true;
                                     alpha.myLabel.DispError = true;
                                     rtn = true;
