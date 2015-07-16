@@ -233,16 +233,16 @@ public class BOMCables : MonoBehaviour {
 
         tf.DrawString("Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only"), caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
-            tf.DrawString("$" + (((dualLCount + dualRCount) > 0 ? crtDual : crtSing) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+            tf.DrawString("$" + (((dualLCount + dualRCount) > 0 ? crtDual : crtSing) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
 
-        top += 0.2;
+        top += 0.15;
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Quantity", caliSmBold, XBrushes.Black, new XRect(0.5, top - 0.01, 0.9, 0.1));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Cables", caliSmBold, XBrushes.Black, new XRect(1.4, top - 0.01, 2.0, 0.1));
         if(CameraControl.ShowPricing)
-            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, top - 0.01, 0.5, 0.1));
+            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(3.625, top - 0.01, 0.5, 0.1));
 
         top += 0.1;
         tf.Alignment = XParagraphAlignment.Center;
@@ -250,7 +250,7 @@ public class BOMCables : MonoBehaviour {
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("External Control Cable - " + (opt.length) + "'", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
-            tf.DrawString("$" + ((BarManager.useCAN ? opt.canPrice : opt.hardPrice) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+            tf.DrawString("$" + ((BarManager.useCAN ? opt.canPrice : opt.hardPrice) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
 
         if(BarManager.useCAN || BarManager.cableType == 1) {
             top += 0.1;
@@ -259,7 +259,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString("10 Gauge Power Cable - " + (opt.length) + "'", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (opt.pwrPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (opt.pwrPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
 
         if(singleLCount > 0) {
@@ -269,7 +269,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString("Internal Control Cable - Single Color, Left", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (singleLCount * (useLong ? intSingL : intSingS) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (singleLCount * (useLong ? intSingL : intSingS) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
 
         if(dualLCount > 0) {
@@ -279,7 +279,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString("Internal Control Cable - Dual Color, Left", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (dualLCount * (useLong ? intDualL : intDualS) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (dualLCount * (useLong ? intDualL : intDualS) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
 
         if(singleRCount > 0) {
@@ -289,7 +289,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString("Internal Control Cable - Single Color, Right", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (singleRCount * intSingS * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (singleRCount * intSingS * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
 
         if(dualRCount > 0) {
@@ -299,7 +299,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString("Internal Control Cable - Dual Color, Right", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (dualRCount * intDualS * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (dualRCount * intDualS * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
 
         if(yCount > 0) {
@@ -309,7 +309,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Left;
             tf.DrawString("Internal Output Splitter", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (yCount * intSplit * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (yCount * intSplit * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
     }
 

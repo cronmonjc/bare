@@ -1486,7 +1486,7 @@ public class PDFExportJob : ThreadedJob {
             } catch(IOException) {
                 ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
             } catch(Exception) {
-                ErrorText.inst.DispError("Problem saving the PDF.  Something happened that wasn't accounted for.");
+                ErrorText.inst.DispError("Problem saving the PDF.  Something happened that wasn't accounted for.  Please try again.");
                 Debug.LogException(thrownExcep);
             }
 
@@ -1584,42 +1584,49 @@ public class PDFExportJob : ThreadedJob {
 
         tf.Alignment = XParagraphAlignment.Left;
 
-        tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(1.4, 3.19, 2.0, 0.1));
-        tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(4.0, 3.19, 0.5, 0.1));
-        if(CameraControl.ShowPricing)
-            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, 3.19, 0.5, 0.1));
+        tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(1.0, 3.09, 2.0, 0.1));
+        tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(5.0, 3.09, 2.0, 0.1));
+        tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(3.0, 3.09, 0.5, 0.1));
+        tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(7.0, 3.09, 0.5, 0.1));
+        if(CameraControl.ShowPricing) {
+            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(3.625, 3.09, 0.5, 0.1));
+            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(7.625, 3.09, 0.5, 0.1));
+        }
 
-        double top = 3.3;
+        double top = 3.2;
         for(int i = 0; i < headNumber.Length; i++) {
             LightHead lh = headNumber[i];
-            tf.DrawString("Position " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect(0.5, top + (i * 0.10), 1.2, 0.10));
-            PrintHead(tf, caliSm, courierSm, top + (i * 0.10), lh);
+            tf.DrawString("Pos " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect((i > (headNumber.Length / 2) - 1 ? 4.5 : 0.5), top + ((i > (headNumber.Length / 2) - 1 ? i - (headNumber.Length / 2) : i) * 0.10), 0.5, 0.10));
+            PrintHead(tf, caliSm, courierSm, top + ((i > (headNumber.Length / 2) - 1 ? i - (headNumber.Length / 2) : i) * 0.10), lh, i > (headNumber.Length / 2) - 1);
         }
-        top += (headNumber.Length + 1) * 0.1;
+        top += (headNumber.Length / 2) * 0.1;
+        top += 0.15;
 
         tf.DrawString("Additional Parts", caliSmBold, XBrushes.Black, new XRect(1.4, top - 0.01, 2.0, 0.1));
         if(CameraControl.ShowPricing)
-            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(5.5, top - 0.01, 0.5, 0.1));
+            tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(3.625, top - 0.01, 0.5, 0.1));
+
+        tf.DrawString("Totals:", caliLg, XBrushes.Black, new XRect(4.5, top + 0.39, 2.0, 0.2));
+        tf.DrawString(string.Format("{0:F3}A max", ampTotal * 0.001f), courierSm, XBrushes.Black, new XRect(7.0, top + 0.4, 1.0, 0.10));
+        tf.DrawString(string.Format("{0:F3}A avg", ampTotal * 0.0005f), courierSm, XBrushes.Black, new XRect(7.0, top + 0.5, 1.0, 0.10));
+        if(CameraControl.ShowPricing) {
+            tf.Alignment = XParagraphAlignment.Right;
+            tf.DrawString(string.Format("${0:F2}", costTotal * 0.01f), courier, XBrushes.Black, new XRect(6.0, top + 0.7, 2.0, 0.20));
+            tf.Alignment = XParagraphAlignment.Left;
+        }
 
         top += 0.1;
         tf.DrawString(BarModel + " Bar Base", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
-            tf.DrawString("$" + (barCost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+            tf.DrawString("$" + (barCost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
 
         top += 0.1;
         tf.DrawString("Gutter Mount Kit", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
-            tf.DrawString("$" + (LightDict.inst.bracketPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+            tf.DrawString("$" + (LightDict.inst.bracketPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
 
         top += 0.1;
         bomcables.PDFExportSummary(ref top, tf, courierSm, caliSm, caliSmBold);
-
-        top += 0.1;
-        tf.DrawString("Totals:", caliSmBold, XBrushes.Black, new XRect(1.4, top - 0.01, 2.0, 0.1));
-        tf.DrawString(string.Format("{0:F3}A max", ampTotal * 0.001f), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
-        tf.DrawString(string.Format("{0:F3}A avg", ampTotal * 0.0005f), courierSm, XBrushes.Black, new XRect(4.0, top + 0.1, 1.0, 0.10));
-        if(CameraControl.ShowPricing)
-            tf.DrawString(string.Format("${0:F2}", costTotal * 0.01f), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
 
         top += 0.3;
 
@@ -1632,11 +1639,11 @@ public class PDFExportJob : ThreadedJob {
             }
             if(sb.Length > 0) {
                 tf.DrawString("Issues found:", caliSmBold, XBrushes.Black, new XRect(0.5, top, 1.2, 0.10));
-                tf.DrawString("Sign Off:", caliLg, XBrushes.Black, new XRect(3.2, top - .1, 0.6, 0.2));
-                gfx.DrawLine(border, 3.8, top + 0.1, 4.0, top - 0.1);
-                gfx.DrawLine(border, 3.8, top - 0.1, 4.0, top + 0.1);
-                gfx.DrawLine(border, 4.0, top + 0.1, 6.0, top + 0.1);
-                tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.8, top + 0.10, p.Width.Inch - 1.3, 2.0));
+                tf.DrawString("Sign Off:", caliLg, XBrushes.Black, new XRect(5.2, top - .1, 0.6, 0.2));
+                gfx.DrawLine(border, 5.8, top + 0.1, 6.0, top - 0.1);
+                gfx.DrawLine(border, 5.8, top - 0.1, 6.0, top + 0.1);
+                gfx.DrawLine(border, 6.0, top + 0.1, 8.0, top + 0.1);
+                tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.6, top + 0.10, p.Width.Inch - 1.1, 2.0));
             }
         }
 
@@ -1663,14 +1670,14 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
 
-    private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh) {
+    private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh, bool rightSide) {
         if(lh.lhd.style == null) {
-            tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 0.5, 0.10));
+            tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect((rightSide ? 4.65 : 1.4), (top - 0.01), 0.5, 0.10));
         } else {
-            tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
-            tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("0.000A"), courierSm, XBrushes.Black, new XRect(4.0, top, 1.0, 0.10));
+            tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect((rightSide ? 5.0 : 1.0), (top - 0.01), 2.0, 0.10));
+            tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("0.000A"), courierSm, XBrushes.Black, new XRect((rightSide ? 7.0 : 3.0), top, 0.625, 0.10));
             if(CameraControl.ShowPricing)
-                tf.DrawString("$" + (lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(5.5, top, 1.0, 0.10));
+                tf.DrawString("$" + (lh.lhd.optic.cost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect((rightSide ? 7.625 : 3.625), top, 0.5, 0.10));
         }
     }
 

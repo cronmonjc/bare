@@ -83,10 +83,14 @@ public class UnwiredFunc : IssueChecker {
 
         if(missingFuncList.Count > 0) {
             if(missingFuncList.Count > 1) {
-                lastFunc = missingFuncList[missingFuncList.Count - 1];
-                missingFuncList.RemoveAt(missingFuncList.Count - 1);
-                functions = ", and " + lastFunc;
-                functions = string.Join(", ", missingFuncList.ToArray()) + functions;
+                if(missingFuncList.Count == 2) {
+                    functions = string.Join(" and ", missingFuncList.ToArray());
+                } else {
+                    lastFunc = missingFuncList[missingFuncList.Count - 1];
+                    missingFuncList.RemoveAt(missingFuncList.Count - 1);
+                    functions = ", and " + lastFunc;
+                    functions = string.Join(", ", missingFuncList.ToArray()) + functions;
+                }
                 text.text = "You're using specific functions - " + functions + " - on at least one of the above heads, however an input for that function hasn't been assigned. We suggest that you examine the input map by clicking \"Pattern Editing\" above and assigning the function to an input.";
                 missingFuncList.Add(lastFunc);
             } else {

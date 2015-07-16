@@ -22,6 +22,6 @@ public class LensEndColorIssue : IssueChecker {
     }
 
     public override string pdfText {
-        get { return "This bar uses a colored lens overtop a Cool White alley head."; }
+        get { return "This bar uses a colored lens overtop a Cool White alley head.  This will cause the alley to shine with the color of the lens, not white."; }
     }
 }
