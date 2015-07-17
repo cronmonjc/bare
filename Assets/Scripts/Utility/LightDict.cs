@@ -1263,6 +1263,10 @@ public struct MountingKitOption {
     public static bool operator ==(MountingKitOption left, MountingKitOption right) {
         return left.part == right.part;
     }
+
+    public static bool operator !=(MountingKitOption left, MountingKitOption right) {
+        return left.part != right.part;
+    }
 }
 
 public static class Extensions {
