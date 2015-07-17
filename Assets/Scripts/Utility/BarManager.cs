@@ -509,12 +509,19 @@ public class BarManager : MonoBehaviour {
 
     public IEnumerator RefreshBits() {
         RefreshingBits = true;
+
+        Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>();
+        foreach(LightHead alpha in allHeads) {
+            alpha.myBit = 255;
+            alpha.FarWire = false;
+            headDict[alpha.transform.GetPath()] = alpha;
+        }
+
+
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
         foreach(LightHead alpha in allHeads) {
             if(!alpha.gameObject.activeInHierarchy) continue;
-            alpha.myBit = 255;
-            alpha.FarWire = false;
             if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) {
                 if(alpha.transform.position.x < 0) {
                     alpha.myBit = 0;
@@ -534,8 +541,40 @@ public class BarManager : MonoBehaviour {
                 switch(path[2]) {
                     case "DE":
                         switch(path[3]) {
-                            case "FO": alpha.myBit = 1; break;
-                            case "FI": alpha.myBit = 4; break;
+                            #region /Bar/DE/FO
+                            case "FO":
+                                if(alpha.isSmall) {
+                                    if(path[5] == "L")
+                                        alpha.myBit = 1;
+                                    else {
+                                        if(alpha.lhd.style == headDict["/Bar/DE/FO/DS/L"].lhd.style) {
+                                            alpha.myBit = 1;
+                                        } else {
+                                            alpha.myBit = 4;
+                                        }
+                                    }
+                                } else {
+                                    alpha.myBit = 1;
+                                }
+                                break;
+                            #endregion
+                            #region /Bar/DE/FI
+                            case "FI":
+                                if(alpha.isSmall) {
+                                    if(path[5] == "R")
+                                        alpha.myBit = 4;
+                                    else {
+                                        if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style) {
+                                            alpha.myBit = 4;
+                                        } else {
+                                            alpha.myBit = 1;
+                                        }
+                                    }
+                                } else {
+                                    alpha.myBit = 4;
+                                }
+                                break;
+                            #endregion
                             case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break;
                             case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
                             default: break;
@@ -548,7 +587,15 @@ public class BarManager : MonoBehaviour {
                                 if(BarSize == 2) {
                                     if(alpha.isSmall) {
                                         alpha.FarWire = path[5] == "L";
-                                        alpha.myBit = (byte)(alpha.FarWire ? 5 : 6);
+                                        if(!alpha.FarWire) {
+                                            if(alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
+                                                alpha.myBit = 5;
+                                            } else {
+                                                alpha.myBit = 6;
+                                            }
+                                        } else {
+                                            alpha.myBit = 5;
+                                        }
                                     } else {
                                         alpha.myBit = 5;
                                         alpha.FarWire = true;
@@ -566,8 +613,17 @@ public class BarManager : MonoBehaviour {
                         switch(path[3]) {
                             #region /Bar/DN/F
                             case "F":
-                                alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
-                                alpha.FarWire = (BarSize == 1);
+                                if(BarSize == 4) {
+                                    if((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style)) {
+                                        alpha.myBit = 5;
+                                    } else {
+                                        alpha.myBit = 6;
+                                    }
+                                } else {
+                                    alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
+                                    alpha.FarWire = (BarSize == 1);
+                                }
+
                                 break;
                             #endregion
                             case "R": alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break;
@@ -576,7 +632,17 @@ public class BarManager : MonoBehaviour {
                         break;
                     case "PN":
                         switch(path[3]) {
-                            case "F": alpha.myBit = 6; break;
+                            case "F":
+                                if(BarSize == 4) {
+                                    if((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style)) {
+                                        alpha.myBit = 6;
+                                    } else {
+                                        alpha.myBit = 5;
+                                    }
+                                } else {
+                                    alpha.myBit = 6;
+                                }
+                                break;
                             default: break;
                         }
                         break;
@@ -587,7 +653,15 @@ public class BarManager : MonoBehaviour {
                                 if(BarSize == 2) {
                                     if(alpha.isSmall) {
                                         alpha.FarWire = path[5] == "R";
-                                        alpha.myBit = (byte)(alpha.FarWire ? 6 : 5);
+                                        if(!alpha.FarWire) {
+                                            if(alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
+                                                alpha.myBit = 6;
+                                            } else {
+                                                alpha.myBit = 5;
+                                            }
+                                        } else {
+                                            alpha.myBit = 6;
+                                        }
                                     } else {
                                         alpha.myBit = 6;
                                         alpha.FarWire = true;
@@ -603,8 +677,40 @@ public class BarManager : MonoBehaviour {
                         break;
                     case "PE":
                         switch(path[3]) {
-                            case "FO": alpha.myBit = 10; break;
-                            case "FI": alpha.myBit = 7; break;
+                            #region /Bar/PE/FO
+                            case "FO":
+                                if(alpha.isSmall) {
+                                    if(path[5] == "R")
+                                        alpha.myBit = 10;
+                                    else {
+                                        if(alpha.lhd.style == headDict["/Bar/PE/FO/DS/R"].lhd.style) {
+                                            alpha.myBit = 10;
+                                        } else {
+                                            alpha.myBit = 7;
+                                        }
+                                    }
+                                } else {
+                                    alpha.myBit = 10;
+                                }
+                                break;
+                            #endregion
+                            #region /Bar/PE/FI
+                            case "FI":
+                                if(alpha.isSmall) {
+                                    if(path[5] == "L")
+                                        alpha.myBit = 7;
+                                    else {
+                                        if(alpha.lhd.style == headDict["/Bar/PE/FI/DS/L"].lhd.style) {
+                                            alpha.myBit = 7;
+                                        } else {
+                                            alpha.myBit = 10;
+                                        }
+                                    }
+                                } else {
+                                    alpha.myBit = 7;
+                                }
+                                break;
+                            #endregion
                             case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break;
                             case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
                             default: break;
@@ -2073,6 +2179,18 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+    }
+
+    public void ChecklistPage(PdfPage p) {
+        XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
+        XTextFormatter tf = new XTextFormatter(gfx);
+
+        XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+        XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
+
+        XPen border = new XPen(XColors.Black, 0.025);
+
+
     }
 
     public void OutputMapPage(PdfPage p, Rect capRect) {
