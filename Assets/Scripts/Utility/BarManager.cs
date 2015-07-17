@@ -888,19 +888,58 @@ public class BarManager : MonoBehaviour {
                 }
             }
             if(bit == 10) {
-                test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
+                test.Clear();
+                test.AddRange(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
                 if(test.Count > 0) {
                     foreach(RaycastHit hit in test) {
                         hit.transform.GetComponent<LightHead>().myBit = 10;
                     }
                 }
             }
-            RefreshingBits = false;
+            
+            LightHead centermost;
+
+            if(BarSize == 2) {
+                test.Clear();
+                test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
+                if(test.Count == 12) {
+                    centermost = headDict["/Bar/DF/R/DS/R"];
+                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) {
+                        centermost.myBit = 6;
+                    }
+                    centermost = headDict["/Bar/PF/R/DS/L"];
+                    if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
+                        centermost.myBit = 5;
+                    }
+                }
+            } else if(BarSize == 4) {
+                test.Clear();
+                test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
+                if(test.Count == 16) {
+                    centermost = headDict["/Bar/DF/R/DS/R"];
+                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) {
+                        centermost.myBit = 5;
+                    }
+                    centermost = headDict["/Bar/DN/R/DS/L"];
+                    if(centermost.lhd.style != headDict["/Bar/DN/R/DS/R"].lhd.style) {
+                        centermost.myBit = 4;
+                    }
+                    centermost = headDict["/Bar/PN/R/DS/R"];
+                    if(centermost.lhd.style != headDict["/Bar/PN/R/DS/L"].lhd.style) {
+                        centermost.myBit = 7;
+                    }
+                    centermost = headDict["/Bar/PF/R/DS/L"];
+                    if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
+                        centermost.myBit = 6;
+                    }
+
+                }
+
+            }
         }
 
 
-
-
+        RefreshingBits = false;
         yield return StartCoroutine(RefreshAllLabels());
         yield return null;
     }
