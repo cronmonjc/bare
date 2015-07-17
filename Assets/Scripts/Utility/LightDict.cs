@@ -1249,9 +1249,20 @@ public enum TDOption {
     NONE = 0, LG_SEVEN = 1, SM_EIGHT = 2, SM_SIX = 3, LG_EIGHT = 4, LG_SIX = 5
 }
 
+[System.Serializable]
 public struct CableLengthOption {
     public byte length;
     public uint pwrPrice, canPrice, hardPrice;
+}
+
+[System.Serializable]
+public struct MountingKitOption {
+    public string name, part;
+    public uint price;
+
+    public static bool operator ==(MountingKitOption left, MountingKitOption right) {
+        return left.part == right.part;
+    }
 }
 
 public static class Extensions {

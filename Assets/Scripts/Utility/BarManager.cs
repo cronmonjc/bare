@@ -39,6 +39,7 @@ public class BarManager : MonoBehaviour {
         }
     }
     public static int cableType = 0, cableLength = 0;
+    public static MountingKitOption mountingKit;
 
     public NbtCompound patts;
 
