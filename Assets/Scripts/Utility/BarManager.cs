@@ -896,7 +896,7 @@ public class BarManager : MonoBehaviour {
                     }
                 }
             }
-            
+
             LightHead centermost;
 
             if(BarSize == 2) {
@@ -1662,27 +1662,32 @@ public class PDFExportJob : ThreadedJob {
             doc.Info.Creator = "1000 Lightbar Configurator";
             doc.Info.Title = "1000 Lightbar Configuration";
             lock(progressStuff) {
-                progressText = "Publishing Page 1/5: Overview...";
+                progressText = "Publishing Page 1/6: Overview...";
                 progressPercentage = 10;
             }
             OverviewPage(doc.AddPage(), capRect);
             lock(progressStuff) {
-                progressText = "Publishing Page 2/5: BOM...";
+                progressText = "Publishing Page 2/6: BOM...";
                 progressPercentage = 30;
             }
             PartsPage(doc.AddPage(), capRect);
             lock(progressStuff) {
-                progressText = "Publishing Page 3/5: Wiring...";
+                progressText = "Publishing Page 3/6: Wiring...";
                 progressPercentage = 50;
             }
             WiringPage(doc.AddPage(), capRect);
             lock(progressStuff) {
-                progressText = "Publishing Page 4/5: Programming...";
+                progressText = "Publishing Page 4/6: Programming...";
                 progressPercentage = 80;
             }
             PatternPage(doc.AddPage(), capRect);
             lock(progressStuff) {
-                progressText = "Publishing Page 5/5: Output Map...";
+                progressText = "Publishing Page 5/6: Checklist...";
+                progressPercentage = 88;
+            }
+            ChecklistPage(doc.AddPage());
+            lock(progressStuff) {
+                progressText = "Publishing Page 6/6: Output Map...";
                 progressPercentage = 90;
             }
             OutputMapPage(doc.AddPage(), capRect);
@@ -1817,7 +1822,7 @@ public class PDFExportJob : ThreadedJob {
 
     private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh, bool rightSide) {
         if(lh.lhd.style == null) {
-            tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect((rightSide ? 4.65 : 1.4), (top - 0.01), 0.5, 0.10));
+            tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect((rightSide ? 5.4 : 1.4), (top - 0.01), 0.5, 0.10));
         } else {
             tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect((rightSide ? 5.0 : 1.0), (top - 0.01), 2.0, 0.10));
             tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("0.000A"), courierSm, XBrushes.Black, new XRect((rightSide ? 7.0 : 3.0), top, 0.625, 0.10));
@@ -2225,11 +2230,164 @@ public class PDFExportJob : ThreadedJob {
         XTextFormatter tf = new XTextFormatter(gfx);
 
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+        XFont caliMd = new XFont("Calibri", new XUnit(10, XGraphicsUnit.Point).Inch);
+        XFont cali = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
         XPen border = new XPen(XColors.Black, 0.025);
 
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1000 Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.Alignment = XParagraphAlignment.Left;
 
+        tf.DrawString("Initials", caliSm, XBrushes.Black, new XRect(0.5, 1.0, 0.5, 0.1));
+        tf.DrawString("Assembly / Inspection", caliBold, XBrushes.Black, new XRect(0.5, 1.15, 2.0, 0.1));
+
+        double top = 1.4;
+
+        tf.Alignment = XParagraphAlignment.Right;
+        string[] list = new string[] { "Order #:", "Serial #:", "S.O. #:" };
+
+        foreach(string alpha in list) {
+            gfx.DrawLine(border, 7.0, top + 0.25, 8.0, top + 0.25);
+            tf.DrawString(alpha, cali, XBrushes.Black, new XRect(6.0, top + 0.05, 0.9, 0.2));
+            top += 0.3;
+        }
+        tf.DrawString("Date:", cali, XBrushes.Black, new XRect(6.0, 1.15, 0.9, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+
+        tf.DrawString(DateTime.Now.ToString("MMM dd, \\'yy"), cali, XBrushes.Black, new XRect(7.0, 1.15, 1.0, 0.2));
+
+        top = 1.4;
+        list = new string[] { "Confirm correct light components / color with order", "Check for loose/splayed wires in terminal block", "Check for pinched wires",
+                                       "Check for and remove loose hardware, wire insulation, etc.", "Wipe all components clean", "Power components individually / check off approriate color wire below",
+                                       "Apply all labels (Model #, Serial #, USA, etc.)", "Run burn-in test" };
+
+        foreach(string alpha in list) {
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, 0.75, 0.3));
+            gfx.DrawLine(border, 0.5, top + 0.3, 1.25, top);
+            tf.DrawString(alpha, cali, XBrushes.Black, new XRect(1.35, top + 0.05, 5.5, 0.2));
+            top += 0.3;
+        }
+
+        tf.Alignment = XParagraphAlignment.Right;
+        top -= 0.3;
+        tf.DrawString("Start:", cali, XBrushes.Black, new XRect(3.0, top + 0.05, 0.95, 0.2));
+        gfx.DrawLine(border, 4.0, top + 0.25, 5.0, top + 0.25);
+        tf.DrawString("Stop:", cali, XBrushes.Black, new XRect(5.0, top + 0.05, 0.95, 0.2));
+        gfx.DrawLine(border, 6.0, top + 0.25, 7.0, top + 0.25);
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("(1 hour typical, 30 minutes minimum)", caliBold, XBrushes.Black, new XRect(3.5, top + 0.25, 3.5, 0.2));
+        top += 0.4;
+        tf.Alignment = XParagraphAlignment.Left;
+
+        tf.DrawString("Packing", caliBold, XBrushes.Black, new XRect(0.5, top, 2.0, 0.1));
+        top += 0.25;
+        list = new string[] { "Polish Domes", "Add mounting kit", "Add gutter mount", "Add instruction sheet", "Add carton labels" };
+
+        foreach(string alpha in list) {
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, 0.75, 0.3));
+            tf.DrawString(alpha, cali, XBrushes.Black, new XRect(1.35, top + 0.05, 5.5, 0.2));
+            top += 0.3;
+        }
+        top -= (list.Length - 1) * 0.3;
+        list = new string[] { "No mounting kit required", "No gutter mount required", "Add Checklist (Confirm Serial #!)", "Program Lightbar" };
+
+        foreach(string alpha in list) {
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(4.0, top, 0.75, 0.3));
+            tf.DrawString(alpha, cali, XBrushes.Black, new XRect(4.85, top + 0.05, 5.5, 0.2));
+            top += 0.3;
+        }
+
+        gfx.DrawLine(new XPen(XColors.Black, 0.02), 5.85, top - 0.35, 7.0, top - 0.35);
+
+        top += 0.1;
+        gfx.DrawLine(border, 0.5, top, 8.0, top);
+
+        tf.DrawString("In Use", caliBold, XBrushes.Black, new XRect(0.7, top, 0.7, 0.1));
+        tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        tf.DrawString((useCAN ? "Switch Used" : "Wire Color Used"), caliBold, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        if(!useCAN) tf.DrawString("AWG", caliBold, XBrushes.Black, new XRect(7.5, top, 0.4, 0.1));
+        top += 0.2;
+
+        int[] inputMap = patts.Get<NbtIntArray>("map").Value;
+        bool alt = false;
+        if(useCAN) {
+            for(int i = 0; i < 20; i++) {
+                if(alt) {
+                    gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+                }
+                alt = !alt;
+                gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+                if(inputMap[i] == 0) {
+                    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+                    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+                    tf.DrawString(" -- ", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+                } else {
+                    tf.DrawString(GetFuncFromMap(i), caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+                }
+                tf.DrawString(GetInput(i), caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+                top += 0.2;
+            }
+
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+            tf.DrawString("Power", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+            tf.DrawString("P5, Pin 9", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+            top += 0.2;
+
+            gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+            tf.DrawString("Ground", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+            tf.DrawString("P5, Pin 10", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+            top += 0.2;
+        } else {
+            for(int i = 0; i < 12; i++) {
+                if(alt) {
+                    gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+                }
+                alt = !alt;
+                gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+                if(inputMap[i] == 0) {
+                    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+                    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+                    tf.DrawString(" -- ", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+                } else {
+                    tf.DrawString(GetFuncFromMap(i), caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+                }
+                tf.DrawString(GetInput(i), caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+                tf.DrawString("22", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+                top += 0.2;
+            }
+
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+            tf.DrawString("Shield", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+            tf.DrawString("Bare", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+            tf.DrawString("22", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+            top += 0.2;
+
+            gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+            tf.DrawString("Power", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+            tf.DrawString("Red", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+            tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+            top += 0.2;
+
+            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+            tf.DrawString("Ground", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+            tf.DrawString("Black", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+            tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+            top += 0.2;
+        }
     }
 
     public void OutputMapPage(PdfPage p, Rect capRect) {
@@ -2343,7 +2501,7 @@ public class PDFExportJob : ThreadedJob {
     }
 
     public string GetFuncFromMap(int which) {
-        return GetFuncFromInt(FnDragTarget.inputMap[which]);
+        return GetFuncFromInt(patts.Get<NbtIntArray>("map").Value[which]);
     }
 
     public void PrintRow(XTextFormatter tf, XFont caliSm, string left, string right, ref double top) {
