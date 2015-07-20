@@ -14,6 +14,9 @@ public class CostTotaler : MonoBehaviour {
         if(CameraControl.ShowPricing) {
             total = LightDict.inst.bracketPrice;  // Get static gutter mount kit price over with
 
+            if(BarManager.mountingKit != 0)
+                total += LightDict.inst.mountKits[BarManager.mountingKit - 1].price;  // Add mounting kit price if using one
+
             total += BarManager.inst.BarPrice;  // Add base bar cost
 
             total += Cables.totalCost; // Add costs for all cables and circuit

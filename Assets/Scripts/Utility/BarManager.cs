@@ -38,8 +38,7 @@ public class BarManager : MonoBehaviour {
             }
         }
     }
-    public static int cableType = 0, cableLength = 0;
-    public static MountingKitOption mountingKit;
+    public static int cableType = 0, cableLength = 0, mountingKit = 0;
 
     public NbtCompound patts;
 
@@ -1552,6 +1551,7 @@ public class PDFExportJob : ThreadedJob {
     public LightHead[] headNumber;
     public Dictionary<LightHead, string> color1Wire, color2Wire;
     public BOMCables bomcables;
+    public MountingKitOption mntOpt;
     public uint ampTotal, costTotal, barCost;
 
     public Exception thrownExcep;
@@ -1576,6 +1576,8 @@ public class PDFExportJob : ThreadedJob {
         headNumber = BarManager.headNumber;
         color1Wire = new Dictionary<LightHead, string>();
         color2Wire = new Dictionary<LightHead, string>();
+        if(BarManager.mountingKit != 0)
+            mntOpt = LightDict.inst.mountKits[BarManager.mountingKit - 1];
         bomcables = GameObject.FindObjectOfType<BOMCables>();
         if(bomcables == null)
             Debug.LogError("Couldn't find BOMCable Object");
@@ -1772,9 +1774,16 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString("$" + (barCost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
 
         top += 0.1;
-        tf.DrawString("Gutter Mount Kit", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+        tf.DrawString("Mounting Bracket", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
             tf.DrawString("$" + (LightDict.inst.bracketPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
+
+        if(BarManager.mountingKit != 0) {
+            top += 0.1;
+            tf.DrawString(mntOpt.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + (mntOpt.price * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
+        }
 
         top += 0.1;
         bomcables.PDFExportSummary(ref top, tf, courierSm, caliSm, caliSmBold);
@@ -1878,6 +1887,20 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString(bomcables.circuitPrefix + ((bomcables.dualLCount + bomcables.dualRCount) > 0 ? "2" : "1"), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
         tf.DrawString("Control Circuit - " + ((bomcables.dualLCount + bomcables.dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only"), caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        top += 0.1;
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString("Gutter Mount Bracket", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        if(BarManager.mountingKit != 0) {
+            top += 0.1;
+            tf.Alignment = XParagraphAlignment.Center;
+            tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+            tf.Alignment = XParagraphAlignment.Left;
+            tf.DrawString(mntOpt.part, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString(mntOpt.name, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        }
+
         top += 0.25;
         foreach(string part in parts) {
             tf.Alignment = XParagraphAlignment.Center;

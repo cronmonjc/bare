@@ -18,6 +18,7 @@ public class LightDict : MonoBehaviour {
     public uint bracketPrice = 0;
     [System.NonSerialized]
     public CableLengthOption[] cableLengths;
+    public MountingKitOption[] mountKits;
 
     void Awake() {
         if(inst == null) inst = this;
@@ -128,6 +129,19 @@ public class LightDict : MonoBehaviour {
                         pwrPrice = (uint)opt["pwr"].IntValue
                     };
                 }
+
+                NbtList kitOpts = optsCmpd.Get<NbtList>("mountingKits");
+                mountKits = new MountingKitOption[kitOpts.Count];
+
+                for(int i = 0; i < mountKits.Length; i++) {
+                    NbtCompound opt = kitOpts[i] as NbtCompound;
+                    mountKits[opt["which"].ByteValue] = new MountingKitOption() {
+                        price = (uint)opt["cost"].IntValue,
+                        part = opt["part"].StringValue,
+                        name = opt["name"].StringValue
+                    };
+                }
+
 
             } catch(NbtFormatException ex) {
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");

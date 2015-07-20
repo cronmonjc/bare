@@ -2,13 +2,11 @@
 using System.Collections;
 
 public class MountingKitPulldown : PulldownItem {
-    public MountingKitOption opt;
-
     protected override bool IsSelected() {
-        return BarManager.mountingKit == opt;
+        return BarManager.mountingKit == number;
     }
 
     public override void Clicked() {
-        BarManager.mountingKit = opt;
+        BarManager.mountingKit = number;
     }
 }
