@@ -1284,6 +1284,14 @@ public struct MountingKitOption {
     public static bool operator !=(MountingKitOption left, MountingKitOption right) {
         return left.part != right.part;
     }
+
+    public override bool Equals(object obj) {
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
 }
 
 public static class Extensions {

@@ -1,0 +1,870 @@
+﻿using UnityEngine;
+using UnityEditor;
+using fNbt;
+using System.Collections.Generic;
+
+public class NbtEditor : EditorWindow {
+    private Texture2D newFile, open, save, saveAs;
+    public string filePath = "";
+    public NbtFile nbtFile;
+    public NbtCompoundRender renderRoot;
+    public Vector2 fileScroll;
+
+    [MenuItem("Window/NBT Editor")]
+    static void ShowWindow() {
+        EditorWindow.GetWindow<NbtEditor>("NBT Editor", true);
+    }
+
+    void OnGUI() {
+        if(newFile == null) {
+            newFile = AssetDatabase.LoadAssetAtPath("Assets/Editor/Sprites/New.png", typeof(Texture2D)) as Texture2D;
+            open = AssetDatabase.LoadAssetAtPath("Assets/Editor/Sprites/Open.png", typeof(Texture2D)) as Texture2D;
+            save = AssetDatabase.LoadAssetAtPath("Assets/Editor/Sprites/Save.png", typeof(Texture2D)) as Texture2D;
+            saveAs = AssetDatabase.LoadAssetAtPath("Assets/Editor/Sprites/SaveAs.png", typeof(Texture2D)) as Texture2D;
+        }
+
+        if(GUI.Button(new Rect(10, 8, 28, 28), newFile)) {
+            filePath = "New File";
+            nbtFile = new NbtFile();
+            nbtFile.RootTag.Name = "root";
+            renderRoot = new NbtCompoundRender(nbtFile.RootTag);
+        }
+        if(GUI.Button(new Rect(48, 8, 28, 28), open)) {
+            string newFilePath = EditorUtility.OpenFilePanel("Open NBT File", "Assets/..", "nbt");
+            if(newFilePath == "") return;
+            filePath = newFilePath;
+            nbtFile = new NbtFile(filePath);
+            renderRoot = new NbtCompoundRender(nbtFile.RootTag);
+        }
+        if(GUI.Button(new Rect(86, 8, 28, 28), save)) {
+            if(filePath == "New File") {
+                string newFilePath = EditorUtility.SaveFilePanel("Save NBT File", "Assets/..", "file.nbt", "nbt");
+                if(newFilePath == "") return;
+                filePath = newFilePath;
+            }
+            nbtFile.SaveToFile(filePath, NbtCompression.None);
+        }
+        if(GUI.Button(new Rect(114, 8, 28, 28), saveAs)) {
+            string newFilePath = EditorUtility.SaveFilePanel("Save NBT File", "Assets/..", "file.nbt", "nbt");
+            if(newFilePath == "") return;
+            filePath = newFilePath;
+            nbtFile.SaveToFile(filePath, NbtCompression.None);
+        }
+
+        EditorGUI.DropShadowLabel(new Rect(152, 12, 32, 16), "File:");
+        EditorGUI.LabelField(new Rect(186, 15, position.width - 196, 16), filePath);
+
+        if(renderRoot != null) {
+            fileScroll = GUI.BeginScrollView(new Rect(10, 46, position.width - 20, position.height - 56), fileScroll, new Rect(0, 0, position.width - 35, renderRoot.Height));
+
+            renderRoot.RenderTag(false, 0, 0);
+
+            GUI.EndScrollView();
+        }
+    }
+}
+
+public abstract class NbtRenderer {
+    public NbtRenderer parent;
+
+    public abstract void RenderTag(bool suppressName, float indent, float top);
+
+    public abstract float Height { get; }
+
+    public static NbtRenderer MakeRenderer(NbtTag tag) {
+        switch(tag.TagType) {
+            case NbtTagType.Byte:
+                return new NbtByteRender(tag as NbtByte);
+            case NbtTagType.ByteArray:
+                return new NbtByteArrayRender(tag as NbtByteArray);
+            case NbtTagType.Compound:
+                return new NbtCompoundRender(tag as NbtCompound);
+            case NbtTagType.Double:
+                return new NbtDoubleRender(tag as NbtDouble);
+            case NbtTagType.Float:
+                return new NbtFloatRender(tag as NbtFloat);
+            case NbtTagType.Int:
+                return new NbtIntRender(tag as NbtInt);
+            case NbtTagType.IntArray:
+                return new NbtIntArrayRender(tag as NbtIntArray);
+            case NbtTagType.List:
+                return new NbtListRender(tag as NbtList);
+            case NbtTagType.Long:
+                return new NbtLongRender(tag as NbtLong);
+            case NbtTagType.Short:
+                return new NbtShortRender(tag as NbtShort);
+            case NbtTagType.String:
+                return new NbtStringRender(tag as NbtString);
+            default:
+                throw new System.ArgumentException("Tag not a legit tag.");
+        }
+    }
+
+    public abstract void Delete();
+}
+
+public class NbtByteRender : NbtRenderer {
+    NbtByte data;
+
+    public NbtByteRender(NbtByte tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "Byte");
+        int newVal = 0;
+        if(suppressName) {
+            newVal = EditorGUI.IntField(new Rect(indent + 48, top, 32, 16), data.ByteValue);
+            EditorGUI.HelpBox(new Rect(indent + 88, top, 110, 16), "Value: 0 to 255", MessageType.None);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            newVal = EditorGUI.IntField(new Rect(indent + 180, top, 32, 16), data.ByteValue);
+            EditorGUI.HelpBox(new Rect(indent + 220, top, 110, 16), "Value: 0 to 255", MessageType.None);
+        }
+        try {
+            data.Value = (byte)newVal;
+        } catch(System.Exception) { }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtByteArrayRender : NbtRenderer {
+    NbtByteArray data;
+    bool expanded;
+
+    public NbtByteArrayRender(NbtByteArray tag) {
+        data = tag;
+        expanded = false;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 64, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Mass Edit"), false, MassEdit);
+
+                menu.AddSeparator("");
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        expanded = EditorGUI.Foldout(new Rect(indent, top, 64, 16), expanded, "ByteArr");
+        if(!suppressName) {
+            data.Name = EditorGUI.TextField(new Rect(indent + 64, top, 128, 16), data.Name);
+            EditorGUI.HelpBox(new Rect(indent + 200, top, 110, 16), "Value: 0 to 255", MessageType.None);
+        } else {
+            EditorGUI.HelpBox(new Rect(indent + 60, top, 110, 16), "Value: 0 to 255", MessageType.None);
+        }
+        if(expanded) {
+            byte[] value = data.Value;
+            for(int i = 0; i < value.Length; i++) {
+                if(i % 16 == 0) {
+                    top += 16;
+                    EditorGUI.LabelField(new Rect(indent + 20, top, 44, 16), i.ToString("X4"));
+                }
+                value[i] = (byte)EditorGUI.IntField(new Rect(indent + 64 + (32 * (i % 16)), top, 32, 16), value[i]);
+            }
+        }
+    }
+
+    public void MassEdit() {
+        NbtMassArrayEdit.EditArray(data);
+    }
+
+    public override float Height {
+        get {
+            if(!expanded) {
+                return 16;
+            } else {
+                return 16 + (Mathf.CeilToInt(data.Value.Length / 16.0f) * 16);
+            }
+        }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtCompoundRender : NbtRenderer {
+    NbtCompound data;
+    bool expanded;
+    public List<NbtRenderer> children;
+
+    public NbtCompoundRender(NbtCompound tag) {
+        data = tag;
+        expanded = false;
+        children = new List<NbtRenderer>();
+
+        foreach(NbtTag alpha in tag) {
+            NbtRenderer renderer = NbtRenderer.MakeRenderer(alpha);
+            renderer.parent = this;
+            children.Add(renderer);
+        }
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Add New/Byte Tag"), false, AddByte);
+                menu.AddItem(new GUIContent("Add New/Byte Array Tag"), false, AddByteArray);
+                menu.AddItem(new GUIContent("Add New/Compound Tag"), false, AddCompound);
+                menu.AddItem(new GUIContent("Add New/Double Tag"), false, AddDouble);
+                menu.AddItem(new GUIContent("Add New/Float Tag"), false, AddFloat);
+                menu.AddItem(new GUIContent("Add New/Int Tag"), false, AddInt);
+                menu.AddItem(new GUIContent("Add New/Int Array Tag"), false, AddIntArray);
+                menu.AddItem(new GUIContent("Add New/List Tag"), false, AddList);
+                menu.AddItem(new GUIContent("Add New/Long Tag"), false, AddLong);
+                menu.AddItem(new GUIContent("Add New/Short Tag"), false, AddShort);
+                menu.AddItem(new GUIContent("Add New/String Tag"), false, AddString);
+
+                menu.AddSeparator("");
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        expanded = EditorGUI.Foldout(new Rect(indent, top, 48, 16), expanded, "Cmpd");
+        if(!suppressName) {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+        }
+        if(expanded) {
+            float runningTop = 16f;
+            for(int i = 0; i < children.Count; i++) {
+                children[i].RenderTag(false, indent + 20, top + runningTop);
+                runningTop += children[i].Height;
+            }
+        }
+    }
+
+    public void AddByte() {
+        var newb = new NbtByte("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtByteRender(newb));
+    }
+
+    public void AddByteArray() {
+        var newb = new NbtByteArray("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtByteArrayRender(newb));
+    }
+
+    public void AddCompound() {
+        var newb = new NbtCompound("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtCompoundRender(newb));
+    }
+
+    public void AddDouble() {
+        var newb = new NbtDouble("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtDoubleRender(newb));
+    }
+
+    public void AddFloat() {
+        var newb = new NbtFloat("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtFloatRender(newb));
+    }
+
+    public void AddInt() {
+        var newb = new NbtInt("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtIntRender(newb));
+    }
+
+    public void AddIntArray() {
+        var newb = new NbtIntArray("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtIntArrayRender(newb));
+    }
+
+    public void AddList() {
+        var newb = new NbtList("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtListRender(newb));
+    }
+
+    public void AddLong() {
+        var newb = new NbtLong("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtLongRender(newb));
+    }
+
+    public void AddShort() {
+        var newb = new NbtShort("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtShortRender(newb));
+    }
+
+    public void AddString() {
+        var newb = new NbtString("newtag");
+        data.Add(newb);
+
+        children.Add(new NbtStringRender(newb));
+    }
+
+    public override float Height {
+        get {
+            if(!expanded) {
+                return 16;
+            } else {
+                float rtn = 16;
+                foreach(NbtRenderer r in children) {
+                    rtn += r.Height;
+                }
+                return rtn;
+            }
+        }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtDoubleRender : NbtRenderer {
+    NbtDouble data;
+
+    public NbtDoubleRender(NbtDouble tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "Double");
+        double newVal = 0;
+        if(suppressName) {
+            newVal = EditorGUI.DoubleField(new Rect(indent + 48, top, 128, 16), data.DoubleValue);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            newVal = EditorGUI.DoubleField(new Rect(indent + 180, top, 128, 16), data.DoubleValue);
+        }
+        try {
+            data.Value = newVal;
+        } catch(System.Exception) { }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtFloatRender : NbtRenderer {
+    NbtFloat data;
+
+    public NbtFloatRender(NbtFloat tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "Float");
+        float newVal = 0;
+        if(suppressName) {
+            newVal = EditorGUI.FloatField(new Rect(indent + 48, top, 128, 16), data.FloatValue);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            newVal = EditorGUI.FloatField(new Rect(indent + 180, top, 128, 16), data.FloatValue);
+        }
+        try {
+            data.Value = newVal;
+        } catch(System.Exception) { }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtIntRender : NbtRenderer {
+    NbtInt data;
+
+    public NbtIntRender(NbtInt tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "Int");
+        uint newVal = 0;
+        if(suppressName) {
+            newVal = (uint)EditorGUI.LongField(new Rect(indent + 48, top, 128, 16), data.IntValue);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            newVal = (uint)EditorGUI.LongField(new Rect(indent + 180, top, 128, 16), data.IntValue);
+        }
+        try {
+            data.Value = (int)newVal;
+        } catch(System.Exception) { }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtIntArrayRender : NbtRenderer {
+    NbtIntArray data;
+    bool expanded;
+
+    public NbtIntArrayRender(NbtIntArray tag) {
+        data = tag;
+        expanded = false;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 64, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Mass Edit"), false, MassEdit);
+
+                menu.AddSeparator("");
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        expanded = EditorGUI.Foldout(new Rect(indent, top, 64, 16), expanded, "IntArr");
+        if(!suppressName) {
+            data.Name = EditorGUI.TextField(new Rect(indent + 64, top, 128, 16), data.Name);
+        }
+        if(expanded) {
+            int[] value = data.Value;
+            for(int i = 0; i < value.Length; i++) {
+                if(i % 4 == 0) {
+                    top += 16;
+                    EditorGUI.LabelField(new Rect(indent + 20, top, 44, 16), i.ToString("X4"));
+                }
+                value[i] = EditorGUI.IntField(new Rect(indent + 64 + (128 * (i % 4)), top, 128, 16), value[i]);
+            }
+        }
+    }
+
+    public void MassEdit() {
+        NbtMassArrayEdit.EditArray(data);
+    }
+
+    public override float Height {
+        get {
+            if(!expanded) {
+                return 16;
+            } else {
+                return 16 + (Mathf.CeilToInt(data.Value.Length / 4.0f) * 16);
+            }
+        }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtListRender : NbtRenderer {
+    NbtList data;
+    bool expanded;
+    public List<NbtRenderer> children;
+
+    public NbtListRender(NbtList tag) {
+        data = tag;
+        expanded = false;
+        children = new List<NbtRenderer>();
+
+        foreach(NbtTag alpha in tag) {
+            NbtRenderer renderer = NbtRenderer.MakeRenderer(alpha);
+            renderer.parent = this;
+            children.Add(renderer);
+        }
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Set Type/Byte"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Byte Array"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Compound"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Double"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Float"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Int"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Int Array"), false, null);
+                menu.AddItem(new GUIContent("Set Type/List"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Long"), false, null);
+                menu.AddItem(new GUIContent("Set Type/Short"), false, null);
+                menu.AddItem(new GUIContent("Set Type/String"), false, null);
+
+                menu.AddSeparator("");
+
+                menu.AddItem(new GUIContent("Add New Tag to List"), false, null);
+
+                menu.AddSeparator("");
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        expanded = EditorGUI.Foldout(new Rect(indent, top, 48, 16), expanded, "List");
+        if(!suppressName) {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            EditorGUI.LabelField(new Rect(indent + 180, top, 128, 16), "Type <" + data.ListType + ">");
+        } else {
+            EditorGUI.LabelField(new Rect(indent + 48, top, 128, 16), "Type <" + data.ListType + ">");
+        }
+        if(expanded) {
+            float runningTop = 16f;
+            for(int i = 0; i < children.Count; i++) {
+                children[i].RenderTag(true, indent + 20, top + runningTop);
+                runningTop += children[i].Height;
+            }
+        }
+
+    }
+
+    public override float Height {
+        get {
+            if(!expanded) {
+                return 16;
+            } else {
+                float rtn = 16;
+                foreach(NbtRenderer r in children) {
+                    rtn += r.Height;
+                }
+                return rtn;
+            }
+        }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtLongRender : NbtRenderer {
+    NbtLong data;
+
+    public NbtLongRender(NbtLong tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "Long");
+        long newVal = 0;
+        if(suppressName) {
+            newVal = EditorGUI.LongField(new Rect(indent + 48, top, 128, 16), data.LongValue);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            newVal = EditorGUI.LongField(new Rect(indent + 180, top, 128, 16), data.LongValue);
+        }
+        try {
+            data.Value = newVal;
+        } catch(System.Exception) { }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtShortRender : NbtRenderer {
+    NbtShort data;
+
+    public NbtShortRender(NbtShort tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "Short");
+        int newVal = 0;
+        if(suppressName) {
+            newVal = EditorGUI.IntField(new Rect(indent + 48, top, 64, 16), data.ShortValue);
+            EditorGUI.HelpBox(new Rect(indent + 120, top, 160, 16), "Value: -32768 to 32767", MessageType.None);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            newVal = EditorGUI.IntField(new Rect(indent + 180, top, 64, 16), data.ShortValue);
+            EditorGUI.HelpBox(new Rect(indent + 252, top, 160, 16), "Value: -32768 to 32767", MessageType.None);
+        }
+        try {
+            data.Value = (short)newVal;
+        } catch(System.Exception) { }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
+
+public class NbtStringRender : NbtRenderer {
+    NbtString data;
+
+    public NbtStringRender(NbtString tag) {
+        data = tag;
+    }
+
+    public override void RenderTag(bool suppressName, float indent, float top) {
+        Event evt = Event.current;
+
+        if(evt.type == EventType.ContextClick) {
+            if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
+                GenericMenu menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+
+                menu.ShowAsContext();
+                evt.Use();
+            }
+        }
+
+        EditorGUI.LabelField(new Rect(indent, top, 48, 16), "String");
+        if(suppressName) {
+            data.Value = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.StringValue);
+        } else {
+            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            data.Value = EditorGUI.TextField(new Rect(indent + 180, top, 128, 16), data.StringValue);
+        }
+    }
+
+    public override float Height {
+        get { return 16; }
+    }
+
+    public override void Delete() {
+        if(parent is NbtCompoundRender) {
+            ((NbtCompoundRender)parent).children.Remove(this);
+        } else if(parent is NbtListRender) {
+            ((NbtListRender)parent).children.Remove(this);
+        }
+        if(data.Parent is NbtCompound) {
+            ((NbtCompound)data.Parent).Remove(data);
+        } else if(data.Parent is NbtList) {
+            ((NbtList)data.Parent).Remove(data);
+        }
+    }
+}
