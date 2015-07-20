@@ -38,6 +38,9 @@ public class LightDict : MonoBehaviour {
                 if(!cat.RootTag.Contains("pric")) {
                     Destroy(FindObjectOfType<DispPricing>().gameObject);
                 }
+                if(cat.RootTag.Contains("canPub")) {
+                    BarManager.canPub = cat.RootTag["canPub"].ByteValue;
+                }
 
                 NbtList heads = (NbtList)(cat.RootTag["heads"]);
 

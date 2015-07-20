@@ -13,6 +13,7 @@ using UnityEngine.UI;
 
 public class BarManager : MonoBehaviour {
     public static string DirRoot;
+    public static byte canPub = 0;
 
     public AdvFunction funcBeingTested = AdvFunction.NONE;
 
@@ -1660,40 +1661,61 @@ public class PDFExportJob : ThreadedJob {
 
         PdfDocument doc = new PdfDocument();
 
+        byte pages = 0;
+        for(int i = 0x1; i < 0x80; i = i << 1) {
+            if((BarManager.canPub & i) > 0) {
+                pages++;
+            }
+        }
+
+        byte currPage = 1;
+
         try {
             doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
             doc.Info.Creator = "1000 Lightbar Configurator";
             doc.Info.Title = "1000 Lightbar Configuration";
-            lock(progressStuff) {
-                progressText = "Publishing Page 1/6: Overview...";
-                progressPercentage = 10;
+            if((BarManager.canPub & 0x1) > 0) {
+                lock(progressStuff) {
+                    progressText = string.Format("Publishing Page {0}/{1} : Overview...", currPage++, pages);
+                    progressPercentage = 10;
+                }
+                OverviewPage(doc.AddPage(), capRect);
             }
-            OverviewPage(doc.AddPage(), capRect);
-            lock(progressStuff) {
-                progressText = "Publishing Page 2/6: BOM...";
-                progressPercentage = 30;
+            if((BarManager.canPub & 0x2) > 0) {
+                lock(progressStuff) {
+                    progressText = string.Format("Publishing Page {0}/{1} : BOM...", currPage++, pages);
+                    progressPercentage = 30;
+                }
+                PartsPage(doc.AddPage(), capRect);
             }
-            PartsPage(doc.AddPage(), capRect);
-            lock(progressStuff) {
-                progressText = "Publishing Page 3/6: Wiring...";
-                progressPercentage = 50;
+            if((BarManager.canPub & 0x4) > 0) {
+                lock(progressStuff) {
+                    progressText = string.Format("Publishing Page {0}/{1} : Wiring...", currPage++, pages);
+                    progressPercentage = 50;
+                }
+                WiringPage(doc.AddPage(), capRect);
             }
-            WiringPage(doc.AddPage(), capRect);
-            lock(progressStuff) {
-                progressText = "Publishing Page 4/6: Programming...";
-                progressPercentage = 80;
+            if((BarManager.canPub & 0x8) > 0) {
+                lock(progressStuff) {
+                    progressText = string.Format("Publishing Page {0}/{1} : Programming...", currPage++, pages);
+                    progressPercentage = 80;
+                }
+                PatternPage(doc.AddPage(), capRect);
             }
-            PatternPage(doc.AddPage(), capRect);
-            lock(progressStuff) {
-                progressText = "Publishing Page 5/6: Checklist...";
-                progressPercentage = 88;
+            if((BarManager.canPub & 0x10) > 0) {
+                lock(progressStuff) {
+                    progressText = string.Format("Publishing Page {0}/{1} : Checklist...", currPage++, pages);
+                    progressPercentage = 88;
+                }
+                ChecklistPage(doc.AddPage());
             }
-            ChecklistPage(doc.AddPage());
-            lock(progressStuff) {
-                progressText = "Publishing Page 6/6: Output Map...";
-                progressPercentage = 90;
+            if((BarManager.canPub & 0x20) > 0) {
+                lock(progressStuff) {
+                    progressText = string.Format("Publishing Page {0}/{1} : Output Map...", currPage++, pages);
+                    progressPercentage = 90;
+                }
+                OutputMapPage(doc.AddPage(), capRect); 
             }
-            OutputMapPage(doc.AddPage(), capRect);
             lock(progressStuff) {
                 progressText = "Saving...";
                 progressPercentage = 99;
