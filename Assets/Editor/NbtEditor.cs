@@ -25,16 +25,15 @@ public class NbtEditor : EditorWindow {
 
         if(GUI.Button(new Rect(10, 8, 28, 28), newFile)) {
             filePath = "New File";
-            nbtFile = new NbtFile();
-            nbtFile.RootTag.Name = "root";
-            renderRoot = new NbtCompoundRender(nbtFile.RootTag);
+            nbtFile = null;
+            renderRoot = null;
         }
         if(GUI.Button(new Rect(48, 8, 28, 28), open)) {
             string newFilePath = EditorUtility.OpenFilePanel("Open NBT File", "Assets/..", "nbt");
             if(newFilePath == "") return;
             filePath = newFilePath;
-            nbtFile = new NbtFile(filePath);
-            renderRoot = new NbtCompoundRender(nbtFile.RootTag);
+            nbtFile = null;
+            renderRoot = null;
         }
         if(GUI.Button(new Rect(86, 8, 28, 28), save)) {
             if(filePath == "New File") {
@@ -49,6 +48,17 @@ public class NbtEditor : EditorWindow {
             if(newFilePath == "") return;
             filePath = newFilePath;
             nbtFile.SaveToFile(filePath, NbtCompression.None);
+        }
+
+        if(nbtFile == null) {
+            if(filePath == "New File") {
+                nbtFile = new NbtFile();
+                nbtFile.RootTag.Name = "root";
+            } else if(filePath != "") {
+                nbtFile = new NbtFile(filePath);
+            }
+            if(nbtFile != null)
+                renderRoot = new NbtCompoundRender(nbtFile.RootTag);
         }
 
         EditorGUI.DropShadowLabel(new Rect(152, 12, 32, 16), "File:");
@@ -257,52 +267,53 @@ public class NbtCompoundRender : NbtRenderer {
 
                 menu.AddItem(new GUIContent("Add New/Byte Tag"), false, delegate() {
                     var newb = new NbtByte("newtag"); data.Add(newb);
-                    children.Add(new NbtByteRender(newb));
+                    children.Add(new NbtByteRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Byte Array Tag"), false, delegate() {
                     var newb = new NbtByteArray("newtag"); data.Add(newb);
-                    children.Add(new NbtByteArrayRender(newb));
+                    children.Add(new NbtByteArrayRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Compound Tag"), false, delegate() {
                     var newb = new NbtCompound("newtag"); data.Add(newb);
-                    children.Add(new NbtCompoundRender(newb));
+                    children.Add(new NbtCompoundRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Double Tag"), false, delegate() {
                     var newb = new NbtDouble("newtag"); data.Add(newb);
-                    children.Add(new NbtDoubleRender(newb));
+                    children.Add(new NbtDoubleRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Float Tag"), false, delegate() {
                     var newb = new NbtFloat("newtag"); data.Add(newb);
-                    children.Add(new NbtFloatRender(newb));
+                    children.Add(new NbtFloatRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Int Tag"), false, delegate() {
                     var newb = new NbtInt("newtag"); data.Add(newb);
-                    children.Add(new NbtIntRender(newb));
+                    children.Add(new NbtIntRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Int Array Tag"), false, delegate() {
                     var newb = new NbtIntArray("newtag"); data.Add(newb);
-                    children.Add(new NbtIntArrayRender(newb));
+                    children.Add(new NbtIntArrayRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/List Tag"), false, delegate() {
                     var newb = new NbtList("newtag"); data.Add(newb);
-                    children.Add(new NbtListRender(newb));
+                    children.Add(new NbtListRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Long Tag"), false, delegate() {
                     var newb = new NbtLong("newtag"); data.Add(newb);
-                    children.Add(new NbtLongRender(newb));
+                    children.Add(new NbtLongRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/Short Tag"), false, delegate() {
                     var newb = new NbtShort("newtag"); data.Add(newb);
-                    children.Add(new NbtShortRender(newb));
+                    children.Add(new NbtShortRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/String Tag"), false, delegate() {
                     var newb = new NbtString("newtag"); data.Add(newb);
-                    children.Add(new NbtStringRender(newb));
+                    children.Add(new NbtStringRender(newb) { parent = this });
                 });
 
-                menu.AddSeparator("");
-
-                menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+                if(parent != null) {
+                    menu.AddSeparator("");
+                    menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
+                }
 
                 menu.ShowAsContext();
                 evt.Use();
@@ -732,7 +743,9 @@ public class NbtListRender : NbtRenderer {
                             return;
                     }
                     data.Add(alpha);
-                    children.Add(NbtRenderer.MakeRenderer(alpha));
+                    NbtRenderer newRenderer = NbtRenderer.MakeRenderer(alpha);
+                    newRenderer.parent = this;
+                    children.Add(newRenderer);
                 });
 
                 menu.AddSeparator("");
