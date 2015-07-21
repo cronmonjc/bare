@@ -15,6 +15,13 @@ public class ErrorText : MonoBehaviour {
     }
 
     public void DispError(string msg) {
+        t.color = new Color32(172, 0, 0, 255);
+        if(fader != null) StopCoroutine(fader);
+        fader = StartCoroutine(DispErrorThenFade(msg));
+    }
+
+    public void DispInfo(string msg) {
+        t.color = new Color32(50, 50, 50, 255);
         if(fader != null) StopCoroutine(fader);
         fader = StartCoroutine(DispErrorThenFade(msg));
     }

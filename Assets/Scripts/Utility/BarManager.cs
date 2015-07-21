@@ -101,6 +101,25 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    public string BarWidth {
+        get {
+            switch(BarSize) {
+                case 0:
+                    return "37\"";
+                case 1:
+                    return "44\"";
+                case 2:
+                    return "51\"";
+                case 3:
+                    return "58\"";
+                case 4:
+                    return "65\"";
+                default:
+                    return "??\"";
+            }
+        }
+    }
+
     public uint BarPrice {
         get {
             try {
@@ -135,7 +154,7 @@ public class BarManager : MonoBehaviour {
             patts.Add(new NbtCompound(alpha));
         }
 
-        patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] { new NbtShort("er1", 0), new NbtShort("er2", 0) });
+        patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] { new NbtShort("er1", 0), new NbtShort("er2", 0), new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
 
         foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim" }) {
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("ef1", 0), new NbtShort("ef2", 0), new NbtShort("er1", 0), new NbtShort("er2", 0) });
@@ -1106,6 +1125,9 @@ public class BarManager : MonoBehaviour {
         }
 
         patts = root.Get<NbtCompound>("pats");
+        if(!patts.Get<NbtCompound>("traf").Contains("ctd")) {
+            patts.Get<NbtCompound>("traf").AddRange(new NbtTag[] { new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
+        }
         FnDragTarget.inputMap = patts.Get<NbtIntArray>("map");
 
         foreach(NbtTag alpha in socList) {
@@ -1544,7 +1566,7 @@ public class PDFExportJob : ThreadedJob {
     public float progressPercentage = 0f;
     public NbtCompound patts;
     public bool useCAN = false;
-    public string BarModel = "";
+    public string BarModel = "", BarWidth = "";
     public string filename = "";
     public Rect capRect;
     public List<String> issues;
@@ -1566,6 +1588,7 @@ public class PDFExportJob : ThreadedJob {
         patts = bm.patts.Clone() as NbtCompound;
         progressStuff = bm.progressStuff;
         BarModel = bm.BarModel;
+        BarWidth = bm.BarWidth;
         barCost = bm.BarPrice;
         filename = fname;
         issues = new List<string>();
@@ -1755,7 +1778,7 @@ public class PDFExportJob : ThreadedJob {
 
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Star 1000", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-        tf.DrawString("Model " + BarModel, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Model " + BarModel + " - " + BarWidth, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
 
         tf.Alignment = XParagraphAlignment.Left;
 
@@ -1791,7 +1814,7 @@ public class PDFExportJob : ThreadedJob {
         }
 
         top += 0.1;
-        tf.DrawString(BarModel + " Bar Base", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+        tf.DrawString(BarModel + " Bar Base - " + BarWidth, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
             tf.DrawString("$" + (barCost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
 

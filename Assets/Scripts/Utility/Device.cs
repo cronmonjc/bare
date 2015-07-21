@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 public class Device : IDisposable {
-#if !UNITY_EDITOR
+//#if !UNITY_EDITOR
     [DllImport("mcp2210")]
     private static extern int DllInit(uint vendorID, uint productID);
     [DllImport("mcp2210")]
@@ -104,7 +104,7 @@ public class Device : IDisposable {
     /// </summary>
     /// <param name="bitrate">Bit rate, in units of bits per second.</param>
     /// <param name="idleCS">The state of the Chip Select pins when the device is not communicating over SPI.</param>
-    /// <param name="activeCS">The state of the Chip Select pins when the device is communicating over SPI.</param>
+    /// <param name="activeCS">The state of the Chip Select pins when the device is communicating over SPI.  A low bit means comm line is open.</param>
     /// <param name="csToDataDelay">How much time should be between the Chip Select being chosen and the first byte being sent, in units of 100 microseconds.</param>
     /// <param name="dataToDataDelay">How much time should be between two consecutive bytes, in units of 100 microseconds.</param>
     /// <param name="dataToCsDelay">How much time should be between the last byte being sent and the Chip Select being dropped, in units of 100 microseconds.</param>
@@ -123,7 +123,7 @@ public class Device : IDisposable {
     /// Select which chip the MCP2210 is communicating with.
     /// </summary>
     /// <param name="which">Which chip, from 0 to 8, are we communicating with?</param>
-    public void Select(int which) {
+    public void Select(byte which) {
         if(which > 8 || which < 0)
             throw new ArgumentException("Invalid argument for which chip to select.");
 
@@ -146,6 +146,16 @@ public class Device : IDisposable {
         if(res < 0) throw new DeviceErrorException(res);
 
         return rxData;
+    }
+
+    [DllImport("mcp2210")]
+    private static extern int CancelSpiTxfer();
+    public void Abort() {
+        int res;
+        lock(this) {
+            res = CancelSpiTxfer();
+        }
+        if(res < 0) throw new DeviceErrorException(res);
     }
 
     [DllImport("mcp2210")]
@@ -189,9 +199,9 @@ public class Device : IDisposable {
     public void Dispose() {
         DllCleanUp();
     }
-#else
-    public void Dispose() { }
-#endif
+//#else
+    //public void Dispose() { }
+//#endif
 }
 
 public class DeviceErrorException : Exception {
