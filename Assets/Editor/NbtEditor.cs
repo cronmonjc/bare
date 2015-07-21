@@ -615,90 +615,90 @@ public class NbtListRender : NbtRenderer {
                 menu.AddItem(new GUIContent("Set Type/Byte"), data.ListType == NbtTagType.Byte, delegate() {
                     if(data.ListType != NbtTagType.Byte && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Byte", "This List contains items.  Changing the type to Byte will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Byte;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Byte;
                 });
                 menu.AddItem(new GUIContent("Set Type/Byte Array"), data.ListType == NbtTagType.ByteArray, delegate() {
                     if(data.ListType != NbtTagType.ByteArray && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Byte Array", "This List contains items.  Changing the type to Byte Array will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.ByteArray;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.ByteArray;
                 });
                 menu.AddItem(new GUIContent("Set Type/Compound"), data.ListType == NbtTagType.Compound, delegate() {
                     if(data.ListType != NbtTagType.Compound && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Compound", "This List contains items.  Changing the type to Compound will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Compound;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Compound;
                 });
                 menu.AddItem(new GUIContent("Set Type/Double"), data.ListType == NbtTagType.Double, delegate() {
                     if(data.ListType != NbtTagType.Double && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Double", "This List contains items.  Changing the type to Double will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Double;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Double;
                 });
                 menu.AddItem(new GUIContent("Set Type/Float"), data.ListType == NbtTagType.Float, delegate() {
                     if(data.ListType != NbtTagType.Float && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Float", "This List contains items.  Changing the type to Float will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Float;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Float;
                 });
                 menu.AddItem(new GUIContent("Set Type/Int"), data.ListType == NbtTagType.Int, delegate() {
                     if(data.ListType != NbtTagType.Int && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Int", "This List contains items.  Changing the type to Int will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Int;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Int;
                 });
                 menu.AddItem(new GUIContent("Set Type/Int Array"), data.ListType == NbtTagType.IntArray, delegate() {
                     if(data.ListType != NbtTagType.IntArray && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Int Array", "This List contains items.  Changing the type to Int Array will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.IntArray;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.IntArray;
                 });
                 menu.AddItem(new GUIContent("Set Type/List"), data.ListType == NbtTagType.List, delegate() {
                     if(data.ListType != NbtTagType.List && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> List", "This List contains items.  Changing the type to List will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.List;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.List;
                 });
                 menu.AddItem(new GUIContent("Set Type/Long"), data.ListType == NbtTagType.Long, delegate() {
                     if(data.ListType != NbtTagType.Long && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Long", "This List contains items.  Changing the type to Long will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Long;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Long;
                 });
                 menu.AddItem(new GUIContent("Set Type/Short"), data.ListType == NbtTagType.Short, delegate() {
                     if(data.ListType != NbtTagType.Short && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> Short", "This List contains items.  Changing the type to Short will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.Short;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.Short;
                 });
                 menu.AddItem(new GUIContent("Set Type/String"), data.ListType == NbtTagType.String, delegate() {
                     if(data.ListType != NbtTagType.String && data.Count > 0) {
                         if(EditorUtility.DisplayDialog("Set Type -> String", "This List contains items.  Changing the type to String will require emptying the list.  Is this okay?", "No", "Yes")) return;
-                        data.Clear();
-                        children.Clear();
-                        data.ListType = NbtTagType.String;
                     }
+                    data.Clear();
+                    children.Clear();
+                    data.ListType = NbtTagType.String;
                 });
 
                 menu.AddSeparator("");
