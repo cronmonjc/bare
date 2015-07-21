@@ -701,52 +701,53 @@ public class NbtListRender : NbtRenderer {
                     data.ListType = NbtTagType.String;
                 });
 
-                menu.AddSeparator("");
-
-                menu.AddItem(new GUIContent("Add New Tag to List"), false, delegate() {
-                    NbtTag alpha = null;
-                    switch(data.ListType) {
-                        case NbtTagType.Byte:
-                            alpha = new NbtByte();
-                            break;
-                        case NbtTagType.ByteArray:
-                            alpha = new NbtByteArray();
-                            break;
-                        case NbtTagType.Compound:
-                            alpha = new NbtCompound();
-                            break;
-                        case NbtTagType.Double:
-                            alpha = new NbtDouble();
-                            break;
-                        case NbtTagType.Float:
-                            alpha = new NbtFloat();
-                            break;
-                        case NbtTagType.Int:
-                            alpha = new NbtInt();
-                            break;
-                        case NbtTagType.IntArray:
-                            alpha = new NbtIntArray();
-                            break;
-                        case NbtTagType.List:
-                            alpha = new NbtList();
-                            break;
-                        case NbtTagType.Long:
-                            alpha = new NbtLong();
-                            break;
-                        case NbtTagType.Short:
-                            alpha = new NbtShort();
-                            break;
-                        case NbtTagType.String:
-                            alpha = new NbtString();
-                            break;
-                        default:
-                            return;
-                    }
-                    data.Add(alpha);
-                    NbtRenderer newRenderer = NbtRenderer.MakeRenderer(alpha);
-                    newRenderer.parent = this;
-                    children.Add(newRenderer);
-                });
+                if(data.ListType != NbtTagType.Unknown) {
+                    menu.AddSeparator("");
+                    menu.AddItem(new GUIContent("Add New Tag to List"), false, delegate() {
+                        NbtTag alpha = null;
+                        switch(data.ListType) {
+                            case NbtTagType.Byte:
+                                alpha = new NbtByte();
+                                break;
+                            case NbtTagType.ByteArray:
+                                alpha = new NbtByteArray();
+                                break;
+                            case NbtTagType.Compound:
+                                alpha = new NbtCompound();
+                                break;
+                            case NbtTagType.Double:
+                                alpha = new NbtDouble();
+                                break;
+                            case NbtTagType.Float:
+                                alpha = new NbtFloat();
+                                break;
+                            case NbtTagType.Int:
+                                alpha = new NbtInt();
+                                break;
+                            case NbtTagType.IntArray:
+                                alpha = new NbtIntArray();
+                                break;
+                            case NbtTagType.List:
+                                alpha = new NbtList();
+                                break;
+                            case NbtTagType.Long:
+                                alpha = new NbtLong();
+                                break;
+                            case NbtTagType.Short:
+                                alpha = new NbtShort();
+                                break;
+                            case NbtTagType.String:
+                                alpha = new NbtString();
+                                break;
+                            default:
+                                return;
+                        }
+                        data.Add(alpha);
+                        NbtRenderer newRenderer = NbtRenderer.MakeRenderer(alpha);
+                        newRenderer.parent = this;
+                        children.Add(newRenderer);
+                    });
+                }
 
                 menu.AddSeparator("");
 
