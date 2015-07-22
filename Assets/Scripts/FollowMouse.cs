@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CanvasGroup))]
+[RequireComponent(typeof(UnityEngine.UI.Image))]
 public class FollowMouse : MonoBehaviour {
     public Camera referenceCamera;
     private CanvasGroup group;

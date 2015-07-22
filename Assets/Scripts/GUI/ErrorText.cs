@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Text))]
 public class ErrorText : MonoBehaviour {
     public static ErrorText inst;
     private Coroutine fader;

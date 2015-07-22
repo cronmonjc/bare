@@ -147,7 +147,7 @@ public class BarManager : MonoBehaviour {
         DirRoot = string.Join("/", parts, 0, parts.Length - 1) + "/";
     }
 
-    private void CreatePatts() {
+    public void CreatePatts() {
         patts = new NbtCompound("pats");
 
         foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {

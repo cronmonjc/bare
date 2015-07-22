@@ -20,9 +20,12 @@ public class Device : IDisposable {
         : this(DEFAULT_VENDOR, DEFAULT_PRODUCT) { }
 
     public Device(uint vendorID, uint productID) {
-        DllInit(vendorID, productID);
-        int res = SetGpioConfig(CURRENT_SETTINGS_ONLY, new byte[] { 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1 }, 0xFFFF, 0xFFFF);
+        int res;
+        res = DllInit(vendorID, productID);
         if(res != 0) throw new DeviceErrorException(res);
+        res = SetGpioConfig(CURRENT_SETTINGS_ONLY, new byte[] { 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1 }, 0xFFFF, 0xFFFF);
+        if(res != 0) throw new DeviceErrorException(res);
+        if(!Connected) throw new DeviceErrorException(-101);
     }
 
     [DllImport("mcp2210")]

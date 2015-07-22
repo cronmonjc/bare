@@ -25798,7 +25798,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 1.52587891e-05}
+  m_AnchoredPosition: {x: 0, y: 4.57763672e-05}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 1}
 --- !u!114 &542738553
@@ -27112,8 +27112,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae897d91a71afa649ad0104a49244882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastTX: 
-  lastRX: 
 --- !u!4 &582196027
 Transform:
   m_ObjectHideFlags: 0
@@ -34868,7 +34866,6 @@ GameObject:
   - 224: {fileID: 779590301}
   - 222: {fileID: 779590305}
   - 114: {fileID: 779590304}
-  - 114: {fileID: 779590306}
   - 114: {fileID: 779590302}
   m_Layer: 5
   m_Name: ConnectionDisp
@@ -34941,17 +34938,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 779590300}
---- !u!114 &779590306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 779590300}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cc29d7c643c0904bb94fa173beb97ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &779625805
 GameObject:
   m_ObjectHideFlags: 0
@@ -48292,8 +48278,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1976200899}
   m_HandleRect: {fileID: 1976200898}
   m_Direction: 2
-  m_Value: .999993563
-  m_Size: .797481239
+  m_Value: .999995351
+  m_Size: .809571803
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -61083,8 +61069,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2076613982}
   m_HandleRect: {fileID: 2076613981}
   m_Direction: 2
-  m_Value: 1
-  m_Size: .64852941
+  m_Value: .999999523
+  m_Size: .518077016
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
