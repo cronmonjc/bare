@@ -1685,7 +1685,7 @@ public class PDFExportJob : ThreadedJob {
         PdfDocument doc = new PdfDocument();
 
         byte pages = 0;
-        for(int i = 0x1; i < 0x80; i = i << 1) {
+        for(int i = 0x1; i < 0x40; i = i << 1) {
             if((BarManager.canPub & i) > 0) {
                 pages++;
             }
@@ -1932,13 +1932,13 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString(bomcables.circuitPrefix + ((bomcables.dualLCount + bomcables.dualRCount) > 0 ? "2" : "1"), courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
         tf.DrawString("Control Circuit - " + ((bomcables.dualLCount + bomcables.dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only"), caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
-        top += 0.1;
+        top += 0.15;
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Gutter Mount Bracket", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
         if(BarManager.mountingKit != 0) {
-            top += 0.1;
+            top += 0.15;
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
