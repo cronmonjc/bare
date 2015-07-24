@@ -63,6 +63,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
 workSinceMonday.sh
 tempgen/
 test/
@@ -73,3 +74,4 @@ HasOpen/
 /Documents/~$*
 /Lightbar Drawings
 /Crash*
+bin/

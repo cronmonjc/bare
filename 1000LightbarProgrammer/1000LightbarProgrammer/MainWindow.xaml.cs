@@ -168,6 +168,24 @@ namespace LightbarProg {
                 }
 
                 byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("Read Op @ {0:G}\n\nSent: [{1} bytes]\n", DateTime.Now, xferBuffer.Length);
+                for(short i = 0; i < xferBuffer.Length; i++) {
+                    sb.Append(xferBuffer[i]);
+                    if(i % 2 == 1) sb.Append("\n");
+                    else sb.Append(" ");
+                }
+                sb.AppendFormat("\n\nRecieved: [{0} bytes]\n", rxBuffer.Length);
+                for(short i = 0; i < rxBuffer.Length; i++) {
+                    sb.Append(rxBuffer[i]);
+                    if(i % 2 == 1) sb.Append("\n");
+                    else sb.Append(" ");
+                }
+                sb.Append("\n<End of transfer>\n\n");
+
+                File.AppendAllText("log.txt", sb.ToString());
+
                 using(MemoryStream rxBufferStream = new MemoryStream(rxBuffer))
                 using(BarReader reader = new BarReader(rxBufferStream)) {
                     NbtCompound patt = patts, func;
@@ -355,7 +373,24 @@ namespace LightbarProg {
 
                 dev.XferSize = 768;
                 byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
-                
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("Write Op @ {0:G}\n\nSent: [{1} bytes]\n", DateTime.Now, xferBuffer.Length);
+                for(short i = 0; i < xferBuffer.Length; i++) {
+                    sb.Append(xferBuffer[i]);
+                    if(i % 2 == 1) sb.Append("\n");
+                    else sb.Append(" ");
+                }
+                sb.AppendFormat("\n\nRecieved: [{0} bytes]\n", rxBuffer.Length);
+                for(short i = 0; i < rxBuffer.Length; i++) {
+                    sb.Append(rxBuffer[i]);
+                    if(i % 2 == 1) sb.Append("\n");
+                    else sb.Append(" ");
+                }
+                sb.Append("\n<End of transfer>\n\n");
+
+                File.AppendAllText("log.txt", sb.ToString());
+
                 if(rxBuffer[2] != 2 || rxBuffer[3] != 0) {
                     MessageBox.Show(this, "Write operation complete, but data integrity is not verifiable.  Another attempt is recommended.", "Complete (With Complications)", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                     return;
