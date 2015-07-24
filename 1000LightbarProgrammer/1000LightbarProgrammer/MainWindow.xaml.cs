@@ -288,7 +288,7 @@ namespace LightbarProg {
                 using(BarWriter writer = new BarWriter(xferBufferStream)) {
                     writer.Write(new byte[] { 2, 0 }); // Write command
 
-                    NbtCompound patt = file.RootTag.Get<NbtCompound>("patt"), func;
+                    NbtCompound patt = file.RootTag.Get<NbtCompound>("pats"), func;
                     short val = 0;
                     foreach(string alpha in new string[] { "td", "lall", "rall", "l1", "l2", "l3", "l4", "l5", "dcw", "tdp", "afl", "icl", "ltai", "rtai", "cru", "cal", "emi", "dim" }) {
                         func = patt.Get<NbtCompound>(alpha); // Add all the enables to the byte buffer
@@ -353,7 +353,7 @@ namespace LightbarProg {
                     }
                 }
 
-                
+                dev.XferSize = 768;
                 byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
                 
                 if(rxBuffer[2] != 2 || rxBuffer[3] != 0) {
