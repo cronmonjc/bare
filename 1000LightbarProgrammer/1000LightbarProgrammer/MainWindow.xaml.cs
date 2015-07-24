@@ -130,7 +130,7 @@ namespace LightbarProg {
                     file.RootTag.Add(new NbtList("lens", NbtTagType.Compound));
                 }
 
-                NbtCompound patts = file.RootTag.Get<NbtCompound>("patts");
+                NbtCompound patts = file.RootTag.Get<NbtCompound>("pats");
                 patts.Clear();
 
                 foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" })
@@ -167,6 +167,7 @@ namespace LightbarProg {
                     }
                 }
 
+                dev.XferSize = 768;
                 byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
 
                 StringBuilder sb = new StringBuilder();
@@ -566,7 +567,7 @@ namespace LightbarProg {
         }
 
         public void Dispose() {
-            throw new NotImplementedException();
+            inStream.Dispose();
         }
     }
 }

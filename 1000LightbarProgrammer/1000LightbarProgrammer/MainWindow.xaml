@@ -21,7 +21,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TabControl Margin="0" Grid.ColumnSpan="2">
-            <TabItem Header="Write Program To Bar">
+            <TabItem Header="Send Program To Bar">
                 <Grid Background="#FFF9F9F9">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="76"/>
@@ -39,10 +39,10 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <Image Margin="10,0,10,0" Source="Assets/Upload.png" Cursor="Hand" UseLayoutRounding="False" Grid.Row="1" MouseLeftButtonUp="WriteBar"/>
+                    <Image Margin="10,0,10,0" Source="Assets/ic DOWN.png" Cursor="Hand" UseLayoutRounding="False" Grid.Row="1" MouseLeftButtonUp="WriteBar"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Read Program From Bar" RenderTransformOrigin="0.5,0.5">
+            <TabItem Header="Retrieve Program From Bar" RenderTransformOrigin="0.5,0.5">
                 <TabItem.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -68,7 +68,7 @@
                             </LinearGradientBrush>
                         </Button.Background>
                     </Button>
-                    <Image Margin="10,0,10,0" Source="Assets/Download.png" Cursor="Hand" UseLayoutRounding="False" Grid.Row="1" MouseLeftButtonUp="ReadBar"/>
+                    <Image Margin="10,0,10,0" Source="Assets/ic up.png" Cursor="Hand" UseLayoutRounding="False" Grid.Row="1" MouseLeftButtonUp="ReadBar"/>
                 </Grid>
             </TabItem>
         </TabControl>

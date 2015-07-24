@@ -148,6 +148,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Assets\ic DOWN.png" />
+    <Resource Include="Assets\ic up.png" />
     <Content Include="Plugins\msvcp100.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
