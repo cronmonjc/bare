@@ -191,6 +191,9 @@ namespace LightbarProg {
                 using(BarReader reader = new BarReader(rxBufferStream)) {
                     NbtCompound patt = patts, func;
                     short val = 0;
+
+                    reader.ReadShort();
+
                     foreach(string alpha in new string[] { "td", "lall", "rall", "l1", "l2", "l3", "l4", "l5", "dcw", "tdp", "afl", "icl", "ltai", "rtai", "cru", "cal", "emi", "dim" }) {
                         func = patt.Get<NbtCompound>(alpha); // Add all the enables to the byte buffer
                         foreach(string beta in new string[] { "ef1", "ef2", "er1", "er2" }) {
