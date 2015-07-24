@@ -395,7 +395,7 @@ namespace LightbarProg {
                     MessageBox.Show(this, "Write operation complete, but data integrity is not verifiable.  Another attempt is recommended.", "Complete (With Complications)", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK);
                     return;
                 }
-                byte upper = 2, lower = 10;
+                byte upper = 2, lower = 1;
                 ushort addr = 4;
                 while(addr < 768) {
                     if(rxBuffer[addr++] != upper) {
