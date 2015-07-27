@@ -65,7 +65,7 @@ public class NbtMassArrayEdit : EditorWindow {
                 throw new System.ArgumentNullException("Window does not have a tag to assign value to!");
             }
         }
-        EditorGUI.LabelField(new Rect(10, 10, position.width - 20, 16), "Editing " + (byteTag == null ? intTag.Name : byteTag.Name));
+        if(byteTag != null || intTag != null) EditorGUI.LabelField(new Rect(10, 10, position.width - 20, 16), "Editing " + (byteTag == null ? intTag.Name : byteTag.Name));
         text = EditorGUI.TextArea(new Rect(10, 26, position.width - 20, position.height - 52), text);
     }
 }

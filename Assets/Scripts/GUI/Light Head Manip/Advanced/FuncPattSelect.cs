@@ -46,6 +46,15 @@ public class FuncPattSelect : MonoBehaviour {
         }
     }
 
+    public void OnEnable() {
+        refreshedThisFrame = false;
+        Refresh();
+    }
+
+    public void OnDisable() {
+        refreshedThisFrame = false;
+    }
+
     public void Refresh() {
         if(refreshedThisFrame) return;
         if(menu.childCount == 0) {
@@ -98,14 +107,14 @@ public class FuncPattSelect : MonoBehaviour {
         if(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT) {
             BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("patt").Value = (short)p.id;
 
-            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-                ll.Refresh();
-            }
-
             foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
                 if(!(fe.IsColor2 ^ IsColor2)) {
                     fe.Enable();
                 }
+            }
+
+            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
+                ll.Refresh();
             }
         } else {
             NbtCompound patCmpd = BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (IsColor2 ? "2" : "1"));
@@ -157,14 +166,14 @@ public class FuncPattSelect : MonoBehaviour {
                 }
             }
 
-            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-                ll.Refresh();
-            }
-
             foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
                 if(!(fe.IsColor2 ^ IsColor2)) {
                     fe.Enable();
                 }
+            }
+
+            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
+                ll.Refresh();
             }
         }
 

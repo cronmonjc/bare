@@ -257,7 +257,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                             if(pat == null)
                                 t = t + "No Patt";
                             else {
-                                t = t + pat.name + (pat is FlashPatt ? (thisPhase ? " B" : " A") : "");
+                                t = t + pat.name + ((pat is FlashPatt || pat is SingleFlashRefPattern || pat is DoubleFlashRefPattern) ? (thisPhase ? " B" : " A") : "");
                             }
                         } else if(func.Contains("patt")) {
                             Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, false);
