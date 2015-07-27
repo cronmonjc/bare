@@ -175,7 +175,7 @@ public class BarManager : MonoBehaviour {
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
         }
 
-        FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 1, 2, 3072, 4, 8, 512, 256, 32, 16, 128, 64, 4096, 0, 0, 0, 0, 0, 0, 0, 0 });
+        FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 3072, 4096, 0, 0, 0, 0, 0, 0, 0, 0 });
         patts.Add(FnDragTarget.inputMap);
     }
 
@@ -1128,7 +1128,7 @@ public class BarManager : MonoBehaviour {
         if(!patts.Get<NbtCompound>("traf").Contains("ctd")) {
             patts.Get<NbtCompound>("traf").AddRange(new NbtTag[] { new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
         }
-        TDCyclesSliders tdcs = GameObject.Find("UI/Canvas/LightInteractionPanel/Panes/FuncEdit/Panel/TrafficOpts").GetComponent<TDCyclesSliders>();
+        TDCyclesSliders tdcs = GameObject.Find("UI/Canvas/LightInteractionPanel/Panes/FuncEdit/TrafficOpts").GetComponent<TDCyclesSliders>();
         tdcs.FetchTags();
         tdcs.Refresh();
         FnDragTarget.inputMap = patts.Get<NbtIntArray>("map");
