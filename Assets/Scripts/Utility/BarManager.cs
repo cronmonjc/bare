@@ -1128,6 +1128,9 @@ public class BarManager : MonoBehaviour {
         if(!patts.Get<NbtCompound>("traf").Contains("ctd")) {
             patts.Get<NbtCompound>("traf").AddRange(new NbtTag[] { new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
         }
+        TDCyclesSliders tdcs = GameObject.Find("UI/Canvas/LightInteractionPanel/Panes/FuncEdit/Panel/TrafficOpts").GetComponent<TDCyclesSliders>();
+        tdcs.FetchTags();
+        tdcs.Refresh();
         FnDragTarget.inputMap = patts.Get<NbtIntArray>("map");
 
         foreach(NbtTag alpha in socList) {

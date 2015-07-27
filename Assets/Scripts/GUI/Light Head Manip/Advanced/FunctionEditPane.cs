@@ -12,7 +12,7 @@ public class FunctionEditPane : MonoBehaviour {
     }
     public Text funcName, funcType;
     private Text previewText;
-    public GameObject paneParent, flashing, dimmer, traffic, otherHeadsWarn, testFlashing;
+    public GameObject paneParent, flashing, dimmer, traffic, trafficOpt, otherHeadsWarn, testFlashing;
     private ShowState _state, funcState;
     public ShowState state {
         get {
@@ -27,7 +27,7 @@ public class FunctionEditPane : MonoBehaviour {
     void OnEnable() {
         RetestStatic();
         if(previewText == null) {
-            previewText = testFlashing.GetComponentInChildren<Text>();
+            previewText = testFlashing.transform.Find("Label").GetComponent<Text>();
         }
 
         paneParent.SetActive(false);
@@ -185,6 +185,7 @@ public class FunctionEditPane : MonoBehaviour {
         //dimmer.SetActive(state == ShowState.DIMMER);
         dimmer.SetActive(false);
         traffic.SetActive(state == ShowState.TRAFFIC);
+        trafficOpt.SetActive(state == ShowState.TRAFFIC);
     }
 
     public void Retest() {
