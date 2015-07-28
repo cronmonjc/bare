@@ -183,7 +183,9 @@ public class NbtByteArrayRender : NbtRenderer {
             if(new Rect(indent, top, 64, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
-                menu.AddItem(new GUIContent("Mass Edit"), false, MassEdit);
+                menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
+                    NbtMassArrayEdit.EditArray(new Rect(indent, top, 64, 16), data);
+                });
 
                 menu.AddSeparator("");
 
@@ -211,10 +213,6 @@ public class NbtByteArrayRender : NbtRenderer {
                 value[i] = (byte)EditorGUI.IntField(new Rect(indent + 64 + (32 * (i % 16)), top, 32, 16), value[i]);
             }
         }
-    }
-
-    public void MassEdit() {
-        NbtMassArrayEdit.EditArray(data);
     }
 
     public override float Height {
@@ -533,7 +531,9 @@ public class NbtIntArrayRender : NbtRenderer {
             if(new Rect(indent, top, 64, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
-                menu.AddItem(new GUIContent("Mass Edit"), false, MassEdit);
+                menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
+                    NbtMassArrayEdit.EditArray(new Rect(indent, top, 64, 16), data);
+                });
 
                 menu.AddSeparator("");
 
@@ -558,10 +558,6 @@ public class NbtIntArrayRender : NbtRenderer {
                 value[i] = EditorGUI.IntField(new Rect(indent + 64 + (128 * (i % 4)), top, 128, 16), value[i]);
             }
         }
-    }
-
-    public void MassEdit() {
-        NbtMassArrayEdit.EditArray(data);
     }
 
     public override float Height {

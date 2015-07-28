@@ -8,7 +8,7 @@ public class NbtMassArrayEdit : EditorWindow {
     public NbtIntArray intTag;
     public string text;
 
-    public static void EditArray(NbtByteArray byteArray) {
+    public static void EditArray(Rect buttonRect, NbtByteArray byteArray) {
         NbtMassArrayEdit win = ScriptableObject.CreateInstance<NbtMassArrayEdit>();
         win.title = "Byte Array";
         win.byteTag = byteArray;
@@ -18,10 +18,10 @@ public class NbtMassArrayEdit : EditorWindow {
             sb.Append(byteArray.Value[i]);
         }
         win.text = sb.ToString();
-        win.Show();
+        win.ShowAsDropDown(buttonRect, new Vector2(512, 256));
     }
 
-    public static void EditArray(NbtIntArray intArray) {
+    public static void EditArray(Rect buttonRect, NbtIntArray intArray) {
         NbtMassArrayEdit win = ScriptableObject.CreateInstance<NbtMassArrayEdit>();
         win.title = "Int Array";
         win.intTag = intArray;
@@ -31,7 +31,7 @@ public class NbtMassArrayEdit : EditorWindow {
             sb.Append(intArray.Value[i]);
         }
         win.text = sb.ToString();
-        win.Show();
+        win.ShowAsDropDown(buttonRect, new Vector2(512, 256));
     }
 
     void OnGUI() {
