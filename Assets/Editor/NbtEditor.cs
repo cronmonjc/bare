@@ -2,6 +2,7 @@
 using UnityEditor;
 using fNbt;
 using System.Collections.Generic;
+using System;
 
 public class NbtEditor : EditorWindow {
     private Texture2D newFile, open, save, saveAs;
@@ -57,8 +58,10 @@ public class NbtEditor : EditorWindow {
             } else if(filePath != "") {
                 nbtFile = new NbtFile(filePath);
             }
-            if(nbtFile != null)
+            if(nbtFile != null) {
                 renderRoot = new NbtCompoundRender(nbtFile.RootTag);
+                renderRoot.expanded = true;
+            }
         }
 
         EditorGUI.DropShadowLabel(new Rect(152, 12, 32, 16), "File:");
@@ -70,6 +73,50 @@ public class NbtEditor : EditorWindow {
             renderRoot.RenderTag(false, 0, 0);
 
             GUI.EndScrollView();
+        }
+    }
+}
+
+public class ArrayLengthEditor : EditorWindow {
+    private NbtByteArray byteTag;
+    private NbtIntArray intTag;
+    public int len;
+
+    public static void Edit(Rect rect, NbtByteArray data) {
+        ArrayLengthEditor win = ScriptableObject.CreateInstance<ArrayLengthEditor>();
+        win.title = "Byte Array";
+        win.byteTag = data;
+        win.len = data.Value.Length;
+        win.ShowAsDropDown(rect, new Vector2(256, 32));
+    }
+
+    public static void Edit(Rect rect, NbtIntArray data) {
+        ArrayLengthEditor win = ScriptableObject.CreateInstance<ArrayLengthEditor>();
+        win.title = "Int Array";
+        win.intTag = data;
+        win.len = data.Value.Length;
+        win.ShowAsDropDown(rect, new Vector2(256, 32));
+    }
+
+    void OnGUI() {
+        if(byteTag != null || intTag != null) EditorGUI.LabelField(new Rect(10, 10, position.width - 20, 16), "Editing " + (byteTag == null ? intTag.Name : byteTag.Name));
+
+        len = EditorGUI.IntField(new Rect(10, 26, position.width - 20, 16), "Length:", len);
+
+        if(GUI.Button(new Rect(10, position.height - 26, position.width - 20, 16), "Apply")) {
+            if(byteTag != null) {
+                byte[] array = new byte[len];
+                Array.Copy(byteTag.Value, array, (len < byteTag.Value.Length ? len : byteTag.Value.Length));
+                byteTag.Value = array;
+                Close();
+            } else if(intTag != null) {
+                int[] array = new int[len];
+                Array.Copy(intTag.Value, array, (len < intTag.Value.Length ? len : intTag.Value.Length));
+                intTag.Value = array;
+                Close();
+            } else {
+                throw new ArgumentNullException("Window does not have a tag to assign value to!");
+            }
         }
     }
 }
@@ -106,7 +153,7 @@ public abstract class NbtRenderer {
             case NbtTagType.String:
                 return new NbtStringRender(tag as NbtString);
             default:
-                throw new System.ArgumentException("Tag not a legit tag.");
+                throw new ArgumentException("Tag not a legit tag.");
         }
     }
 
@@ -146,7 +193,7 @@ public class NbtByteRender : NbtRenderer {
         }
         try {
             data.Value = (byte)newVal;
-        } catch(System.Exception) { }
+        } catch(Exception) { }
     }
 
     public override float Height {
@@ -169,7 +216,7 @@ public class NbtByteRender : NbtRenderer {
 
 public class NbtByteArrayRender : NbtRenderer {
     NbtByteArray data;
-    bool expanded;
+    public bool expanded;
 
     public NbtByteArrayRender(NbtByteArray tag) {
         data = tag;
@@ -185,6 +232,10 @@ public class NbtByteArrayRender : NbtRenderer {
 
                 menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
                     NbtMassArrayEdit.EditArray(new Rect(indent, top, 64, 16), data);
+                });
+
+                menu.AddItem(new GUIContent("Edit Size"), false, delegate() {
+                    ArrayLengthEditor.Edit(new Rect(indent, top, 64, 16), data);
                 });
 
                 menu.AddSeparator("");
@@ -241,7 +292,7 @@ public class NbtByteArrayRender : NbtRenderer {
 
 public class NbtCompoundRender : NbtRenderer {
     NbtCompound data;
-    bool expanded;
+    public bool expanded;
     public List<NbtRenderer> children;
 
     public NbtCompoundRender(NbtCompound tag) {
@@ -308,6 +359,9 @@ public class NbtCompoundRender : NbtRenderer {
                     children.Add(new NbtStringRender(newb) { parent = this });
                 });
 
+                menu.AddSeparator("");
+                menu.AddItem(new GUIContent("Expand All Children"), false, RecursiveExpand);
+
                 if(parent != null) {
                     menu.AddSeparator("");
                     menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
@@ -328,6 +382,8 @@ public class NbtCompoundRender : NbtRenderer {
                 children[i].RenderTag(false, indent + 20, top + runningTop);
                 runningTop += children[i].Height;
             }
+        } else {
+            RecursiveCollapse();
         }
     }
 
@@ -355,6 +411,23 @@ public class NbtCompoundRender : NbtRenderer {
             ((NbtCompound)data.Parent).Remove(data);
         } else if(data.Parent is NbtList) {
             ((NbtList)data.Parent).Remove(data);
+        }
+    }
+
+    public void RecursiveExpand() {
+        expanded = true;
+        foreach(NbtRenderer child in children) {
+            if(child is NbtCompoundRender) ((NbtCompoundRender)child).RecursiveExpand();
+            else if(child is NbtListRender) ((NbtListRender)child).RecursiveExpand();
+        }
+    }
+    public void RecursiveCollapse() {
+        expanded = false;
+        foreach(NbtRenderer child in children) {
+            if(child is NbtCompoundRender) ((NbtCompoundRender)child).RecursiveCollapse();
+            else if(child is NbtListRender) ((NbtListRender)child).RecursiveCollapse();
+            else if(child is NbtByteArrayRender) ((NbtByteArrayRender)child).expanded = false;
+            else if(child is NbtIntArrayRender) ((NbtIntArrayRender)child).expanded = false;
         }
     }
 }
@@ -390,7 +463,7 @@ public class NbtDoubleRender : NbtRenderer {
         }
         try {
             data.Value = newVal;
-        } catch(System.Exception) { }
+        } catch(Exception) { }
     }
 
     public override float Height {
@@ -442,7 +515,7 @@ public class NbtFloatRender : NbtRenderer {
         }
         try {
             data.Value = newVal;
-        } catch(System.Exception) { }
+        } catch(Exception) { }
     }
 
     public override float Height {
@@ -494,7 +567,7 @@ public class NbtIntRender : NbtRenderer {
         }
         try {
             data.Value = (int)newVal;
-        } catch(System.Exception) { }
+        } catch(Exception) { }
     }
 
     public override float Height {
@@ -517,7 +590,7 @@ public class NbtIntRender : NbtRenderer {
 
 public class NbtIntArrayRender : NbtRenderer {
     NbtIntArray data;
-    bool expanded;
+    public bool expanded;
 
     public NbtIntArrayRender(NbtIntArray tag) {
         data = tag;
@@ -533,6 +606,10 @@ public class NbtIntArrayRender : NbtRenderer {
 
                 menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
                     NbtMassArrayEdit.EditArray(new Rect(indent, top, 64, 16), data);
+                });
+
+                menu.AddItem(new GUIContent("Edit Size"), false, delegate() {
+                    ArrayLengthEditor.Edit(new Rect(indent, top, 64, 16), data);
                 });
 
                 menu.AddSeparator("");
@@ -586,7 +663,7 @@ public class NbtIntArrayRender : NbtRenderer {
 
 public class NbtListRender : NbtRenderer {
     NbtList data;
-    bool expanded;
+    public bool expanded;
     public List<NbtRenderer> children;
 
     public NbtListRender(NbtList tag) {
@@ -747,6 +824,10 @@ public class NbtListRender : NbtRenderer {
 
                 menu.AddSeparator("");
 
+                menu.AddItem(new GUIContent("Expand All Children"), false, RecursiveExpand);
+
+                menu.AddSeparator("");
+
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -767,10 +848,10 @@ public class NbtListRender : NbtRenderer {
                 children[i].RenderTag(true, indent + 20, top + runningTop);
                 runningTop += children[i].Height;
             }
+        } else {
+            RecursiveCollapse();
         }
     }
-
-
 
     public override float Height {
         get {
@@ -797,6 +878,41 @@ public class NbtListRender : NbtRenderer {
         } else if(data.Parent is NbtList) {
             ((NbtList)data.Parent).Remove(data);
         }
+    }
+
+    public void RecursiveExpand() {
+        expanded = true;
+        if(data.ListType == NbtTagType.Compound) {
+            foreach(NbtRenderer child in children) {
+                ((NbtCompoundRender)child).RecursiveExpand();
+            }
+        } else if(data.ListType == NbtTagType.List) {
+            foreach(NbtRenderer child in children) {
+                ((NbtListRender)child).RecursiveExpand();
+            }
+        }
+    }
+
+    public void RecursiveCollapse() {
+        expanded = false;
+        if(data.ListType == NbtTagType.Compound) {
+            foreach(NbtRenderer child in children) {
+                ((NbtCompoundRender)child).RecursiveCollapse();
+            }
+        } else if(data.ListType == NbtTagType.List) {
+            foreach(NbtRenderer child in children) {
+                ((NbtListRender)child).RecursiveCollapse();
+            }
+        } else if(data.ListType == NbtTagType.IntArray) {
+            foreach(NbtRenderer child in children) {
+                ((NbtIntArrayRender)child).expanded = false;
+            }
+        } else if(data.ListType == NbtTagType.ByteArray) {
+            foreach(NbtRenderer child in children) {
+                ((NbtByteArrayRender)child).expanded = false;
+            }
+        }
+
     }
 }
 
@@ -831,7 +947,7 @@ public class NbtLongRender : NbtRenderer {
         }
         try {
             data.Value = newVal;
-        } catch(System.Exception) { }
+        } catch(Exception) { }
     }
 
     public override float Height {
@@ -885,7 +1001,7 @@ public class NbtShortRender : NbtRenderer {
         }
         try {
             data.Value = (short)newVal;
-        } catch(System.Exception) { }
+        } catch(Exception) { }
     }
 
     public override float Height {
