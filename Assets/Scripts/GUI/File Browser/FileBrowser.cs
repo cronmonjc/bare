@@ -139,7 +139,7 @@ public class FileBrowser : MonoBehaviour {
     }
 
     public void InvokeSave(bool force) {
-        if(!force && File.Exists(currFile)) {
+        if(!force && File.Exists(savingFile)) {
             Transform overconfirm = transform.Find("OverwriteConfirm");
             overconfirm.gameObject.SetActive(true);
             overconfirm.Find("head/pathlabel").GetComponent<Text>().text = savingFile;

@@ -18,7 +18,7 @@ public class NbtMassArrayEdit : EditorWindow {
             sb.Append(byteArray.Value[i]);
         }
         win.text = sb.ToString();
-        win.ShowAsDropDown(buttonRect, new Vector2(512, 256));
+        win.ShowAsDropDown(buttonRect, new Vector2(256, 128));
     }
 
     public static void EditArray(Rect buttonRect, NbtIntArray intArray) {
@@ -31,12 +31,12 @@ public class NbtMassArrayEdit : EditorWindow {
             sb.Append(intArray.Value[i]);
         }
         win.text = sb.ToString();
-        win.ShowAsDropDown(buttonRect, new Vector2(512, 256));
+        win.ShowAsDropDown(buttonRect, new Vector2(256, 128));
     }
 
     void OnGUI() {
         if(GUI.Button(new Rect(10, position.height - 26, position.width - 20, 16), "Apply")) {
-            string[] vals = text.Split(new string[] { " " }, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] vals = text.Split(new string[] { " ", "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
             if(byteTag != null) {
                 try {
                     byteTag.Value = new byte[vals.Length];
@@ -66,6 +66,7 @@ public class NbtMassArrayEdit : EditorWindow {
             }
         }
         if(byteTag != null || intTag != null) EditorGUI.LabelField(new Rect(10, 10, position.width - 20, 16), "Editing " + (byteTag == null ? intTag.Name : byteTag.Name));
+        EditorStyles.textField.wordWrap = EditorStyles.textArea.wordWrap = true;
         text = EditorGUI.TextArea(new Rect(10, 26, position.width - 20, position.height - 52), text);
     }
 }

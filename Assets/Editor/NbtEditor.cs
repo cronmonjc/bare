@@ -70,7 +70,7 @@ public class NbtEditor : EditorWindow {
         if(renderRoot != null) {
             fileScroll = GUI.BeginScrollView(new Rect(10, 46, position.width - 20, position.height - 56), fileScroll, new Rect(0, 0, position.width - 35, renderRoot.Height));
 
-            renderRoot.RenderTag(false, 0, 0);
+            renderRoot.RenderTag(false, 0, 0, position, fileScroll);
 
             GUI.EndScrollView();
         }
@@ -87,7 +87,7 @@ public class ArrayLengthEditor : EditorWindow {
         win.title = "Byte Array";
         win.byteTag = data;
         win.len = data.Value.Length;
-        win.ShowAsDropDown(rect, new Vector2(256, 32));
+        win.ShowAsDropDown(rect, new Vector2(256, 80));
     }
 
     public static void Edit(Rect rect, NbtIntArray data) {
@@ -95,7 +95,7 @@ public class ArrayLengthEditor : EditorWindow {
         win.title = "Int Array";
         win.intTag = data;
         win.len = data.Value.Length;
-        win.ShowAsDropDown(rect, new Vector2(256, 32));
+        win.ShowAsDropDown(rect, new Vector2(256, 80));
     }
 
     void OnGUI() {
@@ -124,7 +124,7 @@ public class ArrayLengthEditor : EditorWindow {
 public abstract class NbtRenderer {
     public NbtRenderer parent;
 
-    public abstract void RenderTag(bool suppressName, float indent, float top);
+    public abstract void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll);
 
     public abstract float Height { get; }
 
@@ -167,7 +167,7 @@ public class NbtByteRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -223,7 +223,7 @@ public class NbtByteArrayRender : NbtRenderer {
         expanded = false;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -231,11 +231,11 @@ public class NbtByteArrayRender : NbtRenderer {
                 GenericMenu menu = new GenericMenu();
 
                 menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
-                    NbtMassArrayEdit.EditArray(new Rect(indent, top, 64, 16), data);
+                    NbtMassArrayEdit.EditArray(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
                 });
 
                 menu.AddItem(new GUIContent("Edit Size"), false, delegate() {
-                    ArrayLengthEditor.Edit(new Rect(indent, top, 64, 16), data);
+                    ArrayLengthEditor.Edit(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
                 });
 
                 menu.AddSeparator("");
@@ -307,7 +307,7 @@ public class NbtCompoundRender : NbtRenderer {
         }
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -379,7 +379,7 @@ public class NbtCompoundRender : NbtRenderer {
         if(expanded) {
             float runningTop = 16f;
             for(int i = 0; i < children.Count; i++) {
-                children[i].RenderTag(false, indent + 20, top + runningTop);
+                children[i].RenderTag(false, indent + 20, top + runningTop, position, fileScroll);
                 runningTop += children[i].Height;
             }
         } else {
@@ -439,7 +439,7 @@ public class NbtDoubleRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -491,7 +491,7 @@ public class NbtFloatRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -543,7 +543,7 @@ public class NbtIntRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -597,7 +597,7 @@ public class NbtIntArrayRender : NbtRenderer {
         expanded = false;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -605,11 +605,11 @@ public class NbtIntArrayRender : NbtRenderer {
                 GenericMenu menu = new GenericMenu();
 
                 menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
-                    NbtMassArrayEdit.EditArray(new Rect(indent, top, 64, 16), data);
+                    NbtMassArrayEdit.EditArray(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
                 });
 
                 menu.AddItem(new GUIContent("Edit Size"), false, delegate() {
-                    ArrayLengthEditor.Edit(new Rect(indent, top, 64, 16), data);
+                    ArrayLengthEditor.Edit(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
                 });
 
                 menu.AddSeparator("");
@@ -678,7 +678,7 @@ public class NbtListRender : NbtRenderer {
         }
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -845,7 +845,7 @@ public class NbtListRender : NbtRenderer {
         if(expanded) {
             float runningTop = 16f;
             for(int i = 0; i < children.Count; i++) {
-                children[i].RenderTag(true, indent + 20, top + runningTop);
+                children[i].RenderTag(true, indent + 20, top + runningTop, position, fileScroll);
                 runningTop += children[i].Height;
             }
         } else {
@@ -923,7 +923,7 @@ public class NbtLongRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -975,7 +975,7 @@ public class NbtShortRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -1029,7 +1029,7 @@ public class NbtStringRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
