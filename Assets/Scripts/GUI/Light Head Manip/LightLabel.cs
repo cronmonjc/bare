@@ -396,7 +396,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if(cmpdName == null) {
                 Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
                 yield return null;
-            } else {
+            } else if(lh.GetCanEnable(FunctionEditPane.currFunc)) {
                 label2.text = label.text = "";
 
                 NbtCompound func = patts.Get<NbtCompound>(cmpdName);

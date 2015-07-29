@@ -475,6 +475,7 @@ public class BarManager : MonoBehaviour {
                     lh.lhd.funcs.Clear();
                     lh.shouldBeTD = true;
                     lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                    lh.AddBasicFunction(BasicFunction.FLASHING);
                 }
                 break;
             case TDOption.LG_SIX:
@@ -493,6 +494,7 @@ public class BarManager : MonoBehaviour {
                     lh.lhd.funcs.Clear();
                     lh.shouldBeTD = true;
                     lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                    lh.AddBasicFunction(BasicFunction.FLASHING);
                 }
                 break;
             case TDOption.SM_EIGHT:
@@ -512,6 +514,7 @@ public class BarManager : MonoBehaviour {
                     lh.lhd.funcs.Clear();
                     lh.shouldBeTD = true;
                     lh.AddBasicFunction(BasicFunction.TRAFFIC);
+                    lh.AddBasicFunction(BasicFunction.FLASHING);
                 }
                 break;
         }
