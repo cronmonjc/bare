@@ -37,7 +37,7 @@ public class BOMCables : MonoBehaviour {
         }
     }
 
-    public CableObject singleL, singleR, dualL, dualR, yCable, power, bar, circuit;
+    public CableObject singleL, singleR, dualL, dualR, yCable, power, bar, circuit, canMod;
 
     [System.NonSerialized]
     public byte flags, singleLCount, singleRCount, dualLCount, dualRCount, yCount;
@@ -46,9 +46,9 @@ public class BOMCables : MonoBehaviour {
     [System.NonSerialized]
     public bool second5, second6;
     [System.NonSerialized]
-    public string internLongPrefix, internShortPrefix, internSplitPart, circuitPrefix, externPowerPrefix, externCanPrefix, externHardPrefix;
+    public string internLongPrefix, internShortPrefix, internSplitPart, circuitPrefix, externPowerPrefix, externCanPrefix, externHardPrefix, canPart;
     [System.NonSerialized]
-    public uint extCanS, extCanL, extHardS, extHardL, intSingL, intSingS, intDualL, intDualS, intSplit, crtSing, crtDual, pwrShrt, pwrLong;
+    public uint intSingL, intSingS, intDualL, intDualS, intSplit, crtSing, crtDual, crtCan;
     [System.NonSerialized]
     public uint totalCost;
 
@@ -66,14 +66,10 @@ public class BOMCables : MonoBehaviour {
         externCanPrefix = externCmpd["CanPre"].StringValue;
         externHardPrefix = externCmpd["HardPre"].StringValue;
 
+        canPart = cmpd["canModPart"].StringValue;
 
-        NbtCompound priceSubCmpd = priceCmpd.Get<NbtCompound>("barCable");
-        extHardS = (uint)priceSubCmpd["hardS"].IntValue;
-        extHardL = (uint)priceSubCmpd["hardL"].IntValue;
-        extCanS = (uint)priceSubCmpd["canS"].IntValue;
-        extCanL = (uint)priceSubCmpd["canL"].IntValue;
 
-        priceSubCmpd = priceCmpd.Get<NbtCompound>("intern");
+        NbtCompound priceSubCmpd = priceCmpd.Get<NbtCompound>("intern");
         intSingS = (uint)priceSubCmpd["singS"].IntValue;
         intSingL = (uint)priceSubCmpd["singL"].IntValue;
         intDualS = (uint)priceSubCmpd["dualS"].IntValue;
@@ -83,10 +79,7 @@ public class BOMCables : MonoBehaviour {
         priceSubCmpd = priceCmpd.Get<NbtCompound>("circuit");
         crtSing = (uint)priceSubCmpd["sing"].IntValue;
         crtDual = (uint)priceSubCmpd["dual"].IntValue;
-
-        priceSubCmpd = priceCmpd.Get<NbtCompound>("power");
-        pwrShrt = (uint)priceSubCmpd["shrt"].IntValue;
-        pwrLong = (uint)priceSubCmpd["long"].IntValue;
+        crtCan = (uint)priceSubCmpd["canMod"].IntValue;
     }
 
     public void Refresh() {
@@ -216,6 +209,14 @@ public class BOMCables : MonoBehaviour {
         bar.quantity = 1;
         bar.text = (BarManager.useCAN ? externCanPrefix : externHardPrefix) + (opt.length) + " -- External Control Cable - " + (opt.length) + "'";
         totalCost += bar.cost = (BarManager.useCAN ? opt.canPrice : opt.hardPrice);
+
+        if(BarManager.useCAN) {
+            canMod.SetActive(true);
+            canMod.text = canPart + " -- CAN Breakout Box";
+            totalCost += canMod.cost = crtCan;
+        } else {
+            canMod.SetActive(false);
+        }
 
         if(BarManager.useCAN || BarManager.cableType == 1) {
             power.SetActive(true);

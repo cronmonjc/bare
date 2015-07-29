@@ -70,7 +70,7 @@ public class NbtEditor : EditorWindow {
         if(renderRoot != null) {
             fileScroll = GUI.BeginScrollView(new Rect(10, 46, position.width - 20, position.height - 56), fileScroll, new Rect(0, 0, position.width - 35, renderRoot.Height));
 
-            renderRoot.RenderTag(false, 0, 0, position, fileScroll);
+            renderRoot.RenderTag(false, 0, 0, position, fileScroll, this);
 
             GUI.EndScrollView();
         }
@@ -130,7 +130,7 @@ public class ArrayLengthEditor : EditorWindow {
 public abstract class NbtRenderer {
     public NbtRenderer parent;
 
-    public abstract void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll);
+    public abstract void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win);
 
     public abstract float Height { get; }
 
@@ -173,7 +173,7 @@ public class NbtByteRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -193,7 +193,12 @@ public class NbtByteRender : NbtRenderer {
             newVal = EditorGUI.IntField(new Rect(indent + 48, top, 32, 16), data.ByteValue);
             EditorGUI.HelpBox(new Rect(indent + 88, top, 110, 16), "Value: 0 to 255", MessageType.None);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             newVal = EditorGUI.IntField(new Rect(indent + 180, top, 32, 16), data.ByteValue);
             EditorGUI.HelpBox(new Rect(indent + 220, top, 110, 16), "Value: 0 to 255", MessageType.None);
         }
@@ -229,7 +234,7 @@ public class NbtByteArrayRender : NbtRenderer {
         expanded = false;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -257,7 +262,12 @@ public class NbtByteArrayRender : NbtRenderer {
 
         expanded = EditorGUI.Foldout(new Rect(indent, top, 64, 16), expanded, "ByteArr");
         if(!suppressName) {
-            data.Name = EditorGUI.TextField(new Rect(indent + 64, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 64, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             EditorGUI.HelpBox(new Rect(indent + 200, top, 110, 16), "Value: 0 to 255", MessageType.None);
         } else {
             EditorGUI.HelpBox(new Rect(indent + 60, top, 110, 16), "Value: 0 to 255", MessageType.None);
@@ -315,7 +325,7 @@ public class NbtCompoundRender : NbtRenderer {
         }
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -363,7 +373,7 @@ public class NbtCompoundRender : NbtRenderer {
                     children.Add(new NbtShortRender(newb) { parent = this });
                 });
                 menu.AddItem(new GUIContent("Add New/String Tag"), false, delegate() {
-                    var newb = new NbtString("newtag"); data.Add(newb);
+                    var newb = new NbtString("newtag", ""); data.Add(newb);
                     children.Add(new NbtStringRender(newb) { parent = this });
                 });
 
@@ -382,12 +392,17 @@ public class NbtCompoundRender : NbtRenderer {
 
         expanded = EditorGUI.Foldout(new Rect(indent, top, 48, 16), expanded, "Cmpd");
         if(!suppressName) {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
         }
         if(expanded) {
             float runningTop = 16f;
             for(int i = 0; i < children.Count; i++) {
-                children[i].RenderTag(false, indent + 20, top + runningTop, position, fileScroll);
+                children[i].RenderTag(false, indent + 20, top + runningTop, position, fileScroll, win);
                 runningTop += children[i].Height;
             }
         } else {
@@ -447,7 +462,7 @@ public class NbtDoubleRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -466,7 +481,12 @@ public class NbtDoubleRender : NbtRenderer {
         if(suppressName) {
             newVal = EditorGUI.DoubleField(new Rect(indent + 48, top, 128, 16), data.DoubleValue);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             newVal = EditorGUI.DoubleField(new Rect(indent + 180, top, 128, 16), data.DoubleValue);
         }
         try {
@@ -499,7 +519,7 @@ public class NbtFloatRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -518,7 +538,12 @@ public class NbtFloatRender : NbtRenderer {
         if(suppressName) {
             newVal = EditorGUI.FloatField(new Rect(indent + 48, top, 128, 16), data.FloatValue);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             newVal = EditorGUI.FloatField(new Rect(indent + 180, top, 128, 16), data.FloatValue);
         }
         try {
@@ -551,7 +576,7 @@ public class NbtIntRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -570,7 +595,12 @@ public class NbtIntRender : NbtRenderer {
         if(suppressName) {
             newVal = (uint)EditorGUI.LongField(new Rect(indent + 48, top, 128, 16), data.IntValue);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             newVal = (uint)EditorGUI.LongField(new Rect(indent + 180, top, 128, 16), data.IntValue);
         }
         try {
@@ -605,7 +635,7 @@ public class NbtIntArrayRender : NbtRenderer {
         expanded = false;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -633,7 +663,12 @@ public class NbtIntArrayRender : NbtRenderer {
 
         expanded = EditorGUI.Foldout(new Rect(indent, top, 64, 16), expanded, "IntArr");
         if(!suppressName) {
-            data.Name = EditorGUI.TextField(new Rect(indent + 64, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 64, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
         }
         if(expanded) {
             int[] value = data.Value;
@@ -688,7 +723,7 @@ public class NbtListRender : NbtRenderer {
         }
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -847,7 +882,12 @@ public class NbtListRender : NbtRenderer {
 
         expanded = EditorGUI.Foldout(new Rect(indent, top, 48, 16), expanded, "List");
         if(!suppressName) {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             EditorGUI.LabelField(new Rect(indent + 180, top, 128, 16), "Type <" + data.ListType + ">");
         } else {
             EditorGUI.LabelField(new Rect(indent + 48, top, 128, 16), "Type <" + data.ListType + ">");
@@ -855,7 +895,7 @@ public class NbtListRender : NbtRenderer {
         if(expanded) {
             float runningTop = 16f;
             for(int i = 0; i < children.Count; i++) {
-                children[i].RenderTag(true, indent + 20, top + runningTop, position, fileScroll);
+                children[i].RenderTag(true, indent + 20, top + runningTop, position, fileScroll, win);
                 runningTop += children[i].Height;
             }
         } else {
@@ -933,7 +973,7 @@ public class NbtLongRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -952,7 +992,12 @@ public class NbtLongRender : NbtRenderer {
         if(suppressName) {
             newVal = EditorGUI.LongField(new Rect(indent + 48, top, 128, 16), data.LongValue);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             newVal = EditorGUI.LongField(new Rect(indent + 180, top, 128, 16), data.LongValue);
         }
         try {
@@ -985,7 +1030,7 @@ public class NbtShortRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -1005,7 +1050,12 @@ public class NbtShortRender : NbtRenderer {
             newVal = EditorGUI.IntField(new Rect(indent + 48, top, 64, 16), data.ShortValue);
             EditorGUI.HelpBox(new Rect(indent + 120, top, 160, 16), "Value: -32768 to 32767", MessageType.None);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             newVal = EditorGUI.IntField(new Rect(indent + 180, top, 64, 16), data.ShortValue);
             EditorGUI.HelpBox(new Rect(indent + 252, top, 160, 16), "Value: -32768 to 32767", MessageType.None);
         }
@@ -1039,7 +1089,7 @@ public class NbtStringRender : NbtRenderer {
         data = tag;
     }
 
-    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll) {
+    public override void RenderTag(bool suppressName, float indent, float top, Rect position, Vector2 fileScroll, EditorWindow win) {
         Event evt = Event.current;
 
         if(evt.type == EventType.ContextClick) {
@@ -1057,7 +1107,12 @@ public class NbtStringRender : NbtRenderer {
         if(suppressName) {
             data.Value = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.StringValue);
         } else {
-            data.Name = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            string newName = EditorGUI.TextField(new Rect(indent + 48, top, 128, 16), data.Name);
+            if((data.Parent != null) && ((NbtCompound)data.Parent).Contains(newName) && ((NbtCompound)data.Parent)[newName] != data) {
+                win.ShowNotification(new GUIContent("Cannot rename tag: parent Compound already contains that name"));
+            } else {
+                data.Name = newName;
+            }
             data.Value = EditorGUI.TextField(new Rect(indent + 180, top, 128, 16), data.StringValue);
         }
     }

@@ -506,6 +506,12 @@ public class LightHead : MonoBehaviour {
     }
 
     public void TestSingleDual() {
+        if(lhd.funcs.Count > 1 && (lhd.funcs.Contains(BasicFunction.EMITTER) || lhd.funcs.Contains(BasicFunction.BLOCK_OFF))) {
+            lhd.funcs.RemoveRange(0, lhd.funcs.Count - 1);
+            TestSingleDual();
+            return;
+        }
+
         useSingle = useDual = false;
         switch(lhd.funcs.Count) {
             case 0:
@@ -547,11 +553,6 @@ public class LightHead : MonoBehaviour {
     }
 
     public void RefreshBasicFuncDefault() {
-        if(lhd.funcs.Count > 1 && (lhd.funcs.Contains(BasicFunction.EMITTER) || lhd.funcs.Contains(BasicFunction.BLOCK_OFF))) {
-            lhd.funcs.RemoveRange(0, lhd.funcs.Count - 1);
-            RefreshBasicFuncDefault();
-            return;
-        }
 
         switch(lhd.funcs.Count) {
             case 0:
