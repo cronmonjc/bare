@@ -106,16 +106,6 @@ public class FuncPattSelect : MonoBehaviour {
         }
         if(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT) {
             BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("patt").Value = (short)p.id;
-
-            foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
-                if(!(fe.IsColor2 ^ IsColor2)) {
-                    fe.Enable();
-                }
-            }
-
-            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-                ll.Refresh();
-            }
         } else {
             NbtCompound patCmpd = BarManager.inst.patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (IsColor2 ? "2" : "1"));
 
@@ -165,16 +155,18 @@ public class FuncPattSelect : MonoBehaviour {
                         break;
                 }
             }
+        }
 
-            foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
-                if(!(fe.IsColor2 ^ IsColor2)) {
-                    fe.Enable();
-                }
+        foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
+            if(!(fe.IsColor2 ^ IsColor2)) {
+                fe.Enable();
             }
+        }
 
-            foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-                ll.Refresh();
-            }
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(!alpha.gameObject.activeInHierarchy || !alpha.hasRealHead) continue;
+            alpha.PrefetchPatterns(FunctionEditPane.currFunc);
+            alpha.myLabel.Refresh();
         }
 
         FunctionEditPane.RetestStatic();
