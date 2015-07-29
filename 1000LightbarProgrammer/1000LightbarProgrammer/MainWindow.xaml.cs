@@ -237,7 +237,7 @@ namespace LightbarProg {
 
                     val = reader.ReadShort();
                     if(val != 0) {
-                        func.Add(new NbtShort("prog", val)); // Preset program number
+                        patt.Add(new NbtShort("prog", val)); // Preset program number
                     }
 
                     int[] mapping = patt.Get<NbtIntArray>("map").Value; // Then put in the input map.
@@ -355,15 +355,21 @@ namespace LightbarProg {
                     for(byte alpha = 0; alpha < 3; alpha++) { // Add traffic director's patterns 3x (left, right, center) (they should be the same anyway, James was lazy and didn't take out the extra two I guess)
                         writer.Write(val);
                     }
-                    writer.Write(func.Get<NbtShort>("ctd").Value); // Cycles TD value
-                    writer.Write(func.Get<NbtShort>("cwn").Value); // Cycles Warn value
+                    if(func.Contains("ctd"))
+                        writer.Write(func.Get<NbtShort>("ctd").Value); // Cycles TD value
+                    else
+                        writer.Write((short)0);
+                    if(func.Contains("cwn"))
+                        writer.Write(func.Get<NbtShort>("cwn").Value); // Cycles Warn value
+                    else
+                        writer.Write((short)0);
 
                     func = patt.Get<NbtCompound>("dim");
                     val = func.Get<NbtShort>("dimp").Value; // Dim Percentage, ignored last I checked
                     writer.Write(val);
 
-                    if(func.Contains("prog")) {
-                        val = func.Get<NbtShort>("prog").Value; // Preset program number
+                    if(patt.Contains("prog")) {
+                        val = patt.Get<NbtShort>("prog").Value; // Preset program number
                     } else {
                         val = 0; // Not a preset program
                     }
