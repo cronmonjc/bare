@@ -235,6 +235,12 @@ public class BOMCables : MonoBehaviour {
         tf.DrawString("Control Circuit - " + ((dualLCount + dualRCount) > 0 ? "Dual-Color Capable" : "Single-Color Only"), caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
             tf.DrawString("$" + (((dualLCount + dualRCount) > 0 ? crtDual : crtSing) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
+        top += 0.1;
+        if(BarManager.useCAN) {
+            tf.DrawString("CAN Breakout Box", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+            if(CameraControl.ShowPricing)
+                tf.DrawString("$" + ((crtCan) * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
+        }
 
         top += 0.15;
 
