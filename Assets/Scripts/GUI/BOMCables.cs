@@ -61,13 +61,13 @@ public class BOMCables : MonoBehaviour {
         internShortPrefix = internCmpd["shrt"].StringValue;
         internSplitPart = internCmpd["split"].StringValue;
 
-        circuitPrefix = externCmpd["circuit"].StringValue;
         externPowerPrefix = externCmpd["power"].StringValue;
         externCanPrefix = externCmpd["CanPre"].StringValue;
         externHardPrefix = externCmpd["HardPre"].StringValue;
 
         canPart = cmpd["canModPart"].StringValue;
-
+        circuitPrefix = cmpd["circuit"].StringValue;
+        
 
         NbtCompound priceSubCmpd = priceCmpd.Get<NbtCompound>("intern");
         intSingS = (uint)priceSubCmpd["singS"].IntValue;

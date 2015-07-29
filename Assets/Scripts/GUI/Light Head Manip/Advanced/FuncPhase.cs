@@ -23,6 +23,8 @@ public class FuncPhase : MonoBehaviour {
 
         NbtCompound patts = BarManager.inst.patts;
         bool enabled = false, disabled = false, selectable = false;
+        string clrText = "";
+
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
@@ -49,6 +51,15 @@ public class FuncPhase : MonoBehaviour {
                 disabled |= !thisEnabled;
 
                 selectable = true;
+                string[] clrs = alpha.lhd.style.name.Split('/');
+
+                if(clrText.Length > 0) {
+                    if(!clrText.StartsWith("Color"))
+                        if(!clrText.Equals(clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0]))
+                            clrText = "Color " + (IsColor2 ? "2" : "1");
+                } else {
+                    clrText = clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0];
+                }
             }
         }
 
@@ -56,13 +67,13 @@ public class FuncPhase : MonoBehaviour {
 
         if(!selectable) {
             CurrentlyB = false;
-            label.text = "Cannot Phase Color " + (IsColor2 ? "2" : "1");
+            label.text = "Cannot Phase " + clrText;
         } else {
             CurrentlyB = !disabled;
             if(enabled && disabled) {
-                label.text = "Color " + (IsColor2 ? "2" : "1") + " Mixed Phase";
+                label.text = clrText + " Mixed Phase";
             } else {
-                label.text = "Color " + (IsColor2 ? "2" : "1") + (enabled ? " Phase B" : " Phase A");
+                label.text = clrText + (enabled ? " Phase B" : " Phase A");
             }
         }
     }
