@@ -99,6 +99,12 @@ public class ArrayLengthEditor : EditorWindow {
     }
 
     void OnGUI() {
+        if(!EditorGUIUtility.isProSkin) {
+            Color oldColor = GUI.color;
+            GUI.color = new Color(0.9f, 0.9f, 0.9f, 1.0f);
+            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), EditorGUIUtility.whiteTexture);
+            GUI.color = oldColor;
+        }
         if(byteTag != null || intTag != null) EditorGUI.LabelField(new Rect(10, 10, position.width - 20, 16), "Editing " + (byteTag == null ? intTag.Name : byteTag.Name));
 
         len = EditorGUI.IntField(new Rect(10, 26, position.width - 20, 16), "Length:", len);
@@ -230,12 +236,14 @@ public class NbtByteArrayRender : NbtRenderer {
             if(new Rect(indent, top, 64, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                float t = top;
+
                 menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
-                    NbtMassArrayEdit.EditArray(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
+                    NbtMassArrayEdit.EditArray(new Rect(position.x + indent + 20, position.y - fileScroll.y + 48 + t, 64, 16), data);
                 });
 
                 menu.AddItem(new GUIContent("Edit Size"), false, delegate() {
-                    ArrayLengthEditor.Edit(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
+                    ArrayLengthEditor.Edit(new Rect(position.x + indent + 20, position.y - fileScroll.y + 48 + t, 64, 16), data);
                 });
 
                 menu.AddSeparator("");
@@ -604,12 +612,14 @@ public class NbtIntArrayRender : NbtRenderer {
             if(new Rect(indent, top, 64, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                float t = top;
+
                 menu.AddItem(new GUIContent("Mass Edit"), false, delegate() {
-                    NbtMassArrayEdit.EditArray(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
+                    NbtMassArrayEdit.EditArray(new Rect(position.x + indent + 20, position.y - fileScroll.y + 48 + t, 64, 16), data);
                 });
 
                 menu.AddItem(new GUIContent("Edit Size"), false, delegate() {
-                    ArrayLengthEditor.Edit(new Rect(position.x + indent, position.y - fileScroll.y + top, 64, 16), data);
+                    ArrayLengthEditor.Edit(new Rect(position.x + indent + 20, position.y - fileScroll.y + 48 + t, 64, 16), data);
                 });
 
                 menu.AddSeparator("");

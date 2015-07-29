@@ -35,6 +35,12 @@ public class NbtMassArrayEdit : EditorWindow {
     }
 
     void OnGUI() {
+        if(!EditorGUIUtility.isProSkin) {
+            Color oldColor = GUI.color;
+            GUI.color = new Color(0.9f, 0.9f, 0.9f, 1.0f);
+            GUI.DrawTexture(new Rect(0, 0, position.width, position.height), EditorGUIUtility.whiteTexture);
+            GUI.color = oldColor;
+        }
         if(GUI.Button(new Rect(10, position.height - 26, position.width - 20, 16), "Apply")) {
             string[] vals = text.Split(new string[] { " ", "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
             if(byteTag != null) {
