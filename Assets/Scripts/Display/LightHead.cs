@@ -496,7 +496,7 @@ public class LightHead : MonoBehaviour {
                 foreach(LightHead alpha in BarManager.inst.allHeads) {
                     alpha.shouldBeTD = false;
                 }
-                BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
+                BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
             }
             TestSingleDual();
             RefreshBasicFuncDefault();
@@ -695,7 +695,7 @@ public class LightHead : MonoBehaviour {
             }
         }
 
-        BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
+        BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
         BarManager.moddedBar = true;
     }
 

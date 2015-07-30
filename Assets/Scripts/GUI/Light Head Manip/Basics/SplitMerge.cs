@@ -39,7 +39,7 @@ public class SplitMerge : MonoBehaviour {
             }
         }
         cam.fs.Refresh();
-        BarManager.inst.StartCoroutine(BarManager.inst.RefreshBits());
+        BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
         StartCoroutine(BarManager.inst.RefreshAllLabels());
         BarManager.moddedBar = true;
     }

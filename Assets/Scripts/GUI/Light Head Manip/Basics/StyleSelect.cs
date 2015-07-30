@@ -125,5 +125,6 @@ public class StyleSelect : MonoBehaviour {
             alpha.Refresh();
         }
         FindObjectOfType<AdvPattDisp>().Refresh();
+        FindObjectOfType<AltNumberingHide>().Refresh();
     }
 }

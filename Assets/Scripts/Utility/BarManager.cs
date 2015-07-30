@@ -67,6 +67,8 @@ public class BarManager : MonoBehaviour {
     public static bool quitAfterSave = false;
     public static bool forceQuit = false;
 
+    public Toggle AlternateOutputs;
+
     [Serializable]
     public class ProgressStuff {
         public Slider progressBar;
@@ -186,7 +188,7 @@ public class BarManager : MonoBehaviour {
     void Start() {
         allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true));
         allSegs.AddRange(transform.GetComponentsInChildren<BarSegment>(true));
-        StartCoroutine(RefreshBits());
+        StartCoroutine(RefreshBitsIEnum());
         progressStuff.Shown = false;
 
 
@@ -431,7 +433,7 @@ public class BarManager : MonoBehaviour {
             }
             FindObjectOfType<CameraControl>().OnlyCamSelectedHead.Clear();
         }
-        StartCoroutine(RefreshBits());
+        StartCoroutine(RefreshBitsIEnum());
     }
 
     public void SetTDOption(int to) {
@@ -518,7 +520,7 @@ public class BarManager : MonoBehaviour {
                 }
                 break;
         }
-        yield return StartCoroutine(RefreshBits());
+        yield return StartCoroutine(RefreshBitsIEnum());
 
         foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
             ll.Refresh();
@@ -530,7 +532,11 @@ public class BarManager : MonoBehaviour {
         yield return null;
     }
 
-    public IEnumerator RefreshBits() {
+    public void RefreshBits() {
+        StartCoroutine(RefreshBitsIEnum());
+    }
+
+    public IEnumerator RefreshBitsIEnum() {
         RefreshingBits = true;
 
         Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>();
@@ -543,6 +549,30 @@ public class BarManager : MonoBehaviour {
 
         yield return new WaitForEndOfFrame();
         yield return new WaitForEndOfFrame();
+
+        bool altNumberingCenter = (AlternateOutputs.isOn) && (BarSize == 2 || BarSize == 4);
+        if(altNumberingCenter) {
+            if(BarSize == 2) {
+                altNumberingCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy);
+
+                StyleNode node = headDict["/Bar/DF/F/DS/L"].lhd.style;
+
+                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/DF/F/DS/R"].lhd.style);
+                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
+                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/DS/R"].lhd.style);
+            } else {
+                altNumberingCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy);
+                altNumberingCenter &= (headDict["/Bar/DN/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/L"].gameObject.activeInHierarchy);
+
+                StyleNode node = headDict["/Bar/DF/F/L"].lhd.style;
+
+                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/DN/F/L"].lhd.style);
+                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PN/F/L"].lhd.style);
+                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/L"].lhd.style);
+            }
+        }
+
+
         foreach(LightHead alpha in allHeads) {
             if(!alpha.gameObject.activeInHierarchy) continue;
             if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) {
@@ -611,7 +641,7 @@ public class BarManager : MonoBehaviour {
                                     if(alpha.isSmall) {
                                         alpha.FarWire = path[5] == "L";
                                         if(!alpha.FarWire) {
-                                            if(alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
+                                            if(!altNumberingCenter && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
                                                 alpha.myBit = 5;
                                             } else {
                                                 alpha.myBit = 6;
@@ -637,7 +667,7 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/DN/F
                             case "F":
                                 if(BarSize == 4) {
-                                    if((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style)) {
+                                    if(!altNumberingCenter && (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style)) {
                                         alpha.myBit = 5;
                                     } else {
                                         alpha.myBit = 6;
@@ -657,7 +687,7 @@ public class BarManager : MonoBehaviour {
                         switch(path[3]) {
                             case "F":
                                 if(BarSize == 4) {
-                                    if((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style)) {
+                                    if(!altNumberingCenter && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style)) {
                                         alpha.myBit = 6;
                                     } else {
                                         alpha.myBit = 5;
@@ -677,7 +707,7 @@ public class BarManager : MonoBehaviour {
                                     if(alpha.isSmall) {
                                         alpha.FarWire = path[5] == "R";
                                         if(!alpha.FarWire) {
-                                            if(alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
+                                            if(!altNumberingCenter && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
                                                 alpha.myBit = 6;
                                             } else {
                                                 alpha.myBit = 5;
@@ -1074,7 +1104,7 @@ public class BarManager : MonoBehaviour {
         cableType = opts["cabt"].IntValue;
         cableLength = opts["cabl"].IntValue;
 
-        yield return StartCoroutine(RefreshBits());
+        yield return StartCoroutine(RefreshBitsIEnum());
 
         NbtCompound order = root.Get<NbtCompound>("ordr");
         custName.text = order["name"].StringValue;
@@ -1142,7 +1172,7 @@ public class BarManager : MonoBehaviour {
             soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
         }
 
-        yield return StartCoroutine(RefreshBits());
+        yield return StartCoroutine(RefreshBitsIEnum());
 
         if(stts.Count > 0) {
             foreach(NbtTag alpha in stts) {
@@ -1165,7 +1195,7 @@ public class BarManager : MonoBehaviour {
                 lh.TestSingleDual();
             }
 
-            yield return StartCoroutine(RefreshBits());
+            yield return StartCoroutine(RefreshBitsIEnum());
         }
 
         foreach(NbtTag alpha in lensList) {
@@ -1395,7 +1425,7 @@ public class BarManager : MonoBehaviour {
 
         moddedBar = false;
 
-        RefreshBits();
+        RefreshBitsIEnum();
 
         CreatePatts();
     }
@@ -1509,6 +1539,11 @@ public class BarManager : MonoBehaviour {
     }
 
     public void OnApplicationQuit() {
+        if(fb.gameObject.activeInHierarchy) {
+            fb.gameObject.SetActive(false);
+            Application.CancelQuit();
+            return;
+        }
         if(funcBeingTested != AdvFunction.NONE) {
             Application.CancelQuit();
             EndPreview();
@@ -1517,6 +1552,7 @@ public class BarManager : MonoBehaviour {
         if(!forceQuit && moddedBar) {
             Application.CancelQuit();
             quitDialog.SetActive(true);
+            return;
         }
     }
 

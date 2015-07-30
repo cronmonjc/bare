@@ -369,7 +369,7 @@ namespace LightbarProg {
                     writer.Write(val);
 
                     if(patt.Contains("prog")) {
-                        val = patt.Get<NbtShort>("prog").Value; // Preset program number
+                        val = patt.Get<NbtByte>("prog").ShortValue; // Preset program number
                     } else {
                         val = 0; // Not a preset program
                     }
