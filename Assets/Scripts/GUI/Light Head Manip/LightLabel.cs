@@ -269,10 +269,12 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         } else {
                             t = t + "Enabled";
                         }
-                    } else {
+                    } else if(canEnable) {
                         t = t + "Disabled";
+                    } else {
+                        t = t + "Optic Fn Off";
                     }
-                    if(lh.lhd.style.isDualColor) {
+                    if(canEnable && lh.lhd.style.isDualColor) {
                         if(thisEnabled2) {
                             if(func.Contains("pat2")) {
                                 bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
@@ -306,7 +308,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     }
                     secondImage.color = clr;
                     label2.color = label.color = Color.white;
-                    t = t + "Disabled";
+                    t = t + "Optic Fn Off";
                 }
 
                 label2.text = label.text = t;

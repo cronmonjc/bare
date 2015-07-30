@@ -1379,7 +1379,7 @@ public class BarManager : MonoBehaviour {
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
             soc.ShowLong = true;
         foreach(Lens opt in LightDict.inst.lenses) {
-            if(opt.partSuffix == "C") {
+            if(opt.partSuffix == "C-C") {
                 foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true)) {
                     seg.lens = opt;
                 }
