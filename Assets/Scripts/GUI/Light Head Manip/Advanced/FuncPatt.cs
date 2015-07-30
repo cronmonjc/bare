@@ -19,7 +19,7 @@ public class FuncPatt : MonoBehaviour {
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
-            anyEnabled |= alpha.GetIsEnabled(FunctionEditPane.currFunc, fps.IsColor2);
+            anyEnabled |= alpha.GetIsEnabled(FunctionEditPane.currFunc, fps.IsColor2, true);
             on &= alpha.GetPattern(FunctionEditPane.currFunc, fps.IsColor2) == patt;
         }
 
