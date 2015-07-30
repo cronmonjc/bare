@@ -446,7 +446,7 @@ public class TraffPatt : Pattern {
 
         period6 = period8 = 0;
 
-        foreach(short alpha in center6) {
+        foreach(short alpha in left6) {
             switch((alpha >> 14) & 0x3) {
                 case 0:
                     period6 += t0;
@@ -462,7 +462,7 @@ public class TraffPatt : Pattern {
                     break;
             }
         }
-        foreach(short alpha in center8) {
+        foreach(short alpha in left8) {
             switch((alpha >> 14) & 0x3) {
                 case 0:
                     period8 += t0;
@@ -943,7 +943,7 @@ public class DCDoubleRotatorPattern : Pattern {
             }
         }
     }
-} 
+}
 
 #endregion
 
@@ -1215,7 +1215,7 @@ public class StyleNode {
     public override int GetHashCode() {
         return base.GetHashCode();
     }
-} 
+}
 
 #endregion
 

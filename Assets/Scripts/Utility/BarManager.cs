@@ -2145,7 +2145,8 @@ public class PDFExportJob : ThreadedJob {
                             List<string> partsB = new List<string>();
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
-                                if(alpha.GetIsEnabled(advfunc, false)) {
+
+                                if(alpha.GetIsEnabled(advfunc, false, true)) {
                                     if(alpha.GetPhaseB(advfunc, false)) {
                                         partsB.Add(color1Wire[alpha]);
                                     } else {
@@ -2207,7 +2208,7 @@ public class PDFExportJob : ThreadedJob {
                             // Write out enable
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
-                                if(alpha.GetIsEnabled(advfunc, false)) {
+                                if(alpha.GetIsEnabled(advfunc, false, true)) {
                                     parts.Add(color1Wire[alpha]);
                                 }
                                 if(alpha.lhd.style.isDualColor && alpha.GetIsEnabled(advfunc, true)) {

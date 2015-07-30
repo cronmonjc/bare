@@ -28,6 +28,9 @@ public class SameOutputWarning : IssueChecker {
         for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
             LightHead alpha = BarManager.inst.allHeads[h];
             if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead) {
+                if(alpha.Bit == 255) {
+                    Debug.LogWarning("An attempt was made to check LightHead " + alpha.transform.GetPath() + " for Same Output but that head has no bit assigned!", alpha);
+                }
                 if(alpha.myLabel != null) {
                     alpha.myLabel.DispError = false;
 

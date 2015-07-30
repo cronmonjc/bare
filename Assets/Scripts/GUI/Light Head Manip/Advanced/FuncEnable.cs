@@ -27,7 +27,7 @@ public class FuncEnable : MonoBehaviour {
         string clrText = "";
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
+            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected || !alpha.hasRealHead) continue;
 
             bool thisSelectable = false;
 

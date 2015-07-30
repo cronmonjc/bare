@@ -204,8 +204,8 @@ public class LightHead : MonoBehaviour {
 
     private Dictionary<AdvFunction, byte> cachedEnables;
 
-    public bool GetIsEnabled(AdvFunction fn, bool clr2 = false) {
-        if(!cachedEnables.ContainsKey(fn)) {
+    public bool GetIsEnabled(AdvFunction fn, bool clr2 = false, bool forceRefreshCache = false) {
+        if(forceRefreshCache || !cachedEnables.ContainsKey(fn)) {
             NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
 
             string tag = "e" + (isRear ? "r" : "f");
@@ -348,7 +348,6 @@ public class LightHead : MonoBehaviour {
 
     void LateUpdate() {
         m_knowsSelectedThisFrame = false;
-        cachedEnables.Clear();
     }
 
     //public bool IsUsingFunction(AdvFunction f) {
