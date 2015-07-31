@@ -1,11 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Net.Mail;
 using System.IO;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 public class ErrorLogging : MonoBehaviour {
     public static bool allowInputLogging = false;
     private static StreamWriter outputStream;
+
+    public InputField emailAddr, probdesc;
+    public Toggle screen, log;
 
     public static bool logInput {
         get {
@@ -37,9 +44,16 @@ public class ErrorLogging : MonoBehaviour {
     }
 
     public void SendEmail() {
-        MailMessage email = new MailMessage();
+        if(!screen.isOn && (!log.isOn || !allowInputLogging) && string.IsNullOrEmpty(probdesc.text)) {
+            ErrorText.inst.DispError("Message not sent; without any details, that email would be useless.");
+        } else {
+            StartCoroutine(BeginSend(new MailMessage()));
+        }
+    }
 
-        email.From = new MailAddress(System.Environment.UserDomainName + "@star1889.com");
+    public IEnumerator BeginSend(MailMessage email) {
+
+        email.From = new MailAddress("report-noreply@star1889.com");
         foreach(string alpha in sendTo) {
             email.To.Add(alpha);
         }
@@ -47,16 +61,68 @@ public class ErrorLogging : MonoBehaviour {
             email.CC.Add(alpha);
         }
 
-        email.Subject = "An Error Has Been Reported (1000 Configurator)";
+        email.Subject = "A Problem Has Been Reported (1000 Configurator)";
 
         System.Text.StringBuilder bodyBuilder = new System.Text.StringBuilder();
-        bodyBuilder.Append("An error has been reported on the 1000 Configurator by the user ");
+        bodyBuilder.Append("A problem has been reported on the 1000 Configurator by the user ");
+        bodyBuilder.Append(System.Environment.UserName);
+        bodyBuilder.Append(" from the domain ");
         bodyBuilder.Append(System.Environment.UserDomainName);
         bodyBuilder.Append(" on the machine ");
         bodyBuilder.Append(System.Environment.MachineName);
-        bodyBuilder.Append(".\n\n");
+        bodyBuilder.Append(".");
+
+        if(!string.IsNullOrEmpty(emailAddr.text)) {
+            email.ReplyTo = new MailAddress(emailAddr.text);
+
+            bodyBuilder.Append("  They gave an email with which to respond to: ");
+            bodyBuilder.Append(emailAddr.text);
+        }
+
+        bodyBuilder.Append("\n\n");
+
+        if(!string.IsNullOrEmpty(probdesc.text)) {
+            bodyBuilder.Append("The user had given this problem description: \n    ");
+            bodyBuilder.Append(probdesc.text);
+        } else {
+            bodyBuilder.Append("The user had given no problem description.");
+        }
 
         email.Body = bodyBuilder.ToString();
+
+        if(screen.isOn) {
+            Texture2D tex = new Texture2D(Screen.width, Screen.height);
+            yield return new WaitForEndOfFrame();
+            tex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            tex.Apply();
+
+            using(FileStream imgOut = new FileStream(Application.temporaryCachePath + "/err.png", FileMode.OpenOrCreate)) {
+                byte[] imgbytes = tex.EncodeToPNG();
+                imgOut.Write(imgbytes, 0, imgbytes.Length);
+            }
+
+            email.Attachments.Add(new Attachment(Application.temporaryCachePath + "/err.png"));
+        }
+        if(log.isOn && allowInputLogging) {
+            email.Attachments.Add(new Attachment(Application.temporaryCachePath + "/log.txt"));
+        }
+
+        SmtpClient outbox = new SmtpClient("smtpout.secureserver.net", 80);
+        outbox.DeliveryMethod = SmtpDeliveryMethod.Network;
+        outbox.Credentials = (ICredentialsByHost)new NetworkCredential("christophercheng@star1889.com", "christopher");
+        outbox.EnableSsl = false;
+        outbox.Timeout = 2000;
+        outbox.UseDefaultCredentials = false;
+
+        try {
+            outbox.Send(email);
+            ErrorText.inst.DispInfo("Your report has been successfully sent.");
+        } catch(System.Exception ex) {
+            Debug.LogException(ex);
+            ErrorText.inst.DispError("Could not send report email: " + ex.Message);
+        }
+
+        yield return null;
     }
 
     public void HandleLogging(string logDesc, string stackTrace, LogType type) {
