@@ -39,6 +39,9 @@ public class CameraControl : MonoBehaviour {
 
     public GameObject backButton;
     public GameObject timeSlider;
+    public GameObject previewDisclaimer;
+    public GameObject funcDisplay;
+    public Text funcDispText;
 
     public RefreshCallback RefreshOnSelect;
 
@@ -112,8 +115,53 @@ public class CameraControl : MonoBehaviour {
                 }
             }
 
-            backButton.SetActive(BarManager.inst.funcBeingTested != AdvFunction.NONE);
-            timeSlider.SetActive(BarManager.inst.funcBeingTested != AdvFunction.NONE);
+            if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
+                backButton.SetActive(true);
+                timeSlider.SetActive(true);
+                previewDisclaimer.SetActive(true);
+                funcDisplay.SetActive(true);
+                switch(BarManager.inst.funcBeingTested) {
+                    case AdvFunction.PRIO1:
+                        funcDispText.text = "Previewing Function: Priority 1";
+                        break;
+                    case AdvFunction.PRIO2:
+                        funcDispText.text = "Previewing Function: Priority 2";
+                        break;
+                    case AdvFunction.PRIO3:
+                        funcDispText.text = "Previewing Function: Priority 3";
+                        break;
+                    case AdvFunction.PRIO4:
+                        funcDispText.text = "Previewing Function: Priority 4";
+                        break;
+                    case AdvFunction.PRIO5:
+                        funcDispText.text = "Previewing Function: Priority 5";
+                        break;
+                    case AdvFunction.FTAKEDOWN:
+                        funcDispText.text = "Previewing Function: Flashing Pursuit";
+                        break;
+                    case AdvFunction.FALLEY:
+                        funcDispText.text = "Previewing Function: Flashing Alley";
+                        break;
+                    case AdvFunction.ICL:
+                        funcDispText.text = "Previewing Function: ICL";
+                        break;
+                    case AdvFunction.TRAFFIC_LEFT:
+                        funcDispText.text = "Previewing Function: Direct Left";
+                        break;
+                    case AdvFunction.TRAFFIC_RIGHT:
+                        funcDispText.text = "Previewing Function: Direct Right";
+                        break;
+                    default:
+                        funcDispText.text = "Previewing Unknown Function";
+                        break;
+                }
+            } else {
+                backButton.SetActive(false);
+                timeSlider.SetActive(false);
+                previewDisclaimer.SetActive(false);
+                funcDisplay.SetActive(false);
+            }
+
 
             if(ShowWhole || lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) {
                 selectedHead.Clear();
@@ -143,9 +191,12 @@ public class CameraControl : MonoBehaviour {
                         if(myCam.pixelRect.Contains(mousePos)) {
                             dragging = RectTransformUtility.ScreenPointToLocalPointInRectangle(((RectTransform)SelBox.parent), Input.mousePosition, this.myCam, out dragStart);
                             fs.Clear();
+                            if(ErrorLogging.logInput) ErrorLogging.LogInput("Began Selection");
                         }
                 } else if(Input.GetMouseButtonUp(0) && (BarManager.inst.funcBeingTested == AdvFunction.NONE)) { // LMB released
                     if(dragging) {
+                        if(ErrorLogging.logInput) ErrorLogging.LogInput("Finished Selection");
+
                         if(!(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))) {
                             selectedHead.Clear();
                             selectedLens.Clear();
@@ -158,6 +209,8 @@ public class CameraControl : MonoBehaviour {
                                     LightHead head = hit.transform.GetComponent<LightHead>();
                                     if(head != null) {
                                         selectedHead.Add(head);
+
+                                        if(ErrorLogging.logInput) ErrorLogging.LogInput("Single-selected head: " + head.transform.GetPath());
                                     }
                                 }
                             } else {
@@ -189,6 +242,15 @@ public class CameraControl : MonoBehaviour {
                                         }
                                     }
                                 }
+                                if(ErrorLogging.logInput) {
+                                    System.Text.StringBuilder inputBuilder = new System.Text.StringBuilder();
+                                    for(byte i = 0; i < selectedLens.Count; i++) {
+                                        inputBuilder.Append("\n    ");
+                                        inputBuilder.Append(selectedLens[i].transform.GetPath());
+                                    }
+
+                                    ErrorLogging.LogInput("Box-selected lenses: " + inputBuilder.ToString());
+                                }
                             }
                         } else {
                             selectedLens.Clear();
@@ -218,6 +280,16 @@ public class CameraControl : MonoBehaviour {
                                         }
                                     }
                                 }
+                            }
+                            
+                            if(ErrorLogging.logInput) {
+                                System.Text.StringBuilder inputBuilder = new System.Text.StringBuilder();
+                                for(byte i = 0; i < selectedHead.Count; i++) {
+                                    inputBuilder.Append("\n    ");
+                                    inputBuilder.Append(selectedHead[i].transform.GetPath());
+                                }
+
+                                ErrorLogging.LogInput("Box-selected heads: " + inputBuilder.ToString()); 
                             }
                         }
 

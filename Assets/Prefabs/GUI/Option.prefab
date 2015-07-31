@@ -13,6 +13,7 @@ GameObject:
   - 114: {fileID: 11488728}
   - 114: {fileID: 11464004}
   - 114: {fileID: 11469200}
+  - 114: {fileID: 11416900}
   m_Layer: 5
   m_Name: Option
   m_TagString: Untagged
@@ -55,6 +56,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &11416900
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 110134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4162a3398fba88408f1d7bf9cfae84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  label: {fileID: 11453312}
 --- !u!114 &11439038
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -219,6 +232,7 @@ MonoBehaviour:
   funcSel: {fileID: 0}
   optSel: {fileID: 0}
   stySel: {fileID: 0}
+  lensSel: {fileID: 0}
   fn: 0
   t: {fileID: 11469200}
   nrColor: {r: 1, g: .875558436, b: .498039186, a: 1}

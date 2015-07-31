@@ -194,7 +194,7 @@ public class BarManager : MonoBehaviour {
 
 
         foreach(Lens opt in LightDict.inst.lenses) {
-            if(opt.partSuffix == "C") {
+            if(opt.partSuffix == "C-C") {
                 foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true)) {
                     seg.lens = opt;
                 }

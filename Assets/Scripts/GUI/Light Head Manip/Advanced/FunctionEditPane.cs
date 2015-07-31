@@ -7,6 +7,7 @@ public class FunctionEditPane : MonoBehaviour {
     private CameraControl cam;
 
     public static AdvFunction currFunc;
+    private AdvFunction prevFunc = AdvFunction.NONE;
     public enum ShowState {
         NONE, FLASHING, DIMMER, TRAFFIC
     }
@@ -25,6 +26,8 @@ public class FunctionEditPane : MonoBehaviour {
     }
 
     void OnEnable() {
+        prevFunc = currFunc;
+
         RetestStatic();
         if(previewText == null) {
             previewText = testFlashing.transform.Find("Label").GetComponent<Text>();
@@ -178,6 +181,10 @@ public class FunctionEditPane : MonoBehaviour {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 
         paneParent.SetActive(cam.OnlyCamSelectedHead.Count > 0);
+
+        if(prevFunc != currFunc) {
+            OnEnable();
+        }
     }
 
     private void Set() {

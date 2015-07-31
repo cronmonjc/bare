@@ -706,21 +706,26 @@ public class LightHead : MonoBehaviour {
             SetStyle(newStyle.name);
         }
     }
+
+#if UNITY_EDITOR
     void OnDrawGizmos() {
         Gizmos.DrawIcon(transform.position, "Head" + (isSmall ? "Sm" : "Lg") + ".png", true);
         if(shouldBeTD) {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireCube(transform.position, Vector3.one);
         }
-        try {
-            Gizmos.color = Color.red;
-            if(basicPhaseB) Gizmos.DrawSphere(transform.position + new Vector3(0, 0.25f, 0), 0.25f);
-            if(basicPhaseB2) Gizmos.DrawSphere(transform.position + new Vector3(0, -0.25f, 0), 0.25f);
-        } catch(System.Exception) {
+        if(UnityEditor.EditorApplication.isPlaying) {
+            try {
+                Gizmos.color = Color.red;
+                if(basicPhaseB) Gizmos.DrawSphere(transform.position + new Vector3(0, 0.25f, 0), 0.25f);
+                if(basicPhaseB2) Gizmos.DrawSphere(transform.position + new Vector3(0, -0.25f, 0), 0.25f);
+            } catch(System.Exception) {
 
+            }
         }
         Gizmos.color = Color.white;
-    }
+    } 
+#endif
 
     public string PartNumber {
         get {

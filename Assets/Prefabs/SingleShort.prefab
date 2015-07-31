@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 463172}
   - 114: {fileID: 11452734}
   - 65: {fileID: 6568378}
+  - 114: {fileID: 11492156}
   m_Layer: 0
   m_Name: SingleShort
   m_TagString: Untagged
@@ -52,13 +53,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ccaaccd5e8b6e842b4a58f570db3f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Single: {fileID: 0}
-  DualL: {fileID: 0}
-  DualR: {fileID: 0}
   loc: 0
   isSmall: 1
-  myLights: []
-  bits: 00000000
+  FarWire: 0
+  myBit: 255
+--- !u!114 &11492156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 115140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4162a3398fba88408f1d7bf9cfae84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

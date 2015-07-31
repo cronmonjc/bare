@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 479012}
   - 114: {fileID: 11409634}
   - 65: {fileID: 6512740}
+  - 114: {fileID: 11493662}
   m_Layer: 0
   m_Name: Long
   m_TagString: Untagged
@@ -54,8 +55,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loc: 1
   isSmall: 0
-  FarWire: 0000000000
-  bits: 0000000000
+  FarWire: 0
+  myBit: 255
+--- !u!114 &11493662
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 123502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4162a3398fba88408f1d7bf9cfae84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

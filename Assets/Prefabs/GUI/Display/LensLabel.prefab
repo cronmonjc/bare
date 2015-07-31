@@ -44,6 +44,7 @@ GameObject:
   - 224: {fileID: 22431884}
   - 222: {fileID: 22233258}
   - 114: {fileID: 11406014}
+  - 114: {fileID: 11471930}
   m_Layer: 5
   m_Name: LensLabel
   m_TagString: Untagged
@@ -127,6 +128,17 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: asdf
+--- !u!114 &11471930
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 170468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4162a3398fba88408f1d7bf9cfae84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11478460
 MonoBehaviour:
   m_ObjectHideFlags: 1
