@@ -667,7 +667,7 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/DN/F
                             case "F":
                                 if(BarSize == 4) {
-                                    if(!altNumberingCenter && (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style)) {
+                                    if(!altNumberingCenter && ((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style))) {
                                         alpha.myBit = 5;
                                     } else {
                                         alpha.myBit = 6;
@@ -687,7 +687,7 @@ public class BarManager : MonoBehaviour {
                         switch(path[3]) {
                             case "F":
                                 if(BarSize == 4) {
-                                    if(!altNumberingCenter && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style)) {
+                                    if(!altNumberingCenter && ((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style))) {
                                         alpha.myBit = 6;
                                     } else {
                                         alpha.myBit = 5;

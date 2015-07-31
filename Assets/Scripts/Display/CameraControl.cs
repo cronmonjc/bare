@@ -17,7 +17,7 @@ public class CameraControl : MonoBehaviour {
 
     public FunctionSelect fs;
 
-    public RectTransform cover;
+    public RectTransform altnumber;
 
     public RectTransform SelBox;
     private SelBoxCollider sbc, msbc;
@@ -133,6 +133,10 @@ public class CameraControl : MonoBehaviour {
                         if(RectTransformUtility.RectangleContainsScreenPoint(cmc.transform as RectTransform, Input.mousePosition, UICam)) {
                             cont = false;
                         }
+                    }
+
+                    if(RectTransformUtility.RectangleContainsScreenPoint(altnumber, Input.mousePosition, myCam)) {
+                        cont = false;
                     }
 
                     if(cont)
