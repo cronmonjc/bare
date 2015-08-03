@@ -184,7 +184,7 @@ public class CameraControl : MonoBehaviour {
                     }
 
                     if(RectTransformUtility.RectangleContainsScreenPoint(altnumber, Input.mousePosition, myCam)) {
-                        cont = false;
+                        cont &= !altnumber.GetChild(0).gameObject.activeInHierarchy;
                     }
 
                     if(cont)
