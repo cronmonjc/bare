@@ -23,7 +23,9 @@ public class ErrorLogging : MonoBehaviour {
 
             if(value) {
                 outputStream = File.CreateText(Application.temporaryCachePath + "/log.txt");
+                outputStream.Write("Begin Log: " + System.DateTime.Now.ToString("yyyy-MM-dd @ hh:mm:ss tt"));
             } else {
+                if(outputStream != null) outputStream.Close();
                 if(File.Exists(Application.temporaryCachePath + "/log.txt")) File.Delete(Application.temporaryCachePath + "/log.txt");
                 outputStream = null;
             }
@@ -103,7 +105,7 @@ public class ErrorLogging : MonoBehaviour {
 
             email.Attachments.Add(new Attachment(Application.temporaryCachePath + "/err.png"));
         }
-        if(log.isOn && allowInputLogging) {
+        if(log.isOn && File.Exists(Application.temporaryCachePath + "/log.txt")) {
             email.Attachments.Add(new Attachment(Application.temporaryCachePath + "/log.txt"));
         }
 
@@ -157,6 +159,8 @@ public class ErrorLogging : MonoBehaviour {
         if(!allowInputLogging) return;
 
         if(Input.anyKeyDown) {
+            if(string.IsNullOrEmpty(Input.inputString)) return;
+
             char pressed = Input.inputString[0];
 
             if((pressed >= 'a' && pressed <= 'z') || (pressed >= '0' && pressed <= '9')) {

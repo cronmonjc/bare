@@ -124,6 +124,8 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         Vector3 newPos;
         RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, Input.mousePosition, cam, out newPos);
         dragItem.transform.position = newPos;
+
+        ErrorLogging.LogInput("Began Dragging Function 0x" + ((int)myFunc).ToString("X") + " from sidebar");
     }
 
     public void OnDrag(PointerEventData eventData) {
@@ -135,10 +137,14 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public void OnEndDrag(PointerEventData eventData) {
         draggedItem = null;
         dragItem.SetActive(false);
+
+        ErrorLogging.LogInput("Released Function");
     }
 
     public void OnDrop(PointerEventData eventData) {
         if(FnDragTarget.draggedItem != null) {
+            ErrorLogging.LogInput("Removed Function 0x" + FnDragTarget.inputMap.Value[FnDragTarget.draggedItem.key].ToString("X") + " from " + FnDragTarget.draggedItem.key);
+
             FnDragTarget.inputMap.Value[FnDragTarget.draggedItem.key] = 0;
             BarManager.moddedBar = true;
             if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");

@@ -18,6 +18,8 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
         draggedItem = this;
         dragItem.gameObject.SetActive(true);
+
+        ErrorLogging.LogInput("Began Dragging Function 0x" + ((int)inputMap.Value[key]).ToString("X") + " from " + key);
     }
 
     public void OnDrag(PointerEventData eventData) {
@@ -31,17 +33,24 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     public void OnEndDrag(PointerEventData eventData) {
         draggedItem = null;
         dragItem.SetActive(false);
+
+        ErrorLogging.LogInput("Released Function");
     }
 
     public void OnDrop(PointerEventData eventData) {
         if(FnDrag.draggedItem != null) {
             int newFunc = (int)FnDrag.draggedItem.myFunc;
+
             int[] val = inputMap.Value;
             if((val[key] | newFunc) == (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN) &&
                 (val[key] != (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN))) {
                 val[key] = (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN);
+
+                ErrorLogging.LogInput("Assigned Function 0xC00 to " + key);
             } else {
                 val[key] = newFunc;
+
+                ErrorLogging.LogInput("Assigned Function 0x" + newFunc.ToString("X") + " to " + key);
             }
 
             for(int i = 0; i < 20; i++) {
@@ -56,12 +65,17 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         } else if(FnDragTarget.draggedItem != null) {
             int[] val = inputMap.Value;
             int newFunc = val[FnDragTarget.draggedItem.key];
+
             val[FnDragTarget.draggedItem.key] = 0;
             if((val[key] | newFunc) == (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN) &&
                 (val[key] != (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN))) {
                 val[key] = (int)(AdvFunction.FALLEY | AdvFunction.FTAKEDOWN);
+
+                ErrorLogging.LogInput("Moved Function 0x" + newFunc.ToString("X") + " from " + FnDragTarget.draggedItem.key + " to " + key + " - merged");
             } else {
                 val[key] = newFunc;
+
+                ErrorLogging.LogInput("Moved Function 0x" + newFunc.ToString("X") + " from " + FnDragTarget.draggedItem.key + " to " + key);
             }
             inputMap.Value = val;
             BarManager.moddedBar = true;
