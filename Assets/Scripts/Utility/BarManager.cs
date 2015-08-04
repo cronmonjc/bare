@@ -414,6 +414,8 @@ public class BarManager : MonoBehaviour {
             if(!sliding) {
                 SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to;
                 SizeSlider.value = to;
+            } else if(ErrorLogging.logInput) {
+                ErrorLogging.LogInput("Set Size to " + to);
             }
 
             td = TDOption.NONE;
@@ -1404,7 +1406,10 @@ public class BarManager : MonoBehaviour {
         foreach(LightHead lh in allHeads) {
             lh.lhd.funcs.Clear();
             lh.RefreshBasicFuncDefault();
-            if(lh.myLabel != null) lh.myLabel.Refresh();
+            if(lh.myLabel != null) {
+                lh.myLabel.DispError = false;
+                lh.myLabel.Refresh();
+            }
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
             soc.ShowLong = true;
@@ -1737,8 +1742,8 @@ public class PDFExportJob : ThreadedJob {
 
         try {
             doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
-            doc.Info.Creator = "1000 Lightbar Configurator";
-            doc.Info.Title = "1000 Lightbar Configuration";
+            doc.Info.Creator = "Phaser Lightbar Configurator";
+            doc.Info.Title = "Phaser Lightbar Configuration";
             if((BarManager.canPub & 0x1) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : Overview...", currPage++, pages);
@@ -1779,7 +1784,7 @@ public class PDFExportJob : ThreadedJob {
                     progressText = string.Format("Publishing Page {0}/{1} : Output Map...", currPage++, pages);
                     progressPercentage = 90;
                 }
-                OutputMapPage(doc.AddPage(), capRect); 
+                OutputMapPage(doc.AddPage(), capRect);
             }
             lock(progressStuff) {
                 progressText = "Saving...";
@@ -1819,7 +1824,7 @@ public class PDFExportJob : ThreadedJob {
         progressPercentage = 20;
 
         tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Star 1000", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Star Phaser", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
         tf.DrawString("Model " + BarModel + " - " + BarWidth, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
 
         tf.Alignment = XParagraphAlignment.Left;
@@ -1909,7 +1914,7 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString(System.DateTime.Now.ToString("MMM dd, yyyy"), courier, XBrushes.Black, new XRect(6.25, top + 0.2, 3.0, 0.2));
 
         tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
-        tf.DrawString(notes, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
+        tf.DrawString(notes + "\nFilename: " + filename, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
 
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
@@ -2311,6 +2316,9 @@ public class PDFExportJob : ThreadedJob {
                                 tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.3));
                             }
                             break;
+                        case 0x200: // DIM
+                            tf.DrawString("Dimmer", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.2));
+                            break;
                         default:
                             tf.DrawString("Steady Burn", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.2));
                             break;
@@ -2342,14 +2350,13 @@ public class PDFExportJob : ThreadedJob {
         XTextFormatter tf = new XTextFormatter(gfx);
 
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
-        XFont caliMd = new XFont("Calibri", new XUnit(10, XGraphicsUnit.Point).Inch);
         XFont cali = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
         XPen border = new XPen(XColors.Black, 0.025);
 
         tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("1000 Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Phaser Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
         tf.Alignment = XParagraphAlignment.Left;
 
         tf.DrawString("Initials", caliSm, XBrushes.Black, new XRect(0.5, 1.0, 0.5, 0.1));
@@ -2413,93 +2420,93 @@ public class PDFExportJob : ThreadedJob {
 
         gfx.DrawLine(new XPen(XColors.Black, 0.02), 5.85, top - 0.35, 7.0, top - 0.35);
 
-        top += 0.1;
-        gfx.DrawLine(border, 0.5, top, 8.0, top);
+        //top += 0.1;
+        //gfx.DrawLine(border, 0.5, top, 8.0, top);
 
-        tf.DrawString("In Use", caliBold, XBrushes.Black, new XRect(0.7, top, 0.7, 0.1));
-        tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-        tf.DrawString((useCAN ? "Switch Used" : "Wire Color Used"), caliBold, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-        if(!useCAN) tf.DrawString("AWG", caliBold, XBrushes.Black, new XRect(7.5, top, 0.4, 0.1));
-        top += 0.2;
+        //tf.DrawString("In Use", caliBold, XBrushes.Black, new XRect(0.7, top, 0.7, 0.1));
+        //tf.DrawString("Function", caliBold, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //tf.DrawString((useCAN ? "Switch Used" : "Wire Color Used"), caliBold, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //if(!useCAN) tf.DrawString("AWG", caliBold, XBrushes.Black, new XRect(7.5, top, 0.4, 0.1));
+        //top += 0.2;
 
-        int[] inputMap = patts.Get<NbtIntArray>("map").Value;
-        bool alt = false;
-        if(useCAN) {
-            for(int i = 0; i < 20; i++) {
-                if(alt) {
-                    gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
-                }
-                alt = !alt;
-                gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-                if(inputMap[i] == 0) {
-                    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-                    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-                    tf.DrawString(" -- ", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-                } else {
-                    tf.DrawString(GetFuncFromMap(i), caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-                }
-                tf.DrawString(GetInput(i), caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-                top += 0.2;
-            }
+        //int[] inputMap = patts.Get<NbtIntArray>("map").Value;
+        //bool alt = false;
+        //if(useCAN) {
+        //    for(int i = 0; i < 20; i++) {
+        //        if(alt) {
+        //            gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+        //        }
+        //        alt = !alt;
+        //        gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //        if(inputMap[i] == 0) {
+        //            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //            tf.DrawString(" -- ", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //        } else {
+        //            tf.DrawString(GetFuncFromMap(i), caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //        }
+        //        tf.DrawString(GetInput(i), caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //        top += 0.2;
+        //    }
 
-            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-            tf.DrawString("Power", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-            tf.DrawString("P5, Pin 9", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-            top += 0.2;
+        //    gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //    tf.DrawString("Power", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //    tf.DrawString("P5, Pin 9", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //    top += 0.2;
 
-            gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
-            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-            tf.DrawString("Ground", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-            tf.DrawString("P5, Pin 10", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-            top += 0.2;
-        } else {
-            for(int i = 0; i < 12; i++) {
-                if(alt) {
-                    gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
-                }
-                alt = !alt;
-                gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-                if(inputMap[i] == 0) {
-                    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-                    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-                    tf.DrawString(" -- ", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-                } else {
-                    tf.DrawString(GetFuncFromMap(i), caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-                }
-                tf.DrawString(GetInput(i), caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-                tf.DrawString("22", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
-                top += 0.2;
-            }
+        //    gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+        //    gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //    tf.DrawString("Ground", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //    tf.DrawString("P5, Pin 10", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //    top += 0.2;
+        //} else {
+        //    for(int i = 0; i < 12; i++) {
+        //        if(alt) {
+        //            gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+        //        }
+        //        alt = !alt;
+        //        gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //        if(inputMap[i] == 0) {
+        //            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //            tf.DrawString(" -- ", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //        } else {
+        //            tf.DrawString(GetFuncFromMap(i), caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //        }
+        //        tf.DrawString(GetInput(i), caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //        tf.DrawString("22", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+        //        top += 0.2;
+        //    }
 
-            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-            tf.DrawString("Shield", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-            tf.DrawString("Bare", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-            tf.DrawString("22", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
-            top += 0.2;
+        //    gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //    tf.DrawString("Shield", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //    tf.DrawString("Bare", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //    tf.DrawString("22", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+        //    top += 0.2;
 
-            gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
-            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-            tf.DrawString("Power", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-            tf.DrawString("Red", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-            tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
-            top += 0.2;
+        //    gfx.DrawRectangle(XBrushes.LightGray, new XRect(0.5, top, 7.5, 0.2));
+        //    gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //    tf.DrawString("Power", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //    tf.DrawString("Red", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //    tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+        //    top += 0.2;
 
-            gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
-            gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
-            gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
-            tf.DrawString("Ground", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
-            tf.DrawString("Black", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
-            tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
-            top += 0.2;
-        }
+        //    gfx.DrawRectangle(border, XBrushes.White, new XRect(0.8, top, 0.2, 0.2));
+        //    gfx.DrawLine(border, 0.8, top, 1.0, top + 0.2);
+        //    gfx.DrawLine(border, 0.8, top + 0.2, 1.0, top);
+        //    tf.DrawString("Ground", caliMd, XBrushes.Black, new XRect(1.5, top, 2.0, 0.1));
+        //    tf.DrawString("Black", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
+        //    tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
+        //    top += 0.2;
+        //}
     }
 
     public void OutputMapPage(PdfPage p, Rect capRect) {

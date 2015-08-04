@@ -22,11 +22,10 @@ public class ErrorLogging : MonoBehaviour {
             allowInputLogging = value;
 
             if(value) {
-                outputStream = File.CreateText(Application.temporaryCachePath + "/log.txt");
-                outputStream.Write("Begin Log: " + System.DateTime.Now.ToString("yyyy-MM-dd @ hh:mm:ss tt"));
+                outputStream = new StreamWriter(new MemoryStream(4*1024*1024));
+                outputStream.Write("Begin Log: " + System.DateTime.Now.ToString("yyyy-MM-dd @ hh:mm:ss tt") + "\n");
             } else {
-                if(outputStream != null) outputStream.Close();
-                if(File.Exists(Application.temporaryCachePath + "/log.txt")) File.Delete(Application.temporaryCachePath + "/log.txt");
+                if(outputStream != null) outputStream.Dispose();
                 outputStream = null;
             }
         }
@@ -49,6 +48,7 @@ public class ErrorLogging : MonoBehaviour {
         if(!screen.isOn && (!log.isOn || !allowInputLogging) && string.IsNullOrEmpty(probdesc.text)) {
             ErrorText.inst.DispError("Message not sent; without any details, that email would be useless.");
         } else {
+            ErrorText.inst.DispInfo("Starting to send message...");
             StartCoroutine(BeginSend(new MailMessage()));
         }
     }
@@ -63,10 +63,10 @@ public class ErrorLogging : MonoBehaviour {
             email.CC.Add(alpha);
         }
 
-        email.Subject = "A Problem Has Been Reported (1000 Configurator)";
+        email.Subject = "A Problem Has Been Reported (Phaser Configurator)";
 
         System.Text.StringBuilder bodyBuilder = new System.Text.StringBuilder();
-        bodyBuilder.Append("A problem has been reported on the 1000 Configurator by the user ");
+        bodyBuilder.Append("A problem has been reported on the Phaser Configurator by the user ");
         bodyBuilder.Append(System.Environment.UserName);
         bodyBuilder.Append(" from the domain ");
         bodyBuilder.Append(System.Environment.UserDomainName);
@@ -92,21 +92,22 @@ public class ErrorLogging : MonoBehaviour {
 
         email.Body = bodyBuilder.ToString();
 
+        MemoryStream screenMem = null;
         if(screen.isOn) {
             Texture2D tex = new Texture2D(Screen.width, Screen.height);
             yield return new WaitForEndOfFrame();
             tex.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
             tex.Apply();
 
-            using(FileStream imgOut = new FileStream(Application.temporaryCachePath + "/err.png", FileMode.OpenOrCreate)) {
-                byte[] imgbytes = tex.EncodeToPNG();
-                imgOut.Write(imgbytes, 0, imgbytes.Length);
-            }
+            screenMem = new MemoryStream(tex.EncodeToPNG());
 
-            email.Attachments.Add(new Attachment(Application.temporaryCachePath + "/err.png"));
+            email.Attachments.Add(new Attachment(screenMem, "err.png", "image/png"));
         }
-        if(log.isOn && File.Exists(Application.temporaryCachePath + "/log.txt")) {
-            email.Attachments.Add(new Attachment(Application.temporaryCachePath + "/log.txt"));
+
+        if(log.isOn && outputStream != null) {
+            outputStream.Flush();
+            outputStream.BaseStream.Seek(0, SeekOrigin.Begin);
+            email.Attachments.Add(new Attachment(outputStream.BaseStream, "log.txt", System.Net.Mime.MediaTypeNames.Text.Plain));
         }
 
         SmtpClient outbox = new SmtpClient("smtpout.secureserver.net", 80);
@@ -119,9 +120,14 @@ public class ErrorLogging : MonoBehaviour {
         try {
             outbox.Send(email);
             ErrorText.inst.DispInfo("Your report has been successfully sent.");
+
         } catch(System.Exception ex) {
             Debug.LogException(ex);
             ErrorText.inst.DispError("Could not send report email: " + ex.Message);
+        } finally {
+            email.Dispose();
+
+            if(screenMem != null) screenMem.Dispose();
         }
 
         yield return null;
@@ -151,91 +157,11 @@ public class ErrorLogging : MonoBehaviour {
 
         outputStream.WriteLine(logDesc);
         outputStream.WriteLine("---@ " + stackTrace);
-        outputStream.Write("\n");
-        outputStream.Flush();
-    }
-
-    void Update() {
-        if(!allowInputLogging) return;
-
-        if(Input.anyKeyDown) {
-            if(string.IsNullOrEmpty(Input.inputString)) return;
-
-            char pressed = Input.inputString[0];
-
-            if((pressed >= 'a' && pressed <= 'z') || (pressed >= '0' && pressed <= '9')) {
-                string modifiers = "" + pressed.ToString().ToUpper();
-
-                if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) modifiers = "Shift+" + modifiers;
-                if(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) modifiers = "Alt+" + modifiers;
-                if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) modifiers = "Ctrl+" + modifiers;
-                LogInput(modifiers);
-            } else {
-                switch(pressed) {
-                    case '\b':
-                        LogInput("Backspace");
-                        break;
-                    case '\n':
-                    case '\r':
-                        LogInput("Enter");
-                        break;
-                    case '-':
-                    case '_':
-                    case '=':
-                    case '+':
-                    case '[':
-                    case ']':
-                    case '{':
-                    case '}':
-                    case ';':
-                    case ':':
-                    case ',':
-                    case '<':
-                    case '.':
-                    case '>':
-                    case '/':
-                    case '?':
-                    case '\'':
-                    case '\"':
-                    case '|':
-                    case '\\':
-                    case '`':
-                    case '~':
-                        string modifiers = "" + pressed;
-
-                        if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) modifiers = "Shift+" + modifiers;
-                        if(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)) modifiers = "Alt+" + modifiers;
-                        if(Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) modifiers = "Ctrl+" + modifiers;
-                        LogInput(modifiers);
-                        break;
-                    default:
-                        if(Input.GetKeyDown(KeyCode.Tab)) {
-                            LogInput("Tab");
-                        } else if(Input.GetKeyDown(KeyCode.Insert)) {
-                            LogInput("Insert");
-                        } else if(Input.GetKeyDown(KeyCode.Delete)) {
-                            LogInput("Delete");
-                        } else if(Input.GetKeyDown(KeyCode.Home)) {
-                            LogInput("Home");
-                        } else if(Input.GetKeyDown(KeyCode.End)) {
-                            LogInput("End");
-                        } else if(Input.GetKeyDown(KeyCode.PageUp)) {
-                            LogInput("Page Up");
-                        } else if(Input.GetKeyDown(KeyCode.PageDown)) {
-                            LogInput("Page Down");
-                        } else if(Input.GetKeyDown(KeyCode.Escape)) {
-                            LogInput("Escape");
-                        }
-                        break;
-                }
-            }
-        }
     }
 
     public static void LogInput(string inputDesc) {
         if(!allowInputLogging) return;
 
-        outputStream.WriteLine("[Input] " + inputDesc + "\n");
-        outputStream.Flush();
+        outputStream.WriteLine("[Input] " + inputDesc);
     }
 }

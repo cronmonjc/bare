@@ -31,8 +31,10 @@ public class ToFnEdit : MonoBehaviour {
 
         LightLabel.showPatt = (FunctionEditPane.currFunc != AdvFunction.NONE);
 
-        foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-            ll.Refresh();
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(!alpha.gameObject.activeInHierarchy || !alpha.hasRealHead) continue;
+            if(LightLabel.showPatt) alpha.PrefetchPatterns(FunctionEditPane.currFunc);
+            alpha.myLabel.Refresh();
         }
 
         if(FuncEnable.clr1 != null) FuncEnable.clr1.Retest();

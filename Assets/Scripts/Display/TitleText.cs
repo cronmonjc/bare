@@ -23,7 +23,7 @@ public class TitleText : MonoBehaviour {
         } else if(preset.Length > 1) {
             t.text = "New " + preset + (BarManager.moddedBar ? "**" : "");
         } else {
-            t.text = "New 1000-Series Light Bar" + (BarManager.moddedBar ? "**" : "");
+            t.text = "New Phaser Light Bar" + (BarManager.moddedBar ? "**" : "");
         }
     }
 }
