@@ -4,52 +4,95 @@ using System.IO;
 using fNbt;
 using UnityEngine;
 
+/// <summary>
+/// Class that manages the dictionary of options for lenses, optics, styles, patterns... everything found in the library file.
+/// </summary>
 public class LightDict : MonoBehaviour {
+    /// <summary>
+    /// A static reference to the one and only instance of this class.
+    /// </summary>
     public static LightDict inst;
+    /// <summary>
+    /// A static reference to the one and only instance of the Steady Burn Pattern.
+    /// </summary>
     public static SteadyPattern stdy;
+    /// <summary>
+    /// A Dictionary containing all of the different optic and style options, organized by location.
+    /// </summary>
     public Dictionary<Location, LocationNode> lights;
+    /// <summary>
+    /// A List of all the lens options available.
+    /// </summary>
     public List<Lens> lenses;
+    /// <summary>
+    /// A List of what functions are considered "steady burn" functions.  Set via the Unity Inspector.
+    /// </summary>
     public List<AdvFunction> steadyBurn;
-    public List<Pattern> flashPatts, tdPatts;
+    /// <summary>
+    /// A List of Patterns for flashing heads.
+    /// </summary>
+    public List<Pattern> flashPatts;
+    /// <summary>
+    /// A List of Patterns for traffic director heads.
+    /// </summary>
+    public List<Pattern> tdPatts;
+    /// <summary>
+    /// How long a single pattern tick is in units of 10ms.
+    /// </summary>
     [System.NonSerialized]
     public short pattBase = 0;
+    /// <summary>
+    /// A reference to a BOMCables object, to initialize it at load time.  Set by the Unity Inspector.
+    /// </summary>
     public BOMCables BomCableRef;
+    /// <summary>
+    /// The static price for mounting brackets.
+    /// </summary>
     [System.NonSerialized]
     public uint bracketPrice = 0;
+    /// <summary>
+    /// An array of options for cable lengths.
+    /// </summary>
     [System.NonSerialized]
     public CableLengthOption[] cableLengths;
+    /// <summary>
+    /// An array of options for mounting kits.
+    /// </summary>
     public MountingKitOption[] mountKits;
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created. (typically at load time)
+    /// </summary>
     void Awake() {
-        if(inst == null) inst = this;
+        if(inst == null) inst = this;  // Make sure everything can reference this object.
 
-        lights = new Dictionary<Location, LocationNode>();
+        lights = new Dictionary<Location, LocationNode>(); // Instantiate all of the data containers
         this.lenses = new List<Lens>();
         stdy = new SteadyPattern();
 
-        if(File.Exists(BarManager.DirRoot + "lib.nbt")) {
+        if(File.Exists(BarManager.DirRoot + "lib.nbt")) { // Look for the library file
             foreach(Location l in new Location[] { Location.FRONT, Location.FRONT_CORNER, Location.ALLEY, Location.REAR_CORNER, Location.FAR_REAR, Location.REAR }) {
-                lights[l] = new LocationNode();
+                lights[l] = new LocationNode(); // More container instantiation
             }
 
             try {
-                NbtFile cat = new NbtFile(BarManager.DirRoot + "lib.nbt");
+                NbtFile cat = new NbtFile(BarManager.DirRoot + "lib.nbt"); // Open the library file
 
-                if(!cat.RootTag.Contains("pric")) {
-                    Destroy(FindObjectOfType<DispPricing>().gameObject);
+                if(!cat.RootTag.Contains("pric")) { // If the library file doesn't contain a "pric" tag... (type doesn't matter, but NbtTagType.Byte takes up the least space)
+                    Destroy(FindObjectOfType<DispPricing>().gameObject);  // ...destroy the DispPricing button, preventing the user from seeing or using it to toggle pricing on and off.
                 }
-                if(cat.RootTag.Contains("canPub")) {
-                    BarManager.canPub = cat.RootTag["canPub"].ByteValue;
+                if(cat.RootTag.Contains("canPub")) { // If the library file contains a "canPub" tag... (should be a NbtTagType.Byte tag)
+                    BarManager.canPub = cat.RootTag["canPub"].ByteValue;  // ...get the value of it.
                 }
 
-                NbtList heads = (NbtList)(cat.RootTag["heads"]);
+                NbtList heads = (NbtList)(cat.RootTag["heads"]);  // Get the list of potential head options.
 
                 foreach(NbtTag head in heads) {
-                    OpticNode optNode = new OpticNode((NbtCompound)head);
+                    OpticNode optNode = new OpticNode((NbtCompound)head);  // Generate the OpticNode from each tag in the list
 
-                    NbtList locs = (NbtList)head["locs"];
+                    NbtList locs = (NbtList)head["locs"];  // Figure out where the optic can go and add a reference to it
                     foreach(NbtTag loc in locs) {
-                        string strLoc = loc.StringValue;
+                        string strLoc = loc.StringValue;  // Each tag in the list should be of type NbtTagType.String
 
                         switch(strLoc) {
                             case "f":
@@ -76,56 +119,60 @@ public class LightDict : MonoBehaviour {
                     }
                 }
 
-                NbtCompound pattstag = cat.RootTag.Get<NbtCompound>("patts");
+                NbtCompound pattstag = cat.RootTag.Get<NbtCompound>("patts");  // Get the pattern reference from the library
 
-                pattBase = pattstag["base"].ShortValue;
+                pattBase = pattstag["base"].ShortValue;  // Get the pattern base value
 
-                flashPatts = new List<Pattern>();
-                NbtList patlist = pattstag.Get<NbtList>("sflsh");
+                flashPatts = new List<Pattern>();  // Instantiate flashing pattern container
+                NbtList patlist = pattstag.Get<NbtList>("sflsh");  // Get all of the single-color flashing patterns
                 foreach(NbtTag alpha in patlist) {
-                    if(((NbtCompound)alpha).Contains("ref")) { flashPatts.Add(new SingleFlashRefPattern((NbtCompound)alpha)); } else { flashPatts.Add(new FlashPatt((NbtCompound)alpha)); }
+                    if(((NbtCompound)alpha).Contains("ref")) { // This pattern references other patterns.
+                        flashPatts.Add(new SingleFlashRefPattern((NbtCompound)alpha));
+                    } else { // This pattern stands alone.
+                        flashPatts.Add(new FlashPatt((NbtCompound)alpha));
+                    }
                 }
-                patlist = pattstag.Get<NbtList>("dcflash");
+                patlist = pattstag.Get<NbtList>("dcflash");  // All of the dual-color flashing patterns
                 foreach(NbtTag alpha in patlist) {
                     flashPatts.Add(new DoubleFlashRefPattern((NbtCompound)alpha));
                 }
-                patlist = pattstag.Get<NbtList>("flash");
+                patlist = pattstag.Get<NbtList>("flash");  // All of the polyhead flashing patterns
                 foreach(NbtTag alpha in patlist) {
                     flashPatts.Add(new WarnPatt((NbtCompound)alpha));
                 }
-                flashPatts.Add(new DCCirclePattern());
-                flashPatts.Add(new DCDoubleRotatorPattern());
+                flashPatts.Add(new DCCirclePattern());  // Hard-coded Dual-Color Circle Pattern
+                flashPatts.Add(new DCDoubleRotatorPattern());  // Hard-coded Dual-Color Double Rotator Pattern
 
 
-                tdPatts = new List<Pattern>();
-                patlist = pattstag.Get<NbtList>("traff");
+                tdPatts = new List<Pattern>(); // Instantiate traffic director pattern container
+                patlist = pattstag.Get<NbtList>("traff"); // Get all of the traffic director patterns
                 foreach(NbtTag alpha in patlist) {
                     tdPatts.Add(new TraffPatt((NbtCompound)alpha));
                 }
 
 
-                NbtCompound lensCmpd = cat.RootTag.Get<NbtCompound>("lenses");
-                Lens.lgPrefix = lensCmpd["lgFix"].StringValue;
+                NbtCompound lensCmpd = cat.RootTag.Get<NbtCompound>("lenses"); // Get the lens definition package
+                Lens.lgPrefix = lensCmpd["lgFix"].StringValue; // Get the prefixes for both size of lens.
                 Lens.smPrefix = lensCmpd["smFix"].StringValue;
-                NbtList lenses = lensCmpd.Get<NbtList>("opts");
+                NbtList lenses = lensCmpd.Get<NbtList>("opts"); // Get the different options out
                 foreach(NbtTag alpha in lenses) {
                     this.lenses.Add(new Lens(alpha as NbtCompound));
                 }
 
 
-                NbtCompound optsCmpd = cat.RootTag.Get<NbtCompound>("opts");
-                BomCableRef.Initialize(optsCmpd.Get<NbtCompound>("cables"));
+                NbtCompound optsCmpd = cat.RootTag.Get<NbtCompound>("opts"); // Get the option definition package
+                BomCableRef.Initialize(optsCmpd.Get<NbtCompound>("cables")); // Have the BomCableRef object parse the "cables" NbtTagType.Compound tag.
 
-                FindObjectOfType<BarManager>().Initialize(optsCmpd.Get<NbtCompound>("base"));
+                FindObjectOfType<BarManager>().Initialize(optsCmpd.Get<NbtCompound>("base")); // Have the BarManager extract model numbers and prices from the "base" NbtTagType.Compound tag.
 
-                bracketPrice = (uint)optsCmpd["bracket"].IntValue;
+                bracketPrice = (uint)optsCmpd["bracket"].IntValue; // Get the bracket price.
 
-                NbtList lenOpts = optsCmpd.Get<NbtList>("cableLength");
+                NbtList lenOpts = optsCmpd.Get<NbtList>("cableLength"); // Extract all of the cable length options...
                 cableLengths = new CableLengthOption[lenOpts.Count];
 
                 for(int i = 0; i < cableLengths.Length; i++) {
                     NbtCompound opt = lenOpts[i] as NbtCompound;
-                    cableLengths[i] = new CableLengthOption() {
+                    cableLengths[i] = new CableLengthOption() { // ...extract all of the information from each option, then save it in the cableLengths array.
                         length = opt["len"].ByteValue,
                         canPrice = (uint)opt["can"].IntValue,
                         hardPrice = (uint)opt["hard"].IntValue,
@@ -133,12 +180,12 @@ public class LightDict : MonoBehaviour {
                     };
                 }
 
-                NbtList kitOpts = optsCmpd.Get<NbtList>("mountingKits");
+                NbtList kitOpts = optsCmpd.Get<NbtList>("mountingKits"); // Extract all of the mounting kit options...
                 mountKits = new MountingKitOption[kitOpts.Count];
 
                 for(int i = 0; i < mountKits.Length; i++) {
                     NbtCompound opt = kitOpts[i] as NbtCompound;
-                    mountKits[opt["which"].ByteValue] = new MountingKitOption() {
+                    mountKits[opt["which"].ByteValue] = new MountingKitOption() { // ...extract all of the information from each option, then save it in the mountKits array.
                         price = (uint)opt["cost"].IntValue,
                         part = opt["part"].StringValue,
                         name = opt["name"].StringValue
@@ -146,51 +193,61 @@ public class LightDict : MonoBehaviour {
                 }
 
 
-            } catch(NbtFormatException ex) {
+            } catch(NbtFormatException ex) { // Thrown if the file doesn't make sense to the NBT Parser.
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");
                 Debug.LogException(ex);
-            } catch(EndOfStreamException ex) {
+            } catch(EndOfStreamException ex) { // Thrown if the file ends before the Parser expected it to end.
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");
                 Debug.LogException(ex);
-            } catch(InvalidCastException ex) {
+            } catch(InvalidCastException ex) { // Thrown if tag types don't match up to expected.
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");
                 Debug.LogException(ex);
-            } catch(NullReferenceException ex) {
+            } catch(NullReferenceException ex) { // Thrown if a tag doesn't exist
                 ErrorText.inst.DispError("Could not parse the file.  Are you certain you got this file from Star?");
                 Debug.LogException(ex);
             }
-        } else {
+        } else { // The library file's MIA.
             ErrorText.inst.DispError("You seem to be missing the 'lib.nbt' file.  Make sure it's in the same directory as the executable.");
         }
     }
-
+    
+#if UNITY_EDITOR
+    /// <summary>
+    /// EDITOR ONLY.  Tells Unity how to render this GameObject in the Scene View.
+    /// </summary>
     void OnDrawGizmos() {
         Gizmos.DrawIcon(transform.position, "Dict.png", true);
     }
+#endif
 
+    /// <summary>
+    /// Function used to grab a LocationNode from the dictionary.
+    /// </summary>
+    /// <param name="locs">One or more locations to reference.</param>
+    /// <returns>A LocationNode that has all of the different options to pick from.</returns>
     public LocationNode FetchLocation(params Location[] locs) {
-        if(locs.Length == 0) {
+        if(locs.Length == 0) { // No locations?  Exception for you!
             throw new ArgumentException();
         }
         if(locs.Length == 1) {
-            return lights[locs[0]];
+            return lights[locs[0]]; // Only one Location selected, give the node wholesale.
         }
 
-        LocationNode rtn = lights[locs[0]].Clone();
-        List<Location> loclist = new List<Location>(locs);
-        loclist.RemoveAt(0);
+        LocationNode rtn = lights[locs[0]].Clone(); // Clone the first Location's LocationNode.
+        List<Location> loclist = new List<Location>(locs); // Make a mutable List of the requested Locations.
+        loclist.RemoveAt(0); // We've already done the first, so remove that.
         foreach(Location l in loclist) {
-            LocationNode dln = lights[l];
-            foreach(OpticNode rtnon in new List<OpticNode>(rtn.optics.Values)) {
-                if(dln.optics.ContainsKey(rtnon.name)) {
-                    foreach(StyleNode rtnsn in new List<StyleNode>(rtnon.styles.Values)) {
+            LocationNode dln = lights[l]; // Get the subsequent Location's LocationNode for reference.
+            foreach(OpticNode rtnon in new List<OpticNode>(rtn.optics.Values)) { // For each OpticNode in the LocationNode to return...
+                if(dln.optics.ContainsKey(rtnon.name)) { // If this LocationNode has a matching OpticNode...
+                    foreach(StyleNode rtnsn in new List<StyleNode>(rtnon.styles.Values)) { // Go through each StyleNode and remove any that don't match from the LocationNode to return.
                         if(!(dln.optics[rtnon.name].styles.ContainsKey(rtnsn.name) && dln.optics[rtnon.name].styles[rtnsn.name] == rtnsn)) {
                             rtnon.Remove(rtnsn);
                         } else {
                             rtnsn.selectable &= dln.optics[rtnon.name].styles[rtnsn.name].selectable;
                         }
                     }
-                } else if(dln.optics.ContainsKey(rtnon.smEquivalent)) {
+                } else if(dln.optics.ContainsKey(rtnon.smEquivalent)) {  // Do the same if this LocationNode has the small equivalent
                     foreach(StyleNode rtnsn in new List<StyleNode>(rtnon.styles.Values)) {
                         if(!(dln.optics[rtnon.smEquivalent].styles.ContainsKey(rtnsn.name) && dln.optics[rtnon.smEquivalent].styles[rtnsn.name] == rtnsn)) {
                             rtnon.Remove(rtnsn);
@@ -198,7 +255,7 @@ public class LightDict : MonoBehaviour {
                             rtnsn.selectable &= dln.optics[rtnon.smEquivalent].styles[rtnsn.name].selectable;
                         }
                     }
-                } else if(dln.optics.ContainsKey(rtnon.lgEquivalent)) {
+                } else if(dln.optics.ContainsKey(rtnon.lgEquivalent)) {  // Do the same if this LocationNode has the large equivalent
                     foreach(StyleNode rtnsn in new List<StyleNode>(rtnon.styles.Values)) {
                         if(!(dln.optics[rtnon.lgEquivalent].styles.ContainsKey(rtnsn.name) && dln.optics[rtnon.lgEquivalent].styles[rtnsn.name] == rtnsn)) {
                             rtnon.Remove(rtnsn);
@@ -207,14 +264,20 @@ public class LightDict : MonoBehaviour {
                         }
                     }
                 } else {
-                    rtn.Remove(rtnon);
+                    rtn.Remove(rtnon); // No matches found, so remove it from the LocationNode to return.
                 }
             }
         }
 
-        return rtn;
+        return rtn;  // Return the LocationNode
     }
 
+    /// <summary>
+    /// Fetches an OpticNode given its name and a matching Location.
+    /// </summary>
+    /// <param name="loc">Which Location is the node being fetched for?</param>
+    /// <param name="optic">Name of the optic to fetch</param>
+    /// <returns>An OpticNode if one was found, otherwise null</returns>
     public OpticNode FetchOptic(Location loc, string optic) {
         if(lights[loc].optics.ContainsKey(optic))
             return lights[loc].optics[optic];
@@ -225,25 +288,75 @@ public class LightDict : MonoBehaviour {
 
 #region Patterns
 
+/// <summary>
+/// Abstract class, representing one of a number of patterns for Flashing or Traffic Director heads
+/// </summary>
 public abstract class Pattern {
+    /// <summary>
+    /// Name of the pattern
+    /// </summary>
     public string name;
-
+    /// <summary>
+    /// ID of the pattern
+    /// </summary>
     public ushort id;
-    public ushort t0, t1, t2, t3;
+
+    /// <summary>
+    /// Pattern's t0 keyframe time length
+    /// </summary>
+    public ushort t0;
+    /// <summary>
+    /// Pattern's t1 keyframe time length
+    /// </summary>
+    public ushort t1;
+    /// <summary>
+    /// Pattern's t2 keyframe time length
+    /// </summary>
+    public ushort t2;
+    /// <summary>
+    /// Pattern's t3 keyframe time length
+    /// </summary>
+    public ushort t3;
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public abstract ulong period { get; }
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public abstract bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit);
 }
 
+/// <summary>
+/// A Pattern that affects multiple heads
+/// </summary>
 public class WarnPatt : Pattern {
+    /// <summary>
+    /// Information this pattern's holding on what flashes when
+    /// </summary>
     public short[] definition;
+    /// <summary>
+    /// Personal variable so it doesn't have to recalculate the period every time it's asked
+    /// </summary>
     private ulong _period = 0;
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return _period; }
     }
 
-
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cmpd">The NbtCompound we're extracting pattern information from</param>
     public WarnPatt(NbtCompound cmpd) {
-        name = cmpd["name"].StringValue;
+        name = cmpd["name"].StringValue; // Get the basics.
         id = (ushort)cmpd["id"].ShortValue;
         t0 = (ushort)cmpd["t0"].ShortValue;
         t1 = (ushort)cmpd["t1"].ShortValue;
@@ -258,8 +371,8 @@ public class WarnPatt : Pattern {
         _period = 0uL;
 
         for(int i = 0; i < vals.Length; i++) {
-            definition[i] = (short)(vals[i] & 0xFFFF);
-            switch((vals[i] >> 14) & 0x3) {
+            definition[i] = (short)(vals[i] & 0xFFFF); // Copy down all of the pattern information
+            switch((vals[i] >> 14) & 0x3) { // Calculate the period now so we don't have to calculate it every time we're asked for it
                 case 0:
                     _period += t0;
                     break;
@@ -276,10 +389,18 @@ public class WarnPatt : Pattern {
         }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
-        tick %= period;
+        tick %= period; // Reduce the tick down so it's somewhere in the pattern definition.
         foreach(short b in definition) {
-            switch(0x3 & (b >> 14)) {
+            switch(0x3 & (b >> 14)) { // Go through each short, look for when this tick should occur, then test it for when it should be lit.
                 case 0:
                     if(tick < t0) {
                         return (b & (0x1 << bit)) > 0;
@@ -316,15 +437,31 @@ public class WarnPatt : Pattern {
     }
 }
 
+/// <summary>
+/// A Pattern that affects a single head
+/// </summary>
 public class FlashPatt : Pattern {
+    /// <summary>
+    /// Information this pattern's holding on what flashes when
+    /// </summary>
     public byte[] definition;
+    /// <summary>
+    /// Personal variable so it doesn't have to recalculate the period every time it's asked
+    /// </summary>
     private ulong _period = 0;
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return _period; }
     }
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cmpd">The NbtCompound we're extracting pattern information from</param>
     public FlashPatt(NbtCompound cmpd) {
-        name = cmpd["name"].StringValue;
+        name = cmpd["name"].StringValue; // Get the basics.
         id = (ushort)cmpd["id"].ShortValue;
         t0 = (ushort)cmpd["t0"].ShortValue;
         t1 = (ushort)cmpd["t1"].ShortValue;
@@ -332,12 +469,12 @@ public class FlashPatt : Pattern {
         t3 = (ushort)cmpd["t3"].ShortValue;
 
         NbtByteArray patttag = cmpd.Get<NbtByteArray>("patt");
-        definition = patttag.Value;
+        definition = patttag.Value; // Copy down all of the pattern information
 
         _period = 0uL;
 
         for(int i = 0; i < definition.Length; i++) {
-            switch((definition[i] >> 2) & 0x3) {
+            switch((definition[i] >> 2) & 0x3) { // Calculate the period now so we don't have to calculate it every time we're asked for it
                 case 0:
                     _period += t0;
                     break;
@@ -354,11 +491,19 @@ public class FlashPatt : Pattern {
         }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
-        tick %= period;
+        tick %= period; // Reduce the tick down so it's somewhere in the pattern definition.
 
         foreach(byte b in definition) {
-            switch(0x3 & (b >> 2)) {
+            switch(0x3 & (b >> 2)) { // Go through each byte, look for when this tick should occur, then test it for when it should be lit.
                 case 0:
                     if(tick < t0) {
                         return (b & (phaseB ? 0x2 : 0x1)) > 0;
@@ -396,22 +541,47 @@ public class FlashPatt : Pattern {
     }
 }
 
+/// <summary>
+/// A Pattern that affects traffic director heads
+/// </summary>
 public class TraffPatt : Pattern {
-    public static bool directLeft = false, sixHeads = false;
+    /// <summary>
+    /// Display the leftward directing if true, rightward if false
+    /// </summary>
+    public static bool directLeft = false;
+    /// <summary>
+    /// Display the six-head version if true, the eight-head version if false
+    /// </summary>
+    public static bool sixHeads = false;
 
+    /// <summary>
+    /// Information this pattern's holding on what flashes when
+    /// </summary>
     public short[] left6, right6, center6, left8, right8, center8;
+    /// <summary>
+    /// Personal variable so it doesn't have to recalculate the period every time it's asked
+    /// </summary>
     public ulong period6, period8;
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return (sixHeads ? period6 : period8); }
     }
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cmpd">The NbtCompound we're extracting pattern information from</param>
     public TraffPatt(NbtCompound cmpd) {
-        name = cmpd["name"].StringValue;
+        name = cmpd["name"].StringValue; // Get the basics.
         id = (ushort)cmpd["id"].ShortValue;
         t0 = (ushort)cmpd["t0"].ShortValue;
         t1 = (ushort)cmpd["t1"].ShortValue;
         t2 = (ushort)cmpd["t2"].ShortValue;
         t3 = (ushort)cmpd["t3"].ShortValue;
+
+        // Copy down all of the pattern information for each of the six definitions
 
         NbtIntArray patttag = cmpd.Get<NbtCompound>("6hed").Get<NbtIntArray>("cntr");
         center6 = new short[patttag.Value.Length];
@@ -444,8 +614,11 @@ public class TraffPatt : Pattern {
             right8[i] = (short)(patttag[i] & 0xFFFF);
         }
 
-        period6 = period8 = 0;
+        // End information copy
 
+        period6 = period8 = 0;
+        
+        // Calculate the periods now so we don't have to calculate it every time we're asked for it
         foreach(short alpha in left6) {
             switch((alpha >> 14) & 0x3) {
                 case 0:
@@ -480,13 +653,21 @@ public class TraffPatt : Pattern {
         }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
 
         if(sixHeads) {
-            tick %= period6;
+            tick %= period6; // Reduce the tick down so it's somewhere in the pattern definition.
             if(directLeft) {
                 foreach(short b in left6) {
-                    switch(0x3 & (b >> 14)) {
+                    switch(0x3 & (b >> 14)) { // Go through each short, look for when this tick should occur, then test it for when it should be lit.
                         case 0:
                             if(tick < t0) {
                                 return (b & (0x1 << bit)) > 0;
@@ -521,7 +702,7 @@ public class TraffPatt : Pattern {
                 }
             } else {
                 foreach(short b in right6) {
-                    switch(0x3 & (b >> 14)) {
+                    switch(0x3 & (b >> 14)) { // Go through each short, look for when this tick should occur, then test it for when it should be lit.
                         case 0:
                             if(tick < t0) {
                                 return (b & (0x1 << bit)) > 0;
@@ -556,10 +737,10 @@ public class TraffPatt : Pattern {
                 }
             }
         } else {
-            tick %= period8;
+            tick %= period8; // Reduce the tick down so it's somewhere in the pattern definition.
             if(directLeft) {
                 foreach(short b in left8) {
-                    switch(0x3 & (b >> 14)) {
+                    switch(0x3 & (b >> 14)) { // Go through each short, look for when this tick should occur, then test it for when it should be lit.
                         case 0:
                             if(tick < t0) {
                                 return (b & (0x1 << bit)) > 0;
@@ -594,7 +775,7 @@ public class TraffPatt : Pattern {
                 }
             } else {
                 foreach(short b in right8) {
-                    switch(0x3 & (b >> 14)) {
+                    switch(0x3 & (b >> 14)) { // Go through each short, look for when this tick should occur, then test it for when it should be lit.
                         case 0:
                             if(tick < t0) {
                                 return (b & (0x1 << bit)) > 0;
@@ -634,33 +815,66 @@ public class TraffPatt : Pattern {
     }
 }
 
+/// <summary>
+/// A simple Pattern representing a steady burn head.
+/// </summary>
 public class SteadyPattern : Pattern {
+    /// <summary>
+    /// Static period
+    /// </summary>
     public override ulong period {
         get {
             return 1;
         }
     }
 
+    /// <summary>
+    /// Constructor.  Gives itself a name.
+    /// </summary>
     public SteadyPattern() {
         name = "Steady Burn";
     }
 
+    /// <summary>
+    /// Always returns true.  Because steady burn.
+    /// </summary>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
         return true;
     }
 }
 
+/// <summary>
+/// A Pattern that affects a single head, using other patterns for reference
+/// </summary>
 public class SingleFlashRefPattern : Pattern {
+    /// <summary>
+    /// Personal variable so it doesn't have to recalculate the period every time it's asked
+    /// </summary>
     public ulong _period;
 
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return _period; }
     }
 
+    /// <summary>
+    /// Information about the references it needs to hold
+    /// </summary>
     public struct Reference {
+        /// <summary>
+        /// Which pattern is it referencing?
+        /// </summary>
         public Pattern patt;
+        /// <summary>
+        /// How many times do we cycle through this pattern?
+        /// </summary>
         public short count;
 
+        /// <summary>
+        /// Total period for this Reference
+        /// </summary>
         public ulong totalPeriod {
             get {
                 return patt.period * (ulong)count;
@@ -668,14 +882,21 @@ public class SingleFlashRefPattern : Pattern {
         }
     }
 
+    /// <summary>
+    /// Information this pattern's holding on what references its using
+    /// </summary>
     public Reference[] definition;
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cmpd">The NbtCompound we're extracting pattern information from</param>
     public SingleFlashRefPattern(NbtCompound cmpd) {
-        id = (ushort)cmpd["id"].ShortValue;
+        id = (ushort)cmpd["id"].ShortValue; // Get the basics.
         name = cmpd["name"].StringValue;
-        _period = t0 = t1 = t2 = t3 = 0;
+        _period = t0 = t1 = t2 = t3 = 0; // t0 thru t3 should be 0, because we aren't using those in this Pattern.  Initialize _pattern.
 
-        NbtList refs = cmpd.Get<NbtList>("ref");
+        NbtList refs = cmpd.Get<NbtList>("ref"); // Examine references
         definition = new Reference[refs.Count];
         for(int i = 0; i < refs.Count; i++) {
             NbtCompound alpha = refs.Get<NbtCompound>(i);
@@ -683,23 +904,31 @@ public class SingleFlashRefPattern : Pattern {
             definition[i].count = alpha["cnt"].ShortValue;
             short pattID = alpha["id"].ShortValue;
 
-            foreach(Pattern p in LightDict.inst.flashPatts) {
+            foreach(Pattern p in LightDict.inst.flashPatts) { // Look for the pattern this Reference should be referencing
                 if(p.id == pattID) {
-                    definition[i].patt = p;
+                    definition[i].patt = p; // Found it.
                     break;
                 }
             }
 
-            _period += definition[i].totalPeriod;
+            _period += definition[i].totalPeriod; // Add the period
         }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
-        tick %= period;
+        tick %= period; // Reduce the tick down so it's somewhere in the pattern definition.
 
         foreach(Reference r in definition) {
-            if(tick < r.totalPeriod) {
-                return r.patt.GetIsActive(tick, phaseB, color2, bit);
+            if(tick < r.totalPeriod) { // If the tick resides somewhere in this Reference...
+                return r.patt.GetIsActive(tick, phaseB, color2, bit); // Have the Pattern figure out the rest.
             } else {
                 tick -= r.totalPeriod;
             }
@@ -709,17 +938,42 @@ public class SingleFlashRefPattern : Pattern {
     }
 }
 
+/// <summary>
+/// A Pattern that affects both colors of a single head, using other patterns for reference
+/// </summary>
 public class DoubleFlashRefPattern : Pattern {
+    /// <summary>
+    /// Personal variable so it doesn't have to recalculate the period every time it's asked
+    /// </summary>
     public ulong _period;
+    
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return _period; }
     }
 
+    /// <summary>
+    /// Information about the references it needs to hold
+    /// </summary>
     public struct Reference {
+        /// <summary>
+        /// Which pattern is it referencing?
+        /// </summary>
         public Pattern patt;
+        /// <summary>
+        /// Is this reference influencing Color 2?
+        /// </summary>
         public bool forColor2;
+        /// <summary>
+        /// How many times do we cycle through this pattern?
+        /// </summary>
         public short count;
 
+        /// <summary>
+        /// Total period for this Reference
+        /// </summary>
         public ulong totalPeriod {
             get {
                 return patt.period * (ulong)count;
@@ -727,14 +981,21 @@ public class DoubleFlashRefPattern : Pattern {
         }
     }
 
+    /// <summary>
+    /// Information this pattern's holding on what references its using
+    /// </summary>
     public Reference[] definition;
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cmpd">The NbtCompound we're extracting pattern information from</param>
     public DoubleFlashRefPattern(NbtCompound cmpd) {
-        id = (ushort)cmpd["id"].ShortValue;
+        id = (ushort)cmpd["id"].ShortValue; // Get the basics.
         name = cmpd["name"].StringValue;
-        _period = t0 = t1 = t2 = t3 = 0;
+        _period = t0 = t1 = t2 = t3 = 0; // t0 thru t3 should be 0, because we aren't using those in this Pattern.  Initialize _pattern.
 
-        NbtList refs = cmpd.Get<NbtList>("ref");
+        NbtList refs = cmpd.Get<NbtList>("ref"); // Examine references
         definition = new Reference[refs.Count];
         for(int i = 0; i < refs.Count; i++) {
             NbtCompound alpha = refs.Get<NbtCompound>(i);
@@ -743,23 +1004,31 @@ public class DoubleFlashRefPattern : Pattern {
             definition[i].forColor2 = alpha["clr"].ByteValue == 1;
             short pattID = alpha["id"].ShortValue;
 
-            foreach(Pattern p in LightDict.inst.flashPatts) {
+            foreach(Pattern p in LightDict.inst.flashPatts) { // Look for the pattern this Reference should be referencing
                 if(p.id == pattID) {
-                    definition[i].patt = p;
+                    definition[i].patt = p; // Found it.
                     break;
                 }
             }
 
-            _period += definition[i].totalPeriod;
+            _period += definition[i].totalPeriod; // Add the period
         }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
-        tick %= period;
+        tick %= period; // Reduce the tick down so it's somewhere in the pattern definition.
 
         foreach(Reference r in definition) {
-            if(tick < r.totalPeriod) {
-                return (!(color2 ^ r.forColor2)) && r.patt.GetIsActive(tick, phaseB, color2, bit);
+            if(tick < r.totalPeriod) { // If the tick resides somewhere in this Reference...
+                return (!(color2 ^ r.forColor2)) && r.patt.GetIsActive(tick, phaseB, color2, bit); // Check first if we're checking the right color.  If we are, then have the Pattern figure out the rest.
             } else {
                 tick -= r.totalPeriod;
             }
@@ -769,7 +1038,13 @@ public class DoubleFlashRefPattern : Pattern {
     }
 }
 
+/// <summary>
+/// A statically-defined Pattern that will have two lights circling the bar, one on each color.
+/// </summary>
 public class DCCirclePattern : Pattern {
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     public DCCirclePattern() {
         name = "DC Circle";
         id = 34;
@@ -777,18 +1052,33 @@ public class DCCirclePattern : Pattern {
         t1 = t2 = t3 = 0;
     }
 
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return 120; }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables.  Not implemented, requires additional care
+    /// </summary>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <param name="isRear">Is the head in the rear?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit, bool isRear) {
-        byte frame = (byte)((tick % 120) / 5);
+        byte frame = (byte)((tick % 120) / 5);  // Figure out which frame we're on
         if(isRear) {
-            switch(frame) {
+            switch(frame) { // Rear frames
                 case 0:
                     return ((color2 ? 0x0C00 : 0x0003) & (0x1 << bit)) > 0;
                 case 1:
@@ -821,7 +1111,7 @@ public class DCCirclePattern : Pattern {
                     return false;
             }
         } else {
-            switch(frame) {
+            switch(frame) { // Front frames
                 case 0:
                     return ((color2 ? 0x2000 : 0x1000) & (0x1 << bit)) > 0;
                 case 1:
@@ -857,7 +1147,13 @@ public class DCCirclePattern : Pattern {
     }
 }
 
+/// <summary>
+/// A statically-defined Pattern that will have four lights circling the bar, one on each color on each half.
+/// </summary>
 public class DCDoubleRotatorPattern : Pattern {
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     public DCDoubleRotatorPattern() {
         name = "DC Double Rotator";
         id = 35;
@@ -865,18 +1161,33 @@ public class DCDoubleRotatorPattern : Pattern {
         t1 = t2 = t3 = 0;
     }
 
+    /// <summary>
+    /// How long does the pattern run for, in ticks?
+    /// </summary>
     public override ulong period {
         get { return 70; }
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables.  Not implemented, requires additional care
+    /// </summary>
     public override bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit) {
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Returns whether or not a head should be on for this pattern given a few different variables
+    /// </summary>
+    /// <param name="tick">Which tick is it currently?</param>
+    /// <param name="phaseB">Is the head on Phase B?</param>
+    /// <param name="color2">Are we checking color 2 of the head?</param>
+    /// <param name="bit">Which bit is the head on?</param>
+    /// <param name="isRear">Is the head in the rear?</param>
+    /// <returns>True if the head should be active, false if it should not</returns>
     public bool GetIsActive(ulong tick, bool phaseB, bool color2, byte bit, bool isRear) {
-        byte frame = (byte)((tick % 70) / 5);
+        byte frame = (byte)((tick % 70) / 5);  // Figure out which frame we're on
         if(isRear) {
-            switch(frame) {
+            switch(frame) { // Rear frames
                 case 0:
                     return ((color2 ? 0x1041 : 0x2030) & (0x1 << bit)) > 0;
                 case 1:
@@ -949,9 +1260,18 @@ public class DCDoubleRotatorPattern : Pattern {
 
 #region Optics
 
+/// <summary>
+/// A node that holds optics for a specific Location.
+/// </summary>
 public class LocationNode {
+    /// <summary>
+    /// All of the OpticNode options
+    /// </summary>
     public Dictionary<string, OpticNode> optics;
 
+    /// <summary>
+    /// Constructor.
+    /// </summary>
     public LocationNode() {
         optics = new Dictionary<string, OpticNode>();
     }
@@ -1018,18 +1338,57 @@ public class LocationNode {
     }
 }
 
+/// <summary>
+/// A node that holds styles for a specific optic.
+/// </summary>
 public class OpticNode {
+    /// <summary>
+    /// All of the StyleNode options
+    /// </summary>
     public Dictionary<string, StyleNode> styles;
 
+    /// <summary>
+    /// Name of the optic
+    /// </summary>
     public string name;
+    /// <summary>
+    /// Part number prefix for this optic
+    /// </summary>
     public string partNumber;
-    public bool fitsLg = false, fitsSm = false;
-    public string smEquivalent, lgEquivalent;
+    /// <summary>
+    /// Is this optic for a large head?
+    /// </summary>
+    public bool fitsLg = false;
+    /// <summary>
+    /// Is this optic for a small head?
+    /// </summary>
+    public bool fitsSm = false;
+    /// <summary>
+    /// When splitting, the small equivalent of this head
+    /// </summary>
+    public string smEquivalent;
+    /// <summary>
+    /// When merging, the large equivalent of this head
+    /// </summary>
+    public string lgEquivalent;
 
-    public uint cost, amperage;
+    /// <summary>
+    /// The sale price of this optic, in whole cents
+    /// </summary>
+    public uint cost;
+    /// <summary>
+    /// The current draw of this optic, in whole milliamps
+    /// </summary>
+    public uint amperage;
 
+    /// <summary>
+    /// Is this head a dual-color head?
+    /// </summary>
     public bool dual = false;
 
+    /// <summary>
+    /// Generic Contructor
+    /// </summary>
     public OpticNode() {
         styles = new Dictionary<string, StyleNode>();
         name = "";
@@ -1042,7 +1401,11 @@ public class OpticNode {
         dual = false;
     }
 
-    public OpticNode(fNbt.NbtCompound defTag) {
+    /// <summary>
+    /// Constructor using information gleaned from the library file
+    /// </summary>
+    /// <param name="defTag">The CompoundTag containing information on this optic</param>
+    public OpticNode(NbtCompound defTag) {
         styles = new Dictionary<string, StyleNode>();
         this.name = defTag["name"].StringValue;
         this.partNumber = defTag["part"].StringValue;
@@ -1098,9 +1461,9 @@ public class OpticNode {
     }
 
     /// <summary>
-    /// Creates a copy of this Function Node.
+    /// Creates a copy of this OpticNode.
     /// </summary>
-    /// <returns>A copy of this Function Node.</returns>
+    /// <returns>A copy of this OpticNode.</returns>
     public OpticNode Clone() {
         OpticNode rtn = new OpticNode();
 
@@ -1144,13 +1507,38 @@ public class OpticNode {
     }
 }
 
+/// <summary>
+/// A node that holds a specific style's information
+/// </summary>
 public class StyleNode {
+    /// <summary>
+    /// Name of the style
+    /// </summary>
     public string name;
+    /// <summary>
+    /// Part number suffix for this style
+    /// </summary>
     public string partSuffix;
+    /// <summary>
+    /// Is this style a dual-color style?
+    /// </summary>
     public bool isDualColor = false;
-    public Color color, color2;
+    /// <summary>
+    /// The display color of this style, also used in the testing against lenses for color compatibility
+    /// </summary>
+    public Color color;
+    /// <summary>
+    /// The display color of the second color of this style, not applicable if not dual-color.
+    /// </summary>
+    public Color color2;
+    /// <summary>
+    /// Can this style be selected for use?
+    /// </summary>
     public bool selectable = true;
 
+    /// <summary>
+    /// Generic Contructor
+    /// </summary>
     public StyleNode() {
         name = "";
         partSuffix = "";
@@ -1159,6 +1547,10 @@ public class StyleNode {
         selectable = true;
     }
 
+    /// <summary>
+    /// Parameterized Constructor using information gleaned from the library file
+    /// </summary>
+    /// <param name="defTag">The CompoundTag containing information on this style</param>
     public StyleNode(NbtCompound defTag) {
         this.name = defTag["name"].StringValue;
         this.partSuffix = defTag["suff"].StringValue;
@@ -1176,9 +1568,9 @@ public class StyleNode {
     }
 
     /// <summary>
-    /// Creates a copy of this Function Node.
+    /// Creates a copy of this StyleNode.
     /// </summary>
-    /// <returns>A copy of this Function Node.</returns>
+    /// <returns>A copy of this StyleNode.</returns>
     public StyleNode Clone() {
         StyleNode rtn = new StyleNode();
 
@@ -1219,18 +1611,43 @@ public class StyleNode {
 
 #endregion
 
+/// <summary>
+/// A class containing information about an option for lens / dome color.  I call them lenses, you call them domes, means the same thing.
+/// </summary>
 public class Lens {
+    /// <summary>
+    /// Static variable holding information on the prefix of lenses
+    /// </summary>
     public static string smPrefix, lgPrefix;
+    /// <summary>
+    /// Name of the color of this lens
+    /// </summary>
     public string name;
+    /// <summary>
+    /// This lens's color suffix
+    /// </summary>
     public string partSuffix;
+    /// <summary>
+    /// The sale price of this lens, in whole cents
+    /// </summary>
     public uint cost;
+    /// <summary>
+    /// The display color of this lens, also used to test compatibility with light heads
+    /// </summary>
     public Color color;
 
+    /// <summary>
+    /// Generic Constructor
+    /// </summary>
     public Lens() {
         name = partSuffix = "";
         color = Color.white;
     }
 
+    /// <summary>
+    /// Parameterized Constructor using information gleaned from the library file
+    /// </summary>
+    /// <param name="cmpd">NbtCompound that contains this lens's information</param>
     public Lens(NbtCompound cmpd) {
         name = cmpd["name"].StringValue;
         partSuffix = cmpd["part"].StringValue;
@@ -1238,20 +1655,34 @@ public class Lens {
         color = new Color32(clr[0], clr[1], clr[2], clr[3]);
     }
 
+    /// <summary>
+    /// Test this lens's color against another's
+    /// </summary>
+    /// <param name="testAgainst">Color to test against</param>
+    /// <returns>Whether the other color would shine through</returns>
     public bool Test(Color testAgainst) {
         float r = Mathf.Min(color.r, testAgainst.r), b = Mathf.Min(color.b, testAgainst.b), g = Mathf.Min(color.g, testAgainst.g);
         return r + b + g >= 1f;
     }
 }
 
+/// <summary>
+/// Enumeration with all of the possible locations on the bar
+/// </summary>
 public enum Location {
     FRONT = 0x1, FRONT_CORNER = 0x2, ALLEY = 0x4, REAR_CORNER = 0x8, REAR = 0x10, FAR_REAR = 0x20
 }
 
+/// <summary>
+/// Enumeration with all of the possible basic functions a head can take on
+/// </summary>
 public enum BasicFunction {
     NULL = 0x0, FLASHING = 0x1, STEADY = 0x2, EMITTER = 0x4, CAL_STEADY = 0x8, CRUISE = 0x10, STT = 0x20, TRAFFIC = 0x40, BLOCK_OFF = 0x80
 }
 
+/// <summary>
+/// Enumeration with all of the known advanced functions the control circuit can handle
+/// </summary>
 public enum AdvFunction {
     NONE = 0x0,
     TAKEDOWN = 0x1, PRIO1 = 0x2, PRIO2 = 0x4, PRIO3 = 0x8,
@@ -1262,19 +1693,52 @@ public enum AdvFunction {
     EMITTER = 0x100000
 }
 
+/// <summary>
+/// Eumeration with all known Traffic Director options
+/// </summary>
 public enum TDOption {
     NONE = 0, LG_SEVEN = 1, SM_EIGHT = 2, SM_SIX = 3, LG_EIGHT = 4, LG_SIX = 5
 }
 
+/// <summary>
+/// Struct holding a cable length option
+/// </summary>
 [System.Serializable]
 public struct CableLengthOption {
+    /// <summary>
+    /// Length of this option, in feet
+    /// </summary>
     public byte length;
-    public uint pwrPrice, canPrice, hardPrice;
+    /// <summary>
+    /// Sale price of a power cable of this length, in whole cents
+    /// </summary>
+    public uint pwrPrice;
+    /// <summary>
+    /// Sale price of a CAN communication cable of this length, in whole cents
+    /// </summary>
+    public uint canPrice;
+    /// <summary>
+    /// Sale price of a Hardwire communication cable of this length, in whole cents
+    /// </summary>
+    public uint hardPrice;
 }
 
+/// <summary>
+/// Struct holding a mounting foot kit option
+/// </summary>
 [System.Serializable]
 public struct MountingKitOption {
-    public string name, part;
+    /// <summary>
+    /// Name of this option
+    /// </summary>
+    public string name;
+    /// <summary>
+    /// Part number of this option
+    /// </summary>
+    public string part;
+    /// <summary>
+    /// Sale price of this option
+    /// </summary>
     public uint price;
 
     public static bool operator ==(MountingKitOption left, MountingKitOption right) {
@@ -1294,33 +1758,56 @@ public struct MountingKitOption {
     }
 }
 
+/// <summary>
+/// A class holding various extension methods created for the project
+/// </summary>
 public static class Extensions {
+    /// <summary>
+    /// Disables a bit in this NbtShort's value
+    /// </summary>
+    /// <param name="value">The NbtShort to modify</param>
+    /// <param name="bit">Which bit to flick off</param>
     public static void DisableBit(this NbtShort value, byte bit) {
         value.Value = (short)(value.Value & ~(0x1 << bit));
     }
 
+    /// <summary>
+    /// Enables a bit in this NbtShort's value
+    /// </summary>
+    /// <param name="value">The NbtShort to modify</param>
+    /// <param name="bit">Which bit to flick on</param>
     public static void EnableBit(this NbtShort value, byte bit) {
         value.Value = (short)(value.Value | (short)(0x1 << bit));
     }
 
+    /// <summary>
+    /// Recursively gets the path of this Transform
+    /// </summary>
+    /// <param name="t">The Transform to generate a path for</param>
+    /// <returns>A path that represents this Transform's ancestry, ie ("/Bar/DF/FO/L")</returns>
     public static string GetPath(this Transform t) {
         if(t.parent == null) return "/" + t.name;
         else return t.parent.GetPath() + "/" + t.name;
     }
 
+    /// <summary>
+    /// Gets the path of this Component
+    /// </summary>
+    /// <param name="c">The Component to generate a path for</param>
+    /// <returns>A path that represents this Component's ancestry, ie ("/Bar/DF/FO/L:LightHead")</returns>
     public static string GetPath(this Component c) {
         return c.transform.GetPath() + ":" + c.GetType().ToString();
     }
 
-    public static PdfSharp.Drawing.XColor ToXColor(this Color c) {
-        return PdfSharp.Drawing.XColor.FromArgb(Mathf.RoundToInt(c.a * 255), Mathf.RoundToInt(c.r * 255), Mathf.RoundToInt(c.g * 255), Mathf.RoundToInt(c.b * 255));
-    }
+    //public static PdfSharp.Drawing.XColor ToXColor(this Color c) {
+    //    return PdfSharp.Drawing.XColor.FromArgb(Mathf.RoundToInt(c.a * 255), Mathf.RoundToInt(c.r * 255), Mathf.RoundToInt(c.g * 255), Mathf.RoundToInt(c.b * 255));
+    //}
 
-    public static PdfSharp.Drawing.XColor ToXColor(this Color32 c) {
-        return PdfSharp.Drawing.XColor.FromArgb(c.a, c.r, c.g, c.b);
-    }
+    //public static PdfSharp.Drawing.XColor ToXColor(this Color32 c) {
+    //    return PdfSharp.Drawing.XColor.FromArgb(c.a, c.r, c.g, c.b);
+    //}
 
-    public static PdfSharp.Drawing.XPoint ToXPoint(this Vector2 v) {
-        return new PdfSharp.Drawing.XPoint(v.x, v.y);
-    }
+    //public static PdfSharp.Drawing.XPoint ToXPoint(this Vector2 v) {
+    //    return new PdfSharp.Drawing.XPoint(v.x, v.y);
+    //}
 }

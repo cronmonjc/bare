@@ -3,11 +3,26 @@ using UnityEngine.UI;
 using System.Collections;
 using fNbt;
 
+/// <summary>
+/// GUI Item.  Used to display what pattern selected head(s) are using.
+/// </summary>
 public class AdvFuncDisp : MonoBehaviour {
+    /// <summary>
+    /// A reference to the CameraControl object, to make figuring out selected heads easier.
+    /// </summary>
     public static CameraControl cam;
+    /// <summary>
+    /// Which function this object is supposed to display information for.  Set by the Unity Inspector.
+    /// </summary>
     public AdvFunction func;
 
+    /// <summary>
+    /// Output Text Component.  Set by the Unity Inspector.
+    /// </summary>
     public Text c1patt, c2patt, c1phase, c2phase, dim;
+    /// <summary>
+    /// Output Image Component (checkmarks indicating enables).  Set by the Unity Inspector.
+    /// </summary>
     public Image c1enable, c2enable;
 
     public void Refresh() {
