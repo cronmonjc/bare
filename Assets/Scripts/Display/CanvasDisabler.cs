@@ -9,6 +9,9 @@ public class CanvasDisabler : MonoBehaviour {
         set { c.enabled = value; }
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         c = GetComponent<Canvas>();
     }

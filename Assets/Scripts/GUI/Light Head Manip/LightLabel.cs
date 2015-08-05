@@ -23,6 +23,9 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         set { warnImage.enabled = value; }
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         selectionImage.gameObject.SetActive(false);
         selectionImage.transform.rotation = Quaternion.identity;
@@ -496,7 +499,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     }
 
     void Update() {
-        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
         if(cam == null) cam = FindObjectOfType<CameraControl>();
         else {
             if(target != null) {

@@ -8,6 +8,9 @@ public class DebugOrthoGet : MonoBehaviour {
     public Transform tl, br;
     public float threshold = 20f;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         Application.targetFrameRate = 120;
 

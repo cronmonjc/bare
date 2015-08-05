@@ -67,6 +67,9 @@ public class SizeOptionControl : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         longGO = transform.FindChild("L").gameObject;
         shortGO = transform.FindChild("DS").gameObject;

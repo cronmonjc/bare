@@ -9,6 +9,9 @@ public class DimSelect : MonoBehaviour {
 
     public UnityEngine.UI.Text label;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         UnityEngine.UI.Slider s = GetComponentInChildren<UnityEngine.UI.Slider>();
         s.minValue = minimumPercentage;

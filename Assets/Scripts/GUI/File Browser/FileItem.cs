@@ -15,7 +15,10 @@ public class FileItem : Selectable, IPointerClickHandler {
     public Image icon;
     public InputField label;
 
-    protected override void Start() {
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
+    void Start() {
         base.Start();
 
         label.onEndEdit.AddListener(delegate(string to) {

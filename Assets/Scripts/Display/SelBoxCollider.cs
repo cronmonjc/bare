@@ -6,13 +6,16 @@ public class SelBoxCollider : MonoBehaviour {
     public List<LightHead> SelectedHead;
     public List<BarSegment> SelectedLens;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         SelectedHead = new List<LightHead>();
         SelectedLens = new List<BarSegment>();
     }
 
     void Update() {
-        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
         RectTransform rt = (RectTransform)transform;
         BoxCollider c = GetComponent<BoxCollider>();
 

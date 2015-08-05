@@ -307,6 +307,9 @@ public class LightHead : MonoBehaviour {
         cachedEnables = new Dictionary<AdvFunction, byte>();
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         if(cam == null) {
             cam = FindObjectOfType<CameraControl>();
@@ -330,7 +333,7 @@ public class LightHead : MonoBehaviour {
     }
 
     void Update() {
-        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {  // Quick & dirty optimization - if we're previewing a function, do nothing
             return;
         }
 

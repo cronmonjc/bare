@@ -8,6 +8,9 @@ public class CollapsingMenuControl : MonoBehaviour, ILayoutElement {
     public static Camera cam;
     public bool display = false;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         transform.localScale = new Vector3(1, 0, 1);
     }

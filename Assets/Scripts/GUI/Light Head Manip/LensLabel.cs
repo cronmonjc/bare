@@ -16,6 +16,9 @@ public class LensLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public static LabelTooltip tooltip;
     private Lens lastLens;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         selectionImage.gameObject.SetActive(false);
         selectionImage.transform.rotation = Quaternion.identity;
@@ -53,7 +56,7 @@ public class LensLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
 
     void Update() {
-        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
         if(cam == null) cam = FindObjectOfType<CameraControl>();
         else {
             if(target != null) {

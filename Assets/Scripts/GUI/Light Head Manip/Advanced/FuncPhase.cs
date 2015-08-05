@@ -10,6 +10,9 @@ public class FuncPhase : MonoBehaviour {
     public bool IsColor2 = false;
     public bool CurrentlyB = false;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         button = GetComponent<Button>();
         label = transform.FindChild("Label").GetComponent<Text>();

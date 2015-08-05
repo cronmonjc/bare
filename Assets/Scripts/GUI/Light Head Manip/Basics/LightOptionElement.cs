@@ -50,6 +50,9 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
 
     private CameraControl cam;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         Update();
     }

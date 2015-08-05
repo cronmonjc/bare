@@ -5,6 +5,9 @@ public class InUseDisabler : MonoBehaviour {
     List<FnDrag> draggables;
     List<AdvFunction> funcsInUse;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         draggables = new List<FnDrag>(transform.GetComponentsInChildren<FnDrag>());
         funcsInUse = new List<AdvFunction>();

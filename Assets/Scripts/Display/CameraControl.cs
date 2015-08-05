@@ -72,6 +72,9 @@ public class CameraControl : MonoBehaviour {
         selectedLens = new List<BarSegment>();
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         Directory.CreateDirectory("HasOpen");
         StreamWriter fw = File.CreateText(Directory.GetCurrentDirectory() + "\\HasOpen\\" + System.Environment.MachineName + ".txt");

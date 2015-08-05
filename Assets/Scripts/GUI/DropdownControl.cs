@@ -22,6 +22,9 @@ public class DropdownControl : MonoBehaviour {
 
     public SelectionCallback OnSelect;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         display = GetComponent<Text>();
         cmc = GetComponentInChildren<CollapsingMenuControl>();

@@ -185,6 +185,9 @@ public class BarManager : MonoBehaviour {
         useCAN = to;
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true));
         allSegs.AddRange(transform.GetComponentsInChildren<BarSegment>(true));
@@ -1582,7 +1585,10 @@ public class ThreadedJob {
         }
     }
 
-    public virtual void Start() {
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
+    void Start() {
         m_Thread = new System.Threading.Thread(Run);
         m_Thread.Start();
     }

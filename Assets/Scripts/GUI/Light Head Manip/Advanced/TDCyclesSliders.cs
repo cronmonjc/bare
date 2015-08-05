@@ -5,6 +5,9 @@ public class TDCyclesSliders : MonoBehaviour {
     public UnityEngine.UI.Text outputText;
     private fNbt.NbtShort td, warn;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         Display(0, 0);
     }

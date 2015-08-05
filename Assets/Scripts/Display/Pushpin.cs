@@ -8,14 +8,16 @@ public class Pushpin : MonoBehaviour {
     private LightHead lh;
     private MeshRenderer mr;
 
-    // Use this for initialization
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         mr = GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
     void Update() {
-        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
         if(lh == null) {
             lh = target.GetComponent<LightHead>();
         } else {

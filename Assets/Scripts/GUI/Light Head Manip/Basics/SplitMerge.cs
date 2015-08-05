@@ -10,7 +10,7 @@ public class SplitMerge : MonoBehaviour {
 
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
-        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;
+        if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(!lh.gameObject.activeInHierarchy || !lh.Selected) continue;
             SizeOptionControl soc = lh.soc;

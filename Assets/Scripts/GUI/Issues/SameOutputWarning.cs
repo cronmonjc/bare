@@ -6,6 +6,9 @@ public class SameOutputWarning : IssueChecker {
 
     private Image icon;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         text = GetComponentInChildren<Text>();
         le = GetComponent<LayoutElement>();

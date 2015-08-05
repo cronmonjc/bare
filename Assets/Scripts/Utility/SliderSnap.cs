@@ -22,6 +22,9 @@ public class SliderSnap : MonoBehaviour, IPointerUpHandler {
         Snap();
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         if(s == null) s = GetComponent<Slider>();
         lastWholeVal = Mathf.RoundToInt(s.value);

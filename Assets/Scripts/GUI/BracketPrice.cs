@@ -10,6 +10,9 @@ public class BracketPrice : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         text = GetComponent<UnityEngine.UI.Text>();
         Price = LightDict.inst.bracketPrice;

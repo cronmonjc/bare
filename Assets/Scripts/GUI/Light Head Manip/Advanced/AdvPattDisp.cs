@@ -8,6 +8,9 @@ public class AdvPattDisp : MonoBehaviour {
     public Text color1, color2;
     public Dictionary<AdvFunction, AdvFuncDisp> displays;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         if(displays == null) {
             displays = new Dictionary<AdvFunction, AdvFuncDisp>();

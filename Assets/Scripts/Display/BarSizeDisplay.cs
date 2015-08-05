@@ -1,10 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Shows the bar size with optional prefix / suffix text.
+/// </summary>
 public class BarSizeDisplay : MonoBehaviour {
-    public string Prefix, Suffix;
+    /// <summary>
+    /// Text to put before the bar model number.  Set via the Unity Inspector.
+    /// </summary>
+    public string Prefix;
+    /// <summary>
+    /// Text to put after the bar model number.  Set via the Unity Inspector.
+    /// </summary>
+    public string Suffix;
+    /// <summary>
+    /// The Text Component of the price display.  May be null if none exists.  Set via the Unity Inspector.
+    /// </summary>
     public UnityEngine.UI.Text priceText;
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         SetSize();
     }

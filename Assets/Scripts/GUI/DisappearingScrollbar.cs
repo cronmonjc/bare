@@ -5,7 +5,9 @@ using UnityEngine.UI;
 public class DisappearingScrollbar : MonoBehaviour {
     private Scrollbar s;
 
-    // Use this for initialization
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         s = GetComponent<Scrollbar>();
     }

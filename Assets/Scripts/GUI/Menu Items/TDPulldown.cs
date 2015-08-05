@@ -10,6 +10,9 @@ public class TDPulldown : PulldownItem {
         return false;
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         prev = false;
     }

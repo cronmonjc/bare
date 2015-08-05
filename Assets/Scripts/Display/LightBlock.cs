@@ -52,6 +52,9 @@ public class LightBlock : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Start is called once, when the containing GameObject is instantiated, after Awake.
+    /// </summary>
     void Start() {
         patterns = new Dictionary<AdvFunction, Pattern>();
 
