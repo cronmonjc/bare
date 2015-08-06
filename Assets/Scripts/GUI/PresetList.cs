@@ -29,6 +29,9 @@ public class PresetList : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
     void OnEnable() {
         Clear();
         string[] presets = Directory.GetFiles(BarManager.DirRoot + "Presets");

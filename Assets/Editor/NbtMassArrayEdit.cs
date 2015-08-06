@@ -34,6 +34,9 @@ public class NbtMassArrayEdit : EditorWindow {
         win.ShowAsDropDown(buttonRect, new Vector2(256, 128));
     }
 
+    /// <summary>
+    /// Called by Unity to render the elements inside this EditorWindow's window
+    /// </summary>
     void OnGUI() {
         if(!EditorGUIUtility.isProSkin) {
             Color oldColor = GUI.color;

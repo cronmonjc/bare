@@ -46,12 +46,18 @@ public class FuncPattSelect : MonoBehaviour {
         }
     }
 
-    public void OnEnable() {
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
+    void OnEnable() {
         refreshedThisFrame = false;
         Refresh();
     }
 
-    public void OnDisable() {
+    /// <summary>
+    /// Called immediately when the Component's GameObject is disabled
+    /// </summary>
+    void OnDisable() {
         refreshedThisFrame = false;
     }
 
@@ -174,6 +180,9 @@ public class FuncPattSelect : MonoBehaviour {
         if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
     }
 
+    /// <summary>
+    /// LateUpdate is called once each frame, after all Updates.
+    /// </summary>
     void LateUpdate() {
         refreshedThisFrame = false;
     }

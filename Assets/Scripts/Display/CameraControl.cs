@@ -382,6 +382,9 @@ public class CameraControl : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called when the application is about to quit
+    /// </summary>
     void OnApplicationQuit() {
         if(Directory.Exists(Directory.GetCurrentDirectory() + "\\tempgen"))
             Directory.Delete(Directory.GetCurrentDirectory() + "\\tempgen", true);

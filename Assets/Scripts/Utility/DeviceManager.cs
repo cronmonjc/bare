@@ -236,6 +236,9 @@ public class DeviceManager : MonoBehaviour {
             afterward(job.recieveBuffer);
     }
 
+    /// <summary>
+    /// EDITOR ONLY.  Tells Unity how to render this GameObject in the Scene View.
+    /// </summary>
     void OnDrawGizmos() {
         Gizmos.DrawIcon(transform.position, "ChipBase.png", true);
     }

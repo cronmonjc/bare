@@ -16,6 +16,9 @@ public class OverrideWiring : MonoBehaviour {
         b.colors = (LightLabel.wireOverride ? tru : fal);
     }
 
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
     void OnEnable() {
         if(b == null) b = GetComponent<Button>();
 

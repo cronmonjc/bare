@@ -10,6 +10,9 @@ public class ReferencePoint : MonoBehaviour {
         Debug.Log(this.GetPath() + " - " + transform.position);
     }
 
+    /// <summary>
+    /// EDITOR ONLY.  Tells Unity how to render this GameObject in the Scene View.
+    /// </summary>
     void OnDrawGizmos() {
         Gizmos.color = Color.red;
         Gizmos.DrawCube(transform.position, Vector3.one * 0.1f);

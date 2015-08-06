@@ -16,6 +16,9 @@ public class NbtEditor : EditorWindow {
         EditorWindow.GetWindow<NbtEditor>("NBT Editor", true);
     }
 
+    /// <summary>
+    /// Called by Unity to render the elements inside this EditorWindow's window
+    /// </summary>
     void OnGUI() {
         if(newFile == null) {
             newFile = AssetDatabase.LoadAssetAtPath("Assets/Editor/Sprites/New.png", typeof(Texture2D)) as Texture2D;
@@ -98,6 +101,9 @@ public class ArrayLengthEditor : EditorWindow {
         win.ShowAsDropDown(rect, new Vector2(256, 80));
     }
 
+    /// <summary>
+    /// Called by Unity to render the elements inside this EditorWindow's window
+    /// </summary>
     void OnGUI() {
         if(!EditorGUIUtility.isProSkin) {
             Color oldColor = GUI.color;

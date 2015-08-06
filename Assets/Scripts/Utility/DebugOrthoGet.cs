@@ -28,6 +28,9 @@ public class DebugOrthoGet : MonoBehaviour {
         
     }
 
+    /// <summary>
+    /// Called when Unity is requesting that GameObjects render GUI elements.  Legacy, avoid use when possible unless for debugging.
+    /// </summary>
     void OnGUI() {
         GUILayout.Box("OS=" + cam.orthographicSize.ToString("0.000") + (fixing ? "...?" : ""));
         float aspRatio = ((Screen.width * 1f) / (Screen.height * 1f));

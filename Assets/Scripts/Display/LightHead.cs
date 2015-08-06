@@ -355,6 +355,9 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// LateUpdate is called once each frame, after all Updates.
+    /// </summary>
     void LateUpdate() {
         m_knowsSelectedThisFrame = false;
     }
@@ -717,6 +720,9 @@ public class LightHead : MonoBehaviour {
     }
 
 #if UNITY_EDITOR
+    /// <summary>
+    /// EDITOR ONLY.  Tells Unity how to render this GameObject in the Scene View.
+    /// </summary>
     void OnDrawGizmos() {
         Gizmos.DrawIcon(transform.position, "Head" + (isSmall ? "Sm" : "Lg") + ".png", true);
         if(shouldBeTD) {

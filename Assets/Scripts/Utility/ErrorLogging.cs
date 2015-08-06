@@ -36,10 +36,16 @@ public class ErrorLogging : MonoBehaviour {
     [Header("Email addresses to which email reports should be CC'd to")]
     public string[] ccTo;
 
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
     void OnEnable() {
         Application.logMessageReceived += HandleLogging;
     }
 
+    /// <summary>
+    /// Called immediately when the Component's GameObject is disable
+    /// </summary>
     void OnDisable() {
         Application.logMessageReceived -= HandleLogging;
     }

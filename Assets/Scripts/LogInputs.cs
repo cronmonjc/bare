@@ -6,7 +6,10 @@ public class LogInputs : MonoBehaviour, IPointerClickHandler {
     private string path = "";
     public UnityEngine.UI.Text label;
 
-    public void OnEnable() {
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
+    void OnEnable() {
         if(string.IsNullOrEmpty(path)) path = transform.GetPath();
     }
 
@@ -25,12 +28,19 @@ public class LogInputs : MonoBehaviour, IPointerClickHandler {
     //        ErrorLogging.LogInput("Mouse Down on " + path + " - " + Input.mousePosition.ToString("F1") + (label != null ? " - " + string.Join(", ", label.text.Split('\n')) : ""));
     //}
 
-    public void OnMouseUpAsButton() {
+    /// <summary>
+    /// Called when the left mouse button is pressed then released on a Collider on this GameObject
+    /// </summary>
+    void OnMouseUpAsButton() {
         if(ErrorLogging.allowInputLogging)
             ErrorLogging.LogInput("Mouse Clicked on " + path + " - " + Input.mousePosition.ToString("F1") + (label != null ? " - " + string.Join(", ", label.text.Split('\n')) : ""));
     }
 
-    public void OnPointerClick(PointerEventData eventData) {
+    /// <summary>
+    /// Called when a mouse button is pressed then released on a Selectable Component on this GameObject
+    /// </summary>
+    /// <param name="eventData">Mouse input information</param>
+    void OnPointerClick(PointerEventData eventData) {
         OnMouseUpAsButton();
     }
 }

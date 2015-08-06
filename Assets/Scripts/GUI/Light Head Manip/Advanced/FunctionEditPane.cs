@@ -25,6 +25,9 @@ public class FunctionEditPane : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
     void OnEnable() {
         prevFunc = currFunc;
 

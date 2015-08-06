@@ -33,6 +33,9 @@ public class BOMElement : MonoBehaviour {
     
     public Text qty, desc, amp, cost;
     
+    /// <summary>
+    /// LateUpdate is called once each frame, after all Updates.
+    /// </summary>
     void LateUpdate() {
         qty.text = quantity + "x"; // Always update the quantity.
         if(!unconfigured) {

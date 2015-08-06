@@ -11,7 +11,10 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     public GameObject dragItem;
     public static FnDrag draggedItem;
 
-    public void OnEnable() {
+    /// <summary>
+    /// Called immediately when the Component's GameObject is enabled
+    /// </summary>
+    void OnEnable() {
         if(dragItem != null) return;
 
         dragItem = new GameObject(gameObject.name + " Drag");
@@ -113,7 +116,10 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         dragItem.SetActive(false);
     }
 
-    public void OnDisable() {
+    /// <summary>
+    /// Called immediately when the Component's GameObject is disable
+    /// </summary>
+    void OnDisable() {
         dragItem.SetActive(false);
     }
 

@@ -27,6 +27,10 @@ public class SelBoxCollider : MonoBehaviour {
         c.center = new Vector3(r.width * 0.5f, r.height * -0.5f, 0.1f);
     }
 
+    /// <summary>
+    /// Called when this GameObject begins colliding with another
+    /// </summary>
+    /// <param name="coll">The Collision object that contains information on how the two objects collided</param>
     void OnCollisionEnter(Collision coll) {
         LightHead lh = coll.gameObject.GetComponent<LightHead>();
         if(lh != null) {
@@ -43,6 +47,10 @@ public class SelBoxCollider : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called when this GameObject stops colliding with another
+    /// </summary>
+    /// <param name="coll">The Collision object that contains information on how the two objects collided</param>
     void OnCollisionExit(Collision coll) {
         LightHead lh = coll.gameObject.GetComponent<LightHead>();
         if(lh != null) {
