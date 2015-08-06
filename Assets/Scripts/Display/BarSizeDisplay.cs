@@ -25,6 +25,9 @@ public class BarSizeDisplay : MonoBehaviour {
         SetSize();
     }
 
+    /// <summary>
+    /// Sets the text on the Text Component.  Also called when the size slider moves.
+    /// </summary>
     public void SetSize() {
         GetComponent<UnityEngine.UI.Text>().text = Prefix + BarManager.inst.BarModel + Suffix;
         if(priceText != null) priceText.text = "$" + (BarManager.inst.BarPrice * 0.01f).ToString("F2");

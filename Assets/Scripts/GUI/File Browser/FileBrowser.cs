@@ -39,6 +39,9 @@ public class FileBrowser : MonoBehaviour {
     public FileEvent OnSave;
     public FileEvent OnOpen;
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         if(Application.isWebPlayer) {
             Navigate(Application.persistentDataPath);

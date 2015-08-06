@@ -14,6 +14,9 @@ public class PattSelect : MonoBehaviour {
     public DisableEnablePatt disableButton, enableButton;
     public PhaseButton PhaseA, PhaseB;
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         if(inst == null) inst = this;
     }

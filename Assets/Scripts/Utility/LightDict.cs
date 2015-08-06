@@ -61,7 +61,7 @@ public class LightDict : MonoBehaviour {
     public MountingKitOption[] mountKits;
 
     /// <summary>
-    /// Awake is called once, immediately as the object is created. (typically at load time)
+    /// Awake is called once, immediately as the object is created (typically at load time)
     /// </summary>
     void Awake() {
         if(inst == null) inst = this;  // Make sure everything can reference this object.

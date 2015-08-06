@@ -301,6 +301,9 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         lhd = new LightHeadDefinition();
 

@@ -139,6 +139,9 @@ public class BarManager : MonoBehaviour {
         prices = new uint[] { (uint)priceCmpd["0"].IntValue, (uint)priceCmpd["1"].IntValue, (uint)priceCmpd["2"].IntValue, (uint)priceCmpd["3"].IntValue, (uint)priceCmpd["4"].IntValue };
     }
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         CreatePatts();
 

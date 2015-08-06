@@ -8,6 +8,9 @@ public class ErrorText : MonoBehaviour {
     private Coroutine fader;
     private Text t;
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         if(inst == null) inst = this;
 

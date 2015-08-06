@@ -24,8 +24,17 @@ public class BOMControl : MonoBehaviour {
     /// </summary>
     private Dictionary<string, BOMElement> elements;
 
+    /// <summary>
+    /// A Dictionary holding the counts of each part number
+    /// </summary>
     private Dictionary<string, int> counts;
+    /// <summary>
+    /// A Dictionary holding a light head description for each part number
+    /// </summary>
     private Dictionary<string, LightHead> descsHead;
+    /// <summary>
+    /// A Dictionary holding a lens description for each part number
+    /// </summary>
     private Dictionary<string, BarSegment> descsLens;
 
     /// <summary>
@@ -38,8 +47,14 @@ public class BOMControl : MonoBehaviour {
     /// </summary>
     public GameObject elementPrefab;
 
+    /// <summary>
+    /// A List of the part numbers in use.
+    /// </summary>
     private List<string> parts;
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         elements = new Dictionary<string, BOMElement>();
         counts = new Dictionary<string, int>();

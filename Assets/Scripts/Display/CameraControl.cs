@@ -67,6 +67,9 @@ public class CameraControl : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Awake is called once, immediately as the object is created (typically at load time)
+    /// </summary>
     void Awake() {
         selectedHead = new List<LightHead>();
         selectedLens = new List<BarSegment>();
