@@ -633,6 +633,10 @@ public class LightHead : MonoBehaviour {
         BarManager.moddedBar = true;
     }
 
+    /// <summary>
+    /// Removes a Basic Function from this head.  Will always process defaults.
+    /// </summary>
+    /// <param name="func">The Basic Function to remove</param>
     public void RemoveBasicFunction(BasicFunction func) {
         if(lhd.funcs.Contains(func)) {
             lhd.funcs.Remove(func);
@@ -649,6 +653,9 @@ public class LightHead : MonoBehaviour {
         BarManager.moddedBar = true;
     }
 
+    /// <summary>
+    /// Refreshes the useSingle and useDual variables on this head to match the Basic Functions on it
+    /// </summary>
     public void TestSingleDual() {
         if(lhd.funcs.Count > 1 && (lhd.funcs.Contains(BasicFunction.EMITTER) || lhd.funcs.Contains(BasicFunction.BLOCK_OFF))) {
             lhd.funcs.RemoveRange(0, lhd.funcs.Count - 1);
@@ -696,6 +703,9 @@ public class LightHead : MonoBehaviour {
         useDual &= !(isRear && (Bit == 1 || Bit == 10));
     }
 
+    /// <summary>
+    /// Set the optic and style of this head to match the default defined by this head's Basic Functions
+    /// </summary>
     public void RefreshBasicFuncDefault() {
 
         switch(lhd.funcs.Count) {
@@ -770,6 +780,10 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Set this head's optic using an OpticNode
+    /// </summary>
+    /// <param name="newOptic">The OpticNode to have this head use</param>
     public void SetOptic(OpticNode newOptic) {
         if(newOptic == null) {
             SetOptic("");
@@ -779,10 +793,15 @@ public class LightHead : MonoBehaviour {
         } else SetOptic(newOptic.name);
     }
 
+    /// <summary>
+    /// Set this head's optic by name
+    /// </summary>
+    /// <param name="newOptic">The name of the optic to have this head use</param>
+    /// <param name="doDefault">Should the default style be set too?</param>
     public void SetOptic(string newOptic, bool doDefault = true) {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
-            if(doDefault && lhd.optic != null) {
+            if(doDefault && lhd.optic != null) { // If we're setting the optic (rather than removing one) and we're applying a default style...
                 if(lhd.optic.name == "Block Off") {
                     SetStyle("No Logo");
                 } else {
@@ -794,7 +813,7 @@ public class LightHead : MonoBehaviour {
                         }
                     }
 
-                    if(styles.Count == 1) {
+                    if(styles.Count == 1) { // Only apply a default style when one style is recommended
                         SetStyle(styles[0]);
                     } else {
                         SetStyle("");
@@ -803,15 +822,15 @@ public class LightHead : MonoBehaviour {
             } else {
                 SetStyle("");
             }
-            if(lhd.optic == null || !lhd.optic.dual) {
-                string shortName = "e" + (isRear ? "r" : "f") + "2";
-                foreach(string patt in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
-                    NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(patt);
-                    if(cmpd.Contains(shortName)) {
-                        cmpd.Get<NbtShort>(shortName).DisableBit(Bit);
-                    }
-                }
-            }
+            //if(lhd.optic == null || !lhd.optic.dual) {
+            //    string shortName = "e" + (isRear ? "r" : "f") + "2";
+            //    foreach(string patt in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
+            //        NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(patt);
+            //        if(cmpd.Contains(shortName)) {
+            //            cmpd.Get<NbtShort>(shortName).DisableBit(Bit);
+            //        }
+            //    }
+            //}
             BarManager.moddedBar = true;
         } else {
             lhd.optic = null;
@@ -820,6 +839,10 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Set the style of the head by name
+    /// </summary>
+    /// <param name="newStyle">Name of the style to set</param>
     public void SetStyle(string newStyle) {
         if(lhd.optic != null && newStyle.Length > 0) {
             lhd.style = lhd.optic.styles[newStyle];
@@ -844,6 +867,10 @@ public class LightHead : MonoBehaviour {
         BarManager.moddedBar = true;
     }
 
+    /// <summary>
+    /// Set the style of the head by a StyleNode
+    /// </summary>
+    /// <param name="newStyle">The StyleNode to set this head to</param>
     public void SetStyle(StyleNode newStyle) {
         if(newStyle == null || lhd.optic == null) {
             SetStyle("");
@@ -875,6 +902,9 @@ public class LightHead : MonoBehaviour {
     } 
 #endif
 
+    /// <summary>
+    /// The part number of the optic on this head (including style suffix)
+    /// </summary>
     public string PartNumber {
         get {
             return lhd.optic.partNumber + lhd.style.partSuffix;
