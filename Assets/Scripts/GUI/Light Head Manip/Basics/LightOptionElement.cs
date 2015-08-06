@@ -57,6 +57,9 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
         Update();
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(funcSel != null) {
             t.isOn = funcSel.selFuncs.Contains(fn);

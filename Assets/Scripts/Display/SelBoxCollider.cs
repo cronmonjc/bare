@@ -14,6 +14,9 @@ public class SelBoxCollider : MonoBehaviour {
         SelectedLens = new List<BarSegment>();
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
         RectTransform rt = (RectTransform)transform;

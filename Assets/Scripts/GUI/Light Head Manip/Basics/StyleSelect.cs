@@ -109,6 +109,9 @@ public class StyleSelect : MonoBehaviour {
         return rtn;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(selectedType == null) {
             gameObject.SetActive(false);

@@ -15,7 +15,9 @@ public class IssueTrack : MonoBehaviour {
     /// </summary>
     private Button ContinueButton;
     
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(ContinueButton == null) { ContinueButton = GetComponent<Button>(); }
 

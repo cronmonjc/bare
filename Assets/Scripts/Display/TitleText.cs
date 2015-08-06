@@ -18,6 +18,9 @@ public class TitleText : MonoBehaviour {
         inst = this;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(t == null) t = GetComponent<Text>();
 

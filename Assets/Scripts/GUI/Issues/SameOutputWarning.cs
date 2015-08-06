@@ -15,6 +15,9 @@ public class SameOutputWarning : IssueChecker {
         icon = GetComponentInChildren<Image>();
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         bool enable = BarManager.moddedBar && DoCheck();
         text.enabled = enable;

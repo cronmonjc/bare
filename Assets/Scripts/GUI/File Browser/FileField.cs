@@ -7,6 +7,9 @@ using UnityEngine.Events;
 public class FileField : MonoBehaviour {
     private bool focusedLastFrame = false;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
             if(focusedLastFrame) {

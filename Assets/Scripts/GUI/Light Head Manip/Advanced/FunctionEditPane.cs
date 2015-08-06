@@ -177,6 +177,9 @@ public class FunctionEditPane : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 

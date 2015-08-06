@@ -6,6 +6,9 @@ public class AmperageTotal : MonoBehaviour {
     public Text text;
     public uint totalAmp;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         totalAmp = 0;
         for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {

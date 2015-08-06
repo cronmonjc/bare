@@ -28,6 +28,9 @@ public class FileItem : Selectable, IPointerClickHandler {
         label.enabled = false;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(myPath.Length > 0 && label.text.Length == 0) {
             string[] pathParts = myPath.Split(new char[] { '/', '\\' }, System.StringSplitOptions.RemoveEmptyEntries);

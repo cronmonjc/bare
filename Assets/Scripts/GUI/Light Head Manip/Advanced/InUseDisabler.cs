@@ -13,6 +13,9 @@ public class InUseDisabler : MonoBehaviour {
         funcsInUse = new List<AdvFunction>();
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         funcsInUse.Clear();
 

@@ -16,7 +16,7 @@ public class FollowMouse : MonoBehaviour {
     public static bool AppHasFocus = true;
 
     /// <summary>
-    /// Update is called every frame.
+    /// Update is called once each frame
     /// </summary>
     void Update() {
         Vector2 currMousePos = Input.mousePosition;

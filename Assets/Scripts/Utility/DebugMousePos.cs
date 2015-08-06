@@ -5,7 +5,9 @@ using UnityEngine.UI;
 public class DebugMousePos : MonoBehaviour {
     private Text t;
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(t == null) t = GetComponent<Text>();
 

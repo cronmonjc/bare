@@ -6,6 +6,9 @@ public class MountingKitBOM : MonoBehaviour {
     private Text desc, price;
     private int prev = -1;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(desc == null) {
             desc = transform.Find("Desc").GetComponent<Text>();

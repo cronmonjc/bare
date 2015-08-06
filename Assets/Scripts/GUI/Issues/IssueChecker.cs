@@ -23,7 +23,10 @@ public abstract class IssueChecker : MonoBehaviour {
         text = GetComponent<Text>();
         le = GetComponent<LayoutElement>();
     }
-    
+
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         bool enable = (IgnoreSuppression || BarManager.moddedBar) && DoCheck();
         text.enabled = enable;

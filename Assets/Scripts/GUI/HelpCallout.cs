@@ -6,6 +6,9 @@ public class HelpCallout : MonoBehaviour {
     private LineRenderer lr;
     public Transform target;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(lr == null) lr = GetComponent<LineRenderer>();
 

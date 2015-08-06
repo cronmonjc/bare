@@ -68,6 +68,9 @@ public class LightBlock : MonoBehaviour {
         RenderColor = c;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         RenderColor = c + (Color.white * (Selected ? 0.25f : 0.0f));
     }

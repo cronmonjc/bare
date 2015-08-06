@@ -43,7 +43,10 @@ public class CostTotaler : MonoBehaviour {
         }
     }
 
-    public void Update() {
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
+    void Update() {
         if(TotalObject.activeInHierarchy ^ CameraControl.ShowPricing) {
             Refresh();
         }

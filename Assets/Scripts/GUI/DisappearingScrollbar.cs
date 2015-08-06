@@ -12,7 +12,9 @@ public class DisappearingScrollbar : MonoBehaviour {
         s = GetComponent<Scrollbar>();
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         bool show = !(s.size > 0.98f);
         foreach(Transform t in transform) {

@@ -13,6 +13,9 @@ public abstract class PulldownItem : MonoBehaviour {
     protected abstract bool IsSelected();
     public abstract void Clicked();
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(b == null) b = GetComponent<Button>();
         bool curr = IsSelected();

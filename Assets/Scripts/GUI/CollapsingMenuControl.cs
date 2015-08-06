@@ -15,6 +15,9 @@ public class CollapsingMenuControl : MonoBehaviour, ILayoutElement {
         transform.localScale = new Vector3(1, 0, 1);
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(cam == null) {
             cam = GameObject.Find("UI").GetComponent<Camera>();

@@ -11,6 +11,9 @@ public class NewVersionChecker : MonoBehaviour {
 
     public float countdown = 0.0f, loopTime = 10.0f;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(text == null) text = GetComponent<UnityEngine.UI.Text>();
 

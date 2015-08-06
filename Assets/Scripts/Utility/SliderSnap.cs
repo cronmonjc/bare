@@ -30,7 +30,10 @@ public class SliderSnap : MonoBehaviour, IPointerUpHandler {
         lastWholeVal = Mathf.RoundToInt(s.value);
     }
 
-    
+
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         int val = Mathf.RoundToInt(s.value);
         if(val != lastWholeVal) {

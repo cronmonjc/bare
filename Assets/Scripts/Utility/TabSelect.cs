@@ -19,6 +19,9 @@ public class TabSelect : MonoBehaviour {
         system = EventSystem.current;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(!fired && Input.GetKeyDown(KeyCode.Tab)) {
             if(system.currentSelectedGameObject == null && IsMain) {

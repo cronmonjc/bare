@@ -8,6 +8,9 @@ public class EventSysDebug : MonoBehaviour {
     private PointerInputModule pim;
     private Text t;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(pim == null) pim = GetComponent<StandaloneInputModule>();
         if(t == null) t = GetComponent<Text>();

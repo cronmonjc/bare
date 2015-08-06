@@ -383,6 +383,9 @@ public class BOMCables : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(showingPricing ^ CameraControl.ShowPricing) {
             showingPricing = CameraControl.ShowPricing;

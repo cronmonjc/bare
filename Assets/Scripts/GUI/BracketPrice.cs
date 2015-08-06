@@ -18,6 +18,9 @@ public class BracketPrice : MonoBehaviour {
         Price = LightDict.inst.bracketPrice;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(text.enabled ^ CameraControl.ShowPricing) {
             text.enabled = CameraControl.ShowPricing;

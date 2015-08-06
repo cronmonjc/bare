@@ -15,7 +15,9 @@ public class LightInteractionPanel : MonoBehaviour {
     public GameObject SummaryPane, LensPane, OpticPane, FuncAssignPane, FuncEditPane;
     public UnityEngine.UI.Text PattEditButton;
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(cam == null) {
             cam = FindObjectOfType<CameraControl>();

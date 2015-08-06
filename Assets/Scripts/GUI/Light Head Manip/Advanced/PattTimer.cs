@@ -26,6 +26,9 @@ public class PattTimer : MonoBehaviour {
         running = false;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(!running) return;
         passedTime += Time.deltaTime;

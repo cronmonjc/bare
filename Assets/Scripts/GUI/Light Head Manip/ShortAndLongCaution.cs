@@ -4,6 +4,9 @@ using System.Collections;
 public class ShortAndLongCaution : MonoBehaviour {
     public GameObject CautionObject;
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
 

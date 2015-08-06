@@ -30,6 +30,9 @@ public class BarSizeDisplay : MonoBehaviour {
         if(priceText != null) priceText.text = "$" + (BarManager.inst.BarPrice * 0.01f).ToString("F2");
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(priceText != null && (priceText.enabled ^ CameraControl.ShowPricing)) {
             priceText.enabled = CameraControl.ShowPricing;

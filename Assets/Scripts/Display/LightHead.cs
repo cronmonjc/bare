@@ -332,6 +332,9 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {  // Quick & dirty optimization - if we're previewing a function, do nothing
             return;

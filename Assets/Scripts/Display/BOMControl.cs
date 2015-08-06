@@ -51,6 +51,9 @@ public class BOMControl : MonoBehaviour {
         parts = new List<string>();
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         parts.Clear();
         foreach(string alpha in new List<string>(counts.Keys)) {

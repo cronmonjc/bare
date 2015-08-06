@@ -89,7 +89,10 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         inputMap.Value = val;
     }
 
-    public void Update() {
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
+    void Update() {
         int val = inputMap.Value[key];
 
         if(val == 0xC00) {

@@ -9,6 +9,9 @@ public class PathLink : DirectoryLink {
         fb.Navigate(string.Join("\\", Path.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)));
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         string[] pathParts = Path.Split('/', '\\');
         GetComponentInChildren<UnityEngine.UI.Text>().text = pathParts[pathParts.Length - (pathParts[pathParts.Length - 1].Length > 0 ? 1 : 2)];

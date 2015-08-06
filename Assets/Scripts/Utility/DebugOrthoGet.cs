@@ -18,6 +18,9 @@ public class DebugOrthoGet : MonoBehaviour {
         fixing = true;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
 
         float aspRatio = ((Screen.width * 1f) / (Screen.height * 1f));

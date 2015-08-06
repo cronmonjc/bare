@@ -17,6 +17,9 @@ public class TDPulldown : PulldownItem {
         prev = false;
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         if(b == null) b = GetComponent<UnityEngine.UI.Button>();
         bool curr = BarManager.inst.td == (TDOption)number;

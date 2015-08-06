@@ -108,6 +108,9 @@ public class CameraControl : MonoBehaviour {
         RefreshOnSelect.Invoke();
     }
 
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
     void Update() {
         Screen.SetResolution(Screen.width, Screen.height, false);
         if(!FBrowser.activeInHierarchy) {
