@@ -3,32 +3,66 @@ using System.Collections;
 using System.Collections.Generic;
 using fNbt;
 
+/// <summary>
+/// Massive class that handles individual light heads.  Handles everything from definition storage to processing.
+/// </summary>
+/// <remarks>
+/// LightHead is a Component that exists on every light head on the bar.  While it manages information regarding the physical definition of the head (optic and style) it will also cache information regarding patterns and enables, and handles default optics and styles when adding functions.
+/// </remarks>
 public class LightHead : MonoBehaviour {
+    /// <summary>
+    /// The location this LightHead is residing.  Set via the Unity Inspector.
+    /// </summary>
     public Location loc;
 
+    /// <summary>
+    /// A reference to the CameraControl Component
+    /// </summary>
     private static CameraControl cam;
-    private static SelBoxCollider sbc;
 
+    /// <summary>
+    /// Is this a small head?  Set via the Unity Inspector.
+    /// </summary>
     public bool isSmall;
+    /// <summary>
+    /// The object containing information on the light head itself
+    /// </summary>
     public LightHeadDefinition lhd;
 
+    /// <summary>
+    /// Do the functions on this head allow for use of single-color heads?
+    /// </summary>
     [System.NonSerialized]
     public bool useSingle;
+    /// <summary>
+    /// Do the functions on this head allow for use of dual-color heads?
+    /// </summary>
     [System.NonSerialized]
     public bool useDual;
 
+    /// <summary>
+    /// The SizeOptionControl that owns this head, if any
+    /// </summary>
     [System.NonSerialized]
     public SizeOptionControl soc;
 
+    /// <summary>
+    /// This head's personal cache variable on its path
+    /// </summary>
     private string m_path = "";
+    /// <summary>
+    /// This head's path
+    /// </summary>
     public string Path {
         get {
-            if(m_path.Length == 0) m_path = transform.GetPath();
-            return m_path;
+            if(m_path.Length == 0) m_path = transform.GetPath(); // We don't know where we're living, spend a little time to get that now.
+            return m_path; // Heads don't move in the hierarchy at all - fetch once and we never need to fetch again.
         }
     }
 
-
+    /// <summary>
+    /// Is Color 1 on this head using Phase A?
+    /// </summary>
     public bool basicPhaseA {
         get {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
@@ -57,6 +91,9 @@ public class LightHead : MonoBehaviour {
             }
         }
     }
+    /// <summary>
+    /// Is Color 2 on this head using Phase A?
+    /// </summary>
     public bool basicPhaseA2 {
         get {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
@@ -86,6 +123,9 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Is Color 1 on this head using Phase B?
+    /// </summary>
     public bool basicPhaseB {
         get {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
@@ -114,6 +154,9 @@ public class LightHead : MonoBehaviour {
             }
         }
     }
+    /// <summary>
+    /// Is Color 2 on this head using Phase B?
+    /// </summary>
     public bool basicPhaseB2 {
         get {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
@@ -143,9 +186,18 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Does this head know if it's a rear head?  (Can't simply check if m_isRear is null, bools aren't nullable)
+    /// </summary>
     private bool m_knowsIsRear = false;
+    /// <summary>
+    /// This head's personal cache variable for isRear.  Important for PDF export (can't use UnityEngine.Transform in another thread).
+    /// </summary>
     private bool m_isRear = false;
 
+    /// <summary>
+    /// Is this head in the rear of the bar?
+    /// </summary>
     public bool isRear {
         get {
             if(!m_knowsIsRear) {
@@ -156,16 +208,30 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// This head's personal cache variable for hasRealHead.
+    /// </summary>
     private bool m_hasRealHead = false;
 
+    /// <summary>
+    /// Does this head have a real optic in it? (defined, not block off)
+    /// </summary>
     public bool hasRealHead {
         get {
             return m_hasRealHead;
         }
     }
 
+    /// <summary>
+    /// This head's cache variable for patterns, to prevent having to fetch it multiple times over
+    /// </summary>
     public Dictionary<AdvFunction, Pattern> pattDict1, pattDict2;
 
+    /// <summary>
+    /// Get whether this head can be enabled given its current functions for a specific Advanced Function
+    /// </summary>
+    /// <param name="fn">The Advanced Function to test</param>
+    /// <returns>True if this light head can be enabled given its setup</returns>
     public bool GetCanEnable(AdvFunction fn) {
         switch(fn) {
             case AdvFunction.PRIO1:
@@ -173,7 +239,6 @@ public class LightHead : MonoBehaviour {
             case AdvFunction.PRIO3:
             case AdvFunction.PRIO4:
             case AdvFunction.PRIO5:
-                return lhd.funcs.Contains(BasicFunction.FLASHING);
             case AdvFunction.FTAKEDOWN:
             case AdvFunction.FALLEY:
             case AdvFunction.ICL:
@@ -202,8 +267,18 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// This head's personal cache Dictionary storing whether or not it's enabled for each Advanced Function
+    /// </summary>
     private Dictionary<AdvFunction, byte> cachedEnables;
 
+    /// <summary>
+    /// Get whether or not this head is enabled for a certain Advanced Function
+    /// </summary>
+    /// <param name="fn">The Advanced Function to test for</param>
+    /// <param name="clr2">Are we checking color 2?</param>
+    /// <param name="forceRefreshCache">Force the function to get information from the pattern bytes</param>
+    /// <returns>True if the head is enabled for that function</returns>
     public bool GetIsEnabled(AdvFunction fn, bool clr2 = false, bool forceRefreshCache = false) {
         if(forceRefreshCache || !cachedEnables.ContainsKey(fn)) {
             NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
@@ -221,6 +296,12 @@ public class LightHead : MonoBehaviour {
         return (cachedEnables[fn] & (clr2 ? 2 : 1)) > 0;
     }
 
+    /// <summary>
+    /// Get whether or not this head is using Phase B for a certain Flashing Advanced Function
+    /// </summary>
+    /// <param name="fn">The Advanced Function to test for</param>
+    /// <param name="clr2">Are we checking color 2?</param>
+    /// <returns>True if the head is using Phase B for that function</returns>
     public bool GetPhaseB(AdvFunction fn, bool clr2 = false) {
         NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, fn));
 
@@ -230,6 +311,9 @@ public class LightHead : MonoBehaviour {
             return (patt.Get<NbtShort>("p" + (isRear ? "r" : "f") + (clr2 ? "2" : "1")).ShortValue & (0x1 << Bit)) > 0;
     }
 
+    /// <summary>
+    /// A list of all of the Basic Functions this head is capable of
+    /// </summary>
     public List<BasicFunction> CapableBasicFunctions {
         get {
             List<BasicFunction> rtn = new List<BasicFunction>(new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY });
@@ -257,28 +341,49 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Is this head using the far wire if it's in the center?
+    /// </summary>
     public bool FarWire = false;
 
+    /// <summary>
+    /// A reference to this head's light label
+    /// </summary>
     [System.NonSerialized]
     public LightLabel myLabel;
 
-    [System.NonSerialized]
-    public Light[] myLights;
-
+    /// <summary>
+    /// This head's bit.  A bit of 255 means it has none assigned.
+    /// </summary>
     public byte myBit = 255;
 
+    /// <summary>
+    /// Should this head be a Traffic Director head?
+    /// </summary>
     [System.NonSerialized]
     public bool shouldBeTD;
 
+    /// <summary>
+    /// This head's bit.  A bit of 255 means it has none assigned.
+    /// </summary>
     public byte Bit {
         get {
             return myBit;
         }
     }
 
+    /// <summary>
+    /// Does this head know if it's selected this frame?  (Can't simply check if m_selected is null, bools aren't nullable)
+    /// </summary>
     private bool m_knowsSelectedThisFrame = false;
+    /// <summary>
+    /// This head's personal cache variable for Selected.
+    /// </summary>
     private bool m_selected = false;
 
+    /// <summary>
+    /// Is this head currently selected?
+    /// </summary>
     public bool Selected {
         get {
             if(!m_knowsSelectedThisFrame) {
@@ -324,9 +429,7 @@ public class LightHead : MonoBehaviour {
         myLabel.transform.localScale = Vector3.one;
         myLabel.DispError = false;
 
-        myLights = GetComponentsInChildren<Light>(true);
-
-        for(Transform t = transform; soc == null && t != null; t = t.parent) {
+        for(Transform t = transform; soc == null && t != null; t = t.parent) { // Look for a SizeOptionControl somewhere in its heritage
             soc = t.GetComponent<SizeOptionControl>();
         }
 
@@ -345,9 +448,6 @@ public class LightHead : MonoBehaviour {
 
         if(cam == null) {
             cam = FindObjectOfType<CameraControl>();
-        }
-        if(sbc == null) {
-            sbc = cam.SelBox.GetComponent<SelBoxCollider>();
         }
 
         if(!myLabel.gameObject.activeInHierarchy) {
@@ -382,6 +482,9 @@ public class LightHead : MonoBehaviour {
     //    return ((en & (0x1 << Bit)) > 0);
     //}
 
+    /// <summary>
+    /// Gets the head to fetch ALL of the Patterns assigned to it
+    /// </summary>
     public void PrefetchPatterns() {
         if(pattDict1 == null)
             pattDict1 = new Dictionary<AdvFunction, Pattern>();
@@ -398,6 +501,10 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Gets the head to fetch the Patterns assigned to it for a specific Advanced Function
+    /// </summary>
+    /// <param name="which">The Advanced Function to fetch for</param>
     public void PrefetchPatterns(AdvFunction which) {
         if(pattDict1 == null)
             pattDict1 = new Dictionary<AdvFunction, Pattern>();
@@ -408,33 +515,40 @@ public class LightHead : MonoBehaviour {
         pattDict2[which] = GetPattern(which, true, true);
     }
 
+    /// <summary>
+    /// Get the Pattern this head is assigned for a specific Advanced Function
+    /// </summary>
+    /// <param name="f">The Advanced Function to fetch for</param>
+    /// <param name="clr2">Are we fetching for color 2?</param>
+    /// <param name="forceFetch">Force the function to get information from the pattern bytes</param>
+    /// <returns>The Pattern this head is using</returns>
     public Pattern GetPattern(AdvFunction f, bool clr2 = false, bool forceFetch = false) {
-        if(!forceFetch) {
-            if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null;
-            if(clr2 && pattDict2 != null) return pattDict2.ContainsKey(f) ? pattDict2[f] : null;
+        if(!forceFetch) { // We aren't forced to fetch
+            if(!clr2 && pattDict1 != null) return pattDict1.ContainsKey(f) ? pattDict1[f] : null; // If color 1, return the value in pattDict1
+            if(clr2 && pattDict2 != null) return pattDict2.ContainsKey(f) ? pattDict2[f] : null; // If color 2, return the value in pattDict2
         }
-        if(!hasRealHead) return null;
-        if(LightDict.inst.steadyBurn.Contains(f)) {
+        if(!hasRealHead) return null; // If this head doesn't have a real head, it doesn't have a Pattern to return
+        if(LightDict.inst.steadyBurn.Contains(f)) { // If this is a Steady Burn Advanced Function, return the Steady Burn pattern
             return LightDict.stdy;
         }
-        NbtCompound patts = BarManager.inst.patts;
+        NbtCompound patts = BarManager.inst.patts; // Get the pattern bytes NbtCompound
 
         string cmpdName = BarManager.GetFnString(transform, f);
         if(cmpdName == null) {
             Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.");
             return null;
         }
-        if(f == AdvFunction.TRAFFIC_LEFT || f == AdvFunction.TRAFFIC_RIGHT) {
-            short patID = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("patt").Value;
-            foreach(Pattern p in LightDict.inst.tdPatts) {
+        if(f == AdvFunction.TRAFFIC_LEFT || f == AdvFunction.TRAFFIC_RIGHT) { // Looking for traffic director Pattern
+            short patID = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("patt").Value; // Get the Pattern ID
+            foreach(Pattern p in LightDict.inst.tdPatts) { // Look through every Pattern, return the one whose ID matches
                 if(p.id == patID) {
                     return p;
                 }
             }
-        } else {
-            NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1"));
+        } else { // Looking for a flashing Pattern
+            NbtCompound patCmpd = patts.Get<NbtCompound>(cmpdName).Get<NbtCompound>("pat" + (clr2 ? "2" : "1")); // Get the pertinent function NbtCompound
 
-            string tagname = transform.position.y < 0 ? "r" : "f";
+            string tagname = isRear ? "r" : "f";
             string path = Path;
 
             if(path.Contains("C") || path.Contains("A")) {
@@ -450,8 +564,8 @@ public class LightHead : MonoBehaviour {
                 tagname = tagname + "cen";
             }
 
-            short patID = patCmpd.Get<NbtShort>(tagname).Value;
-            foreach(Pattern p in LightDict.inst.flashPatts) {
+            short patID = patCmpd.Get<NbtShort>(tagname).Value; // Get the Pattern ID
+            foreach(Pattern p in LightDict.inst.flashPatts) { // Look through every Pattern, return the one whose ID matches
                 if(p.id == patID) {
                     return p;
                 }
@@ -460,13 +574,18 @@ public class LightHead : MonoBehaviour {
         return null;
     }
 
+    /// <summary>
+    /// Adds a Basic Function to this head.  Will process defaults unless not desired.
+    /// </summary>
+    /// <param name="func">The Basic Function to add</param>
+    /// <param name="doDefault">Are we applying defaults?</param>
     public void AddBasicFunction(BasicFunction func, bool doDefault = true) {
-        if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {
-            lhd.funcs.Add(func);
-            TestSingleDual();
-            if(doDefault) RefreshBasicFuncDefault();
+        if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {  // If it's capable of adding the function and it doesn't have it yet...
+            lhd.funcs.Add(func); // Add the function
+            TestSingleDual(); // Check for ability to take single/dual heads
+            if(doDefault) RefreshBasicFuncDefault(); // Apply defaults if desired
         }
-        switch(func) {
+        switch(func) { // Automatically enable heads for certain functions
             case BasicFunction.STT:
                 NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
                 taiCmpd.Get<NbtShort>("er1").EnableBit(Bit);
@@ -488,8 +607,22 @@ public class LightHead : MonoBehaviour {
                 calCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
                 break;
             case BasicFunction.STEADY:
-                if(loc == Location.ALLEY || loc == Location.FRONT) {
-                    NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
+                NbtCompound cmpd = null;
+                switch(loc) {
+                    case Location.ALLEY: // Alley
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "all");
+                        break;
+                    case Location.FRONT: // Takedown / Work Light
+                    case Location.FRONT_CORNER:
+                    case Location.REAR:
+                    case Location.REAR_CORNER:
+                    case Location.FAR_REAR:
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>("td");
+                        break;
+                    default:
+                        break;
+                }
+                if(cmpd != null) {
                     cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
                     cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
                 }

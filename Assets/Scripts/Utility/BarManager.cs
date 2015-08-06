@@ -1591,7 +1591,7 @@ public class ThreadedJob {
     /// <summary>
     /// Start is called once, when the containing GameObject is instantiated, after Awake.
     /// </summary>
-    void Start() {
+    public void Start() {
         m_Thread = new System.Threading.Thread(Run);
         m_Thread.Start();
     }

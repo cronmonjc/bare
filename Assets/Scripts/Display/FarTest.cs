@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// A small class that tests whether a head is "far rear" -- deprecated because anything that uses it simply examines bits now
+/// </summary>
+[System.Obsolete("Anything that used to depend on the FarTest Component to set it on \"far head\" now simply examines the bits")]
 public class FarTest : MonoBehaviour {
 
     public bool canFarOnPos = false;

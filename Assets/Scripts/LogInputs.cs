@@ -40,7 +40,7 @@ public class LogInputs : MonoBehaviour, IPointerClickHandler {
     /// Called when a mouse button is pressed then released on a Selectable Component on this GameObject
     /// </summary>
     /// <param name="eventData">Mouse input information</param>
-    void OnPointerClick(PointerEventData eventData) {
+    void IPointerClickHandler.OnPointerClick(PointerEventData eventData) {
         OnMouseUpAsButton();
     }
 }

@@ -18,7 +18,7 @@ public class FileItem : Selectable, IPointerClickHandler {
     /// <summary>
     /// Start is called once, when the containing GameObject is instantiated, after Awake.
     /// </summary>
-    void Start() {
+    protected override void Start() {
         base.Start();
 
         label.onEndEdit.AddListener(delegate(string to) {

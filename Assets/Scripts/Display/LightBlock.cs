@@ -2,6 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Deprecated.  Used to display an individual color for a light head (splitting the head if it was dual color).
+/// </summary>
+[System.Obsolete("No longer used, as light heads individually maintain what color they should display")]
 public class LightBlock : MonoBehaviour {
     private static CameraControl cam;
     private MeshRenderer mr;
