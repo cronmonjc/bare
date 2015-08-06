@@ -26,7 +26,7 @@ public class LightInteractionPanel : MonoBehaviour {
 
         switch(state) {
             case ShowState.SUMMARY:
-                if(cam.OnlyCamSelectedHead.Count > 0) {
+                if(cam.SelectedHead.Count > 0) {
                     state = ShowState.OPTICS;
                 } else if(cam.SelectedLens.Count > 0) {
                     state = ShowState.LENSES;
@@ -35,7 +35,7 @@ public class LightInteractionPanel : MonoBehaviour {
                 }
                 break;
             case ShowState.OPTICS:
-                if(cam.OnlyCamSelectedHead.Count == 0) {
+                if(cam.SelectedHead.Count == 0) {
                     state = ShowState.SUMMARY;
                 } else if(cam.SelectedLens.Count > 0) {
                     state = ShowState.LENSES;
@@ -46,7 +46,7 @@ public class LightInteractionPanel : MonoBehaviour {
             case ShowState.LENSES:
                 if(cam.SelectedLens.Count == 0) {
                     state = ShowState.SUMMARY;
-                } else if(cam.OnlyCamSelectedHead.Count > 0) {
+                } else if(cam.SelectedHead.Count > 0) {
                     state = ShowState.OPTICS;
                 } else if(EditingFunc) {
                     state = ShowState.FUNCASSIGN;

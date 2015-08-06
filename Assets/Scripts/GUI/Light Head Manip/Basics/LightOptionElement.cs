@@ -75,7 +75,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                     if(cam == null) cam = FindObjectOfType<CameraControl>();
 
                     byte locs = 0x0;
-                    foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+                    foreach(LightHead alpha in cam.SelectedHead) {
                         locs |= (byte)alpha.loc;
                     }
 
@@ -87,7 +87,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                             break;
                         case 0x4:
                             byte side = 0x0;
-                            foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+                            foreach(LightHead alpha in cam.SelectedHead) {
                                 if(alpha.Bit == 12) {
                                     side |= 0x1;
                                 } else if(alpha.Bit == 13) {

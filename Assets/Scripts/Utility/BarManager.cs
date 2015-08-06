@@ -439,7 +439,7 @@ public class BarManager : MonoBehaviour {
             foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
                 soc.ShowLong = true;
             }
-            FindObjectOfType<CameraControl>().OnlyCamSelectedHead.Clear();
+            FindObjectOfType<CameraControl>().SelectedHead.Clear();
         }
         StartCoroutine(RefreshBitsIEnum());
     }
@@ -1524,7 +1524,7 @@ public class BarManager : MonoBehaviour {
 
     public void BeginPreview() {
         funcBeingTested = FunctionEditPane.currFunc;
-        FindObjectOfType<CameraControl>().OnlyCamSelectedHead.Clear();
+        FindObjectOfType<CameraControl>().SelectedHead.Clear();
         CameraControl.ShowWhole = true;
         CanvasDisabler.CanvasEnabled = false;
         PattTimer.inst.StartTimer();

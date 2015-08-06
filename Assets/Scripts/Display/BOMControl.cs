@@ -70,9 +70,9 @@ public class BOMControl : MonoBehaviour {
     /// Update is called once each frame
     /// </summary>
     void Update() {
-        parts.Clear();
+        parts.Clear(); // Clear out the part number list
         foreach(string alpha in new List<string>(counts.Keys)) {
-            counts[alpha] = 0;
+            counts[alpha] = 0; // Clear out the counts
         }
 
         if(type == BOMType.Lights) {
@@ -101,10 +101,10 @@ public class BOMControl : MonoBehaviour {
             unconfigured.gameObject.SetActive(unconfig > 0);
 
             foreach(string alpha in parts) {
-                if(elements.ContainsKey(alpha)) {
+                if(elements.ContainsKey(alpha)) { // If the BOM Element already exists, recycle
                     elements[alpha].quantity = counts[alpha];
                     elements[alpha].headToDescribe = descsHead[alpha];
-                } else {
+                } else { // Otherwise make a new one
                     BOMElement newbie = AddItem(alpha);
                     newbie.type = type;
                     newbie.headToDescribe = descsHead[alpha];

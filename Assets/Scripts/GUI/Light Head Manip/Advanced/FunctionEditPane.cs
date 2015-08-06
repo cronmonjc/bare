@@ -186,7 +186,7 @@ public class FunctionEditPane : MonoBehaviour {
     void Update() {
         if(cam == null) cam = FindObjectOfType<CameraControl>();
 
-        paneParent.SetActive(cam.OnlyCamSelectedHead.Count > 0);
+        paneParent.SetActive(cam.SelectedHead.Count > 0);
 
         if(prevFunc != currFunc) {
             OnEnable();

@@ -286,15 +286,15 @@ public class LightHead : MonoBehaviour {
                 if(cam == null) {
                     cam = FindObjectOfType<CameraControl>();
                 }
-                m_selected = cam.OnlyCamSelectedHead.Contains(this);
+                m_selected = cam.SelectedHead.Contains(this);
             }
             return m_selected;
         }
         set {
             if(value && !Selected) {
-                cam.OnlyCamSelectedHead.Add(this);
+                cam.SelectedHead.Add(this);
             } else if(!value && Selected) {
-                cam.OnlyCamSelectedHead.Remove(this);
+                cam.SelectedHead.Remove(this);
             }
             m_knowsSelectedThisFrame = true;
             m_selected = value;

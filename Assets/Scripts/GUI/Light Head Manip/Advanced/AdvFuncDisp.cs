@@ -28,7 +28,7 @@ public class AdvFuncDisp : MonoBehaviour {
     public void Refresh() {
         if(cam == null) { cam = FindObjectOfType<CameraControl>(); }
 
-        NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(cam.OnlyCamSelectedHead[0].transform, func));
+        NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(cam.SelectedHead[0].transform, func));
         bool c1anyEnabled = false, c1allEnabled = true;
         bool c2anyEnabled = false, c2allEnabled = true;
         string c1ph = "", c2ph = "";
@@ -37,7 +37,7 @@ public class AdvFuncDisp : MonoBehaviour {
         //if(c1phase != null) c1phase.text = "";
         //if(c2phase != null) c2phase.text = "";
 
-        foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+        foreach(LightHead alpha in cam.SelectedHead) {
             if(!alpha.gameObject.activeInHierarchy) continue;
 
             byte bit = alpha.Bit;
@@ -86,7 +86,7 @@ public class AdvFuncDisp : MonoBehaviour {
                 bool foundOne = false;
                 Pattern p = null;
 
-                foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+                foreach(LightHead alpha in cam.SelectedHead) {
                     if(!alpha.gameObject.activeInHierarchy) continue;
 
                     Pattern ap = alpha.GetPattern(func, false);
@@ -116,7 +116,7 @@ public class AdvFuncDisp : MonoBehaviour {
                 bool foundOne = false;
                 Pattern p = null;
 
-                foreach(LightHead alpha in cam.OnlyCamSelectedHead) {
+                foreach(LightHead alpha in cam.SelectedHead) {
                     if(!alpha.gameObject.activeInHierarchy) continue;
 
                     Pattern ap = alpha.GetPattern(func, true);
