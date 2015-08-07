@@ -11,6 +11,9 @@ using PdfSharp.Pdf;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 
+/// </summary>
 public class BarManager : MonoBehaviour {
     public static string DirRoot;
     public static byte canPub = 0;
@@ -1616,25 +1619,100 @@ public class ThreadedJob {
     }
 }
 
+/// <summary>
+/// This is the class that handles the asynchronous production of the PDFs.
+/// </summary>
 public class PDFExportJob : ThreadedJob {
-    public string custName, orderNumber, notes;
+    /// <summary>
+    /// Provided customer name
+    /// </summary>
+    public string custName;
+    /// <summary>
+    /// Provided order number
+    /// </summary>
+    public string orderNumber;
+    /// <summary>
+    /// Provided order notes
+    /// </summary>
+    public string notes;
+    /// <summary>
+    /// The description of the current state of production
+    /// </summary>
     public string progressText = "...";
+    /// <summary>
+    /// A value representing the current progress of production.  Valid from 0 to 100.
+    /// </summary>
     public float progressPercentage = 0f;
+    /// <summary>
+    /// A reference to the NbtCompound pattern bytes.  Cloned at the start.
+    /// </summary>
     public NbtCompound patts;
+    /// <summary>
+    /// Is this bar using CAN?
+    /// </summary>
     public bool useCAN = false;
-    public string BarModel = "", BarWidth = "";
+    /// <summary>
+    /// The model number of the bar
+    /// </summary>
+    public string BarModel = "";
+    /// <summary>
+    /// The human-friendly width of the bar
+    /// </summary>
+    public string BarWidth = "";
+    /// <summary>
+    /// The path to which the file will be written
+    /// </summary>
     public string filename = "";
+    /// <summary>
+    /// The rectangle used to capture the images
+    /// </summary>
     public Rect capRect;
+    /// <summary>
+    /// A list of issues that were found with the bar
+    /// </summary>
     public List<String> issues;
+    /// <summary>
+    /// A referece to the Progress Stuff that is used to display progress to the screen
+    /// </summary>
     public BarManager.ProgressStuff progressStuff;
+    /// <summary>
+    /// A list of all of the heads
+    /// </summary>
     public LightHead[] headNumber;
+    /// <summary>
+    /// Dictionary containing all of the wires in use
+    /// </summary>
     public Dictionary<LightHead, string> color1Wire, color2Wire;
+    /// <summary>
+    /// Reference to BOMCables object, so it can write its own things to the PDF as well
+    /// </summary>
     public BOMCables bomcables;
+    /// <summary>
+    /// Reference to the Mounting Kit Option in use
+    /// </summary>
     public MountingKitOption mntOpt;
-    public uint ampTotal, costTotal, barCost;
+    /// <summary>
+    /// Total current draw, in whole milliamps
+    /// </summary>
+    public uint ampTotal;
+    /// <summary>
+    /// Total sale price of the bar, in whole cents
+    /// </summary>
+    public uint costTotal;
+    /// <summary>
+    /// Cost of the base subassembly alone, in whole cents
+    /// </summary>
+    public uint barCost;
 
+    /// <summary>
+    /// If an exception occured while producing the PDF, it's stored here so it can be processed on Unity's thread
+    /// </summary>
     public Exception thrownExcep;
 
+    /// <summary>
+    /// Initializes the job.  Gathers the information it needs before handing it to a new thread.
+    /// </summary>
+    /// <param name="fname">Where are we saving the file?</param>
     public void Start(string fname) {
         BarManager bm = BarManager.inst;
         custName = bm.custName.text;
@@ -1693,6 +1771,10 @@ public class PDFExportJob : ThreadedJob {
         m_Thread.Name = "PDF Export Thread";
     }
 
+    /// <summary>
+    /// Unity check-in method - performed on Unity thread
+    /// </summary>
+    /// <returns>True if the method's done</returns>
     public override bool Update() {
         if(IsDone) {
             OnFinished();
@@ -1707,23 +1789,26 @@ public class PDFExportJob : ThreadedJob {
         }
     }
 
+    /// <summary>
+    /// Finalization of the job - performed on Unity thread
+    /// </summary>
     protected override void OnFinished() {
-        if(thrownExcep != null) {
+        if(thrownExcep != null) { // If an exception was thrown...
             try {
-                throw thrownExcep;
-            } catch(IOException) {
+                throw thrownExcep; // Rethrow it in a try-catch to process
+            } catch(IOException) { // Can't read/write file
                 ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
-            } catch(Exception) {
+            } catch(Exception) { // Something else happened
                 ErrorText.inst.DispError("Problem saving the PDF.  Something happened that wasn't accounted for.  Please try again.");
                 Debug.LogException(thrownExcep);
             }
 
         } else {
-            Application.OpenURL("file://" + filename);
+            Application.OpenURL("file://" + filename); // Open the file up
         }
 
         if(BarManager.inst.savePDF)
-            BarManager.inst.fb.currFile = BarManager.inst.barFilePath;
+            BarManager.inst.fb.currFile = BarManager.inst.barFilePath; // Restore path to current file in the file browser
         BarManager.inst.savePDF = false;
 
         CanvasDisabler.CanvasEnabled = true;
@@ -1733,6 +1818,9 @@ public class PDFExportJob : ThreadedJob {
 
     }
 
+    /// <summary>
+    /// Thread's function
+    /// </summary>
     protected override void ThreadFunction() {
         lock(progressStuff) {
             progressText = "Finished capturing images.";
@@ -1809,6 +1897,11 @@ public class PDFExportJob : ThreadedJob {
         }
     }
 
+    /// <summary>
+    /// Produces the overview page (page 1 of 6)
+    /// </summary>
+    /// <param name="p">The PDF page we're using</param>
+    /// <param name="capRect">Reference of the capture rectangle</param>
     public void OverviewPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
@@ -1942,6 +2035,11 @@ public class PDFExportJob : ThreadedJob {
         }
     }
 
+    /// <summary>
+    /// Produces the parts page (page 2 of 6)
+    /// </summary>
+    /// <param name="p">The PDF page we're using</param>
+    /// <param name="capRect">Reference of the capture rectangle</param>
     public void PartsPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
@@ -2065,6 +2163,11 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
 
+    /// <summary>
+    /// Produces the wiring page (page 3 of 6)
+    /// </summary>
+    /// <param name="p">The PDF page we're using</param>
+    /// <param name="capRect">Reference of the capture rectangle</param>
     public void WiringPage(PdfPage p, Rect capRect) {
         p.Orientation = PageOrientation.Landscape;
 
@@ -2096,6 +2199,11 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
 
+    /// <summary>
+    /// Produces the pattern page (page 4 of 6)
+    /// </summary>
+    /// <param name="p">The PDF page we're using</param>
+    /// <param name="capRect">Reference of the capture rectangle</param>
     public void PatternPage(PdfPage p, Rect capRect) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
@@ -2354,6 +2462,10 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
     }
 
+    /// <summary>
+    /// Produces the checklist page (page 5 of 6)
+    /// </summary>
+    /// <param name="p">The PDF page we're using</param>
     public void ChecklistPage(PdfPage p) {
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
@@ -2518,6 +2630,11 @@ public class PDFExportJob : ThreadedJob {
         //}
     }
 
+    /// <summary>
+    /// Produces the output mapping page (page 6 of 6)
+    /// </summary>
+    /// <param name="p">The PDF page we're using</param>
+    /// <param name="capRect">Reference of the capture rectangle</param>
     public void OutputMapPage(PdfPage p, Rect capRect) {
         p.Orientation = PageOrientation.Landscape;
 
