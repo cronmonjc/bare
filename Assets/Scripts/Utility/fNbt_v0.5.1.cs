@@ -2331,7 +2331,7 @@ namespace fNbt {
         /// Creates a new tag with the exact same contents as the original.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal abstract NbtTag Clone();
+        public abstract NbtTag Clone();
     }
 
     /// <summary> Exception thrown when an operation is attempted on an NbtReader that
