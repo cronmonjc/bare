@@ -12,21 +12,48 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 
+/// The Component that handles management of every piece of information about the bar itself
 /// </summary>
+/// <remarks>
+/// The BarManager Component does exactly as its name implies – it manages the entire bar, from holding a list of every head that’s on it (visible or not), making sure each head gets the right bits, applying auto-phase on demand, holding a list of all of the lenses, tracking size, tracking pattern setup, and tracking accessories.  However, it also manages a few other things, such as bar saving / loading, handling the quit callback (preventing the application from closing when the “close” button is pressed under certain conditions), and handling PDF production.
+/// </remarks>
 public class BarManager : MonoBehaviour {
+    /// <summary>
+    /// The directory that this application resides in
+    /// </summary>
     public static string DirRoot;
+    /// <summary>
+    /// Bit field of pages we're allowed to publish
+    /// </summary>
     public static byte canPub = 0;
 
+    /// <summary>
+    /// The function we're previewing right now
+    /// </summary>
     public AdvFunction funcBeingTested = AdvFunction.NONE;
 
+    /// <summary>
+    /// Are we selecting a spot to save the PDF in the file browser?
+    /// </summary>
     [NonSerialized]
     public bool savePDF = false;
 
+    /// <summary>
+    /// The size of the bar (in number of center sections)
+    /// </summary>
     [Range(0, 4)]
     public int BarSize = 3;
+    /// <summary>
+    /// The TDOption currently in use
+    /// </summary>
     public TDOption td;
+    /// <summary>
+    /// Are we using the CAN module?
+    /// </summary>
     public static bool _useCAN = false;
+    /// <summary>
+    /// Are we using the CAN module?
+    /// </summary>
     public static bool useCAN {
         get { return _useCAN; }
         set {
@@ -42,60 +69,164 @@ public class BarManager : MonoBehaviour {
             }
         }
     }
-    public static int cableType = 0, cableLength = 0, mountingKit = 0;
+    /// <summary>
+    /// The type of cable we're using (single hard vs dual hard)
+    /// </summary>
+    public static int cableType = 0;
+    /// <summary>
+    /// The length of cable we're using (index of LightDict.cableLengths)
+    /// </summary>
+    public static int cableLength = 0;
+    /// <summary>
+    /// The mounting kit we're using (0 = no kit; remainder minus 1 is index of LightDict.mountKits)
+    /// </summary>
+    public static int mountingKit = 0;
 
+    /// <summary>
+    /// The pattern byte NbtCompound
+    /// </summary>
     public NbtCompound patts;
 
+    /// <summary>
+    /// The single instance of the BarManager
+    /// </summary>
     public static BarManager inst;
+    /// <summary>
+    /// All LightHeads on the bar, enabled and disabled; used to iterate through every head in a less memory-/CPU-intensive manner
+    /// </summary>
     public List<LightHead> allHeads;
+    /// <summary>
+    /// All BarSegments on the bar, enabled and disabled
+    /// </summary>
     public List<BarSegment> allSegs;
+    /// <summary>
+    /// An array of only enabled LightHeads, ordered by position on the light bar
+    /// </summary>
     public static LightHead[] headNumber;
 
+    /// <summary>
+    /// The "first" LightHead, typically the driver front corner.  Set by the Unity Inspector.
+    /// </summary>
     public LightHead first;
 
-    public InputField custName, orderNum, notes;
+    /// <summary>
+    /// InputField holding the customer name.  Set by the Unity Inspector.
+    /// </summary>
+    public InputField custName;
+    /// <summary>
+    /// InputField holding the order number.  Set by the Unity Inspector.
+    /// </summary>
+    public InputField orderNum;
+    /// <summary>
+    /// InputField holding the order notes.  Set by the Unity Inspector.
+    /// </summary>
+    public InputField notes;
 
+    /// <summary>
+    /// Reference to the File Browser.  Set by the Unity Inspector.
+    /// </summary>
     public FileBrowser fb;
+    /// <summary>
+    /// The path to the bar file
+    /// </summary>
+    /// <remarks>Variable is used only when trying to save a PDF to restore the file path after selecting a place to save the PDF.</remarks>
     [NonSerialized]
     public string barFilePath;
 
+    /// <summary>
+    /// The reference to the Size Slider, used to display current size on slider after loading bar.  Set by the Unity Inspector.
+    /// </summary>
     public Slider SizeSlider;
 
+    /// <summary>
+    /// List of all potential issues with the bar.  Set by the Unity Inspector.
+    /// </summary>
     public IssueChecker[] issues;
 
+    /// <summary>
+    /// Is the BarManager currently refreshing bits on the heads?
+    /// </summary>
     public static bool RefreshingBits = false;
 
+    /// <summary>
+    /// Reference to the Quit Dialog GameObject.  Set by the Unity Inspector.
+    /// </summary>
     public GameObject quitDialog;
+    /// <summary>
+    /// Has the user modified the bar?
+    /// </summary>
     public static bool moddedBar = false;
+    /// <summary>
+    /// Is the user trying to save the bar and quit?
+    /// </summary>
     public static bool quitAfterSave = false;
+    /// <summary>
+    /// Does the user want to just discard changes and quit?
+    /// </summary>
     public static bool forceQuit = false;
 
+    /// <summary>
+    /// Reference to the staggered output toggle.  Set via Unity Inspector.
+    /// </summary>
     public Toggle AlternateOutputs;
 
+    /// <summary>
+    /// Small container of objects used in displaying PDF export progress
+    /// </summary>
     [Serializable]
     public class ProgressStuff {
+        /// <summary>
+        /// Reference to the progress bar graphically displaying the progress.  Set via Unity Inspector.
+        /// </summary>
         public Slider progressBar;
+        /// <summary>
+        /// Reference to the GameObject containing the progress bar.  Set via Unity Inspector.
+        /// </summary>
         public GameObject progressGO;
+        /// <summary>
+        /// Reference to the progress text displaying the current state.  Set via Unity Inspector.
+        /// </summary>
         public Text progressText;
 
+        /// <summary>
+        /// Is the progress bar shown?
+        /// </summary>
         public bool Shown {
             set { progressGO.SetActive(value); }
         }
 
+        /// <summary>
+        /// Progress of the task.  Use a value between 0 and 100.
+        /// </summary>
         public float Progress {
             set { progressBar.value = value; }
         }
 
+        /// <summary>
+        /// Text describing the current state of the task
+        /// </summary>
         public string Text {
             set { progressText.text = value; }
         }
     }
 
+    /// <summary>
+    /// The object containing everything for the progress bar.  Elements set via Unity Inspector.
+    /// </summary>
     public ProgressStuff progressStuff;
 
+    /// <summary>
+    /// All of the base bar model numbers
+    /// </summary>
     public string[] models;
+    /// <summary>
+    /// All of the base bar sale prices, in whole cents
+    /// </summary>
     public uint[] prices;
 
+    /// <summary>
+    /// The bar model number currently in use
+    /// </summary>
     public string BarModel {
         get {
             try {
@@ -106,6 +237,9 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// The human-friendly bar width
+    /// </summary>
     public string BarWidth {
         get {
             switch(BarSize) {
@@ -125,6 +259,9 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// The sale price of the base bar currently in use
+    /// </summary>
     public uint BarPrice {
         get {
             try {
@@ -135,6 +272,10 @@ public class BarManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Extract information from the library file
+    /// </summary>
+    /// <param name="cmpd">The NbtCompound Tag containing the information the BarManager needs</param>
     public void Initialize(NbtCompound cmpd) {
         NbtCompound partCmpd = cmpd.Get<NbtCompound>("part");
         models = new string[] { partCmpd["0"].StringValue, partCmpd["1"].StringValue, partCmpd["2"].StringValue, partCmpd["3"].StringValue, partCmpd["4"].StringValue };
@@ -155,38 +296,52 @@ public class BarManager : MonoBehaviour {
         DirRoot = string.Join("/", parts, 0, parts.Length - 1) + "/";
     }
 
+    /// <summary>
+    /// Create skeleton pattern tag
+    /// </summary>
     public void CreatePatts() {
-        patts = new NbtCompound("pats");
+        patts = new NbtCompound("pats"); // Get the root created
 
         foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
-            patts.Add(new NbtCompound(alpha));
+            patts.Add(new NbtCompound(alpha)); // Create roots for each of the 19 definable functions
         }
 
+        // Traffic Director's special, gets its own personalized set of shorts
         patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] { new NbtShort("er1", 0), new NbtShort("er2", 0), new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
 
         foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim" }) {
+            // Create enable shorts for every other function
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("ef1", 0), new NbtShort("ef2", 0), new NbtShort("er1", 0), new NbtShort("er2", 0) });
         }
 
+        // Give Dimmer function a percentage short (even if it's not in use)
         patts.Get<NbtCompound>("dim").Add(new NbtShort("dimp", 15));
 
         foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw" }) {
+            // Create phase shorts for every Flashing function
             patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("pf1", 0), new NbtShort("pf2", 0), new NbtShort("pr1", 0), new NbtShort("pr2", 0) });
         }
 
+        // Traffic Director pattern
         patts.Get<NbtCompound>("traf").Add(new NbtShort("patt", 0));
 
         foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl" }) {
+            // Flashing patterns for color 1
             patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat1", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
+            // Flashing patterns for color 2
             patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat2", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
                                                                                      new NbtShort("rcen", 0), new NbtShort("rinb", 0), new NbtShort("roub", 0), new NbtShort("rfar", 0), new NbtShort("rcor", 0) }));
         }
 
+        // Create the Input Map IntArray Tag
         FnDragTarget.inputMap = new NbtIntArray("map", new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 3072, 4096, 0, 0, 0, 0, 0, 0, 0, 0 });
         patts.Add(FnDragTarget.inputMap);
     }
 
+    /// <summary>
+    /// Set whether or not we're using CAN.  Called by the two buttons enabling / disabling CAN.
+    /// </summary>
     public void SetCAN(bool to) {
         useCAN = to;
     }
@@ -195,22 +350,26 @@ public class BarManager : MonoBehaviour {
     /// Start is called once, when the containing GameObject is instantiated, after Awake.
     /// </summary>
     void Start() {
-        allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true));
-        allSegs.AddRange(transform.GetComponentsInChildren<BarSegment>(true));
-        StartCoroutine(RefreshBitsIEnum());
-        progressStuff.Shown = false;
-
-
+        allHeads.AddRange(transform.GetComponentsInChildren<LightHead>(true)); // Get all of the light heads together
+        allSegs.AddRange(transform.GetComponentsInChildren<BarSegment>(true)); // Same for bar segments
+        StartCoroutine(RefreshBitsIEnum()); // Refresh the bits
+        progressStuff.Shown = false; // Hide progress stuff
 
         foreach(Lens opt in LightDict.inst.lenses) {
-            if(opt.partSuffix == "C-C") {
-                foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true)) {
+            if(opt.partSuffix == "C-C") { // Give every bar segment a clear coated clear lens
+                foreach(BarSegment seg in allSegs) {
                     seg.lens = opt;
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Converts a function from an AdvFunction value to a pattern Tag name.
+    /// </summary>
+    /// <param name="left">If the function is AdvFunction.TAIL, do we return the left half of the function?</param>
+    /// <param name="f">The function to fetch a Tag name for</param>
+    /// <returns>The NbtCompound Tag name for the function in the BarManager.patts NbtCompound Tag</returns>
     public static string GetFnString(bool left, AdvFunction f) {
         switch(f) {
             case AdvFunction.ALLEY_LEFT:
@@ -262,14 +421,30 @@ public class BarManager : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// Converts a function from an AdvFunction value to a pattern Tag name.
+    /// </summary>
+    /// <param name="t">The Transform of the head we're fetching the function name for</param>
+    /// <param name="f">The function to fetch a Tag name for</param>
+    /// <returns>The NbtCompound Tag name for the function in the BarManager.patts NbtCompound Tag</returns>
     public static string GetFnString(Transform t, AdvFunction f) {
         return GetFnString(t.position.x < 0, f);
     }
 
+    /// <summary>
+    /// Gets the full wire information for a light head
+    /// </summary>
+    /// <param name="lh">The light head to fetch the wire information for</param>
+    /// <returns>A string describing the wire setup for the light head</returns>
     public static string GetWire(LightHead lh) {
         return GetWireColor1(lh) + (lh.lhd.style.isDualColor ? (" C & " + GetWireColor2(lh) + " W") : "");
     }
 
+    /// <summary>
+    /// Gets the color 1 wire for a light head
+    /// </summary>
+    /// <param name="lh">The light head to fetch the wire information for</param>
+    /// <returns>The color 1 wire for the light head</returns>
     public static string GetWireColor1(LightHead lh) {
         byte bit = lh.Bit;
         string rtn = "";
@@ -346,6 +521,11 @@ public class BarManager : MonoBehaviour {
         return rtn;
     }
 
+    /// <summary>
+    /// Gets the color 2 wire for a light head
+    /// </summary>
+    /// <param name="lh">The light head to fetch the wire information for</param>
+    /// <returns>The color 2 wire for the light head</returns>
     public static string GetWireColor2(LightHead lh) {
         byte bit = lh.Bit;
         string rtn = "";
@@ -414,20 +594,27 @@ public class BarManager : MonoBehaviour {
         return rtn;
     }
 
+    /// <summary>
+    /// Set the bar size we're using.  Called by the bar size slider.
+    /// </summary>
     public void SetBarSize(float to) {
         SetBarSize(Mathf.RoundToInt(to), true);
     }
 
+    /// <summary>
+    /// Set the bar size we're using
+    /// </summary>
+    /// <param name="sliding">Was this function called because the slider was slid?</param>
     public void SetBarSize(int to, bool sliding = false) {
-        if(to < 5 && to > -1) {
+        if(to < 5 && to > -1) { // Ensure size is valid
             if(!sliding) {
-                SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to;
+                SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to; // Size wasn't set by sliding, set the slider to the proper value
                 SizeSlider.value = to;
             } else if(ErrorLogging.logInput) {
                 ErrorLogging.LogInput("Set Size to " + to);
             }
 
-            td = TDOption.NONE;
+            td = TDOption.NONE; // Clear out TD Option, because chances are it's not compatible with the new size
 
             foreach(LightHead lh in allHeads) {
                 if(lh.transform.position.y < 0) {
@@ -439,35 +626,44 @@ public class BarManager : MonoBehaviour {
             }
 
             BarSize = to;
-            foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+            foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) { // Also make every head long (if capable)
                 soc.ShowLong = true;
             }
-            FindObjectOfType<CameraControl>().SelectedHead.Clear();
+            FindObjectOfType<CameraControl>().SelectedHead.Clear(); // While not possible to change size while heads are selected, still a good safeguard
         }
-        StartCoroutine(RefreshBitsIEnum());
+        StartCoroutine(RefreshBitsIEnum()); // Refresh the bits
     }
 
+    /// <summary>
+    /// Sets the Traffic Director option.  Called by the bar menu option buttons.  Invalid setups cannot be selected in the first place.
+    /// </summary>
     public void SetTDOption(int to) {
         SetTDOption((TDOption)to);
     }
 
+    /// <summary>
+    /// Sets the Traffic Director option
+    /// </summary>
     public void SetTDOption(TDOption to) {
         StartCoroutine(SetTDOptionCoroutine(to));
     }
 
+    /// <summary>
+    /// Coroutine.  Applies the Traffic Director option.
+    /// </summary>
     public IEnumerator SetTDOptionCoroutine(TDOption to) {
-        RaycastHit[] hits;
-        foreach(LightHead lh in allHeads) {
+        RaycastHit[] hits; // Create variable for raycasting
+        foreach(LightHead lh in allHeads) { // Remove existing traffic options
             if(lh.transform.position.y < 0) {
                 lh.shouldBeTD = false;
                 lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
             }
         }
-        td = to;
+        td = to; // Set internal variable first
 
         switch(td) {
             case TDOption.NONE:
-                foreach(LightHead lh in allHeads) {
+                foreach(LightHead lh in allHeads) { // Don't even care anymore, clear out everything
                     if(lh.transform.position.y < 0) {
                         lh.RemoveBasicFunction(BasicFunction.TRAFFIC);
                     }
@@ -475,113 +671,120 @@ public class BarManager : MonoBehaviour {
                 break;
             case TDOption.LG_SEVEN:
             case TDOption.LG_EIGHT:
-                yield return new WaitForEndOfFrame();
-                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                yield return new WaitForEndOfFrame(); // Wait for dust to settle
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) { // Force rears to large heads
                     if(soc.transform.position.y < 0) soc.ShowLong = true;
                 }
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                hits = Physics.RaycastAll(new Vector3(-8, -1.25f), new Vector3(1, 0));
+                yield return new WaitForEndOfFrame(); // Wait for dust to settle
+                yield return new WaitForEndOfFrame(); // Makes sure that heads get disabled / enabled properly
+                hits = Physics.RaycastAll(new Vector3(-8, -1.25f), new Vector3(1, 0)); // Cast a ray against the entire rear; will hit anything with a Collider (aka heads)
 
                 foreach(RaycastHit hit in hits) {
-                    LightHead lh = hit.transform.GetComponent<LightHead>();
-                    lh.lhd.funcs.Clear();
-                    lh.shouldBeTD = true;
-                    lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                    lh.AddBasicFunction(BasicFunction.FLASHING);
+                    LightHead lh = hit.transform.GetComponent<LightHead>(); // Nab the light head from the hit
+                    lh.lhd.funcs.Clear(); // Clear that sucker's functions out
+                    lh.shouldBeTD = true; // This head should be traffic director
+                    lh.AddBasicFunction(BasicFunction.TRAFFIC, false); // Apply Traffic Basic Func
+                    lh.AddBasicFunction(BasicFunction.FLASHING); // Apply Flashing Basic Func
                 }
                 break;
             case TDOption.LG_SIX:
-                yield return new WaitForEndOfFrame();
-                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
-                    if(soc.transform.position.y < 0) soc.ShowLong = (soc.transform.position.x != 0);
+                yield return new WaitForEndOfFrame(); // Wait for dust to settle
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) { // Force rears to large heads
+                    if(soc.transform.position.y < 0) soc.ShowLong = (soc.transform.position.x != 0); // ...except for the very center section
                 }
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
-                hits = Physics.RaycastAll(new Vector3(-8f, -1.25f), new Vector3(1, 0));
+                yield return new WaitForEndOfFrame(); // Wait for dust to settle
+                yield return new WaitForEndOfFrame(); // Makes sure that heads get disabled / enabled properly
+                hits = Physics.RaycastAll(new Vector3(-8f, -1.25f), new Vector3(1, 0)); // Cast a ray against the entire rear; will hit anything with a Collider (aka heads)
 
                 foreach(RaycastHit hit in hits) {
-                    if(BarSize == 4 && hit.transform.GetPath().Contains("RO")) continue;
-                    LightHead lh = hit.transform.GetComponent<LightHead>();
-                    if(lh.isSmall) continue;
-                    lh.lhd.funcs.Clear();
-                    lh.shouldBeTD = true;
-                    lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                    lh.AddBasicFunction(BasicFunction.FLASHING);
+                    if(BarSize == 4 && hit.transform.GetPath().Contains("RO")) continue; // If we're looking at a 4-size bar, don't do the two end heads
+                    LightHead lh = hit.transform.GetComponent<LightHead>(); // Nab the light head from the hit
+                    if(lh.isSmall) continue; // If the head's small (ie with 3-size bar in center), skip
+                    lh.lhd.funcs.Clear(); // Clear that sucker's functions out
+                    lh.shouldBeTD = true; // This head should be traffic director
+                    lh.AddBasicFunction(BasicFunction.TRAFFIC, false); // Apply Traffic Basic Func
+                    lh.AddBasicFunction(BasicFunction.FLASHING); // Apply Flashing Basic Func
                 }
                 break;
             case TDOption.SM_EIGHT:
             case TDOption.SM_SIX:
-                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) {
+                yield return new WaitForEndOfFrame(); // Wait for dust to settle
+                foreach(SizeOptionControl soc in GetComponentsInChildren<SizeOptionControl>(true)) { // Force rears to small heads
                     if(soc.transform.position.y < 0) soc.ShowLong = false;
                 }
-                yield return new WaitForEndOfFrame();
-                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame(); // Wait for dust to settle
+                yield return new WaitForEndOfFrame(); // Makes sure that heads get disabled / enabled properly
                 if(td == TDOption.SM_SIX)
-                    hits = Physics.RaycastAll(new Vector3(-2.4f, -1.25f), new Vector3(1, 0), 4.4f);
+                    hits = Physics.RaycastAll(new Vector3(-2.4f, -1.25f), new Vector3(1, 0), 4.4f); // Cast a ray of precalculated length against the rear; will hit anything with a Collider (aka heads)
                 else //SM_EIGHT
                     hits = Physics.RaycastAll(new Vector3(-3.2f, -1.25f), new Vector3(1, 0), 6.0f);
 
                 foreach(RaycastHit hit in hits) {
-                    LightHead lh = hit.transform.GetComponent<LightHead>();
-                    lh.lhd.funcs.Clear();
-                    lh.shouldBeTD = true;
-                    lh.AddBasicFunction(BasicFunction.TRAFFIC);
-                    lh.AddBasicFunction(BasicFunction.FLASHING);
+                    LightHead lh = hit.transform.GetComponent<LightHead>(); // Nab the light head from the hit
+                    lh.lhd.funcs.Clear(); // Clear that sucker's functions out
+                    lh.shouldBeTD = true; // This head should be traffic director
+                    lh.AddBasicFunction(BasicFunction.TRAFFIC, false); // Apply Traffic Basic Func
+                    lh.AddBasicFunction(BasicFunction.FLASHING); // Apply Flashing Basic Func
                 }
                 break;
         }
-        yield return StartCoroutine(RefreshBitsIEnum());
+        yield return StartCoroutine(RefreshBitsIEnum()); // Refresh the bits
 
-        foreach(LightLabel ll in GameObject.Find("BarCanvas/Labels").GetComponentsInChildren<LightLabel>(true)) {
-            ll.Refresh();
-        }
+        yield return StartCoroutine(RefreshAllLabels()); // Refresh the labels
 
-        patts.Get<NbtCompound>("traf").Get<NbtShort>("er1").Value = (short)(td == TDOption.NONE ? 0 : 1020);
-        patts.Get<NbtCompound>("traf").Get<NbtShort>("patt").Value = 7;
+        patts.Get<NbtCompound>("traf").Get<NbtShort>("er1").Value = (short)(td == TDOption.NONE ? 0 : 1020);  // Enable the heads for traffic
+        patts.Get<NbtCompound>("traf").Get<NbtShort>("patt").Value = 7; // Default pattern: Snake
 
         yield return null;
     }
 
+    /// <summary>
+    /// Refreshes the bits.  Called by the staggered head toggle.
+    /// </summary>
     public void RefreshBits() {
         StartCoroutine(RefreshBitsIEnum());
     }
 
+    /// <summary>
+    /// Coroutine.  Applies new bits to all of the heads.
+    /// </summary>
     public IEnumerator RefreshBitsIEnum() {
-        RefreshingBits = true;
+        RefreshingBits = true; // Tell rest of application that bits are being refreshed
 
-        Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>();
+        Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>(); // Cache paths so we aren't fetching them a billion times, and for easier reference
         foreach(LightHead alpha in allHeads) {
-            alpha.myBit = 255;
+            alpha.myBit = 255; // Clear out whatever bit it already has
             alpha.FarWire = false;
-            headDict[alpha.transform.GetPath()] = alpha;
+            headDict[alpha.Path] = alpha; // Cache path
         }
 
 
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame(); // Wait for the dust to settle
         yield return new WaitForEndOfFrame();
 
-        bool altNumberingCenter = (AlternateOutputs.isOn) && (BarSize == 2 || BarSize == 4);
-        if(altNumberingCenter) {
+        #region Test for Staggered Output
+        bool altNumberingCenter = (AlternateOutputs.isOn) && (BarSize >= 2 && BarSize <= 4); // Test if we should apply staggered outputs
+        if(altNumberingCenter) { // TODO: GET BAR SIZE 3 STAGGERED OUTPUTS SET
             if(BarSize == 2) {
-                altNumberingCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy);
+                altNumberingCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
 
-                StyleNode node = headDict["/Bar/DF/F/DS/L"].lhd.style;
+                StyleNode node = headDict["/Bar/DF/F/DS/L"].lhd.style; // Check if colors are same
 
                 if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/DF/F/DS/R"].lhd.style);
                 if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
                 if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/DS/R"].lhd.style);
             } else {
-                altNumberingCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy);
+                altNumberingCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy); // Check if the sizes are compatible
                 altNumberingCenter &= (headDict["/Bar/DN/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/L"].gameObject.activeInHierarchy);
 
-                StyleNode node = headDict["/Bar/DF/F/L"].lhd.style;
+                StyleNode node = headDict["/Bar/DF/F/L"].lhd.style; // Check if colors are same
 
                 if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/DN/F/L"].lhd.style);
                 if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PN/F/L"].lhd.style);
                 if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/L"].lhd.style);
             }
-        }
+        } 
+        #endregion
 
 
         foreach(LightHead alpha in allHeads) {
@@ -1101,6 +1304,10 @@ public class BarManager : MonoBehaviour {
         StartCoroutine(OpenIEnum(filename));
     }
 
+    /// <summary>
+    /// Coroutine.  Loads bar information from a file.
+    /// </summary>
+    /// <param name="filename">Path to the file to open</param>
     public IEnumerator OpenIEnum(string filename) {
         Clear();
 
@@ -1572,6 +1779,9 @@ public class BarManager : MonoBehaviour {
 
 }
 
+/// <summary>
+/// Base class for any job that needs to be done on a separate thread
+/// </summary>
 public class ThreadedJob {
     private bool m_IsDone = false;
     private object m_Handle = new object();
@@ -1714,21 +1924,24 @@ public class PDFExportJob : ThreadedJob {
     /// </summary>
     /// <param name="fname">Where are we saving the file?</param>
     public void Start(string fname) {
-        BarManager bm = BarManager.inst;
+        #region Information fetching
+        BarManager bm = BarManager.inst; // Gathering all of the information we need from the rest of the application
         custName = bm.custName.text;
         orderNumber = bm.orderNum.text;
         notes = bm.notes.text;
         useCAN = BarManager.useCAN;
-        patts = bm.patts.Clone() as NbtCompound;
+        patts = bm.patts.Clone() as NbtCompound; // Create a clone of the pattern tag
         progressStuff = bm.progressStuff;
         BarModel = bm.BarModel;
         BarWidth = bm.BarWidth;
         barCost = bm.BarPrice;
         filename = fname;
-        issues = new List<string>();
-        foreach(IssueChecker issue in bm.issues) {
-            if(issue.DoCheck()) {
-                issues.Add(issue.pdfText);
+        if(BarManager.moddedBar) {
+            issues = new List<string>(); // Get the issue list only if it's gonna show in the first place
+            foreach(IssueChecker issue in bm.issues) {
+                if(issue.DoCheck()) {
+                    issues.Add(issue.pdfText);
+                }
             }
         }
         headNumber = BarManager.headNumber;
@@ -1745,17 +1958,20 @@ public class PDFExportJob : ThreadedJob {
         } catch(NullReferenceException) {
             Debug.LogError("Couldn't find AmperageTotal or CostTotaler Object");
         }
+        #endregion
 
         foreach(LightHead alpha in headNumber) {
-            alpha.PrefetchPatterns();
+            alpha.PrefetchPatterns(); // Have each head cache what pattern its using
             if(alpha.hasRealHead) {
-                color1Wire[alpha] = BarManager.GetWireColor1(alpha);
+                color1Wire[alpha] = BarManager.GetWireColor1(alpha); // Precache each head's wire
                 if(alpha.lhd.style.isDualColor) color2Wire[alpha] = BarManager.GetWireColor2(alpha);
             }
         }
 
+        #region Capture Rectangle production
         Camera cam = GameObject.FindObjectOfType<CameraControl>().GetComponent<Camera>();
 
+        //Find two reference points and make a rectangle out of 'em
         Vector3 tl = Vector3.zero, br = Vector3.zero;
         foreach(ReferencePoint rp in GameObject.FindObjectsOfType<ReferencePoint>()) {
             if(rp.gameObject.name == "tl") {
@@ -1765,10 +1981,11 @@ public class PDFExportJob : ThreadedJob {
             }
         }
 
-        capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
+        capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y); // Produce the capture rectangle for scaling's use 
+        #endregion
 
-        base.Start();
-        m_Thread.Name = "PDF Export Thread";
+        base.Start(); // Actually make the separate thread
+        m_Thread.Name = "PDF Export Thread"; // Name other thread for debugging purposes
     }
 
     /// <summary>
@@ -1804,22 +2021,22 @@ public class PDFExportJob : ThreadedJob {
             }
 
         } else {
-            Application.OpenURL("file://" + filename); // Open the file up
+            Application.OpenURL("file://" + filename); // Open the file up for the user
         }
 
         if(BarManager.inst.savePDF)
             BarManager.inst.fb.currFile = BarManager.inst.barFilePath; // Restore path to current file in the file browser
         BarManager.inst.savePDF = false;
 
-        CanvasDisabler.CanvasEnabled = true;
-        CameraControl.ShowWhole = false;
+        CanvasDisabler.CanvasEnabled = true; // Show the main UI
+        CameraControl.ShowWhole = false; // Shrink down camera view
 
-        progressStuff.Shown = false;
+        progressStuff.Shown = false; // Hide progress stuff
 
     }
 
     /// <summary>
-    /// Thread's function
+    /// Thread's function - creates and produces PDF off of Unity's thread
     /// </summary>
     protected override void ThreadFunction() {
         lock(progressStuff) {
@@ -1828,6 +2045,7 @@ public class PDFExportJob : ThreadedJob {
 
         PdfDocument doc = new PdfDocument();
 
+        // Count out how many pages we're actually exporting
         byte pages = 0;
         for(int i = 0x1; i < 0x40; i = i << 1) {
             if((BarManager.canPub & i) > 0) {
@@ -1838,7 +2056,7 @@ public class PDFExportJob : ThreadedJob {
         byte currPage = 1;
 
         try {
-            doc.Info.Author = "Star Headlight and Lantern Co., Inc.";
+            doc.Info.Author = "Star Headlight and Lantern Co., Inc."; // Insert document metadata
             doc.Info.Creator = "Phaser Lightbar Configurator";
             doc.Info.Title = "Phaser Lightbar Configuration";
             if((BarManager.canPub & 0x1) > 0) {
@@ -1846,54 +2064,54 @@ public class PDFExportJob : ThreadedJob {
                     progressText = string.Format("Publishing Page {0}/{1} : Overview...", currPage++, pages);
                     progressPercentage = 10;
                 }
-                OverviewPage(doc.AddPage(), capRect);
+                OverviewPage(doc.AddPage(), capRect); // Produce Overview Page with a new page
             }
             if((BarManager.canPub & 0x2) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : BOM...", currPage++, pages);
                     progressPercentage = 30;
                 }
-                PartsPage(doc.AddPage(), capRect);
+                PartsPage(doc.AddPage(), capRect); // Produce Parts Page with a new page
             }
             if((BarManager.canPub & 0x4) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : Wiring...", currPage++, pages);
                     progressPercentage = 50;
                 }
-                WiringPage(doc.AddPage(), capRect);
+                WiringPage(doc.AddPage(), capRect); // Produce Wiring Page with a new page
             }
             if((BarManager.canPub & 0x8) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : Programming...", currPage++, pages);
                     progressPercentage = 80;
                 }
-                PatternPage(doc.AddPage(), capRect);
+                PatternPage(doc.AddPage(), capRect); // Produce Pattern Page with a new page
             }
             if((BarManager.canPub & 0x10) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : Checklist...", currPage++, pages);
                     progressPercentage = 88;
                 }
-                ChecklistPage(doc.AddPage());
+                ChecklistPage(doc.AddPage()); // Produce Checklist Page with a new page
             }
             if((BarManager.canPub & 0x20) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : Output Map...", currPage++, pages);
                     progressPercentage = 90;
                 }
-                OutputMapPage(doc.AddPage(), capRect);
+                OutputMapPage(doc.AddPage(), capRect); // Produce Output Map Page with a new page
             }
             lock(progressStuff) {
                 progressText = "Saving...";
                 progressPercentage = 99;
             }
 
-            doc.Save(filename);
-        } catch(Exception ex) {
-            thrownExcep = ex;
+            doc.Save(filename); // Save
+        } catch(Exception ex) { // An exception was thrown.  Don't care which one (at this moment)
+            thrownExcep = ex; // Save the exception to rethrow on Unity's thread
         } finally {
             doc.Close();
-            doc.Dispose();
+            doc.Dispose(); // Dispose the document, it's been saved already (frees internal resources)
         }
     }
 
@@ -1903,6 +2121,7 @@ public class PDFExportJob : ThreadedJob {
     /// <param name="p">The PDF page we're using</param>
     /// <param name="capRect">Reference of the capture rectangle</param>
     public void OverviewPage(PdfPage p, Rect capRect) {
+        #region Setup
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
@@ -1911,36 +2130,45 @@ public class PDFExportJob : ThreadedJob {
         XFont caliLg = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
         XFont caliSmBold = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
+        #endregion
 
+        #region Paste Images
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
-        using(XImage descImg = XImage.FromFile("tempgen\\desc.png")) {
+        using(XImage descImg = XImage.FromFile("tempgen\\desc.png")) { // Large description image
             gfx.DrawImage(descImg, 0.5, 1.3, capRect.width * scale, capRect.height * scale);
         }
-        using(XImage tl = XImage.FromFile("pdfassets\\TopLeft.png")) {
+        using(XImage tl = XImage.FromFile("pdfassets\\TopLeft.png")) { // Top left header image
             gfx.DrawImage(tl, 0.5, 0.5, 0.74, 0.9);
         }
-        using(XImage tr = XImage.FromFile("pdfassets\\TopRight.png")) {
+        using(XImage tr = XImage.FromFile("pdfassets\\TopRight.png")) { // Top right header image
             gfx.DrawImage(tr, ((float)p.Width.Inch) - 2.45, 0.5, 1.95, 0.75);
         }
 
-        progressPercentage = 20;
+        lock(progressStuff)
+            progressPercentage = 20;
+        #endregion
 
+        #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Star Phaser", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
         tf.DrawString("Model " + BarModel + " - " + BarWidth, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
+        #endregion
 
+        #region Write Light Head Header
         tf.Alignment = XParagraphAlignment.Left;
-
         tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(1.0, 3.09, 2.0, 0.1));
         tf.DrawString("Light Head Type and Style", caliSmBold, XBrushes.Black, new XRect(5.0, 3.09, 2.0, 0.1));
         tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(3.0, 3.09, 0.5, 0.1));
         tf.DrawString("Amperage", caliSmBold, XBrushes.Black, new XRect(7.0, 3.09, 0.5, 0.1));
-        if(CameraControl.ShowPricing) {
+        if(CameraControl.ShowPricing) { // Write header for List Price only if it'll be shown
             tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(3.625, 3.09, 0.5, 0.1));
             tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(7.625, 3.09, 0.5, 0.1));
         }
+        #endregion
 
         double top = 3.2;
+
+        #region Write Out Light Heads
         for(int i = 0; i < headNumber.Length; i++) {
             LightHead lh = headNumber[i];
             tf.DrawString("Pos " + (i + 1).ToString("00"), courierSm, XBrushes.Black, new XRect((i > (headNumber.Length / 2) - 1 ? 4.5 : 0.5), top + ((i > (headNumber.Length / 2) - 1 ? i - (headNumber.Length / 2) : i) * 0.10), 0.5, 0.10));
@@ -1948,11 +2176,15 @@ public class PDFExportJob : ThreadedJob {
         }
         top += (headNumber.Length / 2) * 0.1;
         top += 0.15;
+        #endregion
 
+        #region Additional Parts Header
         tf.DrawString("Additional Parts", caliSmBold, XBrushes.Black, new XRect(1.4, top - 0.01, 2.0, 0.1));
         if(CameraControl.ShowPricing)
             tf.DrawString("List Price", caliSmBold, XBrushes.Black, new XRect(3.625, top - 0.01, 0.5, 0.1));
+        #endregion
 
+        #region Write Out Totals
         tf.DrawString("Totals:", caliLg, XBrushes.Black, new XRect(4.5, top + 0.39, 2.0, 0.2));
         tf.DrawString(string.Format("{0:F3}A max", ampTotal * 0.001f), courierSm, XBrushes.Black, new XRect(7.0, top + 0.4, 1.0, 0.10));
         tf.DrawString(string.Format("{0:F3}A avg", ampTotal * 0.0005f), courierSm, XBrushes.Black, new XRect(7.0, top + 0.5, 1.0, 0.10));
@@ -1961,31 +2193,41 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString(string.Format("${0:F2}", costTotal * 0.01f), courier, XBrushes.Black, new XRect(6.0, top + 0.7, 2.0, 0.20));
             tf.Alignment = XParagraphAlignment.Left;
         }
+        #endregion
 
+        #region Write Bar Base
         top += 0.1;
         tf.DrawString(BarModel + " Bar Base - " + BarWidth, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
             tf.DrawString("$" + (barCost * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
+        #endregion
 
+        #region Write Mounting Bracket
         top += 0.1;
         tf.DrawString("Mounting Bracket", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
             tf.DrawString("$" + (LightDict.inst.bracketPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
+        #endregion
 
+        #region Write Mounting Kit (if any)
         if(BarManager.mountingKit != 0) {
             top += 0.1;
             tf.DrawString(mntOpt.name, caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
             if(CameraControl.ShowPricing)
                 tf.DrawString("$" + (mntOpt.price * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         }
+        #endregion
 
+        #region Write Cable Summary
         top += 0.1;
         bomcables.PDFExportSummary(ref top, tf, courierSm, caliSm, caliSmBold);
 
         top += 0.3;
+        #endregion
 
         XPen border = new XPen(XColors.Black, 0.025);
 
+        #region List Off Issues (if any, if bar was modded)
         if(BarManager.moddedBar) {
             StringBuilder sb = new StringBuilder(1024);
             foreach(string issue in issues) {
@@ -2000,7 +2242,9 @@ public class PDFExportJob : ThreadedJob {
                 tf.DrawString(sb.ToString(), caliSm, XBrushes.Black, new XRect(0.6, top + 0.10, p.Width.Inch - 1.1, 2.0));
             }
         }
+        #endregion
 
+        #region Produce Bottom Section
         top = p.Height.Inch - 2.5;
         gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, p.Width.Inch - 1.0, 2.0));
         gfx.DrawLine(border, 0.5, top + 0.5, p.Width.Inch - 0.5, top + 0.5);
@@ -2017,17 +2261,30 @@ public class PDFExportJob : ThreadedJob {
 
         tf.DrawString("Order Notes", caliSm, XBrushes.DarkGray, new XRect(0.55, top + 0.51, 1.0, 0.15));
         tf.DrawString(notes + "\nFilename: " + filename, caliSm, XBrushes.Black, new XRect(0.6, top + 0.61, p.Width.Inch - 1.2, 1.4));
+        #endregion
 
+        #region Write Footer
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+        #endregion
     }
 
+    /// <summary>
+    /// Helper function to print out a head.
+    /// </summary>
+    /// <param name="tf">The TextFormatter in use</param>
+    /// <param name="caliSm">Small Calibri font</param>
+    /// <param name="courierSm">Small Courier font</param>
+    /// <param name="top">The "top" variable for reference</param>
+    /// <param name="lh">The light head to print out</param>
+    /// <param name="rightSide">Is this the right column?</param>
     private static void PrintHead(XTextFormatter tf, XFont caliSm, XFont courierSm, double top, LightHead lh, bool rightSide) {
-        if(lh.lhd.style == null) {
+        if(lh.lhd.style == null) { // No head?  Write nothing.
             tf.DrawString(" -- ", caliSm, XBrushes.Black, new XRect((rightSide ? 5.4 : 1.4), (top - 0.01), 0.5, 0.10));
         } else {
+            // Write out the head name, with style if more than one style exists
             tf.DrawString((lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name, caliSm, XBrushes.Black, new XRect((rightSide ? 5.0 : 1.0), (top - 0.01), 2.0, 0.10));
             tf.DrawString((lh.lhd.optic.amperage * 0.001f).ToString("0.000A"), courierSm, XBrushes.Black, new XRect((rightSide ? 7.0 : 3.0), top, 0.625, 0.10));
             if(CameraControl.ShowPricing)
@@ -2041,29 +2298,39 @@ public class PDFExportJob : ThreadedJob {
     /// <param name="p">The PDF page we're using</param>
     /// <param name="capRect">Reference of the capture rectangle</param>
     public void PartsPage(PdfPage p, Rect capRect) {
+        #region Setup
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
         XFont courier = new XFont("Courier New", new XUnit(8, XGraphicsUnit.Point).Inch);
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+        #endregion
 
+        #region Paste Images
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
         using(XImage partImg = XImage.FromFile("tempgen\\part.png")) {
             gfx.DrawImage(partImg, 0.5, 1.0, capRect.width * scale, capRect.height * scale);
         }
 
-        progressPercentage = 40;
+        lock(progressStuff)
+            progressPercentage = 40;
+        #endregion
 
+        #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Model " + BarModel, new XFont("Courier New", new XUnit(24, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.5, p.Width.Inch - 1.0, 1.0));
         tf.DrawString("Production Copy - Bill of Materials", caliBold, XBrushes.Black, new XRect(0.5, 0.8, p.Width.Inch - 1.0, 1.0));
+        #endregion
 
+        #region Write Component Header
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, 3.3, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Component", caliBold, XBrushes.Black, new XRect(1.5, 3.3, 1.0, 0.2));
         tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, 3.3, 4.0, 0.2));
+        #endregion
 
+        #region Compile List of Heads
         List<string> parts = new List<string>();
         Dictionary<string, int> counts = new Dictionary<string, int>();
         Dictionary<string, object> descs = new Dictionary<string, object>();
@@ -2079,7 +2346,9 @@ public class PDFExportJob : ThreadedJob {
                 }
             }
         }
+        #endregion
 
+        #region Circuit, Gutter Mount Bracket, and Mounting Kit
         double top = 3.5;
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
@@ -2099,7 +2368,9 @@ public class PDFExportJob : ThreadedJob {
             tf.DrawString(mntOpt.part, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString(mntOpt.name, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
         }
+        #endregion
 
+        #region Output Light Heads
         top += 0.25;
         foreach(string part in parts) {
             tf.Alignment = XParagraphAlignment.Center;
@@ -2110,16 +2381,21 @@ public class PDFExportJob : ThreadedJob {
             top += 0.15;
         }
 
-        progressPercentage = 45;
+        lock(progressStuff)
+            progressPercentage = 45;
+        #endregion
 
         top += 0.2;
 
+        #region Write Lenses Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Lenses", caliBold, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
         tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        #endregion
 
+        #region Compile List of Lenses
         parts.Clear();
         counts.Clear();
         descs.Clear();
@@ -2135,7 +2411,9 @@ public class PDFExportJob : ThreadedJob {
                 }
             }
         }
+        #endregion
 
+        #region Output Lenses
         top += 0.2;
         foreach(string part in parts) {
             tf.Alignment = XParagraphAlignment.Center;
@@ -2147,20 +2425,26 @@ public class PDFExportJob : ThreadedJob {
         }
 
         top += 0.2;
+        #endregion
 
+        #region Write Cable Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Quantity", caliBold, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
         tf.DrawString("Cables", caliBold, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
         tf.DrawString("Description", caliBold, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        #endregion
 
+        #region Write Cable Parts
         bomcables.PDFExportParts(ref top, tf, courier, caliSm);
+        #endregion
 
-
+        #region Write Footer
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+        #endregion
     }
 
     /// <summary>
@@ -2169,34 +2453,46 @@ public class PDFExportJob : ThreadedJob {
     /// <param name="p">The PDF page we're using</param>
     /// <param name="capRect">Reference of the capture rectangle</param>
     public void WiringPage(PdfPage p, Rect capRect) {
+        #region Setup
         p.Orientation = PageOrientation.Landscape;
 
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
         XFont caliSm = new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch);
+        #endregion
 
+        #region Paste Wire Image
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
         using(XImage wireImg = XImage.FromFile("tempgen\\wire.png")) {
             gfx.DrawImage(wireImg, 0.5, 1.2, capRect.width * scale, capRect.height * scale);
         }
 
-        progressPercentage = 60;
+        lock(progressStuff)
+            progressPercentage = 60;
+        #endregion
 
+        #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Wiring Diagram", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        #endregion
 
+        #region Paste Static Circuit Reference
         XImage circuit = XImage.FromFile("pdfassets\\Circuit.png");
         scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (circuit.PixelWidth * 1.0f);
         gfx.DrawImage(circuit, 0.5, 3.75, circuit.PixelWidth * scale, circuit.PixelHeight * scale);
 
-        progressPercentage = 70;
+        lock(progressStuff)
+            progressPercentage = 70;
+        #endregion
 
+        #region Write Footer
         tf.Alignment = XParagraphAlignment.Left;
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+        #endregion
     }
 
     /// <summary>
@@ -2205,6 +2501,7 @@ public class PDFExportJob : ThreadedJob {
     /// <param name="p">The PDF page we're using</param>
     /// <param name="capRect">Reference of the capture rectangle</param>
     public void PatternPage(PdfPage p, Rect capRect) {
+        #region Setup
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
@@ -2212,26 +2509,36 @@ public class PDFExportJob : ThreadedJob {
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
         XPen border = new XPen(XColors.Black, 0.025);
+        #endregion
 
+        #region Paste Image
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
         using(XImage wireImg = XImage.FromFile("tempgen\\wireClrless.png")) {
             gfx.DrawImage(wireImg, 0.5, 1.2, capRect.width * scale, capRect.height * scale);
         }
 
-        progressPercentage = 90;
+        lock(progressStuff)
+            progressPercentage = 90;
+        #endregion
 
+        #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Bar Programming", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        #endregion
 
+        #region Write Default Program Box (if applicable)
         if(patts.Contains("prog")) {
             gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(0.5, 0.65, 0.75, 0.7));
             tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(0.5, 0.7, 0.75, 0.6));
             gfx.DrawRectangle(border, XBrushes.Yellow, new XRect(p.Width.Inch - 1.25, 0.65, 0.75, 0.7));
             tf.DrawString("Default\nProgram\n" + patts["prog"].ByteValue, caliBold, XBrushes.Black, new XRect(p.Width.Inch - 1.25, 0.7, 0.75, 0.6));
         }
+        #endregion
 
         double top = 3.0;
 
+        //  ** Commented: do not need the input map currently **
+        #region Input Map
         //tf.DrawString("Input Map", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
         //top += 0.2;
         //if(useCAN) {
@@ -2257,10 +2564,12 @@ public class PDFExportJob : ThreadedJob {
         //    PrintRow(tf, caliSm, GetFuncFromMap(8) + " - Purple & White", "Gray - " + GetFuncFromMap(7), ref top);
         //    PrintRow(tf, caliSm, GetFuncFromMap(10) + " - White & Pink", "Purple - " + GetFuncFromMap(9), ref top);
         //    PrintRow(tf, caliSm, "---", "---", ref top);
-        //}
+        //} 
+        #endregion
 
         top += 0.05;
 
+        #region Write Table Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Function Definitions", caliBold, XBrushes.Black, new XRect(3.0, top, p.Width.Inch - 6.0, 0.1));
         top += 0.2;
@@ -2274,23 +2583,28 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Phase B", caliBold, XBrushes.Black, new XRect(3.85, top + 0.2, 1.95, 0.1));
         gfx.DrawLine(border, 5.8, top, 5.8, top + 0.4);
         tf.DrawString("Pattern(s)", caliBold, XBrushes.Black, new XRect(5.85, top + 0.1, p.Width.Inch - 6.7, 0.2));
+        #endregion
 
+        #region Write Functions
         top += 0.4;
         foreach(int func in new int[] { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 8192, 16384, 32768, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 }) {
             for(int i = 0; i < 20; i++) {
                 if((FnDragTarget.inputMap[i] & (int)func) > 0) {
 
+                    #region Draw Borders, Write Function
                     gfx.DrawRectangle(border, new XRect(0.5, top, p.Width.Inch - 1.0, 0.3));
                     gfx.DrawLine(border, 1.75, top, 1.75, top + 0.3);
                     gfx.DrawLine(border, 5.8, top, 5.8, top + 0.3);
                     gfx.DrawLine(border, p.Width.Inch - 0.8, top, p.Width.Inch - 0.8, top + 0.3);
                     tf.DrawString(GetFuncFromInt(func) + "\n" + GetInput(i), caliSm, XBrushes.Black, new XRect(0.5, top + 0.025, 1.25, 0.1));
+                    #endregion
 
                     List<string> parts = new List<string>();
                     AdvFunction advfunc = (AdvFunction)func;
 
                     PartComparer pc = new PartComparer();
 
+                    #region Writing Wires
                     switch(func) {
                         case 0x2: // PRIO1
                         case 0x4: // PRIO2
@@ -2301,6 +2615,7 @@ public class PDFExportJob : ThreadedJob {
                         case 0x40000: // PRIO4
                         case 0x80000: // PRIO5
                             List<string> partsB = new List<string>();
+                            #region Compile List of Wires for each Enable
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
 
@@ -2319,10 +2634,14 @@ public class PDFExportJob : ThreadedJob {
                                     }
                                 }
                             }
+                            #endregion
 
+                            #region Sort Parts
                             parts.Sort(pc);
                             partsB.Sort(pc);
+                            #endregion
 
+                            #region Condense Part Lists
                             foreach(string prefix in new string[] { "FD-", "FP-", "RD-", "RP-" }) {
                                 for(int wire = 1; wire < 14; wire++) {
                                     if(parts.Contains(prefix + wire)) {
@@ -2345,7 +2664,9 @@ public class PDFExportJob : ThreadedJob {
                                     }
                                 }
                             }
+                            #endregion
 
+                            #region Output
                             if(partsB.Count > 0) {
                                 // Both phases used
 
@@ -2360,10 +2681,12 @@ public class PDFExportJob : ThreadedJob {
                                 // Write out enabled
                                 tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.3));
                             }
+                            #endregion
 
                             break;
                         default:
                             // Write out enable
+                            #region Compile List of Wires
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
                                 if(alpha.GetIsEnabled(advfunc, false, true)) {
@@ -2373,9 +2696,12 @@ public class PDFExportJob : ThreadedJob {
                                     parts.Add(color2Wire[alpha]);
                                 }
                             }
+                            #endregion
 
+                            // Sort Wires
                             parts.Sort(pc);
 
+                            #region Condense Part List
                             foreach(string prefix in new string[] { "FD-", "FP-", "RD-", "RP-" }) {
                                 for(int wire = 0; wire < 13; wire++) {
                                     if(parts.Contains(prefix + wire)) {
@@ -2389,11 +2715,15 @@ public class PDFExportJob : ThreadedJob {
                                     }
                                 }
                             }
+                            #endregion
 
+                            // Output
                             tf.DrawString(string.Join(", ", parts.ToArray()), caliSm, XBrushes.Black, new XRect(1.8, top + 0.025, 4.0, 0.3));
                             break;
                     }
-                    // Write out pattern(s)
+                    #endregion
+
+                    #region Write out pattern(s)
                     switch(func) {
                         case 0x2: // PRIO1
                         case 0x4: // PRIO2
@@ -2408,6 +2738,7 @@ public class PDFExportJob : ThreadedJob {
                             List<string> patt = new List<string>(5);
                             Pattern thisPatt;
 
+                            #region Get Patterns
                             foreach(LightHead alpha in headNumber) {
                                 if(!alpha.hasRealHead) continue;
                                 if(alpha.GetIsEnabled(advfunc, false)) {
@@ -2428,10 +2759,13 @@ public class PDFExportJob : ThreadedJob {
                                 }
                                 thisPatt = null;
                             }
+                            #endregion
 
+                            #region Write Patterns (if there are any)
                             if(patt.Count > 0) {
                                 tf.DrawString(string.Join(", ", patt.ToArray()), caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.3));
                             }
+                            #endregion
                             break;
                         case 0x200: // DIM
                             tf.DrawString("Dimmer", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.2));
@@ -2440,13 +2774,16 @@ public class PDFExportJob : ThreadedJob {
                             tf.DrawString("Steady Burn", caliSm, XBrushes.Black, new XRect(5.85, top + 0.025, p.Width.Inch - 6.7, 0.2));
                             break;
                     }
+                    #endregion
 
                     top += 0.3;
                     break;
                 }
             }
         }
+        #endregion
 
+        #region Add Arrow to Bottom
         top += 0.025;
         gfx.DrawLine(border, p.Width.Inch - 0.65, top, p.Width.Inch - 0.8, top + 0.15);
         gfx.DrawLine(border, p.Width.Inch - 0.65, top, p.Width.Inch - 0.5, top + 0.15);
@@ -2454,12 +2791,15 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("Tested for Accuracy", caliSm, XBrushes.Black, new XRect(p.Width.Inch - 2.0, top + 0.025, 1.1, 0.2));
         gfx.DrawLines(border, p.Width.Inch - 2.0, top + 0.2, p.Width.Inch - 0.65, top + 0.2);
+        #endregion
 
+        #region Write Footer
         tf.Alignment = XParagraphAlignment.Left;
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, caliSm, XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", caliSm, XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
+        #endregion
     }
 
     /// <summary>
@@ -2467,6 +2807,7 @@ public class PDFExportJob : ThreadedJob {
     /// </summary>
     /// <param name="p">The PDF page we're using</param>
     public void ChecklistPage(PdfPage p) {
+        #region Setup
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
         XTextFormatter tf = new XTextFormatter(gfx);
 
@@ -2474,17 +2815,23 @@ public class PDFExportJob : ThreadedJob {
         XFont cali = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
-        XPen border = new XPen(XColors.Black, 0.025);
+        XPen border = new XPen(XColors.Black, 0.025); 
+        #endregion
 
+        #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Phaser Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-        tf.Alignment = XParagraphAlignment.Left;
+        tf.Alignment = XParagraphAlignment.Left; 
+        #endregion
 
+        #region Main Checklist Header
         tf.DrawString("Initials", caliSm, XBrushes.Black, new XRect(0.5, 1.0, 0.5, 0.1));
-        tf.DrawString("Assembly / Inspection", caliBold, XBrushes.Black, new XRect(0.5, 1.15, 2.0, 0.1));
+        tf.DrawString("Assembly / Inspection", caliBold, XBrushes.Black, new XRect(0.5, 1.15, 2.0, 0.1)); 
+        #endregion
 
         double top = 1.4;
 
+        #region Order, Serial, SO, Date
         tf.Alignment = XParagraphAlignment.Right;
         string[] list = new string[] { "Order #:", "Serial #:", "S.O. #:" };
 
@@ -2496,8 +2843,10 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Date:", cali, XBrushes.Black, new XRect(6.0, 1.15, 0.9, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
 
-        tf.DrawString(DateTime.Now.ToString("MMM dd, \\'yy"), cali, XBrushes.Black, new XRect(7.0, 1.15, 1.0, 0.2));
+        tf.DrawString(DateTime.Now.ToString("MMM dd, \\'yy"), cali, XBrushes.Black, new XRect(7.0, 1.15, 1.0, 0.2)); 
+        #endregion
 
+        #region Checklist
         top = 1.4;
         list = new string[] { "Confirm correct light components / color with order", "Check for loose/splayed wires in terminal block", "Check for pinched wires",
                                        "Check for and remove loose hardware, wire insulation, etc.", "Wipe all components clean", "Power components individually / check off approriate color wire below",
@@ -2508,8 +2857,10 @@ public class PDFExportJob : ThreadedJob {
             gfx.DrawLine(border, 0.5, top + 0.3, 1.25, top);
             tf.DrawString(alpha, cali, XBrushes.Black, new XRect(1.35, top + 0.05, 5.5, 0.2));
             top += 0.3;
-        }
+        } 
+        #endregion
 
+        #region Burn-In Test Supplemental
         tf.Alignment = XParagraphAlignment.Right;
         top -= 0.3;
         tf.DrawString("Start:", cali, XBrushes.Black, new XRect(3.0, top + 0.05, 0.95, 0.2));
@@ -2519,28 +2870,37 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("(1 hour typical, 30 minutes minimum)", caliBold, XBrushes.Black, new XRect(3.5, top + 0.25, 3.5, 0.2));
         top += 0.4;
-        tf.Alignment = XParagraphAlignment.Left;
+        tf.Alignment = XParagraphAlignment.Left; 
+        #endregion
 
+        #region Secondary Checklist
         tf.DrawString("Packing", caliBold, XBrushes.Black, new XRect(0.5, top, 2.0, 0.1));
         top += 0.25;
+        #region Left Column
         list = new string[] { "Polish Domes", "Add mounting kit", "Add gutter mount", "Add instruction sheet", "Add carton labels" };
 
         foreach(string alpha in list) {
             gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, 0.75, 0.3));
             tf.DrawString(alpha, cali, XBrushes.Black, new XRect(1.35, top + 0.05, 5.5, 0.2));
             top += 0.3;
-        }
+        } 
+        #endregion
         top -= (list.Length - 1) * 0.3;
+        #region Right Column
         list = new string[] { "No mounting kit required", "No gutter mount required", "Add Checklist (Confirm Serial #!)", "Program Lightbar" };
 
         foreach(string alpha in list) {
             gfx.DrawRectangle(border, XBrushes.White, new XRect(4.0, top, 0.75, 0.3));
             tf.DrawString(alpha, cali, XBrushes.Black, new XRect(4.85, top + 0.05, 5.5, 0.2));
             top += 0.3;
-        }
+        }  
+        #endregion
+        #endregion
 
         gfx.DrawLine(new XPen(XColors.Black, 0.02), 5.85, top - 0.35, 7.0, top - 0.35);
 
+        //  **  Commented: Redundant  **
+        #region Function Output Stuff
         //top += 0.1;
         //gfx.DrawLine(border, 0.5, top, 8.0, top);
 
@@ -2627,7 +2987,8 @@ public class PDFExportJob : ThreadedJob {
         //    tf.DrawString("Black", caliMd, XBrushes.Black, new XRect(5.0, top, 2.0, 0.1));
         //    tf.DrawString("10", caliMd, XBrushes.Black, new XRect(7.6, top, 2.0, 0.1));
         //    top += 0.2;
-        //}
+        //} 
+        #endregion
     }
 
     /// <summary>
@@ -2636,27 +2997,39 @@ public class PDFExportJob : ThreadedJob {
     /// <param name="p">The PDF page we're using</param>
     /// <param name="capRect">Reference of the capture rectangle</param>
     public void OutputMapPage(PdfPage p, Rect capRect) {
+        #region Setup
         p.Orientation = PageOrientation.Landscape;
 
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
-        XTextFormatter tf = new XTextFormatter(gfx);
+        XTextFormatter tf = new XTextFormatter(gfx); 
+        #endregion
 
+        #region Paste the One Image
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
         using(XImage wireImg = XImage.FromFile("tempgen\\bits.png")) {
             gfx.DrawImage(wireImg, 0.5, 2.0, capRect.width * scale, capRect.height * scale);
-        }
+        } 
+        #endregion
 
+        #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Output Usage Map", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Output Usage Map", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0)); 
+        #endregion
 
+        #region Write Footer
         tf.Alignment = XParagraphAlignment.Left;
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
-
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2)); 
+        #endregion
     }
 
+    /// <summary>
+    /// Get the Advanced Function name given a function number
+    /// </summary>
+    /// <param name="num">The number that corresponds to a specific function</param>
+    /// <returns>The name of that function</returns>
     public string GetFuncFromInt(int num) {
         switch(num) {
             case 0x0: // Nothing
@@ -2710,6 +3083,11 @@ public class PDFExportJob : ThreadedJob {
         }
     }
 
+    /// <summary>
+    /// Gets the name of input corresponding to an input number
+    /// </summary>
+    /// <param name="which">The number of the input</param>
+    /// <returns>The color of the wire for Hardwire, or the name of the pin on the CAN Breakout Board</returns>
     public string GetInput(int which) {
         if(useCAN) {
             return (which > 11 ? "P5" : "P4") + ", Pin " + ((which % 12) + 1);
@@ -2745,10 +3123,23 @@ public class PDFExportJob : ThreadedJob {
         }
     }
 
+    /// <summary>
+    /// Get the function name corresponding to a function on the input map
+    /// </summary>
+    /// <param name="which">The number of the input</param>
+    /// <returns>The name of the function on that input</returns>
     public string GetFuncFromMap(int which) {
         return GetFuncFromInt(patts.Get<NbtIntArray>("map").Value[which]);
     }
 
+    /// <summary>
+    /// Prints two strings side-by-side.  Used for the input map.
+    /// </summary>
+    /// <param name="tf">The TextFormatter to use</param>
+    /// <param name="caliSm">The font to use</param>
+    /// <param name="left">The string to write on the left</param>
+    /// <param name="right">The string to write on the right</param>
+    /// <param name="top">Where to print it vertically on the page</param>
     public void PrintRow(XTextFormatter tf, XFont caliSm, string left, string right, ref double top) {
         tf.Alignment = XParagraphAlignment.Right;
         tf.DrawString(left, caliSm, XBrushes.Black, new XRect(2.0, top, 2.15, 0.1));
@@ -2757,8 +3148,17 @@ public class PDFExportJob : ThreadedJob {
         top += 0.1;
     }
 
+    /// <summary>
+    /// A small class that compares the wires for the enables
+    /// </summary>
     private class PartComparer : IComparer<string> {
 
+        /// <summary>
+        /// Compares two wires
+        /// </summary>
+        /// <param name="x">Wire 1</param>
+        /// <param name="y">Wire 2</param>
+        /// <returns>Less than 0 if Wire 1 comes before Wire 2.  More than 0 if vice versa.  0 if they're the same.</returns>
         public int Compare(string x, string y) {
             string xl, yl;
             string[] xBits = x.Split('-');
