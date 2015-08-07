@@ -8,6 +8,7 @@ public class NbtEditor : EditorWindow {
     private Texture2D newFile, open, save, saveAs;
     public string filePath = "";
     public NbtFile nbtFile;
+    public static NbtTag clipboard;
     public NbtCompoundRender renderRoot;
     public Vector2 fileScroll;
 
@@ -186,6 +187,9 @@ public class NbtByteRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -259,6 +263,9 @@ public class NbtByteArrayRender : NbtRenderer {
 
                 menu.AddSeparator("");
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -383,11 +390,24 @@ public class NbtCompoundRender : NbtRenderer {
                     children.Add(new NbtStringRender(newb) { parent = this });
                 });
 
+                if(NbtEditor.clipboard != null) {
+                    menu.AddItem(new GUIContent("Paste Tag " + (NbtEditor.clipboard.Name.Length > 0 ? NbtEditor.clipboard.Name : "-unnamed-")), false, delegate() {
+                        var newb = NbtEditor.clipboard.Clone();
+                        data.Add(newb);
+                        NbtRenderer renderer = NbtRenderer.MakeRenderer(newb);
+                        renderer.parent = this;
+                        children.Add(renderer);
+                    });
+                }
+                    
                 menu.AddSeparator("");
                 menu.AddItem(new GUIContent("Expand All Children"), false, RecursiveExpand);
 
+                menu.AddSeparator("");
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 if(parent != null) {
-                    menu.AddSeparator("");
                     menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
                 }
 
@@ -475,6 +495,9 @@ public class NbtDoubleRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -532,6 +555,9 @@ public class NbtFloatRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -589,6 +615,9 @@ public class NbtIntRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -660,6 +689,9 @@ public class NbtIntArrayRender : NbtRenderer {
 
                 menu.AddSeparator("");
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -871,6 +903,16 @@ public class NbtListRender : NbtRenderer {
                         newRenderer.parent = this;
                         children.Add(newRenderer);
                     });
+
+                    if(NbtEditor.clipboard != null && NbtEditor.clipboard.TagType == data.ListType) {
+                        menu.AddItem(new GUIContent("Paste Tag " + (NbtEditor.clipboard.Name.Length > 0 ? NbtEditor.clipboard.Name : "-unnamed-")), false, delegate() {
+                            var newb = NbtEditor.clipboard.Clone();
+                            data.Add(newb);
+                            NbtRenderer renderer = NbtRenderer.MakeRenderer(newb);
+                            renderer.parent = this;
+                            children.Add(renderer);
+                        });
+                    }
                 }
 
                 menu.AddSeparator("");
@@ -879,6 +921,9 @@ public class NbtListRender : NbtRenderer {
 
                 menu.AddSeparator("");
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -986,6 +1031,9 @@ public class NbtLongRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -1043,6 +1091,9 @@ public class NbtShortRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
@@ -1102,6 +1153,9 @@ public class NbtStringRender : NbtRenderer {
             if(new Rect(indent, top, 48, 16).Contains(evt.mousePosition)) {
                 GenericMenu menu = new GenericMenu();
 
+                menu.AddItem(new GUIContent("Copy this Tag"), false, delegate() {
+                    NbtEditor.clipboard = data;
+                });
                 menu.AddItem(new GUIContent("Delete This Tag"), false, Delete);
 
                 menu.ShowAsContext();
