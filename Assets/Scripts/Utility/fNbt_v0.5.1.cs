@@ -111,7 +111,7 @@ namespace fNbt {
         /// Clones this NbtByte tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtByte(Name, Value);
         }
     }
@@ -230,7 +230,7 @@ namespace fNbt {
         /// Clones this NbtByteArray tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtByteArray(Name, Value);
         }
     }
@@ -773,7 +773,7 @@ namespace fNbt {
         /// Clones this NbtCompound tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             NbtCompound rtn = new NbtCompound(Name);
 
             foreach(NbtTag tag in Tags) {
@@ -858,7 +858,7 @@ namespace fNbt {
         /// Clones this NbtDouble tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtDouble(Name, Value);
         }
     }
@@ -937,7 +937,7 @@ namespace fNbt {
         /// Clones this NbtFloat tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtFloat(Name, Value);
         }
     }
@@ -1016,7 +1016,7 @@ namespace fNbt {
         /// Clones this NbtInt tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtInt(Name, Value);
         }
     }
@@ -1141,7 +1141,7 @@ namespace fNbt {
         /// Clones this NbtIntArray tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtIntArray(Name, Value);
         }
     }
@@ -1696,7 +1696,7 @@ namespace fNbt {
         /// Clones this NbtList tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             NbtList rtn = new NbtList(Name);
 
             foreach(NbtTag tag in tags) {
@@ -1785,7 +1785,7 @@ namespace fNbt {
         /// Clones this NbtLong tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtLong(Name, Value);
         }
     }
@@ -1868,7 +1868,7 @@ namespace fNbt {
         /// Clones this NbtShort tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtShort(Name, Value);
         }
     }
@@ -1963,7 +1963,7 @@ namespace fNbt {
         /// Clones this NbtString tag.
         /// </summary>
         /// <returns>The cloned tag.</returns>
-        internal override NbtTag Clone() {
+        public override NbtTag Clone() {
             return new NbtString(Name, Value);
         }
     }
