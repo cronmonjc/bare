@@ -5,19 +5,97 @@ using System.Collections;
 using fNbt;
 using System.Text;
 
+/// <summary>
+/// GUI object.  Displays information about light heads.
+/// </summary>
 public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+    /// <summary>
+    /// Where are we positioning the label?
+    /// </summary>
     public Transform target;
-    public Text label, label2, colorLabel;
-    public Image background, secondImage, selectionImage, warnImage;
+    /// <summary>
+    /// Text Component on color 1 of head, should match label2.  Set via Unity Inspector.
+    /// </summary>
+    public Text label;
+    /// <summary>
+    /// Text Component on color 2 of head, should match label.  Set via Unity Inspector.
+    /// </summary>
+    public Text label2;
+    /// <summary>
+    /// Wire color label.  Set via Unity Inspector.
+    /// </summary>
+    public Text colorLabel;
+    /// <summary>
+    /// Color 1 background.  Set via Unity Inspector.
+    /// </summary>
+    public Image background;
+    /// <summary>
+    /// Color 2 background.  Set via Unity Inspector.
+    /// </summary>
+    public Image secondImage;
+    /// <summary>
+    /// The image displaying the selection status of the head.  Set via Unity Inspector.
+    /// </summary>
+    public Image selectionImage;
+    /// <summary>
+    /// The image displaying the SameOutputWarning icon.  Set via Unity Inspector.
+    /// </summary>
+    public Image warnImage;
 
+    /// <summary>
+    /// The target LightHead
+    /// </summary>
     private LightHead lh;
 
+    /// <summary>
+    /// Reference to the CameraControl object
+    /// </summary>
     public static CameraControl cam;
-    public static bool showParts = false, showBit = false, showJustBit = false, showWire = false, colorlessWire = false, wireOverride = false, showPatt = false;
+
+    /// <summary>
+    /// Are we showing part numbers?
+    /// </summary>
+    public static bool showParts = false;
+    /// <summary>
+    /// Are we showing the bits?
+    /// </summary>
+    public static bool showBit = false;
+    /// <summary>
+    /// Are we showing only the bits?
+    /// </summary>
+    public static bool showJustBit = false;
+    /// <summary>
+    /// Are we showing wires?
+    /// </summary>
+    public static bool showWire = false;
+    /// <summary>
+    /// Are we showing wires without colors?
+    /// </summary>
+    public static bool colorlessWire = false;
+    /// <summary>
+    /// Are we showing empty wire boxes for manual entry?
+    /// </summary>
+    public static bool wireOverride = false;
+    /// <summary>
+    /// Are we showing patterns for a specific Advanced Function?
+    /// </summary>
+    public static bool showPatt = false;
+    /// <summary>
+    /// Reference to the tooltip object for better display of text on mouseover.
+    /// </summary>
     public static LabelTooltip tooltip;
+    /// <summary>
+    /// The last optic this label was aware of the head having (for automatic refreshing)
+    /// </summary>
     private OpticNode lastOptic;
+    /// <summary>
+    /// The last style this label was aware of the head having (for automatic refreshing)
+    /// </summary>
     private StyleNode lastStyle;
 
+    /// <summary>
+    /// Do we show the SameOutputWarning icon on this label?
+    /// </summary>
     public bool DispError {
         get { return warnImage.enabled; }
         set { warnImage.enabled = value; }
@@ -36,18 +114,23 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         Refresh();
     }
 
+    /// <summary>
+    /// Refreshes the light label, optionally showing the head number as well.
+    /// </summary>
+    /// <param name="showHeadNumber">Whether or not to show the head's number</param>
     public void Refresh(bool showHeadNumber = false) {
-        if(lh == null) lh = target.GetComponent<LightHead>();
+        if(lh == null) lh = target.GetComponent<LightHead>(); // Don't have reference to light head yet?  Get it.
 
         colorLabel.text = "";
 
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
-            StartCoroutine(PatternSim());
+            StartCoroutine(PatternSim()); // Begin previewing the flashing of the light head instead of static information
             return;
         }
 
         string prefix = "";
 
+        #region Show Head Number
         if(showHeadNumber) {
             for(int i = 0; i < BarManager.headNumber.Length; i++) {
                 if(BarManager.headNumber[i] == lh) {
@@ -60,14 +143,19 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 prefix = "(?) ";
             }
         }
+        #endregion
 
+        #region Show Part Numbers
         if(showParts) {
             if(lh.lhd.style != null) {
                 label2.text = label.text = prefix + lh.PartNumber;
                 label2.color = label.color = Color.black;
                 secondImage.color = background.color = Color.white;
             }
-        } else if(showJustBit) {
+        }
+        #endregion
+        #region Show Just Bit
+ else if(showJustBit) {
             if(lh.hasRealHead) {
                 label2.text = label.text = ((lh.Bit != 255) ? (lh.Bit + 1) + "" : "None");
                 label2.color = label.color = Color.black;
@@ -76,7 +164,10 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 label2.text = label.text = "";
                 secondImage.color = background.color = new Color(0f, 0f, 0f, 0f);
             }
-        } else if(showWire) {
+        }
+        #endregion
+        #region Show Output Wire
+ else if(showWire) {
             if(lh.hasRealHead) {
                 byte bit = lh.Bit;
 
@@ -87,7 +178,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         switch(lh.Bit) {
                             case 5:
                             case 6:
-                                labelColor = new Color(0.5f, 0.25f, 0.0f);
+                                labelColor = new Color(0.5f, 0.25f, 0.0f); // Brown  (Red with some green)
                                 colorLabel.text = "Brown";
                                 break;
                             case 4:
@@ -107,7 +198,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                 break;
                             case 1:
                             case 10:
-                                labelColor = new Color(0.5f, 0.0f, 1.0f);
+                                labelColor = new Color(0.5f, 0.0f, 1.0f); // Purple  (Blue with some red)
                                 colorLabel.text = "Purple";
                                 break;
                             case 0:
@@ -121,7 +212,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         switch(bit) {
                             case 5:
                             case 6:
-                                labelColor = (lh.FarWire ? Color.yellow : new Color(0.5f, 0.25f, 0.0f));
+                                labelColor = (lh.FarWire ? Color.yellow : new Color(0.5f, 0.25f, 0.0f)); // Yellow if far wire, brown if not
                                 colorLabel.text = (lh.FarWire ? "Yellow" : "Brown");
                                 break;
                             case 4:
@@ -155,66 +246,29 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         label2.color = label.color = Color.black;
                     }
 
-                    label2.text = label.text = prefix + BarManager.GetWire(lh);
+                    label2.text = label.text = prefix + BarManager.GetWire(lh); // Get the wiring text from the BarManager
 
-                } else {
+                } else { // Overriding the pre-generated wiring scheme, just show empty boxes
                     label2.color = label.color = Color.black;
                     secondImage.color = background.color = Color.white;
 
                     label2.text = label.text = prefix + "\n\n";
                 }
 
-                if(colorlessWire) {
+                if(colorlessWire) { // Don't show colors, just the text
                     label2.color = label.color = Color.black;
                     secondImage.color = background.color = Color.white;
                     colorLabel.text = "";
                 }
             }
-        } else if(showPatt) {
+        }
+        #endregion
+        #region Show Pattern
+ else if(showPatt) {
             if(lh.hasRealHead) {
-                bool canEnable;
-                switch(FunctionEditPane.currFunc) {
-                    case AdvFunction.PRIO1:
-                    case AdvFunction.PRIO2:
-                    case AdvFunction.PRIO3:
-                    case AdvFunction.PRIO4:
-                    case AdvFunction.PRIO5:
-                    case AdvFunction.FALLEY:
-                    case AdvFunction.FTAKEDOWN:
-                    case AdvFunction.ICL:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.FLASHING);
-                        break;
-                    case AdvFunction.TAKEDOWN:
-                    case AdvFunction.ALLEY_LEFT:
-                    case AdvFunction.ALLEY_RIGHT:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.STEADY);
-                        break;
-                    case AdvFunction.TURN_LEFT:
-                    case AdvFunction.TURN_RIGHT:
-                    case AdvFunction.TAIL:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.STT);
-                        break;
-                    case AdvFunction.T13:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
-                        break;
-                    case AdvFunction.TRAFFIC_LEFT:
-                    case AdvFunction.TRAFFIC_RIGHT:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.TRAFFIC);
-                        break;
-                    case AdvFunction.CRUISE:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.CRUISE);
-                        break;
-                    case AdvFunction.DIM:
-                        canEnable = true;
-                        break;
-                    case AdvFunction.EMITTER:
-                        canEnable = lh.lhd.funcs.Contains(BasicFunction.EMITTER);
-                        break;
-                    default:
-                        canEnable = false;
-                        break;
-                }
+                bool canEnable = lh.GetCanEnable(FunctionEditPane.currFunc);
 
+                #region Find function NbtCompound Tag
                 NbtCompound patts = BarManager.inst.patts;
                 string cmpdName = BarManager.GetFnString(lh.transform, FunctionEditPane.currFunc);
                 if(cmpdName == null) {
@@ -223,16 +277,18 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
 
                 NbtCompound func = patts.Get<NbtCompound>(cmpdName);
+                #endregion
 
                 string t = ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "");
 
                 if(func.Contains("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1")) {
-                    bool thisEnabled1 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0),
-                         thisEnabled2 = ((func.Get<NbtShort>("e" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+                    bool thisEnabled1 = lh.GetIsEnabled(FunctionEditPane.currFunc, false, true),
+                         thisEnabled2 = lh.GetIsEnabled(FunctionEditPane.currFunc, true);
 
                     thisEnabled1 &= canEnable;
                     thisEnabled2 &= canEnable;
 
+                    #region Give label color(s)
                     Color clr = lh.lhd.style.color;
                     if(!thisEnabled1) clr.a = 0.25f;
                     background.color = clr;
@@ -251,57 +307,63 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         label2.color = Color.black;
                     }
                     secondImage.color = clr;
+                    #endregion
 
-                    if(thisEnabled1) {
-                        if(func.Contains("pat1")) {
-                            bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
+                    #region Color 1
+                    if(thisEnabled1) { // Head is enabled
+                        if(func.Contains("pat1")) { // Flashing function
+                            bool thisPhase = lh.GetPhaseB(FunctionEditPane.currFunc);
 
                             Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, false);
                             if(pat == null)
                                 t = t + "No Patt";
                             else {
-                                t = t + pat.name + ((pat is FlashPatt || pat is SingleFlashRefPattern || pat is DoubleFlashRefPattern) ? (thisPhase ? " B" : " A") : "");
+                                t = t + pat.name + ((pat is FlashPatt || pat is SingleFlashRefPattern || pat is DoubleFlashRefPattern) ? (thisPhase ? " B" : " A") : ""); // Show Phase if function can be phased
                             }
-                        } else if(func.Contains("patt")) {
+                        } else if(func.Contains("patt")) { // Traffic function
                             Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, false);
                             if(pat == null)
                                 t = t + "No Patt";
                             else {
                                 t = t + pat.name;
                             }
-                        } else {
+                        } else { // Steady function
                             t = t + "Enabled";
                         }
-                    } else if(canEnable) {
+                    } else if(canEnable) { // Head can enable, but isn't
                         t = t + "Disabled";
-                    } else {
+                    } else { // Head cannot enable
                         t = t + "Optic Fn Off";
                     }
-                    if(canEnable && lh.lhd.style.isDualColor) {
-                        if(thisEnabled2) {
-                            if(func.Contains("pat2")) {
-                                bool thisPhase = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
+                    #endregion
+
+                    #region Color 2
+                    if(canEnable && lh.lhd.style.isDualColor) { // Head can enable
+                        if(thisEnabled2) { // Head is enabled
+                            if(func.Contains("pat2")) { // Flashing function
+                                bool thisPhase = lh.GetPhaseB(FunctionEditPane.currFunc, true);
 
                                 Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, true);
                                 if(pat == null)
                                     t = t + " / No Patt";
                                 else
-                                    t = t + " / " + pat.name + (pat is FlashPatt ? (thisPhase ? " B" : " A") : "");
-                            } else if(func.Contains("patt")) {
+                                    t = t + " / " + pat.name + ((pat is FlashPatt || pat is SingleFlashRefPattern || pat is DoubleFlashRefPattern) ? (thisPhase ? " B" : " A") : ""); // Show Phase if function can be phased
+                            } else if(func.Contains("patt")) { // Traffic function
                                 Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, true);
                                 if(pat == null) {
                                     t = t + " / No Patt";
                                 } else {
                                     t = t + " / " + pat.name;
                                 }
-                            } else {
+                            } else { // Steady function
                                 t = t + " / Enabled";
                             }
-                        } else {
+                        } else { // Head is not enabled
                             t = t + " / Disabled";
                         }
                     }
-                } else {
+                    #endregion
+                } else { // Enable tag doesn't exist.  Probably front head while examining Traffic function
                     Color clr = lh.lhd.style.color;
                     clr.a = 0.25f;
                     background.color = clr;
@@ -316,13 +378,17 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
                 label2.text = label.text = t;
 
-            } else {
+            } else { // Head does not have proper optic
                 label2.text = label.text = ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + "No Head";
                 label2.color = label.color = Color.white;
                 secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
             }
-        } else {
+        }
+        #endregion
+        #region Show Description
+ else {
             if(lh.lhd.style != null) {
+                #region Build Function list
                 StringBuilder sb = new StringBuilder(20);
                 foreach(BasicFunction func in new BasicFunction[] { BasicFunction.FLASHING, BasicFunction.STEADY, BasicFunction.EMITTER, BasicFunction.CAL_STEADY, BasicFunction.CRUISE, BasicFunction.STT, BasicFunction.TRAFFIC }) {
                     if(!lh.lhd.funcs.Contains(func)) continue;
@@ -334,9 +400,9 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                         case BasicFunction.CRUISE:
                             chars = "C";
                             break;
-                        case BasicFunction.EMITTER:
-                            chars = "E";
-                            break;
+                        //case BasicFunction.EMITTER:  // Probably don't need to show Emitter function, would be redundant
+                        //    chars = "E";
+                        //    break;
                         case BasicFunction.FLASHING:
                             chars = "F";
                             break;
@@ -358,8 +424,10 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                 }
                 if(sb.Length > 0)
                     sb.Append(' ');
+                #endregion
 
                 label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + sb.ToString() + (lh.lhd.optic.styles.Count > 1 ? lh.lhd.style.name + " " : "") + lh.lhd.optic.name;
+                #region Colorize
                 Color clr = lh.lhd.style.color;
                 background.color = clr;
                 if(clr.r + clr.g < clr.b || (clr.r + clr.g + clr.b) < 1.0f) {
@@ -376,121 +444,124 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                     label2.color = Color.black;
                 }
                 secondImage.color = clr;
+                #endregion
             } else {
                 label2.text = label.text = prefix + ((showBit && lh.Bit != 255) ? lh.Bit + ": " : "") + "Empty";
                 label2.color = label.color = Color.white;
                 secondImage.color = background.color = new Color(0, 0, 0, 0.45f);
             }
         }
+        #endregion
 
         lastOptic = lh.lhd.optic;
         lastStyle = lh.lhd.style;
     }
 
+    /// <summary>
+    /// Coroutine.  Simulates pattern for preview.
+    /// </summary>
     private IEnumerator PatternSim() {
-        selectionImage.gameObject.SetActive(false);
+        selectionImage.gameObject.SetActive(false); // Hide selection image
 
-        if(lh.lhd.style == null) {
-            label2.text = label.text = "";
-            label2.color = label.color = Color.white;
+        label2.text = label.text = "";
+        label2.color = label.color = Color.white;
+
+        if(!lh.hasRealHead) {  // Head will not flash
             secondImage.color = background.color = new Color(0, 0, 0, 0f);
             yield return null;
-        } else {
-            NbtCompound patts = BarManager.inst.patts;
-            string cmpdName = BarManager.GetFnString(lh.transform, FunctionEditPane.currFunc);
-            if(cmpdName == null) {
-                Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
-                yield return null;
-            } else if(lh.GetCanEnable(FunctionEditPane.currFunc)) {
-                label2.text = label.text = "";
+        } else if(lh.GetCanEnable(BarManager.inst.funcBeingTested)) {
+            // Fetch necessary patterns
+            Pattern p1 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(BarManager.inst.funcBeingTested == AdvFunction.TRAFFIC_LEFT || BarManager.inst.funcBeingTested == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, false) : null;
+            Pattern p2 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(BarManager.inst.funcBeingTested == AdvFunction.TRAFFIC_LEFT || BarManager.inst.funcBeingTested == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, true) : null;
 
-                NbtCompound func = patts.Get<NbtCompound>(cmpdName);
+            if(p1 != null) {
+                bool phase1 = false, phase2 = false;
+                TraffPatt.directLeft = (BarManager.inst.funcBeingTested == AdvFunction.TRAFFIC_LEFT);
+                TraffPatt.sixHeads = false;
 
-                Pattern p1 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, false) : null;
-                Pattern p2 = (lh.lhd.funcs.Contains(BasicFunction.TRAFFIC) || !(FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT || FunctionEditPane.currFunc == AdvFunction.TRAFFIC_RIGHT)) ? lh.GetPattern(BarManager.inst.funcBeingTested, true) : null;
-
-                if(p1 != null) {
-                    bool phase1 = false, phase2 = false;
-                    TraffPatt.directLeft = (FunctionEditPane.currFunc == AdvFunction.TRAFFIC_LEFT);
-                    TraffPatt.sixHeads = false;
-
-                    if(!(p1 is TraffPatt)) {
-                        phase1 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "1").ShortValue & (0x1 << lh.Bit)) > 0);
-                        phase2 = ((func.Get<NbtShort>("p" + (lh.transform.position.y < 0 ? "r" : "f") + "2").ShortValue & (0x1 << lh.Bit)) > 0);
-                    } else {
-                        byte count = 0;
-                        foreach(LightHead alpha in BarManager.inst.allHeads) {
-                            if(alpha.gameObject.activeInHierarchy && alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
-                                count++;
-                            }
+                if(!(p1 is TraffPatt)) { // Not a traffic pattern
+                    phase1 = lh.GetPhaseB(BarManager.inst.funcBeingTested, false); // Fetch phases
+                    phase2 = lh.GetPhaseB(BarManager.inst.funcBeingTested, true);
+                } else { // Traffic pattern
+                    byte count = 0;
+                    foreach(LightHead alpha in BarManager.inst.allHeads) {
+                        if(alpha.gameObject.activeInHierarchy && alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC)) {
+                            count++;
                         }
-                        TraffPatt.sixHeads = count == 6;
                     }
+                    TraffPatt.sixHeads = count == 6; // If 6 traffic heads, then use 6-head patterns
+                }
 
-                    ulong ticksPast;
-                    byte bit = lh.Bit;
+                ulong ticksPast;
+                byte bit = lh.Bit;
 
-                    bool en1 = (func["e" + (lh.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0,
-                         en2 = (func["e" + (lh.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0;
+                #region Get Enables
+                bool en1 = lh.GetIsEnabled(BarManager.inst.funcBeingTested, false, true),
+                             en2 = lh.GetIsEnabled(BarManager.inst.funcBeingTested, true);
 
-                    if(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN || BarManager.inst.funcBeingTested == AdvFunction.FALLEY) {
-                        for(byte i = 0; i < 20; i++) {
-                            if(FnDragTarget.inputMap.Value[i] == 0xC00) {
-                                NbtCompound otherFunc = patts.Get<NbtCompound>(BarManager.GetFnString(lh.transform, BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN));
+                if(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN || BarManager.inst.funcBeingTested == AdvFunction.FALLEY) { // If testing Flashing Pursuit or Flashing Alley...
+                    for(byte i = 0; i < 20; i++) {
+                        if(FnDragTarget.inputMap.Value[i] == 0xC00) { // If Flashing Pursuit and Flashing Alley share, show both
+                            lh.GetIsEnabled(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, false, true);
 
-                                if(!en1) {
-                                    p1 = lh.GetPattern(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, false);
-                                    en1 |= (otherFunc["e" + (lh.transform.position.y < 0 ? "r" : "f") + "1"].ShortValue & (0x1 << bit)) > 0;
-                                }
+                            if(!en1) {
+                                p1 = lh.GetPattern(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, false);
+                                en1 |= lh.GetIsEnabled(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, false);
+                            }
 
-                                if(!en2) {
-                                    p2 = lh.GetPattern(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, true);
-                                    en2 |= (otherFunc["e" + (lh.transform.position.y < 0 ? "r" : "f") + "2"].ShortValue & (0x1 << bit)) > 0; 
-                                }
-
+                            if(!en2) {
+                                p2 = lh.GetPattern(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, true);
+                                en2 |= lh.GetIsEnabled(BarManager.inst.funcBeingTested == AdvFunction.FTAKEDOWN ? AdvFunction.FALLEY : AdvFunction.FTAKEDOWN, true);
                             }
                         }
                     }
+                } 
+                #endregion
 
-                    if(!lh.lhd.style.isDualColor) en2 = false;
+                if(!lh.lhd.style.isDualColor) en2 = false; // If no dual color, forget about second color.
 
-                    bool light1 = en1, light2 = en2;
+                bool light1 = en1, light2 = en2;
 
-                    if(en1 || en2) {
-                        while(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
-                            ticksPast = PattTimer.inst.passedTicks;
+                if(en1 || en2) {  // If either one is enabled
+                    while(BarManager.inst.funcBeingTested != AdvFunction.NONE) {
+                        ticksPast = PattTimer.inst.passedTicks;  // figure out how long since we started
 
-                            light1 = en1;
-                            light2 = en2 && p2 != null;
+                        light1 = en1;
+                        light2 = en2 && p2 != null;
 
-                            if(light1) {
-                                if(p1 is DCCirclePattern) {
-                                    light1 &= ((DCCirclePattern)p1).GetIsActive(ticksPast, phase1, false, bit, lh.isRear);
-                                } else if(p1 is DCDoubleRotatorPattern) {
-                                    light1 &= ((DCDoubleRotatorPattern)p1).GetIsActive(ticksPast, phase1, false, bit, lh.isRear);
-                                } else {
-                                    light1 &= p1.GetIsActive(ticksPast, phase1, false, bit);
-                                } 
-                            }
-                            if(light2) {
-                                if(p2 is DCCirclePattern) {
-                                    light2 &= ((DCCirclePattern)p2).GetIsActive(ticksPast, phase2, true, bit, lh.isRear);
-                                } else if(p2 is DCDoubleRotatorPattern) {
-                                    light2 &= ((DCDoubleRotatorPattern)p2).GetIsActive(ticksPast, phase2, true, bit, lh.isRear);
-                                } else {
-                                    light2 &= p2.GetIsActive(ticksPast, phase2, true, bit);
-                                }
-                            }
-
-                            background.color = lh.lhd.style.color * (light1 ? 1.0f : 0.25f);
-                            if(lh.lhd.style.isDualColor) {
-                                secondImage.color = lh.lhd.style.color2 * (light2 ? 1.0f : 0.25f);
+                        #region Flash color 1
+                        if(light1) {
+                            if(p1 is DCCirclePattern) {
+                                light1 &= ((DCCirclePattern)p1).GetIsActive(ticksPast, phase1, false, bit, lh.isRear);
+                            } else if(p1 is DCDoubleRotatorPattern) {
+                                light1 &= ((DCDoubleRotatorPattern)p1).GetIsActive(ticksPast, phase1, false, bit, lh.isRear);
                             } else {
-                                secondImage.color = background.color;
+                                light1 &= p1.GetIsActive(ticksPast, phase1, false, bit);
                             }
+                        } 
+                        #endregion
+                        #region Flash color 2
+                        if(light2) {
+                            if(p2 is DCCirclePattern) {
+                                light2 &= ((DCCirclePattern)p2).GetIsActive(ticksPast, phase2, true, bit, lh.isRear);
+                            } else if(p2 is DCDoubleRotatorPattern) {
+                                light2 &= ((DCDoubleRotatorPattern)p2).GetIsActive(ticksPast, phase2, true, bit, lh.isRear);
+                            } else {
+                                light2 &= p2.GetIsActive(ticksPast, phase2, true, bit);
+                            }
+                        } 
+                        #endregion
 
-                            yield return null;
-                        }
+                        #region Apply colors to simulate flashing
+                        background.color = lh.lhd.style.color * (light1 ? 1.0f : 0.25f);
+                        if(lh.lhd.style.isDualColor) {
+                            secondImage.color = lh.lhd.style.color2 * (light2 ? 1.0f : 0.25f);
+                        } else {
+                            secondImage.color = background.color;
+                        } 
+                        #endregion
+
+                        yield return null;
                     }
                 }
             }
@@ -503,39 +574,46 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     /// </summary>
     void Update() {
         if(BarManager.inst.funcBeingTested != AdvFunction.NONE) return;  // Quick & dirty optimization - if we're previewing a function, do nothing
-        if(cam == null) cam = FindObjectOfType<CameraControl>();
-        else {
-            if(target != null) {
-                transform.position = target.position;
-                transform.rotation = target.rotation;
+        if(cam == null) cam = FindObjectOfType<CameraControl>(); // Find Camera if not found already
 
-                if(!target.gameObject.activeInHierarchy) {
-                    gameObject.SetActive(false);
-                }
+        if(target != null) {
+            #region Reposition self
+            transform.position = target.position;
+            transform.rotation = target.rotation;
+
+            if(!target.gameObject.activeInHierarchy) {
+                gameObject.SetActive(false);
+            }
+            #endregion
+
+            if(lh == null) lh = target.GetComponent<LightHead>(); // Find LightHead of Target if not found already
+            if(lh.lhd.style != lastStyle || lh.lhd.optic != lastOptic) {
+                Refresh(); // Refresh now if styles / optics don't match
+            }
+
+            if(lh.Selected) { // Show selection image if selected
+                selectionImage.gameObject.SetActive(true);
+                selectionImage.transform.Rotate(new Vector3(0, 0, 20f) * Time.deltaTime); // Slow rotation
+            } else { // Hide selection image if not selected
+                selectionImage.gameObject.SetActive(false);
+                selectionImage.transform.rotation = Quaternion.identity; // Revert to original orientation
             }
         }
-
-        if(lh == null) lh = target.GetComponent<LightHead>();
-        if(lh.lhd.style != lastStyle || lh.lhd.optic != lastOptic) {
-            Refresh();
-        }
-
-        if(lh.Selected) {
-            selectionImage.gameObject.SetActive(true);
-            selectionImage.transform.Rotate(new Vector3(0, 0, 20f) * Time.deltaTime);
-        } else {
-            selectionImage.gameObject.SetActive(false);
-            selectionImage.transform.rotation = Quaternion.identity;
-        }
     }
 
+    /// <summary>
+    /// Called when the mouse begins hovering over the object.
+    /// </summary>
     public void OnPointerEnter(PointerEventData eventData) {
-        if(tooltip == null) tooltip = FindObjectOfType<LabelTooltip>();
+        if(tooltip == null) tooltip = FindObjectOfType<LabelTooltip>();  // Find tooltip if not found already
         if(label.text.Length > 0)
-            tooltip.Show(label.text);
+            tooltip.Show(label.text); // Put label's text on tooltip
     }
 
+    /// <summary>
+    /// Called when the mouse stops hovering over the object.
+    /// </summary>
     public void OnPointerExit(PointerEventData eventData) {
-        tooltip.Hide();
+        tooltip.Hide();  // Hide tooltip
     }
 }

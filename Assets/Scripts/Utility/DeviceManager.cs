@@ -183,7 +183,7 @@ public class DeviceManager : MonoBehaviour {
         using(MemoryStream xferBufferStream = new MemoryStream(xferBuffer))
         using(BarWriter writer = new BarWriter(xferBufferStream)) {
             writer.Write(new byte[] { 0x2, 0x0 }); // Write command
-            // TODO: fill in the rest of the defaults
+            // fill in the rest of the defaults
         }
 
         SpiXferJob job = new SpiXferJob();
