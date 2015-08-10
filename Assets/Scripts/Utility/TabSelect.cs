@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// GUI Item.  Handles the navigation of the order finisher form using Tab and Shift-Tab.
+/// UI Component.  Handles the navigation of the order finisher form using Tab and Shift-Tab.
 /// </summary>
 public class TabSelect : MonoBehaviour {
     public bool IsMain = false;

@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 /// <summary>
-/// GUI Item.  Disables the Continue Button if there is a single Fatal Issue that occurs.
+/// UI Component.  Disables the Continue Button if there is a single Fatal Issue that occurs.
 /// </summary>
 public class IssueTrack : MonoBehaviour {
     /// <summary>

@@ -4,7 +4,7 @@ using System.Collections;
 using fNbt;
 
 /// <summary>
-/// GUI Item.  Used to display what pattern selected head(s) are using.
+/// UI Component.  Used to display what pattern selected head(s) are using.
 /// </summary>
 public class AdvFuncDisp : MonoBehaviour {
     /// <summary>

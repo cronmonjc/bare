@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// GUI Item.  Used to display light choices and handle selection.
+/// UI Component.  Used to display light choices and handle selection.
 /// </summary>
 public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// <summary>

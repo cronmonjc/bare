@@ -1,9 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component, Issue.  Checks if a head is large and is set up for either Steady Burn or Stop Tail Turn.
+/// </summary>
 public class LargeFSBSTT : IssueChecker {
+    /// <summary>
+    /// Is this instance checking for Steady Burn?  If not, it's checking for Stop Tail Turn
+    /// </summary>
     public bool IsSteadyBurn;
 
+    /// <summary>
+    /// Examined to see whether or not the issue being examined arises.
+    /// </summary>
+    /// <returns>
+    /// True if there is an issue, false if there is no issue.
+    /// </returns>
     public override bool DoCheck() {
         for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
             LightHead lh = BarManager.inst.allHeads[h];
@@ -19,6 +31,9 @@ public class LargeFSBSTT : IssueChecker {
         return false;
     }
 
+    /// <summary>
+    /// Gets the text used to describe an issue on the exported PDF.
+    /// </summary>
     public override string pdfText {
         get { return "This bar is using long optics to handle the " + (IsSteadyBurn ? "Steady Burn" : "Stop/Tail/Turn") + " function.  It is suggested to use a short optic for that function for better directionality."; }
     }

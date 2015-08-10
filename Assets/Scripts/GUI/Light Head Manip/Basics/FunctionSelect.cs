@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 /// <summary>
-/// GUI Item.  Used to allow the user to select the Function they want from a list.
+/// UI Component.  Used to allow the user to select the Function they want from a list.
 /// </summary>
 public class FunctionSelect : MonoBehaviour {
     /// <summary>

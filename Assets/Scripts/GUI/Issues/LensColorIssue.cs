@@ -3,9 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// GUI Item, Issue.  Checks that no lens mismatches with any head it's over.
+/// UI Component, Issue.  Checks that no lens mismatches with any head it's over.
 /// </summary>
 public class LensColorIssue : IssueChecker {
+    /// <summary>
+    /// Examined to see whether or not the issue being examined arises.
+    /// </summary>
+    /// <returns>
+    /// True if there is an issue, false if there is no issue.
+    /// </returns>
     public override bool DoCheck() {
         for(byte s = 0; s < BarManager.inst.allSegs.Count; s++) {
             BarSegment seg = BarManager.inst.allSegs[s];
@@ -28,6 +34,9 @@ public class LensColorIssue : IssueChecker {
         return false;
     }
 
+    /// <summary>
+    /// Gets the text used to describe an issue on the exported PDF.
+    /// </summary>
     public override string pdfText {
         get { return "This bar has lenses whose colors confict with the colors of the light heads underneath them."; }
     }
