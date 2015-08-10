@@ -3,11 +3,29 @@ using UnityEngine.UI;
 using System.Collections;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Component on a Button that applies a certain phase on a LightHead for a certain flashing function.
+/// </summary>
 public class FuncPhase : MonoBehaviour {
+    /// <summary>
+    /// Static references to instances for specific colors
+    /// </summary>
     public static FuncPhase ph1, ph2;
+    /// <summary>
+    /// The label Text Component
+    /// </summary>
     private Text label;
+    /// <summary>
+    /// The Button Component
+    /// </summary>
     private Button button;
+    /// <summary>
+    /// Is this Component managing color 2?
+    /// </summary>
     public bool IsColor2 = false;
+    /// <summary>
+    /// Is the phase currently B for the selected heads?
+    /// </summary>
     public bool CurrentlyB = false;
 
     /// <summary>
@@ -21,12 +39,17 @@ public class FuncPhase : MonoBehaviour {
         Retest();
     }
 
+    /// <summary>
+    /// Retests this Component.
+    /// </summary>
     public void Retest() {
-        if(FunctionEditPane.currFunc == AdvFunction.NONE) return;
+        if(FunctionEditPane.currFunc == AdvFunction.NONE) return; // We aren't modifying a function, return now
 
+        #region Setup
         NbtCompound patts = BarManager.inst.patts;
         bool enabled = false, disabled = false, selectable = false;
-        string clrText = "";
+        string clrText = ""; 
+        #endregion
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
@@ -36,9 +59,9 @@ public class FuncPhase : MonoBehaviour {
                 Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
                 return;
             }
-            if(!patts.Get<NbtCompound>(cmpdName).Contains("pf1")) {
-                button.interactable = false;
-                return;
+            if(!patts.Get<NbtCompound>(cmpdName).Contains("pf1")) { // Cannot phase, return now
+                selectable = false;
+                break;
             }
 
             Pattern patt = alpha.GetPattern(FunctionEditPane.currFunc, IsColor2);
@@ -47,21 +70,21 @@ public class FuncPhase : MonoBehaviour {
 
             if(thisSelectable) {
                 short ph = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("p" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
+                // Test if head is phase B
+                bool thisPhased = ((ph & (0x1 << alpha.Bit)) > 0);
 
-                bool thisEnabled = ((ph & (0x1 << alpha.Bit)) > 0);
-
-                enabled |= thisEnabled;
-                disabled |= !thisEnabled;
+                enabled |= thisPhased;
+                disabled |= !thisPhased;
 
                 selectable = true;
-                string[] clrs = alpha.lhd.style.name.Split('/');
+                string[] clrs = alpha.lhd.style.name.Split('/'); // Fetch color names
 
                 if(clrText.Length > 0) {
-                    if(!clrText.StartsWith("Color"))
-                        if(!clrText.Equals(clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0]))
+                    if(!clrText.StartsWith("Color")) // Have a proper color name currently
+                        if(!clrText.Equals(clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0])) // Colors don't match, go generic
                             clrText = "Color " + (IsColor2 ? "2" : "1");
                 } else {
-                    clrText = clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0];
+                    clrText = clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0]; // Apply color name
                 }
             }
         }
@@ -81,13 +104,18 @@ public class FuncPhase : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Called when the user clicks the Button this Component is on.
+    /// </summary>
     public void Clicked() {
         NbtCompound patts = BarManager.inst.patts;
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
+            #region Test if we can Phase these heads
             bool trigger = false;
 
+            #region Test if function is Flashing
             switch(FunctionEditPane.currFunc) {
                 case AdvFunction.PRIO1:
                 case AdvFunction.PRIO2:
@@ -101,11 +129,14 @@ public class FuncPhase : MonoBehaviour {
                     break;
                 default:
                     break;
-            }
+            } 
+            #endregion
 
             Pattern patt = alpha.GetPattern(FunctionEditPane.currFunc, IsColor2);
 
-            trigger &= (alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && patt != null && (patt is FlashPatt || patt is SingleFlashRefPattern || patt is DoubleFlashRefPattern) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual)));
+            // Test if pattern is Phase-able
+            trigger &= (alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && patt != null && (patt is FlashPatt || patt is SingleFlashRefPattern || patt is DoubleFlashRefPattern) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual))); 
+            #endregion
 
             if(trigger) {
                 string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
@@ -123,14 +154,16 @@ public class FuncPhase : MonoBehaviour {
             }
         }
 
+        #region Retest and Refresh
         ph1.Retest();
         ph2.Retest();
 
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
-        }
+        } 
+        #endregion
         BarManager.moddedBar = true;
-        if(patts.Contains("prog")) patts.Remove("prog");
+        if(patts.Contains("prog")) patts.Remove("prog"); // Remove default program tag, no longer applies
     }
 
 }

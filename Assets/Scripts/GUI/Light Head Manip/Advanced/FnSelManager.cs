@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to manage which function was being edited on selected light blocks.
+/// </summary>
 public class FnSelManager : MonoBehaviour {
     //public static FnSelManager inst;
     //public PattSelect ps;

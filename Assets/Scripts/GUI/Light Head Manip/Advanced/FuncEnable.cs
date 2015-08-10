@@ -3,12 +3,33 @@ using UnityEngine.UI;
 using System.Collections;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Component on a Button that enables a certain color on a LightHead for a certain function.
+/// </summary>
 public class FuncEnable : MonoBehaviour {
+    /// <summary>
+    /// Static references to instances for specific colors
+    /// </summary>
     public static FuncEnable clr1, clr2;
+    /// <summary>
+    /// Reference to the tip text GameObject.  Set via Unity Inspector.
+    /// </summary>
     public GameObject tip;
+    /// <summary>
+    /// Is the function currently enabled for the selected heads?
+    /// </summary>
     private bool funcEnabled;
+    /// <summary>
+    /// The label Text Component
+    /// </summary>
     private Text label;
+    /// <summary>
+    /// The Button Component
+    /// </summary>
     private Button button;
+    /// <summary>
+    /// Is this Component managing color 2?
+    /// </summary>
     public bool IsColor2 = false;
 
     /// <summary>
@@ -22,16 +43,22 @@ public class FuncEnable : MonoBehaviour {
         Retest();
     }
 
+    /// <summary>
+    /// Retests this Component.
+    /// </summary>
     public void Retest() {
-        if(FunctionEditPane.currFunc == AdvFunction.NONE) return;
+        if(FunctionEditPane.currFunc == AdvFunction.NONE) return; // We aren't modifying a function, return now
 
+        #region Setup
         NbtCompound patts = BarManager.inst.patts;
         bool enabled = false, disabled = false, selectable = false;
-        string clrText = "";
+        string clrText = ""; 
+        #endregion
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected || !alpha.hasRealHead) continue;
 
+            #region Figure out if the head can be enabled
             bool thisSelectable = false;
 
             switch(FunctionEditPane.currFunc) {
@@ -73,9 +100,11 @@ public class FuncEnable : MonoBehaviour {
                     break;
                 default:
                     break;
-            }
+            } 
+            #endregion
 
             if(thisSelectable) {
+                #region Test if head is enabled
                 string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
                 if(cmpdName == null) {
                     Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
@@ -87,24 +116,23 @@ public class FuncEnable : MonoBehaviour {
                 }
                 short en = patts.Get<NbtCompound>(cmpdName).Get<NbtShort>("e" + (alpha.transform.position.y < 0 ? "r" : "f") + (IsColor2 ? "2" : "1")).ShortValue;
 
-                bool thisEnabled = ((en & (0x1 << alpha.Bit)) > 0);
+                bool thisEnabled = ((en & (0x1 << alpha.Bit)) > 0); 
+                #endregion
 
                 enabled |= thisEnabled;
                 disabled |= !thisEnabled;
                 
                 selectable = true;
-                string[] clrs = alpha.lhd.style.name.Split('/');
+                string[] clrs = alpha.lhd.style.name.Split('/'); // Fetch color names
 
                 if(clrText.Length > 0) {
-                    if(!clrText.StartsWith("Color"))
-                        if(!clrText.Equals(clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0]))
+                    if(!clrText.StartsWith("Color")) // Have a proper color name currently
+                        if(!clrText.Equals(clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0])) // Colors don't match, go generic
                             clrText = "Color " + (IsColor2 ? "2" : "1");
                 } else {
-                    clrText = clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0];
+                    clrText = clrs[(clrs.Length > 1 && IsColor2) ? 1 : 0]; // Apply color name
                 }
             }
-            
-
         }
 
         button.interactable = selectable;
@@ -114,9 +142,11 @@ public class FuncEnable : MonoBehaviour {
             tip.gameObject.SetActive(true);
         } else {
             funcEnabled = !disabled;
+            #region Coloration of the button
             ColorBlock cb = button.colors;
             cb.highlightedColor = cb.normalColor = (!disabled ? new Color(0.8f, 1.0f, 0.8f, 1.0f) : (!enabled ? new Color(1.0f, 0.8f, 0.8f, 1.0f) : new Color(1.0f, 1.0f, 1.0f, 1.0f)));
             button.colors = cb;
+            #endregion
             tip.gameObject.SetActive(false);
 
             if(enabled && disabled) {
@@ -127,55 +157,16 @@ public class FuncEnable : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Enables the selected heads for this Component's color.
+    /// </summary>
     public void Enable() {
         NbtCompound patts = BarManager.inst.patts;
+        #region Enable all selected heads
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
-            bool trigger = false;
-
-            switch(FunctionEditPane.currFunc) {
-                case AdvFunction.PRIO1:
-                case AdvFunction.PRIO2:
-                case AdvFunction.PRIO3:
-                case AdvFunction.PRIO4:
-                case AdvFunction.PRIO5:
-                case AdvFunction.FTAKEDOWN:
-                case AdvFunction.FALLEY:
-                case AdvFunction.ICL:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
-                    break;
-                case AdvFunction.TAKEDOWN:
-                case AdvFunction.ALLEY_LEFT:
-                case AdvFunction.ALLEY_RIGHT:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STEADY);
-                    break;
-                case AdvFunction.TURN_LEFT:
-                case AdvFunction.TURN_RIGHT:
-                case AdvFunction.TAIL:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STT);
-                    break;
-                case AdvFunction.T13:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
-                    break;
-                case AdvFunction.EMITTER:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
-                    break;
-                case AdvFunction.CRUISE:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
-                    break;
-                case AdvFunction.TRAFFIC_LEFT:
-                case AdvFunction.TRAFFIC_RIGHT:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
-                    break;
-                case AdvFunction.DIM:
-                    trigger |= true;
-                    break;
-                default:
-                    break;
-            }
-
-            if(trigger) {
+            if(alpha.GetCanEnable(FunctionEditPane.currFunc)) { // Test if we can enable
                 string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
                 if(cmpdName == null) {
                     Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
@@ -185,14 +176,16 @@ public class FuncEnable : MonoBehaviour {
 
                 en.EnableBit(alpha.Bit);
             }
-        }
+        } 
+        #endregion
 
+        #region Retest and Refresh
         clr1.Retest();
         clr2.Retest();
 
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
-        }
+        } 
 
         FunctionEditPane fep = transform.GetComponentInParent<FunctionEditPane>();
         switch(fep.state) {
@@ -209,60 +202,22 @@ public class FuncEnable : MonoBehaviour {
             default:
                 break;
         }
+        #endregion
 
         BarManager.moddedBar = true;
-        if(patts.Contains("prog")) patts.Remove("prog");
+        if(patts.Contains("prog")) patts.Remove("prog"); // Remove default program tag, no longer applies
     }
 
+    /// <summary>
+    /// Called when the user clicks the Button this Component is on.
+    /// </summary>
     public void Clicked() {
         NbtCompound patts = BarManager.inst.patts;
+        #region Enable/disable all selected heads
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
-            bool trigger = false;
-
-            switch(FunctionEditPane.currFunc) {
-                case AdvFunction.PRIO1:
-                case AdvFunction.PRIO2:
-                case AdvFunction.PRIO3:
-                case AdvFunction.PRIO4:
-                case AdvFunction.PRIO5:
-                case AdvFunction.FTAKEDOWN:
-                case AdvFunction.FALLEY:
-                case AdvFunction.ICL:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
-                    break;
-                case AdvFunction.TAKEDOWN:
-                case AdvFunction.ALLEY_LEFT:
-                case AdvFunction.ALLEY_RIGHT:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STEADY);
-                    break;
-                case AdvFunction.TURN_LEFT:
-                case AdvFunction.TURN_RIGHT:
-                case AdvFunction.TAIL:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.STT);
-                    break;
-                case AdvFunction.T13:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CAL_STEADY);
-                    break;
-                case AdvFunction.EMITTER:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.EMITTER);
-                    break;
-                case AdvFunction.CRUISE:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.CRUISE);
-                    break;
-                case AdvFunction.TRAFFIC_LEFT:
-                case AdvFunction.TRAFFIC_RIGHT:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC);
-                    break;
-                case AdvFunction.DIM:
-                    trigger |= true;
-                    break;
-                default:
-                    break;
-            }
-
-            if(trigger) {
+            if(alpha.GetCanEnable(FunctionEditPane.currFunc)) {
                 string cmpdName = BarManager.GetFnString(alpha.transform, FunctionEditPane.currFunc);
                 if(cmpdName == null) {
                     Debug.LogWarning(FunctionEditPane.currFunc.ToString() + " has no similar setting in the data bytes.");
@@ -276,15 +231,19 @@ public class FuncEnable : MonoBehaviour {
                     en.EnableBit(alpha.Bit);
                 }
             }
-        }
+        } 
+        #endregion
 
+        #region Retest and Refresh
         clr1.Retest();
         clr2.Retest();
 
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();
-        }
+        } 
+        #endregion
+
         BarManager.moddedBar = true;
-        if(patts.Contains("prog")) patts.Remove("prog");
+        if(patts.Contains("prog")) patts.Remove("prog"); // Remove default program tag, no longer applies
     }
 }

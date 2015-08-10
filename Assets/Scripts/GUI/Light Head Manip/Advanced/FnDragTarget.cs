@@ -4,15 +4,40 @@ using UnityEngine.UI;
 using System.Collections;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Acts as a target to drop the functions being dragged from FnDrag.
+/// </summary>
 public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler {
+    /// <summary>
+    /// The display of what function's currently assigned to this Component.  Set via Unity Inspector.
+    /// </summary>
     public Text display;
+    /// <summary>
+    /// The index of the position this Component's modifying in the input map.  Set via Unity Inspector.
+    /// </summary>
     public int key;
+    /// <summary>
+    /// The shared input map
+    /// </summary>
     public static NbtIntArray inputMap;
+    /// <summary>
+    /// The FnDragTarget currently being dragged
+    /// </summary>
     public static FnDragTarget draggedItem;
+    /// <summary>
+    /// This Component's visually dragged item.  Set via Unity Inspector.
+    /// </summary>
     public GameObject dragItem;
 
+    /// <summary>
+    /// Reference to a pencil with which to edit the currently assigned function.  Set via Unity Inspector.
+    /// </summary>
     public GameObject Edit1, Edit2;
 
+    /// <summary>
+    /// Called when the user begins dragging an object just before a drag is started.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnBeginDrag(PointerEventData eventData) {
         if(inputMap.Value[key] == 0) return;
 
@@ -22,6 +47,10 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         ErrorLogging.LogInput("Began Dragging Function 0x" + ((int)inputMap.Value[key]).ToString("X") + " from " + key);
     }
 
+    /// <summary>
+    /// When dragging is occurring, this will be called every time the cursor is moved.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnDrag(PointerEventData eventData) {
         if(inputMap.Value[key] == 0) return;
 
@@ -30,6 +59,10 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         dragItem.transform.position = newPos;
     }
 
+    /// <summary>
+    /// Called when the user releases a dragged object.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnEndDrag(PointerEventData eventData) {
         draggedItem = null;
         dragItem.SetActive(false);
@@ -37,7 +70,12 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         ErrorLogging.LogInput("Released Function");
     }
 
+    /// <summary>
+    /// Called when the user releases a dragged object on a target that can accept a drop.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnDrop(PointerEventData eventData) {
+        #region Assigning a Function
         if(FnDrag.draggedItem != null) {
             int newFunc = (int)FnDrag.draggedItem.myFunc;
 
@@ -62,6 +100,8 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             inputMap.Value = val;
             BarManager.moddedBar = true;
             if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
+        #endregion
+        #region Moving a Function
         } else if(FnDragTarget.draggedItem != null) {
             int[] val = inputMap.Value;
             int newFunc = val[FnDragTarget.draggedItem.key];
@@ -81,8 +121,12 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             BarManager.moddedBar = true;
             if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
         }
+        #endregion
     }
 
+    /// <summary>
+    /// Clears the mapping of this Component.
+    /// </summary>
     public void Clear() {
         int[] val = inputMap.Value;
         val[key] = 0;
@@ -95,6 +139,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     void Update() {
         int val = inputMap.Value[key];
 
+        #region Show pencils when necessary
         if(val == 0xC00) {
             Edit1.SetActive(true);
             Edit2.SetActive(true);
@@ -104,8 +149,10 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
         } else {
             Edit1.SetActive(true);
             Edit2.SetActive(false);
-        }
+        } 
+        #endregion
 
+        #region Show which function's assigned
         switch(val) {
             case 0x1: // TAKEDOWN
                 display.text = "Takedown / Work Lights";
@@ -173,17 +220,19 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             case 0x100000: // EMITTER
                 display.text = "Emitter";
                 break;
-            default:    
+            default:
                 display.text = "";
                 break;
-        }
+        } 
+        #endregion
 
+        #region Colorize display text indicating whether or not it's in use
         short en = 0x0;
         NbtCompound patts = BarManager.inst.patts;
         switch(val) {
             case 0xC00:
                 NbtCompound afl = patts.Get<NbtCompound>("afl"), tdp = patts.Get<NbtCompound>("tdp");
-                foreach(string alpha in new string[] { "ef1","ef2","er1","er2" }) {
+                foreach(string alpha in new string[] { "ef1", "ef2", "er1", "er2" }) {
                     en |= afl[alpha].ShortValue;
                     en |= tdp[alpha].ShortValue;
                 }
@@ -191,7 +240,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
             case 0x10:
             case 0x20:
                 NbtCompound traf = patts.Get<NbtCompound>("traf");
-                foreach(string alpha in new string[] { "er1","er2" }) {
+                foreach(string alpha in new string[] { "er1", "er2" }) {
                     en |= traf[alpha].ShortValue;
                 }
                 break;
@@ -201,12 +250,13 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 break;
             default:
                 NbtCompound cmpd = patts.Get<NbtCompound>(BarManager.GetFnString(BarManager.inst.transform, (AdvFunction)val));
-                foreach(string alpha in new string[] { "ef1","ef2","er1","er2" }) {
+                foreach(string alpha in new string[] { "ef1", "ef2", "er1", "er2" }) {
                     en |= cmpd[alpha].ShortValue;
                 }
                 break;
 
         }
-        display.color = (en == 0 ? new Color(0.75f, 0.75f, 0.75f, 1.0f) : new Color(0.2f, 0.2f, 0.2f, 1.0f));
+        display.color = (en == 0 ? new Color(0.75f, 0.75f, 0.75f, 1.0f) : new Color(0.2f, 0.2f, 0.2f, 1.0f)); 
+        #endregion
     }
 }

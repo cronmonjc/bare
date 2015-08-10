@@ -4,14 +4,38 @@ using System.Collections;
 using System.Collections.Generic;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Manages all FuncPatt instances, allowing for the selection of patterns for selected heads.
+/// </summary>
 public class FuncPattSelect : MonoBehaviour {
+    /// <summary>
+    /// The place to put all of the options
+    /// </summary>
     public RectTransform menu;
+    /// <summary>
+    /// The option prefab
+    /// </summary>
     public GameObject optionPrefab;
+    /// <summary>
+    /// The reference to the CameraControl object, to make finding selected heads easier
+    /// </summary>
     public CameraControl cam;
+    /// <summary>
+    /// Is this a Traffic Director pattern selection pane?
+    /// </summary>
     public bool IsTD = false;
+    /// <summary>
+    /// Is this pane selecting a pattern for color 2?
+    /// </summary>
     public bool IsColor2 = false;
+    /// <summary>
+    /// Has this pane refreshed this frame already?
+    /// </summary>
     public bool refreshedThisFrame = false;
 
+    /// <summary>
+    /// Clears this Component's list.
+    /// </summary>
     public void Clear() {
         List<Transform> temp = new List<Transform>();
         foreach(Transform alpha in menu) {
@@ -22,6 +46,9 @@ public class FuncPattSelect : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Creates the FuncPatts holding each pattern.
+    /// </summary>
     public void CreateButtons() {
         Clear();
 
@@ -61,6 +88,9 @@ public class FuncPattSelect : MonoBehaviour {
         refreshedThisFrame = false;
     }
 
+    /// <summary>
+    /// Refreshes this Component, refreshing every FuncPatt under it.
+    /// </summary>
     public void Refresh() {
         if(refreshedThisFrame) return;
         if(menu.childCount == 0) {
@@ -104,6 +134,10 @@ public class FuncPattSelect : MonoBehaviour {
         refreshedThisFrame = true;
     }
 
+    /// <summary>
+    /// Sets the selected heads to a specific pattern.  Called by FuncPatts.
+    /// </summary>
+    /// <param name="p">The pattern to apply to the selected heads.</param>
     public void SetSelection(Pattern p) {
         string cmpdName = BarManager.GetFnString(transform, FunctionEditPane.currFunc);
         if(cmpdName == null) {
@@ -119,6 +153,7 @@ public class FuncPattSelect : MonoBehaviour {
                 string tagname = alpha.transform.position.y < 0 ? "r" : "f";
                 string path = alpha.Path;
 
+                #region Figure out where to put the pattern ID
                 if(path.Contains("C") || path.Contains("A")) {
                     tagname = tagname + "cor";
                 } else if(path.Contains("I")) {
@@ -130,8 +165,10 @@ public class FuncPattSelect : MonoBehaviour {
                         tagname = tagname + "oub";
                 } else if(path.Contains("N") || path.Split('/')[2].EndsWith("F")) {
                     tagname = tagname + "cen";
-                }
+                } 
+                #endregion
 
+                // Apply pattern ID
                 patCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
 
                 //if(p is WarnPatt || p is DCCirclePattern || p is DCDoubleRotatorPattern) {
@@ -142,7 +179,7 @@ public class FuncPattSelect : MonoBehaviour {
                     case AdvFunction.FTAKEDOWN:
                     case AdvFunction.FALLEY:
                     case AdvFunction.ICL:
-                        if(!alpha.GetIsEnabled(FunctionEditPane.currFunc, !IsColor2)) {
+                        if(!alpha.GetIsEnabled(FunctionEditPane.currFunc, !IsColor2)) {  // If other color is not enabled
                             NbtCompound otherPatCmpd = ((NbtCompound)patCmpd.Parent).Get<NbtCompound>("pat" + (IsColor2 ? "1" : "2"));
 
                             otherPatCmpd.Get<NbtShort>(tagname).Value = (short)p.id;
@@ -150,7 +187,7 @@ public class FuncPattSelect : MonoBehaviour {
                             NbtShort thisPhase = ((NbtCompound)patCmpd.Parent).Get<NbtShort>("p" + (alpha.isRear ? "r" : "f") + (IsColor2 ? "2" : "1")),
                                     otherPhase = ((NbtCompound)patCmpd.Parent).Get<NbtShort>("p" + (alpha.isRear ? "r" : "f") + (IsColor2 ? "1" : "2"));
 
-                            if((thisPhase.Value & (0x1 << alpha.Bit)) > 0) {
+                            if((thisPhase.Value & (0x1 << alpha.Bit)) > 0) { // Give other color other phase
                                 otherPhase.DisableBit(alpha.Bit);
                             } else {
                                 otherPhase.EnableBit(alpha.Bit);
@@ -165,19 +202,19 @@ public class FuncPattSelect : MonoBehaviour {
 
         foreach(FuncEnable fe in FindObjectsOfType<FuncEnable>()) {
             if(!(fe.IsColor2 ^ IsColor2)) {
-                fe.Enable();
+                fe.Enable(); // Force heads on
             }
         }
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.hasRealHead) continue;
-            alpha.PrefetchPatterns(FunctionEditPane.currFunc);
-            alpha.myLabel.Refresh();
+            alpha.PrefetchPatterns(FunctionEditPane.currFunc);  // Have heads get its new pattern
+            alpha.myLabel.Refresh(); // Refresh labels
         }
 
         FunctionEditPane.RetestStatic();
         BarManager.moddedBar = true;
-        if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog");
+        if(BarManager.inst.patts.Contains("prog")) BarManager.inst.patts.Remove("prog"); // No longer a default program, tag no longer applies
     }
 
     /// <summary>

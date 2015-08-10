@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to allow for enabling of the patterns for heads.
+/// </summary>
 public class DisableEnablePatt : MonoBehaviour {
     public UnityEngine.UI.Image image;
     public bool IsEnable;
@@ -41,8 +44,7 @@ public class DisableEnablePatt : MonoBehaviour {
 
             string cmpdName = BarManager.GetFnString(lb.transform, ps.f);
             if(cmpdName == null) {
-                Debug.LogWarning("lolnope - " + ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-                ErrorText.inst.DispError(ps.f.ToString() + " has no similar setting in the data bytes.  Ask James.");
+                Debug.LogWarning("lolnope - " + ps.f.ToString() + " has no similar setting in the data bytes.");
                 return;
             }
             NbtCompound func = patts.Get<NbtCompound>(cmpdName);

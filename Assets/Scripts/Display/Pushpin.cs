@@ -4,7 +4,6 @@ using System.Collections;
 /// <summary>
 /// Deprecated.  Used to show the colors of the 3D version of the bar.
 /// </summary>
-[System.Obsolete("No longer used to display head colors.  Check out Light Labels instead.")]
 public class Pushpin : MonoBehaviour {
 
     public Transform target;

@@ -3,18 +3,73 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// UI Component.  Allows for and manages the modification of a certain function's patterns, enables, and phases.
+/// </summary>
 public class FunctionEditPane : MonoBehaviour {
+    /// <summary>
+    /// The CameraControl reference, to make finding selected head count easier
+    /// </summary>
     private CameraControl cam;
 
+    /// <summary>
+    /// The function currently being edited
+    /// </summary>
     public static AdvFunction currFunc;
+    /// <summary>
+    /// The previous function, used to refresh everything when changing functions
+    /// </summary>
     private AdvFunction prevFunc = AdvFunction.NONE;
+    /// <summary>
+    /// Enumeration of all possible configurations of the Function Edit Pane.
+    /// </summary>
     public enum ShowState {
         NONE, FLASHING, DIMMER, TRAFFIC
     }
-    public Text funcName, funcType;
+    /// <summary>
+    /// The reference to the function name Text Component.  Set via Unity Inspector.
+    /// </summary>
+    public Text funcName;
+    /// <summary>
+    /// The reference to the function type Text Component.  Set via Unity Inspector.
+    /// </summary>
+    public Text funcType;
+    /// <summary>
+    /// The reference to the preview text Text Component.
+    /// </summary>
     private Text previewText;
-    public GameObject paneParent, flashing, dimmer, traffic, trafficOpt, otherHeadsWarn, testFlashing;
-    private ShowState _state, funcState;
+    /// <summary>
+    /// The reference to the pane parent GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject paneParent;
+    /// <summary>
+    /// The reference to the flashing pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject flashing;
+    /// <summary>
+    /// The reference to the dimmer pane GameObject.  Set via Unity Inspector.  Deprecated
+    /// </summary>
+    public GameObject dimmer;
+    /// <summary>
+    /// The reference to the traffic director pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject traffic;
+    /// <summary>
+    /// The reference to the traffic option pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject trafficOpt;
+    /// <summary>
+    /// The reference to the other heads warn GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject otherHeadsWarn;
+    /// <summary>
+    /// The reference to the test flashing GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject testFlashing;
+    /// <summary>
+    /// The current state of display
+    /// </summary>
+    private ShowState _state;
     public ShowState state {
         get {
             return _state;

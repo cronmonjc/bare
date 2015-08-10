@@ -3,20 +3,39 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Allows for the dragging of functions from the function list
+/// </summary>
 public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler {
+    /// <summary>
+    /// Reference to the camera creating the drag events
+    /// </summary>
     public static Camera cam;
+    /// <summary>
+    /// The function this Component is responsible for.  Set via Unity Inspector.
+    /// </summary>
     public AdvFunction myFunc;
+    /// <summary>
+    /// The parent Transform upon which to put the label.  Set via Unity Inspector.
+    /// </summary>
     public Transform LabelParent;
+    /// <summary>
+    /// The item that is visibly dragged around
+    /// </summary>
     [System.NonSerialized]
     public GameObject dragItem;
+    /// <summary>
+    /// The FnDrag Component that owns the item currently being dragged
+    /// </summary>
     public static FnDrag draggedItem;
 
     /// <summary>
     /// Called immediately when the Component's GameObject is enabled
     /// </summary>
     void OnEnable() {
-        if(dragItem != null) return;
+        if(dragItem != null) return; // If this Component already owns a drag item, stop here
 
+        #region Create new drag item
         dragItem = new GameObject(gameObject.name + " Drag");
         CanvasGroup cg = dragItem.AddComponent<CanvasGroup>();
         cg.ignoreParentGroups = false;
@@ -25,8 +44,10 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         dragItem.AddComponent<CanvasRenderer>();
         Image i = dragItem.AddComponent<Image>();
         i.sprite = GetComponent<Image>().sprite;
-        i.type = Image.Type.Sliced;
+        i.type = Image.Type.Sliced; 
+        #endregion
 
+        #region Create label on drag item showing name of function
         GameObject dragLabel = new GameObject("Text");
         string t = "";
         switch(myFunc) {
@@ -102,16 +123,19 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         text.text = t;
         text.color = Color.black;
         dragLabel.transform.SetParent(dragItem.transform);
-        dragLabel.transform.localScale = Vector3.one;
+        dragLabel.transform.localScale = Vector3.one; 
+        #endregion
 
+        #region Add Content Size Fitter
         dragItem.AddComponent<HorizontalLayoutGroup>().padding = new RectOffset(4, 4, 4, 4);
         ContentSizeFitter csf = dragItem.AddComponent<ContentSizeFitter>();
         csf.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         dragItem.transform.SetParent(LabelParent);
-        dragItem.transform.localScale = Vector3.one;
+        dragItem.transform.localScale = Vector3.one; 
+        #endregion
 
-        if(cam == null) cam = GameObject.Find("UI").GetComponent<Camera>();
+        if(cam == null) cam = GameObject.Find("UI").GetComponent<Camera>(); // Get reference to camera if there isn't one already
 
         dragItem.SetActive(false);
     }
@@ -123,6 +147,10 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         dragItem.SetActive(false);
     }
 
+    /// <summary>
+    /// Called when the user begins dragging an object just before a drag is started.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnBeginDrag(PointerEventData eventData) {
         draggedItem = this;
         dragItem.SetActive(true);
@@ -134,12 +162,20 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         ErrorLogging.LogInput("Began Dragging Function 0x" + ((int)myFunc).ToString("X") + " from sidebar");
     }
 
+    /// <summary>
+    /// When dragging is occurring, this will be called every time the cursor is moved.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnDrag(PointerEventData eventData) {
         Vector3 newPos;
         RectTransformUtility.ScreenPointToWorldPointInRectangle(transform as RectTransform, Input.mousePosition, cam, out newPos);
         dragItem.transform.position = newPos;
     }
 
+    /// <summary>
+    /// Called when the user releases a dragged object.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnEndDrag(PointerEventData eventData) {
         draggedItem = null;
         dragItem.SetActive(false);
@@ -147,8 +183,12 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         ErrorLogging.LogInput("Released Function");
     }
 
+    /// <summary>
+    /// Called when the user releases a dragged object on a target that can accept a drop.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnDrop(PointerEventData eventData) {
-        if(FnDragTarget.draggedItem != null) {
+        if(FnDragTarget.draggedItem != null) { // We were dragging a function from a FnDragTarget
             ErrorLogging.LogInput("Removed Function 0x" + FnDragTarget.inputMap.Value[FnDragTarget.draggedItem.key].ToString("X") + " from " + FnDragTarget.draggedItem.key);
 
             FnDragTarget.inputMap.Value[FnDragTarget.draggedItem.key] = 0;

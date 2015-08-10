@@ -2,12 +2,30 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI Component.  Individual element for FuncPattSelect.
+/// </summary>
 public class FuncPatt : MonoBehaviour {
+    /// <summary>
+    /// The Text Component showing this Component's pattern name.  Set via Unity Inspector.
+    /// </summary>
     public Text text;
+    /// <summary>
+    /// The Pattern this Component holds.  Set by FuncPattSelect.
+    /// </summary>
     public Pattern patt;
+    /// <summary>
+    /// The toggle image.  Set via Unity Inspector.
+    /// </summary>
     public Image i;
+    /// <summary>
+    /// The FuncPattSelect to phone home to when selected.  Set by FuncPattSelect.
+    /// </summary>
     public FuncPattSelect fps;
 
+    /// <summary>
+    /// Refreshes this Component, testing whether all selected heads have its pattern
+    /// </summary>
     public void Refresh() {
         bool anyEnabled = false;
         bool on = true;
@@ -26,6 +44,9 @@ public class FuncPatt : MonoBehaviour {
         i.enabled = anyEnabled & on;
     }
 
+    /// <summary>
+    /// Called when a user clicks on the Button this Component is on
+    /// </summary>
     public void Clicked() {
         fps.SetSelection(patt);
     }

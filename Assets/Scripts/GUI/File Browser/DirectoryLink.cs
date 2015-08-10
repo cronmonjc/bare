@@ -16,7 +16,7 @@ public abstract class DirectoryLink : Selectable, IPointerClickHandler {
     /// <summary>
     /// Called by Unity when the user clicks on the GameObject containing this Component.
     /// </summary>
-    /// <param name="eventData">The event data containing information about the click.</param>
+    /// <param name="eventData">Current event data.</param>
     public void OnPointerClick(PointerEventData eventData) {
         Navigate(GameObject.FindObjectOfType<FileBrowser>());
     }
