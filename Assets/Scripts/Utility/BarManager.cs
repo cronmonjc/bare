@@ -763,47 +763,65 @@ public class BarManager : MonoBehaviour {
         yield return new WaitForEndOfFrame();
 
         #region Test for Staggered Output
-        bool altNumberingCenter = (AlternateOutputs.isOn) && (BarSize >= 2 && BarSize <= 4); // Test if we should apply staggered outputs
-        if(altNumberingCenter) { // TODO: GET BAR SIZE 3 STAGGERED OUTPUTS SET
-            if(BarSize == 2) {
-                altNumberingCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
+        bool staggCenter = (AlternateOutputs.isOn) && (BarSize >= 2 && BarSize <= 4); // Test if we should apply staggered outputs
+        if(staggCenter) {
+            StyleNode node;
 
-                StyleNode node = headDict["/Bar/DF/F/DS/L"].lhd.style; // Check if colors are same
+            switch(BarSize) {
+                case 2:
+                    staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
 
-                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/DF/F/DS/R"].lhd.style);
-                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
-                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/DS/R"].lhd.style);
-            } else {
-                altNumberingCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy); // Check if the sizes are compatible
-                altNumberingCenter &= (headDict["/Bar/DN/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/L"].gameObject.activeInHierarchy);
+                    node = headDict["/Bar/DF/F/DS/L"].lhd.style; // Check if colors are same
 
-                StyleNode node = headDict["/Bar/DF/F/L"].lhd.style; // Check if colors are same
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DF/F/DS/R"].lhd.style);
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/R"].lhd.style);
+                    break;
+                case 3:
+                    staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/DS/R"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
 
-                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/DN/F/L"].lhd.style);
-                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PN/F/L"].lhd.style);
-                if(altNumberingCenter) altNumberingCenter &= (node == headDict["/Bar/PF/F/L"].lhd.style);
+                    staggCenter &= !(headDict["/Bar/DF/F/DS/L"].hasRealHead || headDict["/Bar/PF/F/DS/R"].hasRealHead); // Only allow alternate numbering if the two far center smalls aren't using real otpics
+
+                    node = headDict["/Bar/DF/F/DS/R"].lhd.style; // Check if colors are same
+
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/DS/L"].lhd.style);
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/DS/R"].lhd.style);
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
+                    break;
+                case 4:
+                    staggCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy); // Check if the sizes are compatible
+                    staggCenter &= (headDict["/Bar/DN/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/L"].gameObject.activeInHierarchy);
+
+                    node = headDict["/Bar/DF/F/L"].lhd.style; // Check if colors are same
+
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/L"].lhd.style);
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PN/F/L"].lhd.style);
+                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/L"].lhd.style);
+                    break;
+                default:
+                    break;
             }
-        } 
+        }
         #endregion
 
-
+        #region Assign the more static bits
         foreach(LightHead alpha in allHeads) {
-            if(!alpha.gameObject.activeInHierarchy) continue;
-            if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) {
+            if(!alpha.gameObject.activeInHierarchy) continue; // Inactive head = no bit
+            if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) { // Corners always 0 or 11
                 if(alpha.transform.position.x < 0) {
                     alpha.myBit = 0;
                 } else {
                     alpha.myBit = 11;
                 }
-            } else if(alpha.loc == Location.ALLEY) {
+            } else if(alpha.loc == Location.ALLEY) { // Alleys always 12 or 13
                 if(alpha.transform.position.x < 0) {
                     alpha.myBit = 12;
                 } else {
                     alpha.myBit = 13;
                 }
             } else {
-                if(BarSize > 1 && alpha.transform.position.y < 0) continue;
-                string[] path = alpha.Path.Split('/');
+                if(BarSize > 1 && alpha.transform.position.y < 0) continue; // Size 0 and 1 have static rears.  2 thru 4 do not.
+                string[] path = alpha.Path.Split('/'); // Get path and split
 
                 switch(path[2]) {
                     case "DE":
@@ -811,38 +829,38 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/DE/FO
                             case "FO":
                                 if(alpha.isSmall) {
-                                    if(path[5] == "L")
+                                    if(path[5] == "L") // /Bar/DE/FO/DS/L always 1
                                         alpha.myBit = 1;
                                     else {
                                         if(alpha.lhd.style == headDict["/Bar/DE/FO/DS/L"].lhd.style) {
-                                            alpha.myBit = 1;
+                                            alpha.myBit = 1; // /Bar/DE/FO/DS/R 1 if it matches left style
                                         } else {
-                                            alpha.myBit = 4;
+                                            alpha.myBit = 4; // /Bar/DE/FO/DS/R 4 if it doesn't match
                                         }
                                     }
                                 } else {
-                                    alpha.myBit = 1;
+                                    alpha.myBit = 1; // /Bar/DE/FO/L always 1
                                 }
                                 break;
                             #endregion
                             #region /Bar/DE/FI
                             case "FI":
                                 if(alpha.isSmall) {
-                                    if(path[5] == "R")
+                                    if(path[5] == "R") // /Bar/DE/FI/DS/R always 4
                                         alpha.myBit = 4;
                                     else {
                                         if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style) {
-                                            alpha.myBit = 4;
+                                            alpha.myBit = 4; // /Bar/DE/FI/DS/L 4 if it matches right style
                                         } else {
-                                            alpha.myBit = 1;
+                                            alpha.myBit = 1; // /Bar/DE/FI/DS/L 1 if it doesn't match
                                         }
                                     }
                                 } else {
-                                    alpha.myBit = 4;
+                                    alpha.myBit = 4; // /Bar/DE/FI/L always 4
                                 }
                                 break;
                             #endregion
-                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break;
+                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break; // Size 0 and 1
                             case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
                             default: break;
                         }
@@ -853,22 +871,22 @@ public class BarManager : MonoBehaviour {
                             case "F":
                                 if(BarSize == 2) {
                                     if(alpha.isSmall) {
-                                        alpha.FarWire = path[5] == "L";
-                                        if(!alpha.FarWire) {
-                                            if(!altNumberingCenter && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
-                                                alpha.myBit = 5;
+                                        alpha.FarWire = path[5] == "L"; // Far wire flag set when necessary
+                                        if(!alpha.FarWire) { // Right head
+                                            if(!staggCenter && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
+                                                alpha.myBit = 5; // No staggered output and matching style = /Bar/DF/F/DS/R is 5
                                             } else {
-                                                alpha.myBit = 6;
+                                                alpha.myBit = 6; // Staggered output or no matching style = /Bar/DF/F/DS/R is 6
                                             }
-                                        } else {
+                                        } else { // Left head
                                             alpha.myBit = 5;
                                         }
                                     } else {
-                                        alpha.myBit = 5;
+                                        alpha.myBit = 5; // /Bar/DF/F/L is 5
                                         alpha.FarWire = true;
                                     }
                                 } else {
-                                    alpha.myBit = 5;
+                                    alpha.myBit = 5; // /Bar/DF/F/L is 5, no matter the size
                                     alpha.FarWire = true;
                                 }
                                 break;
@@ -881,27 +899,30 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/DN/F
                             case "F":
                                 if(BarSize == 4) {
-                                    if(!altNumberingCenter && ((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style))) {
+                                    if(!staggCenter && ((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style))) {
+                                        // No staggered output, and /Bar/DN/F/* matches the color of /Bar/DF/F/* (no matter the size)
                                         alpha.myBit = 5;
                                     } else {
                                         alpha.myBit = 6;
                                     }
                                 } else {
                                     alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
-                                    alpha.FarWire = (BarSize == 1);
+                                    alpha.FarWire = (BarSize == 1); // Use far wire only on size 1; forced two shorts on size 1 bars
                                 }
 
                                 break;
                             #endregion
-                            case "R": alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break;
+                            case "R": alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break; // Size 1 only
                             default: break;
                         }
                         break;
                     case "PN":
                         switch(path[3]) {
+                            #region /Bar/PN/F
                             case "F":
                                 if(BarSize == 4) {
-                                    if(!altNumberingCenter && ((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style))) {
+                                    if(!staggCenter && ((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style))) {
+                                        // No staggered output, and /Bar/PN/F/* matches the color of /Bar/PF/F/* (no matter the size)
                                         alpha.myBit = 6;
                                     } else {
                                         alpha.myBit = 5;
@@ -910,6 +931,7 @@ public class BarManager : MonoBehaviour {
                                     alpha.myBit = 6;
                                 }
                                 break;
+                            #endregion
                             default: break;
                         }
                         break;
@@ -919,22 +941,22 @@ public class BarManager : MonoBehaviour {
                             case "F":
                                 if(BarSize == 2) {
                                     if(alpha.isSmall) {
-                                        alpha.FarWire = path[5] == "R";
-                                        if(!alpha.FarWire) {
-                                            if(!altNumberingCenter && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
-                                                alpha.myBit = 6;
+                                        alpha.FarWire = path[5] == "R"; // Far wire flag set when necessary
+                                        if(!alpha.FarWire) { // Left head
+                                            if(!staggCenter && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
+                                                alpha.myBit = 6; // No staggered output and matching style = /Bar/PF/F/DS/L is 6
                                             } else {
-                                                alpha.myBit = 5;
+                                                alpha.myBit = 5; // Staggered output or no matching style = /Bar/PF/F/DS/L is 5
                                             }
                                         } else {
                                             alpha.myBit = 6;
                                         }
                                     } else {
-                                        alpha.myBit = 6;
+                                        alpha.myBit = 6; // /Bar/PF/F/L is 6
                                         alpha.FarWire = true;
                                     }
                                 } else {
-                                    alpha.myBit = 6;
+                                    alpha.myBit = 6; // /Bar/PF/F/L is 6, no matter the size
                                     alpha.FarWire = true;
                                 }
                                 break;
@@ -947,38 +969,38 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/PE/FO
                             case "FO":
                                 if(alpha.isSmall) {
-                                    if(path[5] == "R")
+                                    if(path[5] == "R") // /Bar/PE/FO/DS/R always 10
                                         alpha.myBit = 10;
                                     else {
                                         if(alpha.lhd.style == headDict["/Bar/PE/FO/DS/R"].lhd.style) {
-                                            alpha.myBit = 10;
+                                            alpha.myBit = 10; // /Bar/PE/FO/DS/L 10 if it matches right style
                                         } else {
-                                            alpha.myBit = 7;
+                                            alpha.myBit = 7; // /Bar/PE/FO/DS/L 7 if it doesn't match
                                         }
                                     }
                                 } else {
-                                    alpha.myBit = 10;
+                                    alpha.myBit = 10; // /Bar/PE/FO/L always 10
                                 }
                                 break;
                             #endregion
                             #region /Bar/PE/FI
                             case "FI":
                                 if(alpha.isSmall) {
-                                    if(path[5] == "L")
+                                    if(path[5] == "L") // /Bar/PE/FI/DS/L always 7
                                         alpha.myBit = 7;
                                     else {
                                         if(alpha.lhd.style == headDict["/Bar/PE/FI/DS/L"].lhd.style) {
-                                            alpha.myBit = 7;
+                                            alpha.myBit = 7; // /Bar/PE/FI/DS/R 7 if it matches left style
                                         } else {
-                                            alpha.myBit = 10;
+                                            alpha.myBit = 10; // /Bar/PE/FI/DS/R 10 if it doesn't match
                                         }
                                     }
                                 } else {
-                                    alpha.myBit = 7;
+                                    alpha.myBit = 7; // /Bar/PE/FI/L always 7
                                 }
                                 break;
                             #endregion
-                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break;
+                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break; // Size 0 and 1
                             case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
                             default: break;
                         }
@@ -988,38 +1010,45 @@ public class BarManager : MonoBehaviour {
                 }
             }
         }
+        #endregion
 
+        #region Dynamic rears
         if(BarSize > 1) {
-            List<LightHead> heads = new List<LightHead>(10);
-            List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0)));
+            List<LightHead> heads = new List<LightHead>(10); // Ready some variables
+            List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0))); // Raycast from rear center toward driver
             RaycastHit far; LightHead farHead;
-            switch(td) {
-                case TDOption.NONE:
-                    far = test[0];
-                    foreach(RaycastHit alpha in test) {
-                        if(far.transform != alpha.transform && far.distance < alpha.distance)
-                            far = alpha;
-                    }
 
-                    farHead = far.transform.GetComponent<LightHead>();
-                    if(!farHead.isSmall) {
-                        farHead.myBit = 2;
-                    }
-                    break;
-                default:
-                    break;
-            }
-            byte bit = 5;
-            RaycastHit center;
-            if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) {
-                LightHead alpha = center.transform.GetComponent<LightHead>();
-                if(alpha.hasRealHead) {
-                    alpha.myBit = 5;
-                    bit = 4;
-                } else {
-                    alpha.myBit = 255;
+            #region Give driver-far head bit 2 if large
+            if(td == TDOption.NONE) {
+                far = test[0]; // Find farthest head
+                foreach(RaycastHit alpha in test) {
+                    if(far.transform != alpha.transform && far.distance < alpha.distance)
+                        far = alpha;
+                }
+
+                farHead = far.transform.GetComponent<LightHead>();
+                if(!farHead.isSmall) {
+                    farHead.myBit = 2; // Make farthest head 2 if large
                 }
             }
+            #endregion
+
+            byte bit = 5; // Start at bit 5
+            #region Test for center-straddling head
+            RaycastHit center;
+            if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) { // If there's a (long) head dead center
+                //(  note: RaycastHit List test won't have this head, Physics.RaycastAll only tracks what Colliders it *enters*, not exits  )
+                LightHead alpha = center.transform.GetComponent<LightHead>();
+                if(alpha.hasRealHead) { // If it uses a real head
+                    alpha.myBit = 5; // Give it bit 5
+                    bit = 4; // Start at 4
+                } else {
+                    alpha.myBit = 255; // Take its bit away
+                }
+            }
+            #endregion
+
+            #region Remove undefined / Block Off heads
             bool cont = true;
             while(cont && test.Count > 0) {
                 for(int i = 0; i < test.Count; i++) {
@@ -1027,7 +1056,7 @@ public class BarManager : MonoBehaviour {
                     if(!testHead.hasRealHead) {
                         testHead.myBit = 255;
                         test.RemoveAt(i);
-                        break;
+                        break; // Need to break, else we'll get a ConcurrentModificationException
                     }
                     if(i == test.Count - 1) {
                         cont = false;
@@ -1035,6 +1064,9 @@ public class BarManager : MonoBehaviour {
                     }
                 }
             }
+            #endregion
+
+            #region Compile List of ordered LightHeads
             while(test.Count > 0) {
                 center = test[0];
                 for(int i = 1; i < test.Count; i++) {
@@ -1045,64 +1077,76 @@ public class BarManager : MonoBehaviour {
                 test.Remove(center);
                 heads.Add(center.transform.GetComponent<LightHead>());
             }
+            #endregion
+
+            #region Assign bits
             for(int i = 0; i < heads.Count; i++) {
-                if(!heads[i].hasRealHead) {
+                if(!heads[i].hasRealHead) { // Extra catch for undefined heads
                     heads[i].myBit = 255;
                     continue;
                 }
-                if(heads[i].shouldBeTD) {
+                if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
                     heads[i].myBit = bit--;
-                } else if(bit == 1) {
+                } else if(bit == 1) { // Down to last bit, remaining heads get it
                     heads[i].myBit = 1;
-                    if(heads[i].lhd.style.isDualColor) {
+                    if(heads[i].lhd.style.isDualColor) { // Bit 1 is a single-color-only output.  Drop any that have duals
                         heads[i].SetOptic("");
                         heads[i].useDual = false;
                     }
                 } else {
-                    if(heads.Count - i > bit) {
-                        if(heads[i].isSmall ^ heads[i + 1].isSmall) {
-                            heads[i].myBit = bit--;
+                    if(heads.Count - i > bit) { // More heads left than remaining bits to give
+                        if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
+                            heads[i].myBit = bit--; // Don't share
                         } else {
-                            heads[i].myBit = bit;
+                            heads[i].myBit = bit; // Share
                             heads[++i].myBit = bit--;
                         }
                     } else {
-                        heads[i].myBit = bit--;
+                        heads[i].myBit = bit--; // Enough bits left to give remaining heads their own
                     }
                 }
             }
+            #endregion
+
+            #region Cleanup
             if(bit == 1) {
                 test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(-1f, 0)));
-                if(test.Count > 0) {
+                if(test.Count > 0) { // Have undefined heads to the driver-side
                     foreach(RaycastHit hit in test) {
-                        hit.transform.GetComponent<LightHead>().myBit = 1;
+                        hit.transform.GetComponent<LightHead>().myBit = 1; // Give 'em a bit anyway
                     }
                 }
             }
+            #endregion
 
-            heads.Clear();
+
+
+            heads.Clear(); // Reprep for passenger side
             test.Clear();
             test.AddRange(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(1f, 0)));
-            switch(td) {
-                case TDOption.NONE:
-                    far = test[0];
-                    foreach(RaycastHit alpha in test) {
-                        if(far.transform != alpha.transform && far.distance < alpha.distance)
-                            far = alpha;
-                    }
+            #region Give passenger-far head bit 9 if large
+            if(td == TDOption.NONE) {
+                far = test[0]; // Find farthest head
+                foreach(RaycastHit alpha in test) {
+                    if(far.transform != alpha.transform && far.distance < alpha.distance)
+                        far = alpha;
+                }
 
-                    farHead = far.transform.GetComponent<LightHead>();
-                    if(!farHead.isSmall) {
-                        farHead.myBit = 9;
-                    }
-                    break;
-                default:
-                    break;
+                farHead = far.transform.GetComponent<LightHead>();
+                if(!farHead.isSmall) {
+                    farHead.myBit = 9; // Make farthest head 9 if large
+                }
             }
-            bit = 6;
+            #endregion
+
+            bit = 6; // Start at bit 6
+            #region Test for center-straddling head
             if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1))) {
-                bit = 7;
+                bit = 7; // The head already has a bit (5) - just skip to next one
             }
+            #endregion
+
+            #region Remove undefined / Block Off heads
             cont = true;
             while(cont && test.Count > 0) {
                 for(int i = 0; i < test.Count; i++) {
@@ -1110,7 +1154,7 @@ public class BarManager : MonoBehaviour {
                     if(!testHead.hasRealHead) {
                         testHead.myBit = 255;
                         test.RemoveAt(i);
-                        break;
+                        break; // Need to break, else we'll get a ConcurrentModificationException
                     }
                     if(i == test.Count - 1) {
                         cont = false;
@@ -1118,6 +1162,9 @@ public class BarManager : MonoBehaviour {
                     }
                 }
             }
+            #endregion
+
+            #region Compile List of ordered LightHeads
             while(test.Count > 0) {
                 center = test[0];
                 for(int i = 1; i < test.Count; i++) {
@@ -1128,50 +1175,58 @@ public class BarManager : MonoBehaviour {
                 test.Remove(center);
                 heads.Add(center.transform.GetComponent<LightHead>());
             }
+            #endregion
+
+            #region Assign bits
             for(int i = 0; i < heads.Count; i++) {
-                if(!heads[i].hasRealHead) {
+                if(!heads[i].hasRealHead) { // Extra catch for undefined heads
                     heads[i].myBit = 255;
                     continue;
                 }
-                if(heads[i].shouldBeTD) {
+                if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
                     heads[i].myBit = bit++;
-                } else if(bit == 10) {
+                } else if(bit == 10) { // Down to last bit, remaining heads get it
                     heads[i].myBit = 10;
-                    if(heads[i].lhd.style.isDualColor) {
+                    if(heads[i].lhd.style.isDualColor) { // Bit 10 is a single-color-only output.  Drop any that have duals
                         heads[i].SetOptic("");
                         heads[i].useDual = false;
                     }
                 } else {
-                    if(heads.Count - i > (11 - bit)) {
-                        if(heads[i].isSmall ^ heads[i + 1].isSmall) {
-                            heads[i].myBit = bit++;
+                    if(heads.Count - i > (11 - bit)) { // More heads left than remaining bits to give
+                        if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
+                            heads[i].myBit = bit++; // Don't share
                         } else {
-                            heads[i].myBit = bit;
+                            heads[i].myBit = bit; // Share
                             heads[++i].myBit = bit++;
                         }
                     } else {
-                        heads[i].myBit = bit++;
+                        heads[i].myBit = bit++; // Enough bits left to give remaining heads their own
                     }
                 }
             }
+            #endregion
+
+            #region Cleanup
             if(bit == 10) {
                 test.Clear();
                 test.AddRange(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
-                if(test.Count > 0) {
+                if(test.Count > 0) { // Have undefined heads to the passenger-side
                     foreach(RaycastHit hit in test) {
-                        hit.transform.GetComponent<LightHead>().myBit = 10;
+                        hit.transform.GetComponent<LightHead>().myBit = 10; // Give 'em a bit anyway
                     }
                 }
             }
+            #endregion
 
             LightHead centermost;
 
+            #region Switch outputs around for staggers
             if(BarSize == 2) {
                 test.Clear();
                 test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
-                if(test.Count == 12) {
+                if(test.Count == 12) { // If there's 12 heads in rear (aka all small)
                     centermost = headDict["/Bar/DF/R/DS/R"];
-                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) {
+                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) { // Stagger if rears don't match
                         centermost.myBit = 6;
                     }
                     centermost = headDict["/Bar/PF/R/DS/L"];
@@ -1182,9 +1237,9 @@ public class BarManager : MonoBehaviour {
             } else if(BarSize == 4) {
                 test.Clear();
                 test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
-                if(test.Count == 16) {
+                if(test.Count == 16) { // If there's 16 heads in rear (aka all small)
                     centermost = headDict["/Bar/DF/R/DS/R"];
-                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) {
+                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) { // Stagger if rears don't match
                         centermost.myBit = 5;
                     }
                     centermost = headDict["/Bar/DN/R/DS/L"];
@@ -1199,53 +1254,67 @@ public class BarManager : MonoBehaviour {
                     if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
                         centermost.myBit = 6;
                     }
-
                 }
-
             }
+            #endregion
         }
+        #endregion
 
 
         RefreshingBits = false;
-        yield return StartCoroutine(RefreshAllLabels());
+        yield return StartCoroutine(RefreshAllLabels()); // Refresh Labels
         yield return null;
     }
 
+    /// <summary>
+    /// Begins saving the bar.  Called via Save Button on File Menu.
+    /// </summary>
     public void BeginSave() {
         savePDF = false;
     }
 
+    /// <summary>
+    /// Save bar to specified filename.  Called via callback from File Browser.
+    /// </summary>
+    /// <param name="filename">Where to save the bar to</param>
     public void Save(string filename) {
+        #region Strip known file extensions
         if(filename.EndsWith(".bar.nbt")) {
             filename = filename.Substring(0, filename.Length - 8);
         }
         if(filename.EndsWith(".pdf")) {
             filename = filename.Substring(0, filename.Length - 4);
-        }
+        } 
+        #endregion
 
         try {
-            NbtCompound root = new NbtCompound("root");
+            NbtCompound root = new NbtCompound("root"); // Generate root tag
 
+            #region Stash bar options (size, TD option, CAN, cable type & length)
             NbtCompound opts = new NbtCompound("opts");
             opts.Add(new NbtByte("size", (byte)BarSize));
             opts.Add(new NbtByte("tdop", (byte)td));
             opts.Add(new NbtByte("can", (byte)(useCAN ? 1 : 0)));
             opts.Add(new NbtByte("cabt", (byte)cableType));
             opts.Add(new NbtByte("cabl", (byte)cableLength));
-            root.Add(opts);
+            root.Add(opts); 
+            #endregion
 
+            #region Stash order information (cust name, order num, notes)
             NbtCompound order = new NbtCompound("ordr");
             order.Add(new NbtString("name", custName.text));
             order.Add(new NbtString("num", orderNum.text));
             order.Add(new NbtString("note", notes.text));
-            root.Add(order);
+            root.Add(order); 
+            #endregion
 
+            #region Stash light head information
             NbtList lightList = new NbtList("lite");
             foreach(LightHead lh in allHeads) {
-                if(!lh.gameObject.activeInHierarchy) continue;
+                if(!lh.gameObject.activeInHierarchy) continue; // Only save information about active lights
                 NbtCompound lightCmpd = new NbtCompound();
-                lightCmpd.Add(new NbtString("path", lh.Path));
-                if(lh.lhd.style != null) {
+                lightCmpd.Add(new NbtString("path", lh.Path)); // Save head's path
+                if(lh.lhd.style != null) { // Only save other head information if it contains a fully defined head
                     lightCmpd.Add(new NbtString("optc", lh.lhd.optic.partNumber));
                     lightCmpd.Add(new NbtString("styl", lh.lhd.style.name));
                 }
@@ -1254,14 +1323,16 @@ public class BarManager : MonoBehaviour {
                 foreach(BasicFunction bfn in lh.lhd.funcs) {
                     fn |= (byte)bfn;
                 }
-                lightCmpd.Add(new NbtByte("func", fn));
+                lightCmpd.Add(new NbtByte("func", fn)); // Save function list as bit field
 
                 lightList.Add(lightCmpd);
             }
-            root.Add(lightList);
+            root.Add(lightList); 
+            #endregion
 
-            root.Add(patts.Clone());
+            root.Add(patts.Clone()); // Stash pattern information as a clone (otherwise pattern tag might have two parents)
 
+            #region Stash Size Option Control information (whether heads are large or small)
             NbtList socList = new NbtList("soc");
             foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
                 NbtCompound socCmpd = new NbtCompound();
@@ -1269,8 +1340,10 @@ public class BarManager : MonoBehaviour {
                 socCmpd.Add(new NbtByte("isLg", soc.ShowLong ? (byte)1 : (byte)0));
                 socList.Add(socCmpd);
             }
-            root.Add(socList);
+            root.Add(socList); 
+            #endregion
 
+            #region Stash Lens information
             NbtList lensList = new NbtList("lens");
             foreach(BarSegment seg in allSegs) {
                 NbtCompound segCmpd = new NbtCompound();
@@ -1278,28 +1351,33 @@ public class BarManager : MonoBehaviour {
                 segCmpd.Add(new NbtString("part", seg.lens.partSuffix));
                 lensList.Add(segCmpd);
             }
-            root.Add(lensList);
+            root.Add(lensList); 
+            #endregion
 
-            NbtFile file = new NbtFile(root);
+            NbtFile file = new NbtFile(root); // Create file to save
 
             if(savePDF) {
                 Directory.CreateDirectory(filename);
-                file.SaveToFile(filename + "\\Bar Savefile.bar.nbt", NbtCompression.None);
-                StartCoroutine(SavePDF(filename + "\\Bar Information.pdf"));
+                file.SaveToFile(filename + "\\Bar Savefile.bar.nbt", NbtCompression.None); // Save file
+                StartCoroutine(SavePDF(filename + "\\Bar Information.pdf")); // Save PDF too, if needed
             } else {
-                file.SaveToFile(filename + ".bar.nbt", NbtCompression.None);
+                file.SaveToFile(filename + ".bar.nbt", NbtCompression.None); // Save file
             }
 
-            if(quitAfterSave) { Application.Quit(); }
+            if(quitAfterSave) { Application.Quit(); } // If user wanted to quit and chose to save, quit now
 
-            moddedBar = false;
-            TitleText.inst.currFile = filename;
+            moddedBar = false; // Bar is saved, can quit without repercussion
+            TitleText.inst.currFile = filename; // Change title text
         } catch(Exception ex) {
-            ErrorText.inst.DispError("Problem saving: " + ex.Message);
+            ErrorText.inst.DispError("Problem saving: " + ex.Message); // We had problem
             Debug.LogException(ex);
         }
     }
 
+    /// <summary>
+    /// Open bar from specified filename.  Called via callback from File Browser and presets.
+    /// </summary>
+    /// <param name="filename">Where to load the bar from</param>
     public void Open(string filename) {
         StartCoroutine(OpenIEnum(filename));
     }
@@ -1307,115 +1385,134 @@ public class BarManager : MonoBehaviour {
     /// <summary>
     /// Coroutine.  Loads bar information from a file.
     /// </summary>
-    /// <param name="filename">Path to the file to open</param>
+    /// <param name="filename">Where to load the bar from</param>
     public IEnumerator OpenIEnum(string filename) {
         Clear();
 
-        NbtFile file = new NbtFile(filename);
+        NbtFile file = new NbtFile(filename); // Load file
 
-        NbtCompound root = file.RootTag;
+        NbtCompound root = file.RootTag; // Extract root tag
 
+        #region Extract bar options (size, TD option, CAN, cable type & length)
         NbtCompound opts = root.Get<NbtCompound>("opts");
         SetBarSize(opts["size"].IntValue, false);
         SetTDOption((TDOption)opts["tdop"].ByteValue);
         useCAN = opts["can"].ByteValue == 1;
         cableType = opts["cabt"].IntValue;
-        cableLength = opts["cabl"].IntValue;
+        cableLength = opts["cabl"].IntValue; 
+        #endregion
 
-        yield return StartCoroutine(RefreshBitsIEnum());
+        yield return StartCoroutine(RefreshBitsIEnum()); // Make sure that Traffic Director and Bar Size information get squared away, align the bits
 
+        #region Extract order information (cust name, order num, notes)
         NbtCompound order = root.Get<NbtCompound>("ordr");
         custName.text = order["name"].StringValue;
         orderNum.text = order["num"].StringValue;
-        notes.text = order["note"].StringValue;
+        notes.text = order["note"].StringValue; 
+        #endregion
 
-        NbtList lightList = (NbtList)root["lite"];
+        NbtList lightList = (NbtList)root["lite"]; // Extracting other information before applying
         NbtList socList = (NbtList)root["soc"];
         NbtList lensList = (NbtList)root["lens"];
         Dictionary<string, LightHead> lights = new Dictionary<string, LightHead>();
         Dictionary<string, SizeOptionControl> socs = new Dictionary<string, SizeOptionControl>();
 
-        foreach(LightHead lh in allHeads) {
+        #region Path caching
+        foreach(LightHead lh in allHeads) { // Cache path of all light heads
             lights[lh.Path] = lh;
         }
-        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) {
+        foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) { // Cache path of all SOCs
             socs[soc.transform.GetPath()] = soc;
-        }
-        List<NbtTag> stts = new List<NbtTag>();
+        } 
+        #endregion
+        List<NbtTag> stts = new List<NbtTag>(); // Prepare list of Stop Tail Turns (need to be applied last)
+        #region Light head application
         foreach(NbtTag alpha in lightList) {
             NbtCompound lightCmpd = alpha as NbtCompound;
-            LightHead lh = lights[lightCmpd["path"].StringValue];
+            LightHead lh = lights[lightCmpd["path"].StringValue]; // Find the light head necessary
 
             byte fn = lightCmpd["func"].ByteValue;
             lh.lhd.funcs.Clear();
             foreach(BasicFunction bfn in lh.CapableBasicFunctions) {
                 if(((byte)bfn & fn) != 0) {
-                    lh.lhd.funcs.Add(bfn);
+                    lh.lhd.funcs.Add(bfn); // Add all of the functions
                 }
             }
 
-            if(lh.lhd.funcs.Contains(BasicFunction.STT)) {
+            if(lh.lhd.funcs.Contains(BasicFunction.STT)) { // If head is a Stop Tail Turn, wait until the end to apply it
                 stts.Add(alpha);
                 continue;
             }
 
-            if(lightCmpd.Contains("optc")) {
+            if(lightCmpd.Contains("optc")) { // Head was defined when saved
                 LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
                 string partNum = lightCmpd["optc"].StringValue;
 
                 foreach(OpticNode on in ln.optics.Values) {
-                    if(on.partNumber == partNum) {
-                        lh.SetOptic(on.name, false);
+                    if(on.partNumber == partNum) { // Found optic
+                        lh.SetOptic(on.name, false); // Apply optic and style
                         lh.SetStyle(lightCmpd["styl"].StringValue);
                         break;
                     }
                 }
             }
 
-            lh.TestSingleDual();
-        }
+            lh.TestSingleDual(); // Double-check single/dual
+        } 
+        #endregion
 
-        patts = root.Get<NbtCompound>("pats");
-        if(!patts.Get<NbtCompound>("traf").Contains("ctd")) {
-            patts.Get<NbtCompound>("traf").AddRange(new NbtTag[] { new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
+        #region Extract pattern information
+        patts = root.Get<NbtCompound>("pats"); // Capture pattern tag
+        if(!patts.Get<NbtCompound>("traf").Contains("ctd")) { // Older savefile, doesn't have cycles TD or cycles Warn shorts
+            patts.Get<NbtCompound>("traf").AddRange(new NbtTag[] { new NbtShort("ctd", 0), new NbtShort("cwn", 0) }); // Get placeholders in
         }
         TDCyclesSliders tdcs = GameObject.Find("UI/Canvas/LightInteractionPanel/Panes/FuncEdit/TrafficOpts").GetComponent<TDCyclesSliders>();
         tdcs.FetchTags();
         tdcs.Refresh();
-        FnDragTarget.inputMap = patts.Get<NbtIntArray>("map");
+        FnDragTarget.inputMap = patts.Get<NbtIntArray>("map"); 
+        #endregion
 
+        #region SOC information application
         foreach(NbtTag alpha in socList) {
             NbtCompound socCmpd = alpha as NbtCompound;
             SizeOptionControl soc = socs[socCmpd["path"].StringValue];
             soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
-        }
+        } 
+        #endregion
 
+        // Refresh bits again, because we've now applied almost everything and just want to make sure STTs stick
         yield return StartCoroutine(RefreshBitsIEnum());
 
+        #region Apply Stop Tail Turns
         if(stts.Count > 0) {
             foreach(NbtTag alpha in stts) {
                 NbtCompound lightCmpd = alpha as NbtCompound;
                 LightHead lh = lights[lightCmpd["path"].StringValue];
 
-                if(lightCmpd.Contains("optc")) {
+                //Skip adding basic functions, done already
+
+                if(lightCmpd.Contains("optc")) { // Head was fully defined when saved
                     LocationNode ln = LightDict.inst.FetchLocation(lh.loc);
                     string partNum = lightCmpd["optc"].StringValue;
 
                     foreach(OpticNode on in ln.optics.Values) {
-                        if(on.partNumber == partNum) {
-                            lh.SetOptic(on.name, false);
+                        if(on.partNumber == partNum) { // Found optic
+                            lh.SetOptic(on.name, false); // Apply optic and style
                             lh.SetStyle(lightCmpd["styl"].StringValue);
                             break;
                         }
                     }
                 }
 
-                lh.TestSingleDual();
+                lh.TestSingleDual(); // Double-check single/dual
             }
 
+            // Refresh bits a third time, because we applied more heads
             yield return StartCoroutine(RefreshBitsIEnum());
-        }
+        } 
+        #endregion
 
+        #region Apply lenses
         foreach(NbtTag alpha in lensList) {
             NbtCompound lensCmpd = alpha as NbtCompound;
             foreach(BarSegment seg in allSegs) {
@@ -1429,47 +1526,65 @@ public class BarManager : MonoBehaviour {
                     break;
                 }
             }
-        }
+        } 
+        #endregion
 
-        FindObjectOfType<CameraControl>().RefreshOnSelect.Invoke();
-        moddedBar = false;
+        FindObjectOfType<CameraControl>().RefreshOnSelect.Invoke(); // Have CameraControl refresh things
+        moddedBar = false; // Just loaded bar, no need to try to save when closing
+        #region Apply Title Text stuff
         if(TitleText.inst.preset.Length > 0) {
             TitleText.inst.currFile = "";
         } else {
             TitleText.inst.currFile = filename;
-        }
+        } 
+        #endregion
     }
 
+    /// <summary>
+    /// Begins the PDF saving.  Called by the "Save Order/Quote" button
+    /// </summary>
     public void StartPDF() {
         savePDF = true;
-        barFilePath = fb.currFile;
+        barFilePath = fb.currFile; // Stash bar file path for later
 
-        Directory.CreateDirectory(DirRoot + "Lightbar Drawings");
+        Directory.CreateDirectory(DirRoot + "Lightbar Drawings");  // Create Lightbar Drawing folder and start there
         fb.currFile = "";
         fb.Navigate(DirRoot + "Lightbar Drawings");
-        fb.fileFieldText = custName.text + "_" + (System.Environment.MachineName) + "_" + DateTime.Now.ToString("yyMMddHHmmssf");
+        fb.fileFieldText = custName.text + "_" + (System.Environment.MachineName) + "_" + DateTime.Now.ToString("yyMMddHHmmssf");  // Auto-fill file name
     }
 
+    /// <summary>
+    /// Begins PDF Preview saving.  Called by the "Preview PDF" button
+    /// </summary>
     public void JustSavePDF() {
         Directory.CreateDirectory(DirRoot + "output");
         StartCoroutine(SavePDF(DirRoot + "output/" + (System.Environment.MachineName) + " Preview.pdf"));
     }
 
+    /// <summary>
+    /// Coroutine.  Saves the PDF, spawning an external thread to do so.
+    /// </summary>
+    /// <param name="filename">Where to save the PDF to</param>
     public IEnumerator SavePDF(string filename) {
         bool attempt = true;
+        #region Test if we can delete file (and thus save)
         try {
             File.Delete(filename);
         } catch(IOException) {
             ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
             attempt = false;
-        }
+        } 
+        #endregion
 
         if(attempt) {
+            #region Hide UI stuff
             progressStuff.Shown = false;
             progressStuff.Progress = 0;
             CameraControl.ShowWhole = true;
-            CanvasDisabler.CanvasEnabled = false;
+            CanvasDisabler.CanvasEnabled = false; 
+            #endregion
 
+            #region Capture rectangle
             Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
 
             cam.transform.position = new Vector3(0f, 0f, -10f);
@@ -1485,8 +1600,10 @@ public class BarManager : MonoBehaviour {
                 }
             }
 
-            Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
+            Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y); 
+            #endregion
 
+            // Capture images
             yield return StartCoroutine(CapImages(capRect));
 
             progressStuff.Shown = true;
@@ -1494,8 +1611,8 @@ public class BarManager : MonoBehaviour {
 
             PDFExportJob pej = new PDFExportJob();
 
-            pej.Start(filename);
-            while(!pej.Update()) {
+            pej.Start(filename); // Begin Async export
+            while(!pej.Update()) { // Continually check in, make sure it's finished before continuing
                 yield return null;
             }
         }
@@ -1503,32 +1620,39 @@ public class BarManager : MonoBehaviour {
         yield return null;
     }
 
+    /// <summary>
+    /// Coroutine.  Captures images of the bar.
+    /// </summary>
+    /// <param name="capRect">The rectangle to capture</param>
     public IEnumerator CapImages(Rect capRect) {
-        RefreshCurrentHeads();
+        RefreshCurrentHeads(); // Make sure the labels get their numbers right
 
         Camera cam = FindObjectOfType<CameraControl>().GetComponent<Camera>();
 
+        #region Capture descriptive image (more descriptive comments, rest follow same workflow)
         bool debugBit = LightLabel.showBit;
         LightLabel.showBit = false;
         LightLabel.showParts = false;
-        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
+        foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) { // Gets light labels ready for capture
             alpha.DispError = false;
             alpha.Refresh(true);
         }
-        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
+        foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) { // Gets lens labels ready for capture
             alpha.Refresh();
         }
-        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height));
-        yield return new WaitForEndOfFrame();
-        tex.ReadPixels(capRect, 0, 0);
+        Texture2D tex = new Texture2D(Mathf.RoundToInt(capRect.width), Mathf.RoundToInt(capRect.height)); // Creates a new texture
+        yield return new WaitForEndOfFrame(); // Wait until the right moment to capture
+        tex.ReadPixels(capRect, 0, 0); // Capture
         tex.Apply();
 
-        Directory.CreateDirectory("tempgen");
-        using(FileStream imgOut = new FileStream("tempgen\\desc.png", FileMode.OpenOrCreate)) {
-            byte[] imgbytes = tex.EncodeToPNG();
-            imgOut.Write(imgbytes, 0, imgbytes.Length);
-        }
+        Directory.CreateDirectory("tempgen"); // Create folder to store images in
+        using(FileStream imgOut = new FileStream("tempgen\\desc.png", FileMode.OpenOrCreate)) { // Open a fresh file to dump image in
+            byte[] imgbytes = tex.EncodeToPNG(); // Encode image
+            imgOut.Write(imgbytes, 0, imgbytes.Length); // Dump
+        } 
+        #endregion
 
+        #region Capture bit image
         LightLabel.showJustBit = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
@@ -1544,8 +1668,10 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\bits.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        }
+        } 
+        #endregion
 
+        #region Capture part number image
         LightLabel.showParts = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(true);
@@ -1561,8 +1687,10 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\part.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        }
+        } 
+        #endregion
 
+        #region Capture wiring image
         LightLabel.showWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(false);
@@ -1581,8 +1709,10 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\wire.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        }
+        } 
+        #endregion
 
+        #region Capture colorless wiring image
         LightLabel.colorlessWire = true;
         foreach(LightLabel alpha in FindObjectsOfType<LightLabel>()) {
             alpha.Refresh(false);
@@ -1603,8 +1733,10 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\wireClrless.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        }
+        } 
+        #endregion
 
+        #region Reset
         LightLabel.showBit = debugBit;
 
         cam.orthographicSize = cam.GetComponent<CameraControl>().partialOrtho;
@@ -1614,11 +1746,16 @@ public class BarManager : MonoBehaviour {
         }
         foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
             alpha.Refresh();
-        }
+        } 
+        #endregion
 
     }
 
+    /// <summary>
+    /// Clears the bar out.  Called by either of the clear bar buttons and by load
+    /// </summary>
     public void Clear() {
+        #region Clear out heads
         foreach(LightHead lh in allHeads) {
             lh.lhd.funcs.Clear();
             lh.RefreshBasicFuncDefault();
@@ -1626,45 +1763,53 @@ public class BarManager : MonoBehaviour {
                 lh.myLabel.DispError = false;
                 lh.myLabel.Refresh();
             }
-        }
+        } 
+        #endregion
+        #region Make heads long
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
-            soc.ShowLong = true;
+            soc.ShowLong = true; 
+        #endregion
+        #region Default lenses
         foreach(Lens opt in LightDict.inst.lenses) {
             if(opt.partSuffix == "C-C") {
                 foreach(BarSegment seg in transform.GetComponentsInChildren<BarSegment>(true)) {
                     seg.lens = opt;
                 }
             }
-        }
+        } 
+        #endregion
 
-        TitleText.inst.currFile = "";
+        TitleText.inst.currFile = ""; // Clear out Title Text
         TitleText.inst.preset = "";
 
-        td = TDOption.NONE;
+        td = TDOption.NONE; // Default options
         useCAN = false;
         cableLength = cableType = 0;
 
-        moddedBar = false;
+        moddedBar = false; // Nothing to save anymore
 
-        RefreshBitsIEnum();
+        RefreshBitsIEnum(); // Refresh bits
 
-        CreatePatts();
+        CreatePatts(); // Wipe pattern
     }
 
+    /// <summary>
+    /// Refreshes the array of heads ordered by position
+    /// </summary>
     public void RefreshCurrentHeads() {
-        List<LightHead> headList = new List<LightHead>(50);
+        List<LightHead> headList = new List<LightHead>(50); // List of all active heads
 
         RaycastHit info;
-        if(Physics.Raycast(new Ray(first.transform.position, new Vector3(1, 0.5f)), out info)) {
-            headList.Add(first);
-            LightHead curr = info.transform.GetComponent<LightHead>();
+        if(Physics.Raycast(new Ray(first.transform.position, new Vector3(1, 0.5f)), out info)) { // Can find second head
+            headList.Add(first); // Add first head
+            LightHead curr = info.transform.GetComponent<LightHead>(); // Get second head from information
+            Ray ray;
             while(curr != first && headList.Count < 50) {
-                headList.Add(curr);
-                Ray ray;
-                switch(curr.loc) {
+                headList.Add(curr); // Add next head
+                switch(curr.loc) { // Figure out where it needs to cast next to find next head
                     case Location.FRONT_CORNER:
                         if(curr.transform.position.x < 0) {
-                            ray = new Ray(curr.transform.position, new Vector3(1, 0));
+                            ray = new Ray(curr.transform.position, new Vector3(1, 0.5f));
                         } else {
                             ray = new Ray(curr.transform.position, new Vector3(1, -1));
                         }
@@ -1692,21 +1837,25 @@ public class BarManager : MonoBehaviour {
                         ray = new Ray(curr.transform.position, new Vector3(1, 0));
                         break;
                 }
-                if(Physics.Raycast(ray, out info))
-                    curr = info.transform.GetComponent<LightHead>();
+                if(Physics.Raycast(ray, out info)) // Cast and search
+                    if(curr == first) break; // Looped back, now stop
+                    else curr = info.transform.GetComponent<LightHead>(); // Ready for next head
                 else
-                    break;
+                    break; // Stop, could not find next head
             }
         }
 
-        headNumber = headList.ToArray();
+        headNumber = headList.ToArray(); // Save heads
     }
 
+    /// <summary>
+    /// Perform the auto-phase function.  Uses Color 1 of driver front corner as definition of Phase A.
+    /// </summary>
     public void AutoPhase() {
-        string AStyle = first.lhd.style != null ? first.lhd.style.name.Split('\\', '/')[0] : "";
+        string AStyle = first.lhd.style != null ? first.lhd.style.name.Split('\\', '/')[0] : ""; // Gets name of first color
 
-        if(AStyle.Length == 0) {
-            ErrorText.inst.DispError("Define the color that's using Phase A on the front driver's corner light, first.");
+        if(string.IsNullOrEmpty(AStyle)) {
+            ErrorText.inst.DispError("Define the color that's using Phase A on the front driver's corner light, first."); // Mandatory light is not defined, cannot continue
             return;
         }
 
@@ -1714,14 +1863,17 @@ public class BarManager : MonoBehaviour {
         foreach(LightHead alpha in allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead && alpha.lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 alphaStyles = alpha.lhd.style != null ? alpha.lhd.style.name.Split('\\', '/') : new string[2];
-                alpha.basicPhaseA = (alphaStyles[0].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase));
+                alpha.basicPhaseA = (alphaStyles[0].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase)); // Color 1 should always check to see if it matches
                 if(alphaStyles.Length > 1) {
-                    alpha.basicPhaseA2 = (alpha.isRear ? (alphaStyles[1].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase)) : !alpha.basicPhaseA);
+                    alpha.basicPhaseA2 = (alpha.isRear ? (alphaStyles[1].Equals(AStyle, StringComparison.CurrentCultureIgnoreCase)) : !alpha.basicPhaseA); // Color 2 should check if it matches in the front only.  Rear heads can only be "not A"
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Coroutine.  Refreshes all of the labels.
+    /// </summary>
     public IEnumerator RefreshAllLabels() {
         yield return new WaitForEndOfFrame();
 
@@ -1732,6 +1884,9 @@ public class BarManager : MonoBehaviour {
         yield return null;
     }
 
+    /// <summary>
+    /// Sets things up to begin previewing.  Called by the Begin Preview button.
+    /// </summary>
     public void BeginPreview() {
         funcBeingTested = FunctionEditPane.currFunc;
         FindObjectOfType<CameraControl>().SelectedHead.Clear();
@@ -1741,6 +1896,9 @@ public class BarManager : MonoBehaviour {
         StartCoroutine(RefreshAllLabels());
     }
 
+    /// <summary>
+    /// Ends preview.  Called by the End Preview button or by attempting to close application.
+    /// </summary>
     public void EndPreview() {
         PattTimer.inst.StopTimer();
         CameraControl.ShowWhole = false;
@@ -1749,28 +1907,37 @@ public class BarManager : MonoBehaviour {
         StartCoroutine(RefreshAllLabels());
     }
 
+    /// <summary>
+    /// Set things up to quit after saving.  Called by the Save and Quit button on the Quit Dialog.
+    /// </summary>
     public void SaveAndQuit() {
         quitAfterSave = true;
         fb.BeginSave();
     }
 
+    /// <summary>
+    /// Just quits.  Called by the Discard and Quit button on the Quit Dialog.
+    /// </summary>
     public void ForceQuit() {
         forceQuit = true;
         Application.Quit();
     }
 
+    /// <summary>
+    /// Quit callback, called by Unity when user is trying to quit the application
+    /// </summary>
     public void OnApplicationQuit() {
-        if(fb.gameObject.activeInHierarchy) {
-            fb.gameObject.SetActive(false);
+        if(fb.gameObject.activeInHierarchy) { // If file browser open, just close it
             Application.CancelQuit();
+            fb.gameObject.SetActive(false);
             return;
         }
-        if(funcBeingTested != AdvFunction.NONE) {
+        if(funcBeingTested != AdvFunction.NONE) { // If previewing, stop preview
             Application.CancelQuit();
             EndPreview();
             return;
         }
-        if(!forceQuit && moddedBar) {
+        if(!forceQuit && moddedBar) { // If bar is not saved and trying to quit, show quit dialog
             Application.CancelQuit();
             quitDialog.SetActive(true);
             return;
@@ -2815,18 +2982,18 @@ public class PDFExportJob : ThreadedJob {
         XFont cali = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch);
         XFont caliBold = new XFont("Calibri", new XUnit(12, XGraphicsUnit.Point).Inch, XFontStyle.Bold);
 
-        XPen border = new XPen(XColors.Black, 0.025); 
+        XPen border = new XPen(XColors.Black, 0.025);
         #endregion
 
         #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("Phaser Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
-        tf.Alignment = XParagraphAlignment.Left; 
+        tf.Alignment = XParagraphAlignment.Left;
         #endregion
 
         #region Main Checklist Header
         tf.DrawString("Initials", caliSm, XBrushes.Black, new XRect(0.5, 1.0, 0.5, 0.1));
-        tf.DrawString("Assembly / Inspection", caliBold, XBrushes.Black, new XRect(0.5, 1.15, 2.0, 0.1)); 
+        tf.DrawString("Assembly / Inspection", caliBold, XBrushes.Black, new XRect(0.5, 1.15, 2.0, 0.1));
         #endregion
 
         double top = 1.4;
@@ -2843,7 +3010,7 @@ public class PDFExportJob : ThreadedJob {
         tf.DrawString("Date:", cali, XBrushes.Black, new XRect(6.0, 1.15, 0.9, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
 
-        tf.DrawString(DateTime.Now.ToString("MMM dd, \\'yy"), cali, XBrushes.Black, new XRect(7.0, 1.15, 1.0, 0.2)); 
+        tf.DrawString(DateTime.Now.ToString("MMM dd, \\'yy"), cali, XBrushes.Black, new XRect(7.0, 1.15, 1.0, 0.2));
         #endregion
 
         #region Checklist
@@ -2857,7 +3024,7 @@ public class PDFExportJob : ThreadedJob {
             gfx.DrawLine(border, 0.5, top + 0.3, 1.25, top);
             tf.DrawString(alpha, cali, XBrushes.Black, new XRect(1.35, top + 0.05, 5.5, 0.2));
             top += 0.3;
-        } 
+        }
         #endregion
 
         #region Burn-In Test Supplemental
@@ -2870,7 +3037,7 @@ public class PDFExportJob : ThreadedJob {
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("(1 hour typical, 30 minutes minimum)", caliBold, XBrushes.Black, new XRect(3.5, top + 0.25, 3.5, 0.2));
         top += 0.4;
-        tf.Alignment = XParagraphAlignment.Left; 
+        tf.Alignment = XParagraphAlignment.Left;
         #endregion
 
         #region Secondary Checklist
@@ -2883,7 +3050,7 @@ public class PDFExportJob : ThreadedJob {
             gfx.DrawRectangle(border, XBrushes.White, new XRect(0.5, top, 0.75, 0.3));
             tf.DrawString(alpha, cali, XBrushes.Black, new XRect(1.35, top + 0.05, 5.5, 0.2));
             top += 0.3;
-        } 
+        }
         #endregion
         top -= (list.Length - 1) * 0.3;
         #region Right Column
@@ -2893,7 +3060,7 @@ public class PDFExportJob : ThreadedJob {
             gfx.DrawRectangle(border, XBrushes.White, new XRect(4.0, top, 0.75, 0.3));
             tf.DrawString(alpha, cali, XBrushes.Black, new XRect(4.85, top + 0.05, 5.5, 0.2));
             top += 0.3;
-        }  
+        }
         #endregion
         #endregion
 
@@ -3001,19 +3168,19 @@ public class PDFExportJob : ThreadedJob {
         p.Orientation = PageOrientation.Landscape;
 
         XGraphics gfx = XGraphics.FromPdfPage(p, XGraphicsUnit.Inch);
-        XTextFormatter tf = new XTextFormatter(gfx); 
+        XTextFormatter tf = new XTextFormatter(gfx);
         #endregion
 
         #region Paste the One Image
         float scale = (((float)p.Width.Inch * 1.0f) - 1.0f) / (capRect.width * 1.0f);
         using(XImage wireImg = XImage.FromFile("tempgen\\bits.png")) {
             gfx.DrawImage(wireImg, 0.5, 2.0, capRect.width * scale, capRect.height * scale);
-        } 
+        }
         #endregion
 
         #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Output Usage Map", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0)); 
+        tf.DrawString("Output Usage Map", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
         #endregion
 
         #region Write Footer
@@ -3021,7 +3188,7 @@ public class PDFExportJob : ThreadedJob {
         if(orderNumber.Length > 0)
             tf.DrawString("Order Number: " + orderNumber, new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.Black, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Right;
-        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2)); 
+        tf.DrawString("(C) 2015 Star Headlight and Lantern Co., Inc.", new XFont("Calibri", new XUnit(8, XGraphicsUnit.Point).Inch), XBrushes.DarkGray, new XRect(0.5, p.Height.Inch - 0.49, p.Width.Inch - 1.0, 0.2));
         #endregion
     }
 
