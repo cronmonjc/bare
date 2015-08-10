@@ -2,8 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// Component that is attached to the selection box, recording the collision with light heads for selection
+/// </summary>
 public class SelBoxCollider : MonoBehaviour {
+    /// <summary>
+    /// A list of heads that have collided
+    /// </summary>
     public List<LightHead> SelectedHead;
+    /// <summary>
+    /// A list of lenses that have collided
+    /// </summary>
     public List<BarSegment> SelectedLens;
 
     /// <summary>

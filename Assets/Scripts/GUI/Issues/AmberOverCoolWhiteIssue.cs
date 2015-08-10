@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// GUI Item, Issue.  Checks to make sure that there isn't a Cool White head under an Amber lens.
+/// UI Component, Issue.  Checks to make sure that there isn't a Cool White head under an Amber lens.
 /// </summary>
 public class AmberOverCoolWhiteIssue : IssueChecker {
     public override bool DoCheck() {

@@ -4,18 +4,49 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
 
+/// <summary>
+/// UI Component, File Browser.  Contains and manages all of the file items.
+/// </summary>
 public class FileListing : MonoBehaviour {
-    public Sprite defaultFile, dirIco;
+    /// <summary>
+    /// The default file icon, used when the type is not recognized.  Set via Unity Inspector.
+    /// </summary>
+    public Sprite defaultFile;
+    /// <summary>
+    /// The diretory icon, used when the file is a directory.  Set via Unity Inspector.
+    /// </summary>
+    public Sprite dirIco;
+    /// <summary>
+    /// A struct containing information about a specially-recognized file type.
+    /// </summary>
     [System.Serializable]
     public struct Icon {
+        /// <summary>
+        /// The extension used.  (Called name to be easily findable in the Inspector.)  Set via Unity Inspector.
+        /// </summary>
         public string name;
+        /// <summary>
+        /// The image used.  Set via Unity Inspector.
+        /// </summary>
         public Sprite image;
     }
+    /// <summary>
+    /// The list of special icons to use.  Set via Unity Inspector.
+    /// </summary>
     public Icon[] specialIcons;
 
+    /// <summary>
+    /// The root of where every file item will go.  Set via Unity Inspector.
+    /// </summary>
     public RectTransform fileRoot;
+    /// <summary>
+    /// The file item element prefab.  Set via Unity Inspector.
+    /// </summary>
     public GameObject ElementPrefab;
 
+    /// <summary>
+    /// Clears the list.
+    /// </summary>
     public void Clear() {
         List<Transform> temp = new List<Transform>();
         foreach(Transform alpha in fileRoot) {
@@ -28,6 +59,9 @@ public class FileListing : MonoBehaviour {
         FileItem.SelectedFile = null;
     }
 
+    /// <summary>
+    /// Refreshes the list.
+    /// </summary>
     public void Refresh() {
         Clear();
 
@@ -64,6 +98,7 @@ public class FileListing : MonoBehaviour {
             newf.IsDir = false;
         }
 
+        // Have Unity fix the layout for the file listing
         LayoutRebuilder.MarkLayoutForRebuild(fileRoot);
     }
 }

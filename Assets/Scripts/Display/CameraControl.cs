@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 
 /// <summary>
-/// A Component attached to the same GameObject as the Camera rendering the bar
+/// A Component attached to the same GameObject as the Camera rendering the bar.
 /// </summary>
 public class CameraControl : MonoBehaviour {
     /// <summary>

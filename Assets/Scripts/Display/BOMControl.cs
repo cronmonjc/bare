@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 /// <summary>
-/// GUI Item.  Handles display of a specific section of the BOM, as defined by a value from <see cref="BOMControl.BOMType"/>.
+/// UI Component.  Handles display of a specific section of the BOM, as defined by a value from <see cref="BOMControl.BOMType"/>.
 /// </summary>
 public class BOMControl : MonoBehaviour {
 

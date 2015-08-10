@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 /// <summary>
-/// GUI Item.  Displays the individual element in the BOM.
+/// UI Component.  Displays the individual element in the BOM.
 /// </summary>
 public class BOMElement : MonoBehaviour {
     /// <summary>
