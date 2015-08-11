@@ -3,9 +3,18 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// UI Component.  Gives the user control over SizeOptionControls, letting them control the size of the light heads.
+/// </summary>
 public class SplitMerge : MonoBehaviour {
+    /// <summary>
+    /// Reference to the CameraControl, to get access to the Function Select to refresh it
+    /// </summary>
     public static CameraControl cam;
 
+    /// <summary>
+    /// Is this Component merging heads?  If not, it's splitting.  Set via Unity Inspector.
+    /// </summary>
     public bool IsMerge;
 
     /// <summary>
@@ -29,6 +38,9 @@ public class SplitMerge : MonoBehaviour {
         GetComponent<Button>().interactable = false;
     }
 
+    /// <summary>
+    /// Performs the merge or split.
+    /// </summary>
     public void Act() {
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(!lh.gameObject.activeInHierarchy || !lh.Selected) continue;

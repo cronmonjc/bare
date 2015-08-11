@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 
 /// <summary>
-/// UI Component.  Used to allow the user to select the Type they want from a list.
+/// UI Component.  Used to allow the user to select the Optic they want from a list.
 /// </summary>
 public class OpticSelect : MonoBehaviour {
     /// <summary>
@@ -23,6 +23,9 @@ public class OpticSelect : MonoBehaviour {
     /// </summary>
     public CameraControl cam;
 
+    /// <summary>
+    /// Clears this Component.
+    /// </summary>
     public void Clear() {
         List<Transform> temp = new List<Transform>();
         foreach(Transform alpha in menu) {
@@ -35,14 +38,20 @@ public class OpticSelect : MonoBehaviour {
         styleSelect.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// Refreshes this Component.  Clears the listing and creates new buttons for every selectable optic.
+    /// </summary>
     public void Refresh() {
         Clear();
 
+        #region Setup
         List<Location> locs = new List<Location>();
         bool showLong = true, showShort = true;
         bool showDual = true, showSingle = true;
         bool showBO = true, showEmi = true;
-        List<LightHead> selected = new List<LightHead>();
+        List<LightHead> selected = new List<LightHead>(); 
+        #endregion
+        #region Figure out what optics we can show
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 selected.Add(alpha);
@@ -59,29 +68,34 @@ public class OpticSelect : MonoBehaviour {
                     locs.Add(alpha.loc);
                 }
             }
-        }
+        } 
+        #endregion
         if((!showSingle && !showDual)) {
             return;
         }
-        LocationNode ln = LightDict.inst.FetchLocation(locs.ToArray());
+        LocationNode ln = LightDict.inst.FetchLocation(locs.ToArray()); // Get a Location Node
 
         if(ln != null) {
             string[] keysArray = new List<string>(ln.optics.Keys).ToArray();
+            #region If a head has the Block Off function, show the Block Off "optic"
             if(showBO) {
                 GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
                 newbie.transform.SetParent(menu, false);
                 newbie.transform.localScale = Vector3.one;
                 newbie.GetComponent<LightOptionElement>().optNode = ln.optics["Block Off"];
                 newbie.GetComponent<LightOptionElement>().optSel = this;
-            }
+            } 
+            #endregion
 
+            #region If a head has the Emitter function, show the Emitter optic
             if(showEmi) {
                 GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
                 newbie.transform.SetParent(menu, false);
                 newbie.transform.localScale = Vector3.one;
                 newbie.GetComponent<LightOptionElement>().optNode = ln.optics["Emitter"];
                 newbie.GetComponent<LightOptionElement>().optSel = this;
-            }
+            } 
+            #endregion
             if(!showBO && !showEmi) {
                 for(int i = 0; i < keysArray.Length; i++) {
                     if(keysArray[i] == "Block Off" || keysArray[i] == "Emitter") {
@@ -100,21 +114,26 @@ public class OpticSelect : MonoBehaviour {
                         continue;
                     }
 
+                    #region Create the different options
                     GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
                     newbie.transform.SetParent(menu, false);
                     newbie.transform.localScale = Vector3.one;
                     newbie.GetComponent<LightOptionElement>().optNode = ln.optics[keysArray[i]];
-                    newbie.GetComponent<LightOptionElement>().optSel = this;
+                    newbie.GetComponent<LightOptionElement>().optSel = this; 
+                    #endregion
                 }
             }
         }
 
+        #region Create the "empty slot" "optic" option
         GameObject nohead = GameObject.Instantiate(optionPrefab) as GameObject;
         nohead.transform.SetParent(menu, false);
         nohead.transform.localScale = Vector3.one;
         nohead.GetComponent<LightOptionElement>().optNode = null;
-        nohead.GetComponent<LightOptionElement>().optSel = this;
+        nohead.GetComponent<LightOptionElement>().optSel = this; 
+        #endregion
 
+        #region Figure out which optic is used by all heads (or equivalents)
         OpticNode on = null;
         for(int i = 0; i < selected.Count; i++) {
             if(i == 0) {
@@ -126,48 +145,69 @@ public class OpticSelect : MonoBehaviour {
                     break;
                 }
             }
-        }
+        } 
+        #endregion
+        #region Show Style Select if there is a shared optic
         styleSelect.selectedType = on;
         if(styleSelect.selectedType != null) {
             styleSelect.Refresh();
             styleSelect.gameObject.SetActive(true);
-        }
+        } 
+        #endregion
 
         LayoutRebuilder.MarkLayoutForRebuild(menu);
     }
 
+    /// <summary>
+    /// Applies the optic selection to all of the selected heads.
+    /// </summary>
+    /// <param name="node">The Optic to apply.</param>
     public void SetSelection(OpticNode node) {
+        #region Show Style Select if there was a selected optic
         styleSelect.selectedType = node;
-        styleSelect.gameObject.SetActive(node != null);
+        styleSelect.gameObject.SetActive(node != null); 
+        #endregion
         bool change = false, blank = false;
         foreach(LightHead lh in cam.SelectedHead) {
             if(lh.gameObject.activeInHierarchy && lh.lhd.optic != node) {
                 if(node == null) {
+                    #region Clear out heads entirely if "empty slot" was selected
                     lh.SetOptic("");
                     lh.lhd.funcs.Clear();
-                    blank = true;
+                    blank = true; 
+                    #endregion
                 } else if(node.fitsSm && !lh.isSmall) {
+                    #region Apply large equivalent because head is large but optic is not
                     if(node.lgEquivalent.Length > 0) {
                         lh.SetOptic(node.lgEquivalent);
                         change = true;
-                    }
+                    } 
+                    #endregion
                 } else if(node.fitsLg && lh.isSmall) {
+                    #region Apply small equivalent because head is small but optic is not
                     if(node.smEquivalent.Length > 0) {
                         lh.SetOptic(node.smEquivalent);
                         change = true;
-                    }
+                    } 
+                    #endregion
                 } else {
-                    lh.SetOptic(node);
+                    lh.SetOptic(node); // Head fits, apply optic directly
                     change = true;
                 }
             }
         }
+        #region Refresh Function Select if "empty slot" was selected.
         if(blank)
-            FindObjectOfType<FunctionSelect>().Refresh();
+            FindObjectOfType<FunctionSelect>().Refresh(); 
+        #endregion
+        #region Refresh Style Select if an optic was selected
         if(change)
-            styleSelect.Refresh();
+            styleSelect.Refresh(); 
+        #endregion
+        #region Refresh Basic Phases in case that changed anything
         foreach(BasicPhase alpha in FindObjectsOfType<BasicPhase>()) {
             alpha.Refresh();
         }
+        #endregion
     }
 }

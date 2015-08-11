@@ -3,10 +3,24 @@ using System.Collections;
 
 using fNbt;
 
+/// <summary>
+/// UI Component.  Currently Unused.  Sits on a Slider Component and simply modifies the dim percentage value in the pattern bytes.
+/// </summary>
 public class DimSelect : MonoBehaviour {
+    /// <summary>
+    /// The minimum percentage the value can be
+    /// </summary>
     [Range(0, 100)]
-    public short minimumPercentage = 15, maximumPercentage = 25;
+    public short minimumPercentage = 15;
+    /// <summary>
+    /// The maximum percentage the value can be
+    /// </summary>
+    [Range(0, 100)]
+    public short maximumPercentage = 25;
 
+    /// <summary>
+    /// The reference to the label Text Component
+    /// </summary>
     public UnityEngine.UI.Text label;
 
     /// <summary>
@@ -22,6 +36,9 @@ public class DimSelect : MonoBehaviour {
         CurrVal = maximumPercentage;
     }
 
+    /// <summary>
+    /// Gets or sets the current percentage value.
+    /// </summary>
     public short CurrVal {
         get {
             return FindObjectOfType<BarManager>().patts.Get<NbtCompound>("dim").Get<NbtShort>("dimp").ShortValue;
@@ -31,12 +48,18 @@ public class DimSelect : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Changes the value.  Called by sliding the slider.
+    /// </summary>
     public void ChangeValue(float to) {
         CurrVal = (short)Mathf.Clamp(to, minimumPercentage, maximumPercentage);
         label.text = CurrVal + "%";
         BarManager.moddedBar = true;
     }
 
+    /// <summary>
+    /// Sets the value by code.  Also forces the slider to a certain position.
+    /// </summary>
     public void SetValue(short to) {
         CurrVal = (short)Mathf.Clamp(to, minimumPercentage, maximumPercentage);
         label.text = CurrVal + "%";

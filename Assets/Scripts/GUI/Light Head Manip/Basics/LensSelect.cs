@@ -19,6 +19,9 @@ public class LensSelect : MonoBehaviour {
     /// </summary>
     public CameraControl cam;
 
+    /// <summary>
+    /// Clears this Component.
+    /// </summary>
     public void Clear() {
         List<Transform> temp = new List<Transform>();
         foreach(Transform alpha in menu) {
@@ -29,6 +32,9 @@ public class LensSelect : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Refreshes this Component, recreating the list of lens options
+    /// </summary>
     public void Refresh() {
         Clear();
 
@@ -43,6 +49,9 @@ public class LensSelect : MonoBehaviour {
         LayoutRebuilder.MarkLayoutForRebuild(menu);
     }
 
+    /// <summary>
+    /// Sets the selected lens on all selected BarSegments.
+    /// </summary>
     public void SetSelection(Lens l) {
         foreach(BarSegment seg in cam.SelectedLens) {
             if(seg.Visible) {

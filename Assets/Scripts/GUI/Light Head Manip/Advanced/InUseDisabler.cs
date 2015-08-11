@@ -1,8 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// UI Component.  Hides FnDrags when the functions they represent are in use.
+/// </summary>
 public class InUseDisabler : MonoBehaviour {
+    /// <summary>
+    /// The list of FnDrags
+    /// </summary>
     List<FnDrag> draggables;
+    /// <summary>
+    /// The list of functions in use
+    /// </summary>
     List<AdvFunction> funcsInUse;
 
     /// <summary>
@@ -17,6 +26,7 @@ public class InUseDisabler : MonoBehaviour {
     /// Update is called once each frame
     /// </summary>
     void Update() {
+        #region Compile list of functions
         funcsInUse.Clear();
 
         foreach(int i in FnDragTarget.inputMap.Value) {
@@ -25,14 +35,17 @@ public class InUseDisabler : MonoBehaviour {
                     funcsInUse.Add((AdvFunction)func);
                 }
             }
-        }
+        } 
+        #endregion
 
+        #region Hide / Show where necessary
         foreach(FnDrag alpha in draggables) {
             if(!alpha.gameObject.activeInHierarchy && !funcsInUse.Contains(alpha.myFunc)) {
                 alpha.gameObject.SetActive(true);
             } else if(alpha.gameObject.activeInHierarchy && funcsInUse.Contains(alpha.myFunc)) {
                 alpha.gameObject.SetActive(false);
             }
-        }
+        } 
+        #endregion
     }
 }

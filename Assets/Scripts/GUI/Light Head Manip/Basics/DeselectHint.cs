@@ -1,8 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Displays the deselection hint.
+/// </summary>
 public class DeselectHint : MonoBehaviour {
+    /// <summary>
+    /// Reference to the CameraControl, for use in finding selection count
+    /// </summary>
     public static CameraControl cam;
+    /// <summary>
+    /// The list of GameObjects to show when objects are selected, or to hide when no objects are selected
+    /// </summary>
     public GameObject[] showForDeselect;
 
     /// <summary>

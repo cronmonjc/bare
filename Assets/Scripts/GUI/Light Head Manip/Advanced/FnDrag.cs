@@ -141,7 +141,7 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     }
 
     /// <summary>
-    /// Called immediately when the Component's GameObject is disable
+    /// Called immediately when the Component's GameObject is disabled
     /// </summary>
     void OnDisable() {
         dragItem.SetActive(false);

@@ -44,7 +44,7 @@ public class FuncEnable : MonoBehaviour {
     }
 
     /// <summary>
-    /// Retests this Component.
+    /// Retests this Component, checking if the selected heads are already enabled.
     /// </summary>
     public void Retest() {
         if(FunctionEditPane.currFunc == AdvFunction.NONE) return; // We aren't modifying a function, return now

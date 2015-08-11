@@ -23,6 +23,9 @@ public class StyleSelect : MonoBehaviour {
     /// </summary>
     public CameraControl cam;
 
+    /// <summary>
+    /// Clears this Component.
+    /// </summary>
     public void Clear() {
         List<Transform> temp = new List<Transform>();
         foreach(Transform alpha in menu) {
@@ -33,6 +36,9 @@ public class StyleSelect : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Refreshes this Component, relisting all of the available styles.
+    /// </summary>
     public void Refresh() {
         Clear();
 
@@ -52,6 +58,12 @@ public class StyleSelect : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Determines whether the specified style is recommended for the light head.
+    /// </summary>
+    /// <param name="lh">The light head to test against.</param>
+    /// <param name="sn">The style to test.</param>
+    /// <returns>True if the style is recommended.</returns>
     public static bool IsRecommended(LightHead lh, StyleNode sn) {
         bool rtn = true;
 
@@ -75,34 +87,21 @@ public class StyleSelect : MonoBehaviour {
         return rtn;
     }
 
+    /// <summary>
+    /// Determines whether the specified style node is recommended for all selected heads.
+    /// </summary>
+    /// <param name="sn">The style node to test.</param>
+    /// <returns>True if the style is recommended.</returns>
     public static bool IsRecommended(StyleNode sn) {
         bool rtn = true;
 
-        if(sn.name.Contains("Logo")) {
+        if(sn.name.Contains("Logo")) { // Block Off's "No Logo" and "Logo"
             return true;
         }
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 rtn &= IsRecommended(alpha, sn);
-
-                //foreach(AdvFunction f in alpha.patterns.Keys) {
-                //    switch(f) {
-                //        case AdvFunction.TAKEDOWN:
-                //        case AdvFunction.ICL:
-                //        case AdvFunction.ALLEY:
-                //            rtn &= sn.partSuffix.Contains("C");
-                //            break;
-                //        case AdvFunction.T13:
-                //        case AdvFunction.STT_AND_TAIL:
-                //            rtn &= sn.partSuffix.Contains("R");
-                //            break;
-                //        case AdvFunction.TRAFFIC:
-                //            rtn &= sn.partSuffix.Contains("A");
-                //            break;
-                //        default: break;
-                //    }
-                //}
             }
         }
 
@@ -119,6 +118,10 @@ public class StyleSelect : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets the styles of the selected heads.
+    /// </summary>
+    /// <param name="node">The style to apply.</param>
     public void SetSelection(StyleNode node) {
         foreach(LightHead lh in BarManager.inst.allHeads) {
             if(lh.gameObject.activeInHierarchy && lh.Selected)

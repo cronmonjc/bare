@@ -23,6 +23,9 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// If this is for selecting a style, this is a reference to the Style Select.
     /// </summary>
     public StyleSelect stySel;
+    /// <summary>
+    /// If this is for selecting a lens, this is a reference to the Lens Select.
+    /// </summary>
     public LensSelect lensSel;
     /// <summary>
     /// If this is for selecting a function, this is the function that would be selected when this item is clicked.
@@ -36,6 +39,9 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// If this is for selecting a style, this is the style that would be selected when this item is clicked.
     /// </summary>
     public StyleNode styNode;
+    /// <summary>
+    /// If this is for selecting a lens, this is the lens that would be selected when this item is clicked.
+    /// </summary>
     public Lens lens;
     /// <summary>
     /// Reference to the Toggle to show this is selected.
@@ -46,9 +52,15 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// </summary>
     public Color nrColor;
 
+    /// <summary>
+    /// Whether or not this option is recommended.
+    /// </summary>
     public bool recommended;
 
-    private CameraControl cam;
+    /// <summary>
+    /// A reference to the camera, to find selected heads easier
+    /// </summary>
+    private static CameraControl cam;
 
     /// <summary>
     /// Start is called once, when the containing GameObject is instantiated, after Awake.
@@ -66,6 +78,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
             t.image.color = Color.white;
             t.interactable = true;
             text.color = Color.black;
+            #region Apply name to the option
             string name = "";
             switch(fn) {
                 case BasicFunction.FLASHING:
@@ -79,6 +92,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                         locs |= (byte)alpha.loc;
                     }
 
+                    #region Contextual naming for "Steady Burn" when possible
                     switch(locs) {
                         case 0x1:
                         case 0x2:
@@ -119,7 +133,8 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                             name = "Steady Burn";
                             break;
                     }
-                    break;
+                    break; 
+                    #endregion
                 case BasicFunction.EMITTER:
                     name = "Emitter";
                     break;
@@ -141,7 +156,8 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                 default:
                     throw new System.ArgumentException();
             }
-            text.text = name;
+            text.text = name; 
+            #endregion
         } else if(optSel != null) {
             bool on = true;
             foreach(LightHead lh in BarManager.inst.allHeads) {
@@ -197,6 +213,10 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
 
     }
 
+    /// <summary>
+    /// Called when the user clicks on an object.
+    /// </summary>
+    /// <param name="eventData">Current event data.</param>
     public void OnPointerClick(PointerEventData eventData) {
         if(funcSel != null)
             funcSel.SetSelection(fn);

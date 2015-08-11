@@ -92,6 +92,7 @@ public class FunctionEditPane : MonoBehaviour {
         }
 
         paneParent.SetActive(false);
+        #region Figure out which pane to show
         switch(currFunc) {
             case AdvFunction.PRIO1:
             case AdvFunction.PRIO2:
@@ -113,8 +114,10 @@ public class FunctionEditPane : MonoBehaviour {
             default:
                 state = ShowState.NONE;
                 break;
-        }
+        } 
+        #endregion
 
+        #region Figure out what the type of function is
         switch(currFunc) {
             case AdvFunction.PRIO1:
             case AdvFunction.PRIO2:
@@ -155,8 +158,10 @@ public class FunctionEditPane : MonoBehaviour {
                 funcType.text = "???";
                 testFlashing.SetActive(false);
                 break;
-        }
+        } 
+        #endregion
 
+        #region Display the name of the function
         switch(currFunc) {
             case AdvFunction.TAKEDOWN:
                 funcName.text = "Takedown";
@@ -221,8 +226,10 @@ public class FunctionEditPane : MonoBehaviour {
             default:
                 funcName.text = "???";
                 break;
-        }
+        } 
+        #endregion
 
+        #region Have Preview Text show name of function as well.
         if(testFlashing.activeInHierarchy) {
             previewText.text = "Preview " + funcName.text;
             if(currFunc == AdvFunction.FTAKEDOWN || currFunc == AdvFunction.FALLEY) {
@@ -232,7 +239,8 @@ public class FunctionEditPane : MonoBehaviour {
                     }
                 }
             }
-        }
+        } 
+        #endregion
     }
 
     /// <summary>
@@ -248,6 +256,9 @@ public class FunctionEditPane : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets the pane to show.
+    /// </summary>
     private void Set() {
         flashing.SetActive(state == ShowState.FLASHING);
         //dimmer.SetActive(state == ShowState.DIMMER);
@@ -256,9 +267,13 @@ public class FunctionEditPane : MonoBehaviour {
         trafficOpt.SetActive(state == ShowState.TRAFFIC);
     }
 
+    /// <summary>
+    /// Retests whether or not to show the Other Heads Warn GameObject, as well as refreshing the patterns.
+    /// </summary>
     public void Retest() {
-        otherHeadsWarn.SetActive(false);
+        otherHeadsWarn.SetActive(false); // Disable by default
 
+        #region Refresh FuncPattSelect Components
         switch(state) {
             case ShowState.FLASHING:
                 foreach(FuncPattSelect fps in flashing.GetComponentsInChildren<FuncPattSelect>(true)) {
@@ -272,13 +287,17 @@ public class FunctionEditPane : MonoBehaviour {
                 break;
             default:
                 break;
-        }
+        } 
+        #endregion
 
+        #region Setup
         List<byte> front = new List<byte>(), back = new List<byte>();
-        List<string> patts = new List<string>();
+        List<string> patts = new List<string>(); 
+        #endregion
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
+            if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue; // Only for visible and selected heads
 
+            #region Collect selected head bits
             byte bit = alpha.Bit;
             if(alpha.transform.position.y < 0) {
                 if(!back.Contains(bit)) {
@@ -288,8 +307,10 @@ public class FunctionEditPane : MonoBehaviour {
                 if(!front.Contains(bit)) {
                     front.Add(bit);
                 }
-            }
+            } 
+            #endregion
 
+            #region Collect selected pattern references
             string tagname = alpha.transform.position.y < 0 ? "r" : "f";
             string path = alpha.Path;
 
@@ -308,11 +329,13 @@ public class FunctionEditPane : MonoBehaviour {
 
             if(!patts.Contains(tagname)) {
                 patts.Add(tagname);
-            }
+            } 
+            #endregion
         }
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(!alpha.gameObject.activeInHierarchy || !alpha.hasRealHead || alpha.Selected) continue;
+            if(!alpha.gameObject.activeInHierarchy || !alpha.hasRealHead || alpha.Selected) continue; // Only for visible but unselected heads
 
+            #region If this unselected head shares a bit with a selected head, show warning
             byte bit = alpha.Bit;
             if(alpha.transform.position.y < 0) {
                 if(back.Contains(bit)) {
@@ -324,8 +347,10 @@ public class FunctionEditPane : MonoBehaviour {
                     otherHeadsWarn.SetActive(true);
                     return;
                 }
-            }
+            } 
+            #endregion
 
+            #region If this unselected head shares a pattern reference with a selected head, show warning
             string tagname = alpha.transform.position.y < 0 ? "r" : "f";
             string path = alpha.Path;
 
@@ -345,10 +370,14 @@ public class FunctionEditPane : MonoBehaviour {
             if(patts.Contains(tagname)) {
                 otherHeadsWarn.SetActive(true);
                 return;
-            }
+            } 
+            #endregion
         }
     }
 
+    /// <summary>
+    /// Retests the Component via a static method.
+    /// </summary>
     public static void RetestStatic() {
         if(FunctionEditPane.currFunc == AdvFunction.NONE) return;
 

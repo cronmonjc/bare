@@ -40,7 +40,7 @@ public class FuncPhase : MonoBehaviour {
     }
 
     /// <summary>
-    /// Retests this Component.
+    /// Retests this Component, checking the current phase of the selected heads.
     /// </summary>
     public void Retest() {
         if(FunctionEditPane.currFunc == AdvFunction.NONE) return; // We aren't modifying a function, return now

@@ -44,7 +44,7 @@ public class ErrorLogging : MonoBehaviour {
     }
 
     /// <summary>
-    /// Called immediately when the Component's GameObject is disable
+    /// Called immediately when the Component's GameObject is disabled
     /// </summary>
     void OnDisable() {
         Application.logMessageReceived -= HandleLogging;
