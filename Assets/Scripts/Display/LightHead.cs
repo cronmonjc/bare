@@ -657,6 +657,7 @@ public class LightHead : MonoBehaviour {
     /// Refreshes the useSingle and useDual variables on this head to match the Basic Functions on it
     /// </summary>
     public void TestSingleDual() {
+        // If we have more than one Basic Function, and one of them is Emitter or Block Off, remove all but the last (aka most recent) one and start over.
         if(lhd.funcs.Count > 1 && (lhd.funcs.Contains(BasicFunction.EMITTER) || lhd.funcs.Contains(BasicFunction.BLOCK_OFF))) {
             lhd.funcs.RemoveRange(0, lhd.funcs.Count - 1);
             TestSingleDual();
@@ -665,9 +666,9 @@ public class LightHead : MonoBehaviour {
 
         useSingle = useDual = false;
         switch(lhd.funcs.Count) {
-            case 0:
+            case 0: // No functions: single never, dual never
                 break;
-            case 1:
+            case 1: // One function: single always, dual only on Flashing
                 useSingle = true;
                 switch(lhd.funcs[0]) {
                     case BasicFunction.FLASHING:
@@ -677,26 +678,26 @@ public class LightHead : MonoBehaviour {
                         break;
                 }
                 break;
-            case 2:
+            case 2: // Two functions
                 byte funcs = 0x0;
-                foreach(BasicFunction fn in lhd.funcs)
+                foreach(BasicFunction fn in lhd.funcs) // Figure out which two we have
                     funcs |= (byte)fn;
                 switch(funcs) {
-                    case 0x3:
-                    case 0x11:
-                    case 0x41:
-                        useSingle = useDual = true;
+                    case 0x3: // FLASHING | STEADY
+                    case 0x11: // FLASHING | CRUISE
+                    case 0x41: // FLASHING | TRAFFIC
+                        useSingle = useDual = true; // Single and Dual okay
                         break;
                     default:
-                        useDual = true;
+                        useDual = true; // Dual only for any other combo
                         break;
                 }
                 break;
-            case 3:
-                useDual = true;
-                if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true;
+            case 3: // Three functions
+                useDual = true; // Dual always
+                if(lhd.funcs.Contains(BasicFunction.CRUISE)) useSingle = true; // Single okay too if functions contains Cruise - FLASHING | CRUISE | {STEADY or TRAFFIC}
                 break;
-            default:
+            default: // Four plus functions
                 useDual = true;
                 break;
         }
@@ -707,13 +708,14 @@ public class LightHead : MonoBehaviour {
     /// Set the optic and style of this head to match the default defined by this head's Basic Functions
     /// </summary>
     public void RefreshBasicFuncDefault() {
+        // By this time, the functions should be cleared up, since TestSingleDual is always called before this
 
         switch(lhd.funcs.Count) {
             case 0:
-                SetOptic("");
+                SetOptic(""); // No functions selected, clear out the head
                 return;
             case 1:
-                switch(lhd.funcs[0]) {
+                switch(lhd.funcs[0]) { // Only one function, apply optic and style fitting the function
                     case BasicFunction.BLOCK_OFF:
                         SetOptic("Block Off");
                         return;
@@ -742,27 +744,27 @@ public class LightHead : MonoBehaviour {
                         SetOptic("");
                         return;
                 }
-            case 2:
+            case 2: // Two functions
                 byte funcs = 0x0;
-                foreach(BasicFunction fn in lhd.funcs)
+                foreach(BasicFunction fn in lhd.funcs) // Figure out which functions we've got
                     funcs |= (byte)fn;
                 switch(funcs) {
-                    case 0x3:
+                    case 0x3: // FLASHING | STEADY
                         if(isSmall) {
                             SetOptic("Starburst");
                         } else {
                             SetOptic("Lineum");
                         }
                         break;
-                    case 0x11:
-                    case 0x41:
+                    case 0x11: // FLASHING | CRUISE
+                    case 0x41: // FLASHING | TRAFFIC
                         if(isSmall) {
                             SetOptic("Small Lineum");
                         } else {
                             SetOptic("Lineum");
                         }
                         break;
-                    default:
+                    default: // Any other valid combination
                         if(useDual) {
                             if(isSmall) {
                                 SetOptic("Dual Small Lineum");
@@ -773,9 +775,9 @@ public class LightHead : MonoBehaviour {
                         break;
                 }
                 return;
-            default:
-                if(useDual)
-                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum");
+            default: // Three plus functions
+                if(useDual) // If it can dual
+                    SetOptic("Dual " + (isSmall ? "Small " : "") + "Lineum"); // Use dual.  Don't care what combo of functions it's using.
                 return;
         }
     }
