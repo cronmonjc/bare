@@ -1297,6 +1297,7 @@ public class BarManager : MonoBehaviour {
             opts.Add(new NbtByte("can", (byte)(useCAN ? 1 : 0)));
             opts.Add(new NbtByte("cabt", (byte)cableType));
             opts.Add(new NbtByte("cabl", (byte)cableLength));
+            opts.Add(new NbtByte("mkit", (byte)mountingKit));
             root.Add(opts); 
             #endregion
 
@@ -1399,7 +1400,8 @@ public class BarManager : MonoBehaviour {
         SetTDOption((TDOption)opts["tdop"].ByteValue);
         useCAN = opts["can"].ByteValue == 1;
         cableType = opts["cabt"].IntValue;
-        cableLength = opts["cabl"].IntValue; 
+        cableLength = opts["cabl"].IntValue;
+        if(opts.Contains("mkit")) mountingKit = opts["mkit"].IntValue; else mountingKit = 0;
         #endregion
 
         yield return StartCoroutine(RefreshBitsIEnum()); // Make sure that Traffic Director and Bar Size information get squared away, align the bits
