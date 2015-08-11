@@ -2,8 +2,17 @@
 using UnityEngine.EventSystems;
 using System.Collections;
 
+/// <summary>
+/// A small Component used to log when the user clicked on a GameObject.
+/// </summary>
 public class LogInputs : MonoBehaviour, IPointerClickHandler {
+    /// <summary>
+    /// The cached path of this Component's GameObject
+    /// </summary>
     private string path = "";
+    /// <summary>
+    /// A réerence to a label, to include in logging.  Set by the Unity Inspector.
+    /// </summary>
     public UnityEngine.UI.Text label;
 
     /// <summary>
