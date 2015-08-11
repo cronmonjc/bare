@@ -39,6 +39,7 @@ public class NbtEditor : EditorWindow {
             filePath = newFilePath;
             nbtFile = null;
             renderRoot = null;
+            clipboard = null;
         }
         if(GUI.Button(new Rect(86, 8, 28, 28), save)) {
             if(filePath == "New File") {
@@ -59,12 +60,15 @@ public class NbtEditor : EditorWindow {
             if(filePath == "New File") {
                 nbtFile = new NbtFile();
                 nbtFile.RootTag.Name = "root";
+                clipboard = null;
             } else if(filePath != "") {
                 nbtFile = new NbtFile(filePath);
+                clipboard = null;
             }
             if(nbtFile != null) {
                 renderRoot = new NbtCompoundRender(nbtFile.RootTag);
                 renderRoot.expanded = true;
+                clipboard = null;
             }
         }
 
@@ -391,15 +395,16 @@ public class NbtCompoundRender : NbtRenderer {
                 });
 
                 if(NbtEditor.clipboard != null) {
-                    menu.AddItem(new GUIContent("Paste Tag " + (NbtEditor.clipboard.Name.Length > 0 ? NbtEditor.clipboard.Name : "-unnamed-")), false, delegate() {
+                    menu.AddItem(new GUIContent("Paste Tag " + (string.IsNullOrEmpty(NbtEditor.clipboard.Name) ? "-unnamed-" : NbtEditor.clipboard.Name)), false, delegate() {
                         var newb = NbtEditor.clipboard.Clone();
+                        if(string.IsNullOrEmpty(newb.Name)) newb.Name = "pasted tag";
                         data.Add(newb);
                         NbtRenderer renderer = NbtRenderer.MakeRenderer(newb);
                         renderer.parent = this;
                         children.Add(renderer);
                     });
                 }
-                    
+
                 menu.AddSeparator("");
                 menu.AddItem(new GUIContent("Expand All Children"), false, RecursiveExpand);
 
@@ -905,7 +910,7 @@ public class NbtListRender : NbtRenderer {
                     });
 
                     if(NbtEditor.clipboard != null && NbtEditor.clipboard.TagType == data.ListType) {
-                        menu.AddItem(new GUIContent("Paste Tag " + (NbtEditor.clipboard.Name.Length > 0 ? NbtEditor.clipboard.Name : "-unnamed-")), false, delegate() {
+                        menu.AddItem(new GUIContent("Paste Tag " + (string.IsNullOrEmpty(NbtEditor.clipboard.Name) ? "-unnamed-" : NbtEditor.clipboard.Name)), false, delegate() {
                             var newb = NbtEditor.clipboard.Clone();
                             data.Add(newb);
                             NbtRenderer renderer = NbtRenderer.MakeRenderer(newb);

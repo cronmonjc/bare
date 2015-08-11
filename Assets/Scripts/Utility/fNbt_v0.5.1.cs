@@ -1700,7 +1700,7 @@ namespace fNbt {
             NbtList rtn = new NbtList(Name);
 
             foreach(NbtTag tag in tags) {
-                rtn.Add(tag);
+                rtn.Add(tag.Clone());
             }
 
             return rtn;
