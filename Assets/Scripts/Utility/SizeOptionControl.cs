@@ -61,25 +61,31 @@ public class SizeOptionControl : MonoBehaviour {
                 foreach(LightHead alpha in lhs) {
                     if(!alpha.Selected) {
                         if(lh.lhd.optic != null && lh.lhd.style != null) {
+                            #region Clear any traffic if resizing any traffic heads
                             if(alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && alpha.shouldBeTD) {
                                 BarManager.inst.td = TDOption.NONE;
                                 foreach(LightHead beta in BarManager.inst.allHeads) {
                                     beta.shouldBeTD = false;
                                 }
-                            }
+                            } 
+                            #endregion
+                            #region Copy functions over
                             alpha.lhd.funcs.Clear();
                             foreach(BasicFunction f in lh.lhd.funcs) {
                                 alpha.AddBasicFunction(f, false);
                             }
-                            alpha.RefreshBasicFuncDefault();
+                            alpha.RefreshBasicFuncDefault(); 
+                            #endregion
 
+                            #region Copy optics and styles over when possible
                             if(alpha.lhd.optic.styles.ContainsKey(lh.lhd.style.name)) {
                                 if(alpha.lhd.optic.styles[lh.lhd.style.name].selectable)
                                     alpha.SetStyle(lh.lhd.style);
                             } else {
                                 alpha.SetOptic(value ? lh.lhd.optic.lgEquivalent : lh.lhd.optic.smEquivalent, doDefault: false);
                                 alpha.SetStyle(lh.lhd.style.name);
-                            }
+                            } 
+                            #endregion
                         }
                     }
                 }
