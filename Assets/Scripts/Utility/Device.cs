@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
+/// <summary>
+/// Deprecated.  Used to manage the physical MCP2210 itself.  You should be modifying this in the Phaser Lightbar Programmer project!
+/// </summary>
 public class Device : IDisposable {
 //#if !UNITY_EDITOR
     [DllImport("mcp2210")]

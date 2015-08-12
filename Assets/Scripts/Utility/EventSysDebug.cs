@@ -4,8 +4,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// UI Component.  Debugging.  Listed off everything the StandaloneInputModule was seeing.
+/// </summary>
 public class EventSysDebug : MonoBehaviour {
+    /// <summary>
+    /// The PointerInputModule Component it was using
+    /// </summary>
     private PointerInputModule pim;
+    /// <summary>
+    /// The Text Component reference
+    /// </summary>
     private Text t;
 
     /// <summary>

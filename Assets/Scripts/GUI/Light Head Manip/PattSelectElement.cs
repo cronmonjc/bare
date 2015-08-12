@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to allow for the selection of a pattern on selected heads.
+/// </summary>
 public class PattSelectElement : MonoBehaviour {
     public Image image;
 

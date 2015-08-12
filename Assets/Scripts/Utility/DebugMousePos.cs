@@ -2,7 +2,13 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI Component.  Debugging.  Displays the current mouse position on a Text Component.
+/// </summary>
 public class DebugMousePos : MonoBehaviour {
+    /// <summary>
+    /// The Text Component reference.
+    /// </summary>
     private Text t;
 
     /// <summary>

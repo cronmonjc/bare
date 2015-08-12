@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Deprecated.  Used to help position the camera in specific locations to provide specific views of the 3D bar.
+/// </summary>
 public class CameraPositioning : MonoBehaviour {
     public void HomeView() {
         SetView(new Vector3(-20f, 0f, 0f));

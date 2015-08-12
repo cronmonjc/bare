@@ -2,8 +2,21 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI Component.  Displays BOM information on the Mounting Kit in use.
+/// </summary>
 public class MountingKitBOM : MonoBehaviour {
-    private Text desc, price;
+    /// <summary>
+    /// The reference to the description Text Component.
+    /// </summary>
+    private Text desc;
+    /// <summary>
+    /// The reference to the price Text Component.
+    /// </summary>
+    private Text price;
+    /// <summary>
+    /// The previous Mounting Kit used.
+    /// </summary>
     private int prev = -1;
 
     /// <summary>

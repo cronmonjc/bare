@@ -1,11 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Manages options for traffic director setups.
+/// </summary>
 public class TDPulldown : PulldownItem {
-    public Color textEnabled = new Color(0.2f, 0.2f, 0.2f, 1.0f),
-                textDisabled = new Color(0.75f, 0.75f, 0.75f, 1.0f);
+    /// <summary>
+    /// The text color to use when enabled.  Set via Unity Inspector.
+    /// </summary>
+    public Color textEnabled = new Color(0.2f, 0.2f, 0.2f, 1.0f);
+    /// <summary>
+    /// The text color to use when disabled.  Set via Unity Inspector.
+    /// </summary>
+    public Color textDisabled = new Color(0.75f, 0.75f, 0.75f, 1.0f);
+    /// <summary>
+    /// The Text Component itself.  Set via Unity Inspector.
+    /// </summary>
     public UnityEngine.UI.Text text;
 
+    /// <summary>
+    /// Determines whether this Component's option is selected.  Will always return false, because coloration is handled by this Component.
+    /// </summary>
+    /// <returns>
+    /// False always
+    /// </returns>
     protected override bool IsSelected() {
         return false;
     }
@@ -27,6 +45,8 @@ public class TDPulldown : PulldownItem {
             b.colors = curr ? selected : unselected;
             prev = curr;
         }
+
+
         switch((TDOption)number) {
             case TDOption.LG_SIX:
                 b.interactable = BarManager.inst.BarSize > 1;
@@ -46,6 +66,9 @@ public class TDPulldown : PulldownItem {
         }
     }
 
+    /// <summary>
+    /// Called when the user clicks on the Button Component on this GameObject.
+    /// </summary>
     public override void Clicked() {
         BarManager.moddedBar = true;
 

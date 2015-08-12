@@ -1,9 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Displays the static price for a mounting bracket when needed.
+/// </summary>
 public class BracketPrice : MonoBehaviour {
+    /// <summary>
+    /// The reference to the Text Component to display the price on
+    /// </summary>
     private UnityEngine.UI.Text text;
 
+    /// <summary>
+    /// The price text.
+    /// </summary>
     public uint Price {
         set {
             text.text = "$" + (value * 0.01f).ToString("F2");

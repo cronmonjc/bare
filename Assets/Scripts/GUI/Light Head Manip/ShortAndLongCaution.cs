@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to display a warning when short and long heads were selected, warning that selections might be limited (no longer the case).
+/// </summary>
 public class ShortAndLongCaution : MonoBehaviour {
     public GameObject CautionObject;
 

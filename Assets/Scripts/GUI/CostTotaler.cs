@@ -2,15 +2,33 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Totals the sale price of the components.
+/// </summary>
 public class CostTotaler : MonoBehaviour {
+    /// <summary>
+    /// The reference to the total object GameObject.  Set via Unity Inspector.
+    /// </summary>
     public GameObject TotalObject;
+    /// <summary>
+    /// The text displaying the total sale price.  Set via Unity Inspector.
+    /// </summary>
     public Text TotalText;
 
+    /// <summary>
+    /// The reference to a BOMCables object.  Set via Unity Inspector.
+    /// </summary>
     public BOMCables Cables;
 
+    /// <summary>
+    /// The total sale price
+    /// </summary>
     public uint total;
 
-    public void Refresh() {
+    /// <summary>
+    /// Update is called once each frame
+    /// </summary>
+    void Update() {
         if(CameraControl.ShowPricing) {
             total = LightDict.inst.bracketPrice;  // Get static gutter mount kit price over with
 
@@ -40,15 +58,6 @@ public class CostTotaler : MonoBehaviour {
         } else {
             total = 0;
             TotalObject.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// Update is called once each frame
-    /// </summary>
-    void Update() {
-        if(TotalObject.activeInHierarchy ^ CameraControl.ShowPricing) {
-            Refresh();
         }
     }
 }

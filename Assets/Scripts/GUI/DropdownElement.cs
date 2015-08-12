@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to be an element for DropdownControls.
+/// </summary>
 public class DropdownElement : MonoBehaviour, IPointerClickHandler {
     public Text display;
     public int item;

@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to manage the selection of patterns on selected heads.
+/// </summary>
 public class PattSelect : MonoBehaviour {
     public static PattSelect inst;
 

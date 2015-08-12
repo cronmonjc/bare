@@ -2,14 +2,33 @@
 using System.Collections;
 using System.IO;
 
+/// <summary>
+/// UI Component.  Changes the Revision text when it finds a certain file.
+/// </summary>
 public class NewVersionChecker : MonoBehaviour {
+    /// <summary>
+    /// The path to the file it's looking for
+    /// </summary>
     public string path;
+    /// <summary>
+    /// Whether or not this Component has found the file
+    /// </summary>
     [System.NonSerialized]
     public bool fired = false;
 
+    /// <summary>
+    /// The reference to the Text UI Component
+    /// </summary>
     public UnityEngine.UI.Text text;
 
-    public float countdown = 0.0f, loopTime = 10.0f;
+    /// <summary>
+    /// How much longer until it checks again
+    /// </summary>
+    public float countdown = 0.0f;
+    /// <summary>
+    /// How much time should pass between checks
+    /// </summary>
+    public float loopTime = 10.0f;
 
     /// <summary>
     /// Update is called once each frame

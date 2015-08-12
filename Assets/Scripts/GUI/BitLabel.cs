@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to display the bit of a Light Head.
+/// </summary>
 public class BitLabel : MonoBehaviour {
     public Transform target;
     public Text label;

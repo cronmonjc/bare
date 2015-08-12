@@ -2,7 +2,13 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI Component.  Debugging.  Displays the current size of the screen.
+/// </summary>
 public class ShowScreenSize : MonoBehaviour {
+    /// <summary>
+    /// The text Component to display the screen size on.
+    /// </summary>
     private Text t;
 
     /// <summary>

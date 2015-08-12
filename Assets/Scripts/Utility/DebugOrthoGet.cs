@@ -1,12 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Debugging.  Displays information about the orthographic size of the camera.
+/// </summary>
 public class DebugOrthoGet : MonoBehaviour {
+    /// <summary>
+    /// The reference to the Camera Component
+    /// </summary>
     private Camera cam;
+    /// <summary>
+    /// Is the Component adjusting the Camera's orthographicSize right now?
+    /// </summary>
     public bool fixing;
 
-    public Transform tl, br;
-    public float threshold = 20f;
+    /// <summary>
+    /// The top-left corner of the reference.  Set via Unity Inspector.
+    /// </summary>
+    public Transform tl;
+    /// <summary>
+    /// The bottom-right corner of the reference.  Set via Unity Inspector.
+    /// </summary>
+    public Transform br;
 
     /// <summary>
     /// Start is called once, when the containing GameObject is instantiated, after Awake.

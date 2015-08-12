@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using fNbt;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to allow for selection of phase for selected heads.
+/// </summary>
 public class PhaseButton : MonoBehaviour {
     public UnityEngine.UI.Image image;
     public bool IsPhaseB;

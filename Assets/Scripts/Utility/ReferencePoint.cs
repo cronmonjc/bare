@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// A reference point.
+/// </summary>
+/// <remarks>Useful in Editor to find a specific location of a GameObject, and to find the corners of the capture rectangle for PDF Export.</remarks>
 public class ReferencePoint : MonoBehaviour {
     /// <summary>
     /// Start is called once, when the containing GameObject is instantiated, after Awake.

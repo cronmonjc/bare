@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// Deprecated.  Used to change out the bits of the rear heads to match the traffic director.
+/// </summary>
 public class TDBitChanger : MonoBehaviour {
     public byte[] noTDBits = new byte[] { 0, 0, 0, 0, 0 },
         SvLgBits = new byte[] { 0, 0, 0, 0, 0 },

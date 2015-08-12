@@ -7,9 +7,18 @@ using UnityEngine.EventSystems;
 /// UI Component.  Handles the navigation of the order finisher form using Tab and Shift-Tab.
 /// </summary>
 public class TabSelect : MonoBehaviour {
+    /// <summary>
+    /// Is this where the cursor should start?  (Provided no GameObject's selected)  Set via Unity Inspector.
+    /// </summary>
     public bool IsMain = false;
+    /// <summary>
+    /// Has the Tab key fired its action?
+    /// </summary>
     private static bool fired = false;
 
+    /// <summary>
+    /// The EventSystem we're watching
+    /// </summary>
     private EventSystem system;
 
     /// <summary>

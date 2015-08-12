@@ -2,8 +2,17 @@
 using System.Collections;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI Component.  Totals the amperage in use by the bar.
+/// </summary>
 public class AmperageTotal : MonoBehaviour {
+    /// <summary>
+    /// The display Text Component.  Set via Unity Inspector.
+    /// </summary>
     public Text text;
+    /// <summary>
+    /// The total current draw of the bar
+    /// </summary>
     public uint totalAmp;
 
     /// <summary>

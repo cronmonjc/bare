@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to display the pattern that was on a function for the selected heads, as well as picking functions to modify.
+/// </summary>
 public class PatternFunc : MonoBehaviour, IPointerClickHandler {
     //public FnSelManager fsl;
     //public Text t;

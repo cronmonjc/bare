@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Events;
 
+/// <summary>
+/// UI Component.  Deprecated.  Used to display a dropdown for the selection of an option, but it's not necessary anymore.  Use CollapsingMenuControls filled with PulldownItems instead.
+/// </summary>
 public class DropdownControl : MonoBehaviour {
     private Text display;
     private CollapsingMenuControl cmc;

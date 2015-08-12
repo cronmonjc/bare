@@ -4,6 +4,9 @@ using fNbt;
 using System.IO;
 using System;
 
+/// <summary>
+/// Deprecated.  Used to manage the physical device for Unity.  No longer used, as everything's now handled by the Phaser Lightbar Programmer now!
+/// </summary>
 public class DeviceManager : MonoBehaviour {
     public void Upload() {
         byte[] xferBuffer = new byte[768];
