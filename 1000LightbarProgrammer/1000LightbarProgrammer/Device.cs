@@ -2,6 +2,9 @@
 using System.Runtime.InteropServices;
 using MCP2210;
 
+/// <summary>
+/// Code wrapper for the MCP2210.
+/// </summary>
 public class Device : IDisposable {
     public const int CURRENT_SETTINGS_ONLY = 0;
 
@@ -13,14 +16,25 @@ public class Device : IDisposable {
 
     private DevIO dev;
 
+    /// <summary>
+    /// Creates a new wrapper for an MCP2210, using the default vendor and product IDs.
+    /// </summary>
     public Device()
         : this(DEFAULT_VENDOR, DEFAULT_PRODUCT) { }
 
+    /// <summary>
+    /// Creates a new wrapper for an MCP2210, using the provided default vendor and product IDs.
+    /// </summary>
+    /// <param name="vendorID">The vendor identifier value.</param>
+    /// <param name="productID">The product identifier value.</param>
     public Device(uint vendorID, uint productID) {
         dev = new DevIO(vendorID, productID);
         if(!Connected) throw new DeviceErrorException(-101);
     }
 
+    /// <summary>
+    /// Gets or sets the bit rate of exchange.
+    /// </summary>
     public int BitRate {
         get {
             int res;
@@ -38,6 +52,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the active chip select value.
+    /// </summary>
     public ushort ActiveCS {
         get {
             int res;
@@ -55,6 +72,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the idle chip select value.
+    /// </summary>
     public ushort IdleCS {
         get {
             int res;
@@ -72,6 +92,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the size of the transfer, in bytes.
+    /// </summary>
     public ushort XferSize {
         get { return xferSize; }
         set {
@@ -85,6 +108,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the vendor identifier value.
+    /// </summary>
     public uint VendorID {
         get {
             long res;
@@ -102,6 +128,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the product identifier value.
+    /// </summary>
     public uint ProductID {
         get {
             long res;
@@ -119,6 +148,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the product descriptor string.
+    /// </summary>
     public string ProdDescriptor {
         get { lock(this) return dev.Settings.GetStringDescriptor(); }
         set {
@@ -130,6 +162,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets or sets the manufacturer string.
+    /// </summary>
     public string Manufacturer {
         get { lock(this) return dev.Settings.GetStringManufacturer(); }
         set {
@@ -141,6 +176,9 @@ public class Device : IDisposable {
         }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether this Device is connected.
+    /// </summary>
     public bool Connected {
         get {
             lock(this) { return dev.Settings.GetConnectionStatus(); }
@@ -168,6 +206,13 @@ public class Device : IDisposable {
         this.xferSize = xferSize;
     }
 
+    /// <summary>
+    /// Sets the gpio configuration.
+    /// </summary>
+    /// <param name="pinDesig">The pin designation as an array of 9 bytes.  0 means pin is GPIO, 1 means chip select, and 2 means dedicated function.</param>
+    /// <param name="output">The value of any of the output pins as a bit field.  Uses only the lowest 9 bits.  0 is low, 1 is high.</param>
+    /// <param name="dir">The direction of I/O as a bit field.  Uses only the lowest 9 bits.  0 is output, 1 is input.</param>
+    /// <param name="powerOnToo">Should we also set the Power On values as well?</param>
     public void SetGpioConfig(byte[] pinDesig, int output, int dir, bool powerOnToo = false) {
         int res;
         lock(this) {
@@ -176,6 +221,10 @@ public class Device : IDisposable {
         if(res != 0) throw new DeviceErrorException(res);
     }
 
+    /// <summary>
+    /// Gets the pin designations.
+    /// </summary>
+    /// <returns>An array of 9 bytes, where each byte represents a single pin's value.  0 means pin is GPIO, 1 means chip select, and 2 means dedicated function.</returns>
     public byte[] GetPinDesig() {
         byte[] pinDesig = null;
         int res;
@@ -186,6 +235,11 @@ public class Device : IDisposable {
         return pinDesig;
     }
 
+    /// <summary>
+    /// Sets the pin designations.
+    /// </summary>
+    /// <param name="all">The pin designation as an array of 9 bytes.  0 means pin is GPIO, 1 means chip select, and 2 means dedicated function.</param>
+    /// <param name="powerOnToo">Should we also set the Power On values as well?</param>
     public void SetPinDesig(byte[] all, bool powerOnToo = false) {
         if(all == null) {
             throw new ArgumentNullException("all");
@@ -201,6 +255,12 @@ public class Device : IDisposable {
         SetGpioConfig(all, GetGpioOutput(), GetGpioDir(), powerOnToo);
     }
 
+    /// <summary>
+    /// Sets the pin designations.
+    /// </summary>
+    /// <param name="which">Which pin (from 0 to 8) are we modifying?</param>
+    /// <param name="to">0 means pin is GPIO, 1 means chip select, and 2 means dedicated function.</param>
+    /// <param name="powerOnToo">Should we also set the Power On values as well?</param>
     public void SetPinDesig(byte which, byte to, bool powerOnToo = false) {
         if(which > 8 || which < 0)
             throw new ArgumentException("Invalid argument for which pin to modify.", "which");
@@ -214,6 +274,10 @@ public class Device : IDisposable {
         SetPinDesig(pinDesig, powerOnToo);
     }
 
+    /// <summary>
+    /// Gets the gpio output.
+    /// </summary>
+    /// <returns>An integer bit field, where the lowest 9 bits indicates high/low output.</returns>
     public int GetGpioOutput() {
         int res;
         lock(this) {
@@ -223,10 +287,19 @@ public class Device : IDisposable {
         return res;
     }
 
+    /// <summary>
+    /// Sets the gpio output.
+    /// </summary>
+    /// <param name="to">An integer bit field representing what to set the output to, where the lowest 9 bits indicates high/low output.</param>
     public void SetGpioOutput(int to) {
         SetGpioConfig(GetPinDesig(), to, GetGpioDir());
     }
 
+    /// <summary>
+    /// Gets the gpio dir.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="DeviceErrorException"></exception>
     public int GetGpioDir() {
         int res;
         lock(this) {
@@ -236,6 +309,10 @@ public class Device : IDisposable {
         return res;
     }
 
+    /// <summary>
+    /// Sets the gpio dir.
+    /// </summary>
+    /// <param name="to">To.</param>
     public void SetGpioDir(int to) {
         SetGpioConfig(GetPinDesig(), GetGpioOutput(), to);
     }
@@ -280,9 +357,18 @@ public class Device : IDisposable {
     }
 }
 
+/// <summary>
+/// An Exception raised by the MCP2210.
+/// </summary>
 public class DeviceErrorException : Exception {
+    /// <summary>
+    /// The error code of the Exception
+    /// </summary>
     public int errCode;
 
+    /// <summary>
+    /// Initializes a new instance of the DeviceErrorException.
+    /// </summary>
     public DeviceErrorException(int errCode)
         : base("Error interfacing with MCP2210: " + errCode) {
         this.errCode = errCode;
