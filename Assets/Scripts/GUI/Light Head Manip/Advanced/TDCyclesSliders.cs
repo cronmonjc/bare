@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class TDCyclesSliders : MonoBehaviour {
     /// <summary>
-    /// The output Text Component
+    /// The output Text Component.  Set via Unity Inspector.
     /// </summary>
     public UnityEngine.UI.Text outputText;
     /// <summary>

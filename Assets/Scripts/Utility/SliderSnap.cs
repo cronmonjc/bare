@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class SliderSnap : MonoBehaviour, IPointerUpHandler {
 
     /// <summary>
-    /// The callback for what should happen when the whole value changes
+    /// The callback for what should happen when the whole value changes.  Set via Unity Inspector.
     /// </summary>
     public Slider.SliderEvent OnWholeValueChange;
 

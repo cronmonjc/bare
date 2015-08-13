@@ -11,11 +11,11 @@ public class OrderDisable : MonoBehaviour {
     /// </summary>
     public Button b;
     /// <summary>
-    /// The name field
+    /// The name field.  Set via Unity Inspector.
     /// </summary>
     public InputField nameField;
     /// <summary>
-    /// The PO field
+    /// The PO field.  Set via Unity Inspector.
     /// </summary>
     public InputField poField;
 

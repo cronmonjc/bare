@@ -9,9 +9,9 @@ public class TimeSlider : MonoBehaviour {
     /// Gets or sets the preview timescale.
     /// </summary>
     /// <remarks>
-    /// The way it works is by telling Unity to slow down the way it simulates time application-wide.
-    /// Reducing Time.timeScale below 1.0 will also reduce Time.deltaTime, which PattTimer depends upon to know the time.
-    /// A reduced Time.deltaTime means less recorded second per second, which means longer ticks, which means slower animation.
+    /// <para>The way it works is by telling Unity to slow down the way it simulates time application-wide.</para>
+    /// <para>Reducing Time.timeScale below 1.0 will also reduce Time.deltaTime, which PattTimer depends upon to know the time.</para>
+    /// <para>A reduced Time.deltaTime means less recorded second per second, which means longer ticks, which means slower animation.</para>
     /// </remarks>
     public float timescale {
         get {

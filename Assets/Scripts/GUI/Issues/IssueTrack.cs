@@ -7,7 +7,7 @@ using System.Collections;
 /// </summary>
 public class IssueTrack : MonoBehaviour {
     /// <summary>
-    /// List of Fatal Issues.
+    /// List of Issues considered fatal.  Set via Unity Inspector.
     /// </summary>
     public IssueChecker[] FatalIssues;
     /// <summary>

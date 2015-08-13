@@ -6,7 +6,7 @@ using System.Collections;
 /// </summary>
 public class LogToggle : MonoBehaviour {
     /// <summary>
-    /// The reference to the Text UI Component.
+    /// The reference to the Text UI Component.  Set via Unity Inspector.
     /// </summary>
     public UnityEngine.UI.Text t;
 

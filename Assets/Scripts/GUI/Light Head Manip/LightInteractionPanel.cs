@@ -1,18 +1,58 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// UI Component.  Controls the display of the various panes of light modification.
+/// </summary>
 public class LightInteractionPanel : MonoBehaviour {
+    /// <summary>
+    /// An enumeration of all of the different panes that could be shown
+    /// </summary>
     public enum ShowState {
         SUMMARY, OPTICS, FUNCASSIGN, FUNCEDIT, LENSES
     }
+    /// <summary>
+    /// A reference to the CameraControl component
+    /// </summary>
     private static CameraControl cam;
+    /// <summary>
+    /// Are we currently editing functions?
+    /// </summary>
     public static bool EditingFunc = false;
+    /// <summary>
+    /// The current state of the panel.
+    /// </summary>
     private ShowState _state = ShowState.SUMMARY;
+    /// <summary>
+    /// Gets or sets the current display state of the panel.
+    /// </summary>
     public ShowState state {
         set { _state = value; Set(); }
         get { return _state; }
     }
-    public GameObject SummaryPane, LensPane, OpticPane, FuncAssignPane, FuncEditPane;
+    /// <summary>
+    /// The reference to the summary pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject SummaryPane;
+    /// <summary>
+    /// The reference to the lens pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject LensPane;
+    /// <summary>
+    /// The reference to the optic pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject OpticPane;
+    /// <summary>
+    /// The reference to the function assign pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject FuncAssignPane;
+    /// <summary>
+    /// The reference to the function edit pane GameObject.  Set via Unity Inspector.
+    /// </summary>
+    public GameObject FuncEditPane;
+    /// <summary>
+    /// The reference to the pattern edit button Text UI Component.  Set via Unity Inspector.
+    /// </summary>
     public UnityEngine.UI.Text PattEditButton;
 
     /// <summary>
@@ -73,6 +113,9 @@ public class LightInteractionPanel : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Sets this Component's pane display.
+    /// </summary>
     private void Set() {
         SummaryPane.SetActive(state == ShowState.SUMMARY);
         OpticPane.SetActive(state == ShowState.OPTICS);
@@ -81,10 +124,16 @@ public class LightInteractionPanel : MonoBehaviour {
         FuncEditPane.SetActive(state == ShowState.FUNCEDIT);
     }
 
+    /// <summary>
+    /// Toggles whether or not we're editing functions.  Called by the "Go to Function Editing" button.
+    /// </summary>
     public void ToggleEditFunc() {
         EditingFunc = !EditingFunc;
         FunctionEditPane.currFunc = AdvFunction.NONE;
         LightLabel.showPatt = false;
+
+        cam.SelectedHead.Clear();
+        cam.SelectedLens.Clear();
 
         foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
             ll.Refresh();

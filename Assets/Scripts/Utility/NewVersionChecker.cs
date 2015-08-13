@@ -7,7 +7,7 @@ using System.IO;
 /// </summary>
 public class NewVersionChecker : MonoBehaviour {
     /// <summary>
-    /// The path to the file it's looking for
+    /// The path to the file it's looking for.  Set via Unity Inspector.
     /// </summary>
     public string path;
     /// <summary>
@@ -22,11 +22,11 @@ public class NewVersionChecker : MonoBehaviour {
     public UnityEngine.UI.Text text;
 
     /// <summary>
-    /// How much longer until it checks again
+    /// How much longer until it checks again.  Set via Unity Inspector.
     /// </summary>
     public float countdown = 0.0f;
     /// <summary>
-    /// How much time should pass between checks
+    /// How much time should pass between checks.  Set via Unity Inspector.
     /// </summary>
     public float loopTime = 10.0f;
 

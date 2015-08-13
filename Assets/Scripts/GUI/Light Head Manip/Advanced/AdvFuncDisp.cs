@@ -44,8 +44,6 @@ public class AdvFuncDisp : MonoBehaviour {
         foreach(LightHead alpha in cam.SelectedHead) {
             if(!alpha.gameObject.activeInHierarchy) continue;
 
-            byte bit = alpha.Bit;
-
             bool thisEnabled = false;
 
             #region Enables

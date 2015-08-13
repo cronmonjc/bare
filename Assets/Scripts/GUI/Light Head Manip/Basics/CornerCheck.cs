@@ -6,11 +6,11 @@ using System.Collections;
 /// </summary>
 public class CornerCheck : MonoBehaviour {
     /// <summary>
-    /// The reference to the "Corners can only be long" GameObject
+    /// The reference to the "Corners can only be long" GameObject.  Set via Unity Inspector.
     /// </summary>
     public GameObject CornerLong;
     /// <summary>
-    /// The reference to the "Rear corners are single color only" GameObject
+    /// The reference to the "Rear corners are single color only" GameObject.  Set via Unity Inspector.
     /// </summary>
     public GameObject RearCorner;
 

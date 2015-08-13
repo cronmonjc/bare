@@ -8,19 +8,19 @@ using System.Collections;
 public class ChangeColors : MonoBehaviour {
 
     /// <summary>
-    /// The "chosen idle" color
+    /// The "chosen idle" color.  Set via Unity Inspector.
     /// </summary>
     public Color chosenIdle;
     /// <summary>
-    /// The "chosen highlighted" color
+    /// The "chosen highlighted" color.  Set via Unity Inspector.
     /// </summary>
     public Color chosenHighlighted;
     /// <summary>
-    /// The "unchosen idle" color
+    /// The "unchosen idle" color.  Set via Unity Inspector.
     /// </summary>
     public Color unchosenIdle;
     /// <summary>
-    /// The "unchosen highlighted" color
+    /// The "unchosen highlighted" color.  Set via Unity Inspector.
     /// </summary>
     public Color unchosenHighlighted;
 

@@ -21,19 +21,19 @@ public class ErrorLogging : MonoBehaviour {
     private static StreamWriter outputStream;
 
     /// <summary>
-    /// The field the user optionally places their Respond To address
+    /// The field the user optionally places their Respond To address.  Set via Unity Inspector.
     /// </summary>
     public InputField emailAddr;
     /// <summary>
-    /// The field the user places a description of the issue they're having
+    /// The field the user places a description of the issue they're having.  Set via Unity Inspector.
     /// </summary>
     public InputField probdesc;
     /// <summary>
-    /// The Toggle indicating whether or not they want to send a screenshot
+    /// The Toggle indicating whether or not they want to send a screenshot.  Set via Unity Inspector.
     /// </summary>
     public Toggle screen;
     /// <summary>
-    /// The Toggle indicating whether or not they want to send a copy of the log
+    /// The Toggle indicating whether or not they want to send a copy of the log.  Set via Unity Inspector.
     /// </summary>
     public Toggle log;
 
@@ -58,12 +58,12 @@ public class ErrorLogging : MonoBehaviour {
     }
 
     /// <summary>
-    /// The email addresses to specifically address report emails to
+    /// The email addresses to specifically address report emails to.  Set via Unity Inspector.
     /// </summary>
     [Header("Email addresses to which email reports should be addressed to")]
     public string[] sendTo;
     /// <summary>
-    /// The email addresses that should recieve emails, but aren't being addressed specifically
+    /// The email addresses that should recieve emails, but aren't being addressed specifically.  Set via Unity Inspector.
     /// </summary>
     [Header("Email addresses to which email reports should be CC'd to")]
     public string[] ccTo;

@@ -7,7 +7,10 @@ using fNbt;
 /// Massive class that handles individual light heads.  Handles everything from definition storage to processing.
 /// </summary>
 /// <remarks>
-/// LightHead is a Component that exists on every light head on the bar.  While it manages information regarding the physical definition of the head (optic and style) it will also cache information regarding patterns and enables, and handles default optics and styles when adding functions.
+/// LightHead is a Component that exists on every light head on the bar.  While it manages
+/// information regarding the physical definition of the head (optic and style) it will also
+/// cache information regarding patterns and enables, and handles default optics and styles
+/// when adding functions.
 /// </remarks>
 public class LightHead : MonoBehaviour {
     /// <summary>

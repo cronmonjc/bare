@@ -8,18 +8,18 @@ using fNbt;
 /// </summary>
 public class DimSelect : MonoBehaviour {
     /// <summary>
-    /// The minimum percentage the value can be
+    /// The minimum percentage the value can be.  Set via Unity Inspector.
     /// </summary>
     [Range(0, 100)]
     public short minimumPercentage = 15;
     /// <summary>
-    /// The maximum percentage the value can be
+    /// The maximum percentage the value can be.  Set via Unity Inspector.
     /// </summary>
     [Range(0, 100)]
     public short maximumPercentage = 25;
 
     /// <summary>
-    /// The reference to the label Text Component
+    /// The reference to the label Text Component.  Set via Unity Inspector.
     /// </summary>
     public UnityEngine.UI.Text label;
 

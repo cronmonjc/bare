@@ -38,12 +38,12 @@ public class BOMControl : MonoBehaviour {
     private Dictionary<string, BarSegment> descsLens;
 
     /// <summary>
-    /// The "unconfigured" element.
+    /// The "unconfigured" element.  Set via Unity Inspector.
     /// </summary>
     public BOMElement unconfigured;
 
     /// <summary>
-    /// Prefab of an element.
+    /// Prefab of an element.  Set via Unity Inspector.
     /// </summary>
     public GameObject elementPrefab;
 

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// </summary>
 public class OutputOverload : IssueChecker {
     /// <summary>
-    /// The maximum allowable current per output, in whole milliamps
+    /// The maximum allowable current per output, in whole milliamps.  Set via Unity Inspector.
     /// </summary>
     public uint maxAllowablePerOutput = 2500;
 

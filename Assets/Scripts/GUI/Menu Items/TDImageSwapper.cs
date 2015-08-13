@@ -13,7 +13,13 @@ public class TDImageSwapper : MonoBehaviour {
     /// The selected sprite to use.  Set via Unity Inspector.
     /// </summary>
     public Sprite selected;
+    /// <summary>
+    /// This Component's TDOption, used to test if the bar's option matches.  Set via Unity Inspector.
+    /// </summary>
     public TDOption myOpt;
+    /// <summary>
+    /// The reference to the Image UI Component containing the sprite to swap.
+    /// </summary>
     private UnityEngine.UI.Image img;
 
     /// <summary>

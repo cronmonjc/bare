@@ -9,23 +9,23 @@ using fNbt;
 /// </summary>
 public class FuncPattSelect : MonoBehaviour {
     /// <summary>
-    /// The place to put all of the options
+    /// The place to put all of the options.  Set via Unity Inspector.
     /// </summary>
     public RectTransform menu;
     /// <summary>
-    /// The option prefab
+    /// The option prefab.  Set via Unity Inspector.
     /// </summary>
     public GameObject optionPrefab;
     /// <summary>
-    /// The reference to the CameraControl object, to make finding selected heads easier
+    /// The reference to the CameraControl object, to make finding selected heads easier.  Set via Unity Inspector.
     /// </summary>
     public CameraControl cam;
     /// <summary>
-    /// Is this a Traffic Director pattern selection pane?
+    /// Is this a Traffic Director pattern selection pane?  Set via Unity Inspector.
     /// </summary>
     public bool IsTD = false;
     /// <summary>
-    /// Is this pane selecting a pattern for color 2?
+    /// Is this pane selecting a pattern for color 2?  Set via Unity Inspector.
     /// </summary>
     public bool IsColor2 = false;
     /// <summary>

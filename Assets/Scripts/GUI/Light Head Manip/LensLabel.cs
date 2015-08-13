@@ -14,15 +14,15 @@ public class LensLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     /// </summary>
     public Transform target;
     /// <summary>
-    /// The label Text Component, used to display information
+    /// The label Text Component, used to display information.  Set via Unity Inspector.
     /// </summary>
     public Text label;
     /// <summary>
-    /// The background Image Component, used for coloration
+    /// The background Image Component, used for coloration.  Set via Unity Inspector.
     /// </summary>
     public Image background;
     /// <summary>
-    /// The selection Image Component, used to indicate selection
+    /// The selection Image Component, used to indicate selection.  Set via Unity Inspector.
     /// </summary>
     public Image selectionImage;
 

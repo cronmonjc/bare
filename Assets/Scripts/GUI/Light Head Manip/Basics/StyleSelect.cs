@@ -7,19 +7,19 @@ using System.Collections.Generic;
 /// </summary>
 public class StyleSelect : MonoBehaviour {
     /// <summary>
-    /// OpticNode to define what the user is allowed to select from.
+    /// OpticNode to define what the user is allowed to select from.  Set via Unity Inspector.
     /// </summary>
     public OpticNode selectedType;
     /// <summary>
-    /// The Transform that acts as the parent to the options.
+    /// The Transform that acts as the parent to the options.  Set via Unity Inspector.
     /// </summary>
     public RectTransform menu;
     /// <summary>
-    /// The prefab that we instantiate instances from for each option.
+    /// The prefab that we instantiate instances from for each option.  Set via Unity Inspector.
     /// </summary>
     public GameObject optionPrefab;
     /// <summary>
-    /// A reference to the camera so we can set the lights.
+    /// A reference to the camera so we can set the lights.  Set via Unity Inspector.
     /// </summary>
     public CameraControl cam;
 

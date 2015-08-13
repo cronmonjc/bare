@@ -8,7 +8,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// <summary>
-    /// Reference to this item's text component.
+    /// Reference to this item's text component.  Set via Unity Inspector.
     /// </summary>
     public Text text;
     /// <summary>
@@ -44,11 +44,11 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
     /// </summary>
     public Lens lens;
     /// <summary>
-    /// Reference to the Toggle to show this is selected.
+    /// Reference to the Toggle to show this is selected.  Set via Unity Inspector.
     /// </summary>
     public Toggle t;
     /// <summary>
-    /// The color to show when this item isn't recommended.
+    /// The color to show when this item isn't recommended.  Set via Unity Inspector.
     /// </summary>
     public Color nrColor;
 

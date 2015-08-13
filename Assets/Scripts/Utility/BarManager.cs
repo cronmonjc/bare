@@ -15,7 +15,13 @@ using UnityEngine.UI;
 /// The Component that handles management of every piece of information about the bar itself
 /// </summary>
 /// <remarks>
-/// The BarManager Component does exactly as its name implies – it manages the entire bar, from holding a list of every head that’s on it (visible or not), making sure each head gets the right bits, applying auto-phase on demand, holding a list of all of the lenses, tracking size, tracking pattern setup, and tracking accessories.  However, it also manages a few other things, such as bar saving / loading, handling the quit callback (preventing the application from closing when the “close” button is pressed under certain conditions), and handling PDF production.
+/// <para>The BarManager Component does exactly as its name implies – it manages the entire bar,
+/// from holding a list of every head that’s on it (visible or not), making sure each head
+/// gets the right bits, applying auto-phase on demand, holding a list of all of the lenses,
+/// tracking size, tracking pattern setup, and tracking accessories.</para>
+/// <para>However, it also manages a few other things, such as bar saving / loading, handling the
+/// quit callback (preventing the application from closing when the “close” button is pressed
+/// under certain conditions), and handling PDF production.</para>
 /// </remarks>
 public class BarManager : MonoBehaviour {
     /// <summary>
@@ -1952,8 +1958,17 @@ public class BarManager : MonoBehaviour {
 /// Base class for any job that needs to be done on a separate thread
 /// </summary>
 public class ThreadedJob {
+    /// <summary>
+    /// Is the job done?
+    /// </summary>
     private bool m_IsDone = false;
+    /// <summary>
+    /// The handle for the thread.
+    /// </summary>
     private object m_Handle = new object();
+    /// <summary>
+    /// The thread doing the work.
+    /// </summary>
     protected System.Threading.Thread m_Thread = null;
     public bool IsDone {
         get {
@@ -1977,14 +1992,27 @@ public class ThreadedJob {
         m_Thread = new System.Threading.Thread(Run);
         m_Thread.Start();
     }
+    /// <summary>
+    /// Aborts this job.
+    /// </summary>
     public virtual void Abort() {
         m_Thread.Abort();
     }
 
+    /// <summary>
+    /// Thread's function
+    /// </summary>
     protected virtual void ThreadFunction() { }
 
+    /// <summary>
+    /// Finalization of the job - performed on Unity thread
+    /// </summary>
     protected virtual void OnFinished() { }
 
+    /// <summary>
+    /// Unity check-in method - performed on Unity thread
+    /// </summary>
+    /// <returns>True if the method's done</returns>
     public virtual bool Update() {
         if(IsDone) {
             OnFinished();
@@ -1992,6 +2020,9 @@ public class ThreadedJob {
         }
         return false;
     }
+    /// <summary>
+    /// Generic "do things" function.
+    /// </summary>
     private void Run() {
         ThreadFunction();
         IsDone = true;
@@ -3318,7 +3349,7 @@ public class PDFExportJob : ThreadedJob {
     }
 
     /// <summary>
-    /// A small class that compares the wires for the enables
+    /// A small class that compares the wires for the enables.  Utilized when sorting the wire lists.
     /// </summary>
     private class PartComparer : IComparer<string> {
 

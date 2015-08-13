@@ -6,7 +6,7 @@ using System.Collections;
 /// </summary>
 public class InputEdit : MonoBehaviour {
     /// <summary>
-    /// Whether or not this is the second Pencil for the FnDragTarget.  Useful when the parent FnDragTarget has the Flashing Alley and Flashing Pursuit functions on it.
+    /// Whether or not this is the second Pencil for the FnDragTarget.  Useful when the parent FnDragTarget has the Flashing Alley and Flashing Pursuit functions on it.  Set via Unity Inspector.
     /// </summary>
     public bool IsSecond = false;
     /// <summary>

@@ -22,32 +22,28 @@ public class BOMCables : MonoBehaviour {
         /// </summary>
         public GameObject Gameobject;
         /// <summary>
-        /// The qty
+        /// The reference to the Text Component showing the quantity.  Set via Unity Inspector.
         /// </summary>
         public Text qty;
         /// <summary>
-        /// The descrip
+        /// The reference to the Text Component showing the description.  Set via Unity Inspector.
         /// </summary>
         public Text descrip;
         /// <summary>
-        /// The price
+        /// The reference to the Text Component showing the sale price.  Set via Unity Inspector.
         /// </summary>
         public Text price;
 
         /// <summary>
-        /// Sets the active.
+        /// Sets whether the CableObject is active or not.
         /// </summary>
-        /// <param name="to">if set to <c>true</c> [to].</param>
         public void SetActive(bool to) {
             Gameobject.SetActive(to);
         }
 
         /// <summary>
-        /// Sets the quantity.
+        /// Sets the quantity text.
         /// </summary>
-        /// <value>
-        /// The quantity.
-        /// </value>
         public byte quantity {
             set {
                 qty.text = value + "x";
@@ -55,22 +51,16 @@ public class BOMCables : MonoBehaviour {
         }
 
         /// <summary>
-        /// Gets or sets the text.
+        /// Gets or sets the description text.
         /// </summary>
-        /// <value>
-        /// The text.
-        /// </value>
         public string text {
             get { return descrip.text; }
             set { descrip.text = value; }
         }
 
         /// <summary>
-        /// Sets the cost.
+        /// Sets the displayed sale price.
         /// </summary>
-        /// <value>
-        /// The cost.
-        /// </value>
         public uint cost {
             set {
                 price.gameObject.SetActive(CameraControl.ShowPricing);

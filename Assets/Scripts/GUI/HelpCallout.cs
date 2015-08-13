@@ -11,7 +11,7 @@ public class HelpCallout : MonoBehaviour {
     /// </summary>
     private LineRenderer lr;
     /// <summary>
-    /// The target to point at
+    /// The target to point at.  Set via Unity Inspector.
     /// </summary>
     public Transform target;
 

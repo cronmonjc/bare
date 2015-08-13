@@ -28,7 +28,7 @@ public class FuncEnable : MonoBehaviour {
     /// </summary>
     private Button button;
     /// <summary>
-    /// Is this Component managing color 2?
+    /// Is this Component managing color 2?  Set via Unity Inspector.
     /// </summary>
     public bool IsColor2 = false;
 

@@ -10,7 +10,7 @@ public class DeselectHint : MonoBehaviour {
     /// </summary>
     public static CameraControl cam;
     /// <summary>
-    /// The list of GameObjects to show when objects are selected, or to hide when no objects are selected
+    /// The list of GameObjects to show when objects are selected, or to hide when no objects are selected.  Set via Unity Inspector.
     /// </summary>
     public GameObject[] showForDeselect;
 

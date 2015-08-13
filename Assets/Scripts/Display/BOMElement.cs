@@ -30,8 +30,23 @@ public class BOMElement : MonoBehaviour {
     /// If this is a <see cref="BOMControl.BOMType.FlasherBundles"/> element, the part number of the flasher bundle it's showing.
     /// </summary>
     public BarSegment lensToDescribe;
-    
-    public Text qty, desc, amp, cost;
+
+    /// <summary>
+    /// The reference to the Text Component displaying the quantity.  Set via Unity Inspector.
+    /// </summary>
+    public Text qty;
+    /// <summary>
+    /// The reference to the Text Component displaying the description.  Set via Unity Inspector.
+    /// </summary>
+    public Text desc;
+    /// <summary>
+    /// The reference to the Text Component displaying the current draw.  Set via Unity Inspector.
+    /// </summary>
+    public Text amp;
+    /// <summary>
+    /// The reference to the Text Component displaying the sale price.  Set via Unity Inspector.
+    /// </summary>
+    public Text cost;
     
     /// <summary>
     /// LateUpdate is called once each frame, after all Updates.

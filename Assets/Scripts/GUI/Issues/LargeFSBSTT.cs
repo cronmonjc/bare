@@ -6,7 +6,7 @@ using System.Collections;
 /// </summary>
 public class LargeFSBSTT : IssueChecker {
     /// <summary>
-    /// Is this instance checking for Steady Burn?  If not, it's checking for Stop Tail Turn
+    /// Is this instance checking for Steady Burn?  If not, it's checking for Stop Tail Turn.  Set via Unity Inspector.
     /// </summary>
     public bool IsSteadyBurn;
 

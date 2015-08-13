@@ -9,16 +9,16 @@ using System;
 /// </summary>
 public class DirectoryTree : MonoBehaviour {
     /// <summary>
-    /// The drive root where drives get rendered
+    /// The drive root where drives get rendered.  Set via Unity Inspector.
     /// </summary>
     public RectTransform driveRoot;
     /// <summary>
-    /// The element prefab used to generate each listing
+    /// The element prefab used to generate each listing.  Set via Unity Inspector.
     /// </summary>
     public GameObject ElementPrefab;
 
     /// <summary>
-    /// The directory input field
+    /// The directory input field.  Set via Unity Inspector.
     /// </summary>
     public InputField DirInput;
 

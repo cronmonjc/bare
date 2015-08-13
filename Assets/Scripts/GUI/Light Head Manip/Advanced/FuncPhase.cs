@@ -20,11 +20,11 @@ public class FuncPhase : MonoBehaviour {
     /// </summary>
     private Button button;
     /// <summary>
-    /// Is this Component managing color 2?
+    /// Is this Component managing color 2?  Set via Unity Inspector.
     /// </summary>
     public bool IsColor2 = false;
     /// <summary>
-    /// Is the phase currently B for the selected heads?
+    /// Is the phase currently B for the selected heads?  Set via Unity Inspector.
     /// </summary>
     public bool CurrentlyB = false;
 
