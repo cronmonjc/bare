@@ -64,11 +64,6 @@ public class LightHead : MonoBehaviour {
     }
 
     /// <summary>
-    /// A static array of flashing functions
-    /// </summary>
-    private static AdvFunction[] flashing = new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL };
-
-    /// <summary>
     /// Is Color 1 on this head using Phase A?
     /// </summary>
     public bool basicPhaseA {
@@ -77,7 +72,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 rtn &= !GetPhaseB(f, false);
             }
             return rtn;
@@ -86,7 +81,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
@@ -108,7 +103,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 rtn &= !GetPhaseB(f, true);
             }
             return rtn;
@@ -117,7 +112,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
@@ -140,7 +135,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 rtn &= GetPhaseB(f, false);
             }
             return rtn;
@@ -149,7 +144,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
@@ -171,7 +166,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 rtn &= GetPhaseB(f, true);
             }
             return rtn;
@@ -180,7 +175,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in flashing) {
+            foreach(AdvFunction f in LightDict.flashingFuncs) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))

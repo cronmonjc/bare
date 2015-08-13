@@ -93,17 +93,9 @@ public class FunctionEditPane : MonoBehaviour {
 
         paneParent.SetActive(false);
         #region Figure out which pane to show
-        switch(currFunc) {
-            case AdvFunction.PRIO1:
-            case AdvFunction.PRIO2:
-            case AdvFunction.PRIO3:
-            case AdvFunction.PRIO4:
-            case AdvFunction.PRIO5:
-            case AdvFunction.FTAKEDOWN:
-            case AdvFunction.FALLEY:
-            case AdvFunction.ICL:
-                state = ShowState.FLASHING;
-                break;
+        if(LightDict.flashingFuncs.Contains(currFunc)) {
+            state = ShowState.FLASHING;
+        } else switch(currFunc) {
             case AdvFunction.TRAFFIC_LEFT:
             case AdvFunction.TRAFFIC_RIGHT:
                 state = ShowState.TRAFFIC;
@@ -118,18 +110,10 @@ public class FunctionEditPane : MonoBehaviour {
         #endregion
 
         #region Figure out what the type of function is
-        switch(currFunc) {
-            case AdvFunction.PRIO1:
-            case AdvFunction.PRIO2:
-            case AdvFunction.PRIO3:
-            case AdvFunction.PRIO4:
-            case AdvFunction.PRIO5:
-            case AdvFunction.FTAKEDOWN:
-            case AdvFunction.FALLEY:
-            case AdvFunction.ICL:
-                funcType.text = "Flashing";
-                testFlashing.SetActive(true);
-                break;
+        if(LightDict.flashingFuncs.Contains(currFunc)) {
+            funcType.text = "Flashing";
+            testFlashing.SetActive(true);
+        } else switch(currFunc) {
             case AdvFunction.TAKEDOWN:
             case AdvFunction.ALLEY_LEFT:
             case AdvFunction.ALLEY_RIGHT:

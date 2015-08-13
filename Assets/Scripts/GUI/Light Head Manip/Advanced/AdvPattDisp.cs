@@ -67,7 +67,7 @@ public class AdvPattDisp : MonoBehaviour {
                         funcs.Add(AdvFunction.EMITTER);
                         break;
                     case BasicFunction.FLASHING:
-                        foreach(AdvFunction charlie in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+                        foreach(AdvFunction charlie in LightDict.flashingFuncs) {
                             funcs.Add(charlie);
                         }
                         break;

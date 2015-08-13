@@ -116,19 +116,8 @@ public class FuncPhase : MonoBehaviour {
             bool trigger = false;
 
             #region Test if function is Flashing
-            switch(FunctionEditPane.currFunc) {
-                case AdvFunction.PRIO1:
-                case AdvFunction.PRIO2:
-                case AdvFunction.PRIO3:
-                case AdvFunction.PRIO4:
-                case AdvFunction.PRIO5:
-                case AdvFunction.FTAKEDOWN:
-                case AdvFunction.FALLEY:
-                case AdvFunction.ICL:
-                    trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
-                    break;
-                default:
-                    break;
+            if(LightDict.flashingFuncs.Contains(FunctionEditPane.currFunc)) {
+                trigger |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING);
             } 
             #endregion
 

@@ -101,20 +101,12 @@ public class FuncPattSelect : MonoBehaviour {
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(!alpha.gameObject.activeInHierarchy || !alpha.Selected) continue;
 
-            switch(FunctionEditPane.currFunc) {
+            if(LightDict.flashingFuncs.Contains(FunctionEditPane.currFunc))
+                showPatts |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+            else switch(FunctionEditPane.currFunc) {
                 case AdvFunction.TRAFFIC_LEFT:
                 case AdvFunction.TRAFFIC_RIGHT:
                     showPatts |= alpha.lhd.funcs.Contains(BasicFunction.TRAFFIC) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
-                    break;
-                case AdvFunction.PRIO1:
-                case AdvFunction.PRIO2:
-                case AdvFunction.PRIO3:
-                case AdvFunction.PRIO4:
-                case AdvFunction.PRIO5:
-                case AdvFunction.FTAKEDOWN:
-                case AdvFunction.FALLEY:
-                case AdvFunction.ICL:
-                    showPatts |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
                     break;
                 default:
                     break;

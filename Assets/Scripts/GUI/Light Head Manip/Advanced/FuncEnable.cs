@@ -60,18 +60,9 @@ public class FuncEnable : MonoBehaviour {
 
             #region Figure out if the head can be enabled
             bool thisSelectable = false;
-
-            switch(FunctionEditPane.currFunc) {
-                case AdvFunction.PRIO1:
-                case AdvFunction.PRIO2:
-                case AdvFunction.PRIO3:
-                case AdvFunction.PRIO4:
-                case AdvFunction.PRIO5:
-                case AdvFunction.FTAKEDOWN:
-                case AdvFunction.FALLEY:
-                case AdvFunction.ICL:
-                    thisSelectable |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
-                    break;
+            if(LightDict.flashingFuncs.Contains(FunctionEditPane.currFunc))
+                thisSelectable |= alpha.lhd.funcs.Contains(BasicFunction.FLASHING) && (!IsColor2 || (alpha.lhd.optic != null && alpha.lhd.optic.dual));
+            else switch(FunctionEditPane.currFunc) {
                 case AdvFunction.TAKEDOWN:
                 case AdvFunction.ALLEY_LEFT:
                 case AdvFunction.ALLEY_RIGHT:

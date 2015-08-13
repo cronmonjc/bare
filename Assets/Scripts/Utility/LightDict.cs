@@ -29,6 +29,10 @@ public class LightDict : MonoBehaviour {
     /// </summary>
     public List<AdvFunction> steadyBurn;
     /// <summary>
+    /// A static array of the functions that can flash.
+    /// </summary>
+    public static List<AdvFunction> flashingFuncs = new List<AdvFunction>(new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL });
+    /// <summary>
     /// A List of Patterns for flashing heads.
     /// </summary>
     public List<Pattern> flashPatts;
