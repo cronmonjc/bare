@@ -138,7 +138,7 @@ namespace LightbarProg {
                 foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw" })
                     patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("pf1", 0), new NbtShort("pf2", 0), new NbtShort("pr1", 0), new NbtShort("pr2", 0) });
 
-                patts.Get<NbtCompound>("traf").Add(new NbtShort("patt", 0));
+                patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] {new NbtShort("patt", 0), new NbtShort("ctd", 0), new NbtShort("cwn", 0)});
 
                 foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl" }) {
                     patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat1", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
