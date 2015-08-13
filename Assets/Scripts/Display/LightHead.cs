@@ -359,6 +359,10 @@ public class LightHead : MonoBehaviour {
     /// This head's bit.  A bit of 255 means it has none assigned.
     /// </summary>
     public byte myBit = 255;
+    /// <summary>
+    /// This head's bit, which will stay for the entire frame at most (in theory).  A bit of 255 means it has none assigned.
+    /// </summary>
+    public byte cacheBit = 255;
 
     /// <summary>
     /// Should this head be a Traffic Director head?
@@ -371,7 +375,7 @@ public class LightHead : MonoBehaviour {
     /// </summary>
     public byte Bit {
         get {
-            return myBit;
+            return cacheBit;
         }
     }
 
@@ -439,6 +443,13 @@ public class LightHead : MonoBehaviour {
         if(isRear) { // Dummy if to get the head to recognize it's rearness.
 
         }
+    }
+
+    /// <summary>
+    /// EarlyUpdate is called once each frame, before all Updates.
+    /// </summary>
+    void EarlyUpdate() {
+        cacheBit = myBit;
     }
 
     /// <summary>
@@ -582,7 +593,7 @@ public class LightHead : MonoBehaviour {
     /// <param name="func">The function that should be applied.</param>
     public IEnumerator RefreshBitsThenEnableBytes(BasicFunction func) {
         // Get the Bits refreshed
-        yield return StartCoroutine(BarManager.inst.RefreshBitsIEnum());
+        yield return BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
 
         // Enable the bytes
         switch(func) { // Automatically enable heads for certain functions
@@ -662,36 +673,38 @@ public class LightHead : MonoBehaviour {
     /// </summary>
     /// <param name="func">The function that should be removed.</param>
     public IEnumerator RefreshBitsThenDisableBytes(BasicFunction func) {
+        byte theBit = Bit;
+
         // Get the Bits refreshed
-        yield return StartCoroutine(BarManager.inst.RefreshBitsIEnum());
+        yield return BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
 
         // Enable the bytes
         switch(func) { // Automatically enable heads for certain functions
             case BasicFunction.STT:
-                NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
-                taiCmpd.Get<NbtShort>("er1").DisableBit(Bit);
-                taiCmpd.Get<NbtShort>("er2").DisableBit(Bit);
+                NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((theBit < 5 ? "l" : "r") + "tai");
+                taiCmpd.Get<NbtShort>("er1").DisableBit(theBit);
+                taiCmpd.Get<NbtShort>("er2").DisableBit(theBit);
                 break;
             case BasicFunction.CRUISE:
                 NbtCompound cruCmpd = BarManager.inst.patts.Get<NbtCompound>("cru");
-                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
-                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(theBit);
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(theBit);
                 break;
             case BasicFunction.EMITTER:
                 NbtCompound emiCmpd = BarManager.inst.patts.Get<NbtCompound>("emi");
-                emiCmpd.Get<NbtShort>("ef1").DisableBit(Bit);
-                emiCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+                emiCmpd.Get<NbtShort>("ef1").DisableBit(theBit);
+                emiCmpd.Get<NbtShort>("ef2").DisableBit(theBit);
                 break;
             case BasicFunction.CAL_STEADY:
                 NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
-                calCmpd.Get<NbtShort>("ef1").DisableBit(Bit);
-                calCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+                calCmpd.Get<NbtShort>("ef1").DisableBit(theBit);
+                calCmpd.Get<NbtShort>("ef2").DisableBit(theBit);
                 break;
             case BasicFunction.STEADY:
                 NbtCompound cmpd = null;
                 switch(loc) {
                     case Location.ALLEY: // Alley
-                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit == 12 ? "l" : "r") + "all");
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>((theBit == 12 ? "l" : "r") + "all");
                         break;
                     case Location.FRONT: // Takedown / Work Light
                     case Location.FRONT_CORNER:
@@ -704,8 +717,8 @@ public class LightHead : MonoBehaviour {
                         break;
                 }
                 if(cmpd != null) {
-                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
-                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(theBit);
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(theBit);
                 }
                 break;
             default:
