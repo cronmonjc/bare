@@ -566,11 +566,12 @@ public class LightHead : MonoBehaviour {
         if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {  // If it's capable of adding the function and it doesn't have it yet...
             lhd.funcs.Add(func); // Add the function
             TestSingleDual(); // Check for ability to take single/dual heads
+            
+            // Refresh bits before modifying programming bytes
+            StartCoroutine(RefreshBitsThenEnableBytes(func));
+
             if(doDefault) RefreshBasicFuncDefault(); // Apply defaults if desired
         }
-
-        // Refresh bits before modifying programming bytes
-        StartCoroutine(RefreshBitsThenEnableBytes(func));
 
         BarManager.moddedBar = true;
     }
@@ -609,7 +610,7 @@ public class LightHead : MonoBehaviour {
                 NbtCompound cmpd = null;
                 switch(loc) {
                     case Location.ALLEY: // Alley
-                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "all");
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit == 12 ? "l" : "r") + "all");
                         break;
                     case Location.FRONT: // Takedown / Work Light
                     case Location.FRONT_CORNER:
@@ -650,7 +651,8 @@ public class LightHead : MonoBehaviour {
             RefreshBasicFuncDefault();
         }
 
-        StartCoroutine(RefreshBitsThenDisableBytes(func));
+        if(gameObject.activeInHierarchy)
+            StartCoroutine(RefreshBitsThenDisableBytes(func));
 
         BarManager.moddedBar = true;
     }
@@ -689,7 +691,7 @@ public class LightHead : MonoBehaviour {
                 NbtCompound cmpd = null;
                 switch(loc) {
                     case Location.ALLEY: // Alley
-                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "all");
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit == 12 ? "l" : "r") + "all");
                         break;
                     case Location.FRONT: // Takedown / Work Light
                     case Location.FRONT_CORNER:

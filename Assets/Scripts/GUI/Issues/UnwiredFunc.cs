@@ -53,6 +53,13 @@ public class UnwiredFunc : IssueChecker {
         // Init this run
         thisRun = 0;
 
+        #region Clear current missing function list
+        if(missingFuncList == null) missingFuncList = new List<string>();
+        else {
+            missingFuncList.Clear();
+        } 
+        #endregion
+
         #region Search for missing functions
         for(byte h = 0; h < BarManager.inst.allHeads.Count; h++) {
             LightHead alpha = BarManager.inst.allHeads[h];
@@ -99,13 +106,6 @@ public class UnwiredFunc : IssueChecker {
         #region Test if we already had this list generated
         if(thisRun == missingFuncInt) {
             return missingFuncInt != 0;
-        } 
-        #endregion
-
-        #region Clear current missing function list
-        if(missingFuncList == null) missingFuncList = new List<string>();
-        else {
-            missingFuncList.Clear();
         } 
         #endregion
 

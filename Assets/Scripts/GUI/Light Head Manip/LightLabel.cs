@@ -321,7 +321,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                 t = t + pat.name + ((pat is FlashPatt || pat is SingleFlashRefPattern || pat is DoubleFlashRefPattern) ? (thisPhase ? " B" : " A") : ""); // Show Phase if function can be phased
                             }
                         } else if(func.Contains("patt")) { // Traffic function
-                            Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, false);
+                            Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, false);
                             if(pat == null)
                                 t = t + "No Patt";
                             else {
@@ -349,7 +349,7 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                 else
                                     t = t + " / " + pat.name + ((pat is FlashPatt || pat is SingleFlashRefPattern || pat is DoubleFlashRefPattern) ? (thisPhase ? " B" : " A") : ""); // Show Phase if function can be phased
                             } else if(func.Contains("patt")) { // Traffic function
-                                Pattern pat = lh.GetPattern(AdvFunction.TRAFFIC_LEFT, true);
+                                Pattern pat = lh.GetPattern(FunctionEditPane.currFunc, true);
                                 if(pat == null) {
                                     t = t + " / No Patt";
                                 } else {

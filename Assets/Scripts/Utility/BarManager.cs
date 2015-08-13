@@ -1036,6 +1036,7 @@ public class BarManager : MonoBehaviour {
                 if(!farHead.isSmall) {
                     farHead.myBit = 2; // Make farthest head 2 if large
                 }
+                test.Remove(far); // Remove from list, stop processing it
             }
             #endregion
 
@@ -1142,6 +1143,7 @@ public class BarManager : MonoBehaviour {
                 if(!farHead.isSmall) {
                     farHead.myBit = 9; // Make farthest head 9 if large
                 }
+                test.Remove(far); // Remove from list, stop processing it
             }
             #endregion
 
