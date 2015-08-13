@@ -61,6 +61,11 @@ public class LightHead : MonoBehaviour {
     }
 
     /// <summary>
+    /// A static array of flashing functions
+    /// </summary>
+    private static AdvFunction[] flashing = new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL };
+
+    /// <summary>
     /// Is Color 1 on this head using Phase A?
     /// </summary>
     public bool basicPhaseA {
@@ -69,7 +74,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 rtn &= !GetPhaseB(f, false);
             }
             return rtn;
@@ -78,7 +83,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
@@ -100,7 +105,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 rtn &= !GetPhaseB(f, true);
             }
             return rtn;
@@ -109,7 +114,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
@@ -132,7 +137,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 rtn &= GetPhaseB(f, false);
             }
             return rtn;
@@ -141,7 +146,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "1"))
@@ -163,7 +168,7 @@ public class LightHead : MonoBehaviour {
                 return false;
             }
             bool rtn = true;
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 rtn &= GetPhaseB(f, true);
             }
             return rtn;
@@ -172,7 +177,7 @@ public class LightHead : MonoBehaviour {
             if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
                 return;
             }
-            foreach(AdvFunction f in new AdvFunction[] { AdvFunction.PRIO1, AdvFunction.PRIO2, AdvFunction.PRIO3, AdvFunction.PRIO4, AdvFunction.PRIO5, AdvFunction.FTAKEDOWN, AdvFunction.FALLEY, AdvFunction.ICL }) {
+            foreach(AdvFunction f in flashing) {
                 NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
 
                 if(!patt.Contains("p" + (isRear ? "r" : "f") + "2"))
@@ -462,26 +467,6 @@ public class LightHead : MonoBehaviour {
         m_knowsSelectedThisFrame = false;
     }
 
-    //public bool IsUsingFunction(AdvFunction f) {
-    //    if(!CapableAdvFunctions.Contains(f) || !hasRealHead) return false;
-    //    NbtCompound patts = FindObjectOfType<BarManager>().patts;
-
-    //    string cmpdName = BarManager.GetFnString(transform, f);
-    //    if(cmpdName == null) {
-    //        Debug.LogWarning("lolnope - " + f.ToString() + " has no similar setting in the data bytes.  Ask James.");
-    //        return false;
-    //    }
-    //    NbtCompound func = patts.Get<NbtCompound>(cmpdName);
-
-    //    short en = func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "1").ShortValue;
-
-    //    if(lhd.style.isDualColor) {
-    //        en = (short)(en | func.Get<NbtShort>("e" + (transform.position.z > 0 ? "f" : "r") + "2").ShortValue);
-    //    }
-
-    //    return ((en & (0x1 << Bit)) > 0);
-    //}
-
     /// <summary>
     /// Gets the head to fetch ALL of the Patterns assigned to it
     /// </summary>
@@ -585,6 +570,22 @@ public class LightHead : MonoBehaviour {
             TestSingleDual(); // Check for ability to take single/dual heads
             if(doDefault) RefreshBasicFuncDefault(); // Apply defaults if desired
         }
+
+        // Refresh bits before modifying programming bytes
+        StartCoroutine(RefreshBitsThenEnableBytes(func));
+
+        BarManager.moddedBar = true;
+    }
+
+    /// <summary>
+    /// Coroutine.  Refresh LightHead bits then enable pattern bytes.
+    /// </summary>
+    /// <param name="func">The function that should be applied.</param>
+    public IEnumerator RefreshBitsThenEnableBytes(BasicFunction func) {
+        // Get the Bits refreshed
+        yield return StartCoroutine(BarManager.inst.RefreshBitsIEnum());
+
+        // Enable the bytes
         switch(func) { // Automatically enable heads for certain functions
             case BasicFunction.STT:
                 NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
@@ -630,7 +631,8 @@ public class LightHead : MonoBehaviour {
             default:
                 break;
         }
-        BarManager.moddedBar = true;
+
+        yield return null;
     }
 
     /// <summary>
@@ -645,12 +647,72 @@ public class LightHead : MonoBehaviour {
                 foreach(LightHead alpha in BarManager.inst.allHeads) {
                     alpha.shouldBeTD = false;
                 }
-                BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
             }
             TestSingleDual();
             RefreshBasicFuncDefault();
         }
+
+        StartCoroutine(RefreshBitsThenDisableBytes(func));
+
         BarManager.moddedBar = true;
+    }
+
+    /// <summary>
+    /// Coroutine.  Refresh LightHead bits then disable pattern bytes.
+    /// </summary>
+    /// <param name="func">The function that should be removed.</param>
+    public IEnumerator RefreshBitsThenDisableBytes(BasicFunction func) {
+        // Get the Bits refreshed
+        yield return StartCoroutine(BarManager.inst.RefreshBitsIEnum());
+
+        // Enable the bytes
+        switch(func) { // Automatically enable heads for certain functions
+            case BasicFunction.STT:
+                NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
+                taiCmpd.Get<NbtShort>("er1").DisableBit(Bit);
+                taiCmpd.Get<NbtShort>("er2").DisableBit(Bit);
+                break;
+            case BasicFunction.CRUISE:
+                NbtCompound cruCmpd = BarManager.inst.patts.Get<NbtCompound>("cru");
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
+                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                break;
+            case BasicFunction.EMITTER:
+                NbtCompound emiCmpd = BarManager.inst.patts.Get<NbtCompound>("emi");
+                emiCmpd.Get<NbtShort>("ef1").DisableBit(Bit);
+                emiCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+                break;
+            case BasicFunction.CAL_STEADY:
+                NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
+                calCmpd.Get<NbtShort>("ef1").DisableBit(Bit);
+                calCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
+                break;
+            case BasicFunction.STEADY:
+                NbtCompound cmpd = null;
+                switch(loc) {
+                    case Location.ALLEY: // Alley
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "all");
+                        break;
+                    case Location.FRONT: // Takedown / Work Light
+                    case Location.FRONT_CORNER:
+                    case Location.REAR:
+                    case Location.REAR_CORNER:
+                    case Location.FAR_REAR:
+                        cmpd = BarManager.inst.patts.Get<NbtCompound>("td");
+                        break;
+                    default:
+                        break;
+                }
+                if(cmpd != null) {
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                }
+                break;
+            default:
+                break;
+        }
+
+        yield return null;
     }
 
     /// <summary>
