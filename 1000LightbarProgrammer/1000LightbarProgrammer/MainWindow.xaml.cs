@@ -537,11 +537,20 @@ namespace LightbarProg {
             }
         }
 
+        /// <summary>
+        /// Handles the Closing event of the Window control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
             Device dev = TryGetDevice();
             if(dev != null) dev.Dispose();
         }
 
+        /// <summary>
+        /// Attempts to get a handle for an MCP2210.
+        /// </summary>
+        /// <returns>A wrapper for the MCP2210, if one is connected.</returns>
         private Device TryGetDevice() {
             if(d != null) {
                 if(d.Connected)
@@ -576,31 +585,56 @@ namespace LightbarProg {
         }
     }
 
+    /// <summary>
+    /// Class that handles writing to the Phaser bar.
+    /// </summary>
     public class BarWriter : IDisposable {
+        /// <summary>
+        /// The output stream
+        /// </summary>
         protected Stream outStream;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BarWriter"/> class.
+        /// </summary>
+        /// <param name="output">The output stream to use.</param>
         public BarWriter(Stream output) {
             outStream = output;
         }
 
+        /// <summary>
+        /// Writes the specified bytes to the stream.
+        /// </summary>
         public void Write(byte[] bytes) {
             outStream.Write(bytes, 0, bytes.Length);
         }
 
+        /// <summary>
+        /// Writes the specified byte to the stream.
+        /// </summary>
         public void Write(byte b) {
             outStream.WriteByte(b);
         }
 
+        /// <summary>
+        /// Writes the specified unsigned short to the stream.
+        /// </summary>
         public void Write(ushort s) {
             outStream.WriteByte((byte)((s >> 8) & 0xFF));
             outStream.WriteByte((byte)(s & 0xFF));
         }
 
+        /// <summary>
+        /// Writes the specified short to the stream.
+        /// </summary>
         public void Write(short s) {
             outStream.WriteByte((byte)((s >> 8) & 0xFF));
             outStream.WriteByte((byte)(s & 0xFF));
         }
 
+        /// <summary>
+        /// Writes the specified integer to the stream.
+        /// </summary>
         public void Write(int i) {
             outStream.WriteByte((byte)((i >> 24) & 0xFF));
             outStream.WriteByte((byte)((i >> 16) & 0xFF));
@@ -608,18 +642,35 @@ namespace LightbarProg {
             outStream.WriteByte((byte)(i & 0xFF));
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose() {
             outStream.Dispose();
         }
     }
 
+    /// <summary>
+    /// Class that handles reading from to the Phaser bar.
+    /// </summary>
     public class BarReader : IDisposable {
+        /// <summary>
+        /// The input stream
+        /// </summary>
         protected Stream inStream;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BarReader"/> class.
+        /// </summary>
+        /// <param name="output">The input stream to use.</param>
         public BarReader(Stream input) {
             inStream = input;
         }
 
+        /// <summary>
+        /// Reads an integer off the stream.
+        /// </summary>
+        /// <returns>The integer that was read.</returns>
         public int ReadInt() {
             int rtn = 0;
             rtn |= (byte)(ReadByte() << 24);
@@ -629,6 +680,10 @@ namespace LightbarProg {
             return rtn;
         }
 
+        /// <summary>
+        /// Reads a short off the stream.
+        /// </summary>
+        /// <returns>The short that was read.</returns>
         public short ReadShort() {
             short rtn = 0;
             rtn |= (short)(ReadByte() << 8);
@@ -636,12 +691,19 @@ namespace LightbarProg {
             return rtn;
         }
 
+        /// <summary>
+        /// Reads a byte off the stream.
+        /// </summary>
+        /// <returns>The byte that was read.</returns>
         public byte ReadByte() {
             int val = inStream.ReadByte();
             if(val == -1) throw new EndOfStreamException();
             return (byte)val;
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose() {
             inStream.Dispose();
         }
