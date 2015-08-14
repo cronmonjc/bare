@@ -731,7 +731,12 @@ public class LightHead : MonoBehaviour {
     public void TestSingleDual() {
         // If we have more than one Basic Function, and one of them is Emitter or Block Off, remove all but the last (aka most recent) one and start over.
         if(lhd.funcs.Count > 1 && (lhd.funcs.Contains(BasicFunction.EMITTER) || lhd.funcs.Contains(BasicFunction.BLOCK_OFF))) {
-            lhd.funcs.RemoveRange(0, lhd.funcs.Count - 1);
+            List<BasicFunction> funcsToRemove = new List<BasicFunction>(lhd.funcs);
+            funcsToRemove.RemoveAt(funcsToRemove.Count - 1);
+            for(byte i = 0; i < funcsToRemove.Count; i++) {
+                RemoveBasicFunction(funcsToRemove[i]); // Process removal of basic function
+            }
+
             TestSingleDual();
             return;
         }
