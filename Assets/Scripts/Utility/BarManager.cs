@@ -852,15 +852,16 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/DE/FI
                             case "FI":
                                 if(alpha.isSmall) {
-                                    if(path[5] == "R") // /Bar/DE/FI/DS/R always 4
-                                        alpha.myBit = 4;
-                                    else {
-                                        if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style) {
+                                    if(path[5] == "R") // /Bar/DE/FI/DS/R
+                                        if(BarSize == 0)
+                                            alpha.myBit = 5; // Head bit 5 if size 0 to avoid unnecessary splitter
+                                        else 
+                                            alpha.myBit = 4; // Head bit 4 on other sizes
+                                    else
+                                        if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style)
                                             alpha.myBit = 4; // /Bar/DE/FI/DS/L 4 if it matches right style
-                                        } else {
+                                        else
                                             alpha.myBit = 1; // /Bar/DE/FI/DS/L 1 if it doesn't match
-                                        }
-                                    }
                                 } else {
                                     alpha.myBit = 4; // /Bar/DE/FI/L always 4
                                 }
@@ -992,15 +993,16 @@ public class BarManager : MonoBehaviour {
                             #region /Bar/PE/FI
                             case "FI":
                                 if(alpha.isSmall) {
-                                    if(path[5] == "L") // /Bar/PE/FI/DS/L always 7
-                                        alpha.myBit = 7;
-                                    else {
-                                        if(alpha.lhd.style == headDict["/Bar/PE/FI/DS/L"].lhd.style) {
+                                    if(path[5] == "L") // /Bar/PE/FI/DS/L
+                                        if(BarSize == 0)
+                                            alpha.myBit = 6; // Head bit 6 if size 0 to avoid unnecessary splitter
+                                        else
+                                            alpha.myBit = 7; // Head bit 7 on other sizes
+                                    else
+                                        if(alpha.lhd.style == headDict["/Bar/PE/FI/DS/L"].lhd.style)
                                             alpha.myBit = 7; // /Bar/PE/FI/DS/R 7 if it matches left style
-                                        } else {
+                                        else
                                             alpha.myBit = 10; // /Bar/PE/FI/DS/R 10 if it doesn't match
-                                        }
-                                    }
                                 } else {
                                     alpha.myBit = 7; // /Bar/PE/FI/L always 7
                                 }
