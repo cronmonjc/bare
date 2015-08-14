@@ -42,8 +42,8 @@ namespace LightbarProg {
                     byte[] rxBuff = dev.SpiTransfer(txBuff);
                     
                     input.Content = string.Format("MSB {0} {1} {2} {3} LSB",
-                                                  Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'),
-                                                  Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'));
+                                                  Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
+                                                  Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));
                     
                 } else {
                     connLbl.Content = "Disconnected";
