@@ -703,9 +703,6 @@ public class LightHead : MonoBehaviour {
             case BasicFunction.STEADY:
                 NbtCompound cmpd = null;
                 switch(loc) {
-                    case Location.ALLEY: // Alley
-                        cmpd = BarManager.inst.patts.Get<NbtCompound>((theBit == 12 ? "l" : "r") + "all");
-                        break;
                     case Location.FRONT: // Takedown / Work Light
                     case Location.FRONT_CORNER:
                     case Location.REAR:

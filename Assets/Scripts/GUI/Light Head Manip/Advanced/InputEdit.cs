@@ -26,9 +26,11 @@ public class InputEdit : MonoBehaviour {
         #region Have LightLabels refresh, showing pattern
         LightLabel.showPatt = true;
 
-        foreach(LightLabel ll in FindObjectsOfType<LightLabel>()) {
-            ll.Refresh();
-        } 
+        foreach(LightHead alpha in BarManager.inst.allHeads) {
+            if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead)
+                if(LightLabel.showPatt) alpha.PrefetchPatterns(FunctionEditPane.currFunc); // Get the heads to fetch the patterns it's using for the function
+            alpha.myLabel.Refresh(); // Also refresh their labels
+        }
         #endregion
 
         if(FuncEnable.clr1 != null) FuncEnable.clr1.Retest();
