@@ -203,7 +203,8 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                 break;
                             case 0:
                             case 11:
-                                colorLabel.text = "White";
+							    labelColor = Color.gray;
+                                colorLabel.text = "Gray";
                                 break;
                             default:
                                 break;
@@ -232,7 +233,8 @@ public class LightLabel : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
                                 break;
                             case 12:
                             case 13:
-                                colorLabel.text = "White";
+							labelColor = Color.gray;
+                                colorLabel.text = "Gray";
                                 break;
                             default:
                                 break;
