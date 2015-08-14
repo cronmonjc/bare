@@ -68,8 +68,8 @@ public class BarManager : MonoBehaviour {
             GameObject.Find("UI/Canvas/FuncAssign/FunctionSelection/Panel/InputSelects/CAN").SetActive(value);
 
             if(value) {
-                FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x2000,
-                                                      0x800, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 };
+                FnDragTarget.inputMap.Value = new int[] { 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800,
+                                                      0x2000, 0x4000, 0x8000, 0x10000, 0x20000, 0x40000, 0x80000, 0x100000 };
             } else {
                 FnDragTarget.inputMap.Value = new int[] { 1, 2, 3072, 4, 8, 512, 256, 32, 16, 128, 64, 4096, 0, 0, 0, 0, 0, 0, 0, 0 };
             }
