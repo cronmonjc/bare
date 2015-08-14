@@ -34,9 +34,23 @@ namespace LightbarProg {
                 if(dev != null && dev.Connected) {
                     connLbl.Content = "Connected";
                     connImg.Source = ((Image)this.Resources["conn"]).Source;
+                    
+                    inputLbl.Content = "Active Inputs:";
+                    
+                    byte[] txBuff = new byte[] { 0,1,0,2,0,3,0,4,0,5 };
+                    dev.XferSize = 10;
+                    byte[] rxBuff = dev.SpiTransfer(txBuff);
+                    
+                    input.Content = string.Format("MSB {0} {1} {2} {3} LSB",
+                                                  Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'),
+                                                  Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'));
+                    
                 } else {
                     connLbl.Content = "Disconnected";
                     connImg.Source = ((Image)this.Resources["disconn"]).Source;
+                    
+                    inputLbl.Content = "";
+                    input.Content = "";
                 }
             };
             timer.Interval = new TimeSpan(0, 0, 1); // <-- Means every second
