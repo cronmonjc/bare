@@ -50,8 +50,8 @@ public class ToFnEdit : MonoBehaviour {
         // LightInteractionPanel handles the switching of panes to and from the pattern editing pane.
 
         foreach(LightHead alpha in BarManager.inst.allHeads) {
-            if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead)
-                if(LightLabel.showPatt) alpha.PrefetchPatterns(FunctionEditPane.currFunc); // Get the heads to fetch the patterns it's using for the function
+            if(!alpha.gameObject.activeInHierarchy) continue;
+                if(alpha.hasRealHead && LightLabel.showPatt) alpha.PrefetchPatterns(FunctionEditPane.currFunc); // Get the heads to fetch the patterns it's using for the function
             alpha.myLabel.Refresh(); // Also refresh their labels
         }
 
