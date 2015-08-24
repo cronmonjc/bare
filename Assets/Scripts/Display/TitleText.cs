@@ -43,7 +43,7 @@ public class TitleText : MonoBehaviour {
         } else if(preset.Length > 1) { // No filename, but based on preset
             t.text = "New " + preset + (BarManager.moddedBar ? "**" : "");
         } else { // Based on blank bar
-            t.text = "New Phaser Light Bar" + (BarManager.moddedBar ? "**" : "");
+            t.text = "New Phazer Light Bar" + (BarManager.moddedBar ? "**" : "");
         }
     }
 }

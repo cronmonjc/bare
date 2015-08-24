@@ -597,6 +597,31 @@ namespace LightbarProg {
             }
             return d;
         }
+        
+        
+        
+		void show_list(object sender, MouseButtonEventArgs e)
+		{
+			MessageBox.Show(" LIVE INPUT DEBUG TOOL:\n" +
+ 			                " MSB 000000000   00UTSRQP   ONMLKJI   HGFEDCBA   LSB\n"+
+ 			                "A = INPUT 1 (TAKE DOWN)         L = INPUT 12 (AF)\n" +
+  			                "B = INPUT 2 (PRIORITY 1)          M = NA (PATTERN) \n"	+		                
+  			                "C = INPUT 3 (PRIORITY 2)          N = INPUT 13 (CRUISE)\n"	+		                
+  			                "D = INPUT 4 (PRIORITY 3)          O = INPUT 14 (TURN L)\n"	+		                
+  			                "E = INPUT 5 (TRAFFIC LEFT)       P = INPUT 15 (TURN R)\n"	+		                
+ 			                "F = INPUT 6 (TRAFFIC RIGHT)     Q = INPUT 16 (TAIL)\n" +			                
+  			                "G = INPUT 7 (L ALLEY)                 R = INPUT 17 (CAL)\n"+
+  			                "H = INPUT 8  (R ALLEY)               S = INPUT 18 (L4)\n"+
+  			                "I = INPUT 9  (ICL)	                   T = INPUT 19 (L5)\n"+
+  			                "J = INPUT 10 (DIM) 	    U = INPUT 20 (EMITTER)\n"+
+  			                "K = INPUT 11 (TDF)","function list", MessageBoxButton.OK,MessageBoxImage.Information);
+
+
+
+
+
+  			                
+		}
     }
 
     /// <summary>

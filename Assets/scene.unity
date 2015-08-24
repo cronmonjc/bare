@@ -29722,7 +29722,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Phaser Configurator
+  m_Text: Phazer Configurator
 --- !u!222 &621786901
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -60739,8 +60739,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 491328941}
   m_HandleRect: {fileID: 491328940}
   m_Direction: 2
-  m_Value: .999999642
-  m_Size: .415704459
+  m_Value: 1
+  m_Size: .461893827
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -96668,7 +96668,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: New Phaser Light Bar
+  m_Text: New Phazer Light Bar
 --- !u!1 &2008382182
 GameObject:
   m_ObjectHideFlags: 0

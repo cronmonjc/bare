@@ -109,13 +109,13 @@ public class ErrorLogging : MonoBehaviour {
             email.CC.Add(alpha);
         }
 
-        email.Subject = "A Problem Has Been Reported (Phaser Configurator)"; 
+        email.Subject = "A Problem Has Been Reported (Phazer Configurator)"; 
         #endregion
 
         #region Email Body
         System.Text.StringBuilder bodyBuilder = new System.Text.StringBuilder();
         #region Get Machine Information
-        bodyBuilder.Append("A problem has been reported on the Phaser Configurator by the user ");
+        bodyBuilder.Append("A problem has been reported on the Phazer Configurator by the user ");
         bodyBuilder.Append(System.Environment.UserName);
         bodyBuilder.Append(" from the domain ");
         bodyBuilder.Append(System.Environment.UserDomainName);

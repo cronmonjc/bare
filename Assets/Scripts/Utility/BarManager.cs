@@ -2261,8 +2261,8 @@ public class PDFExportJob : ThreadedJob {
 
         try {
             doc.Info.Author = "Star Headlight and Lantern Co., Inc."; // Insert document metadata
-            doc.Info.Creator = "Phaser Lightbar Configurator";
-            doc.Info.Title = "Phaser Lightbar Configuration";
+            doc.Info.Creator = "Phazer Lightbar Configurator";
+            doc.Info.Title = "Phazer Lightbar Configuration";
             if((BarManager.canPub & 0x1) > 0) {
                 lock(progressStuff) {
                     progressText = string.Format("Publishing Page {0}/{1} : Overview...", currPage++, pages);
@@ -2354,7 +2354,7 @@ public class PDFExportJob : ThreadedJob {
 
         #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Star Phaser", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Star Phazer", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
         tf.DrawString("Model " + BarModel + " - " + BarWidth, courier, XBrushes.Black, new XRect(0.5, 1.1, p.Width.Inch - 1.0, 1.0));
         #endregion
 
@@ -3024,7 +3024,7 @@ public class PDFExportJob : ThreadedJob {
 
         #region Write Page Header
         tf.Alignment = XParagraphAlignment.Center;
-        tf.DrawString("Phaser Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
+        tf.DrawString("Phazer Cable Assembly Checklist", new XFont("Times New Roman", new XUnit(28, XGraphicsUnit.Point).Inch, XFontStyle.Bold), XBrushes.Black, new XRect(0.5, 0.7, p.Width.Inch - 1.0, 1.0));
         tf.Alignment = XParagraphAlignment.Left;
         #endregion
 
