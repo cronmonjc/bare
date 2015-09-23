@@ -2554,6 +2554,12 @@ public class PDFExportJob : ThreadedJob {
 
         #region Circuit, Gutter Mount Bracket, and Mounting Kit
         double top = 3.5;
+		tf.Alignment = XParagraphAlignment.Center;
+		tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+		tf.Alignment = XParagraphAlignment.Left;
+		tf.DrawString(BarModel, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+		tf.DrawString("Bar Base - " + BarWidth, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+		top += 0.15;
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;
