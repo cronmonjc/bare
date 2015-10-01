@@ -200,7 +200,7 @@ namespace LightbarProg {
                 foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw" })
                     patts.Get<NbtCompound>(alpha).AddRange(new NbtShort[] { new NbtShort("pf1", 0), new NbtShort("pf2", 0), new NbtShort("pr1", 0), new NbtShort("pr2", 0) });
 
-                patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] { new NbtShort("patt", 0), new NbtShort("ctd", 0), new NbtShort("cwn", 0) });
+                patts.Get<NbtCompound>("traf").AddRange(new NbtShort[] { new NbtShort("patt", 0), new NbtShort("ctd2", 0), new NbtShort("cwn2", 0) });
 
                 foreach(string alpha in new string[] { "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl" }) {
                     patts.Get<NbtCompound>(alpha).Add(new NbtCompound("pat1", new NbtTag[] { new NbtShort("fcen", 0), new NbtShort("finb", 0), new NbtShort("foub", 0), new NbtShort("ffar", 0), new NbtShort("fcor", 0),
@@ -603,10 +603,10 @@ namespace LightbarProg {
 		void show_list(object sender, MouseButtonEventArgs e)
 		{
 			MessageBox.Show(" LIVE INPUT DEBUG TOOL:\n" +
- 			                " MSB 000000000   00UTSRQP   ONMLKJI   HGFEDCBA   LSB\n"+
- 			                "A = INPUT 1 (TAKE DOWN)         L = INPUT 12 (AF)\n" +
+ 			                " MSB 000000000   000UTSRQ   PONMLKJI   HGFEDCBA   LSB\n"+
+ 			                "A = INPUT 1 (TAKE DOWN)         L = INPUT 12 (Cruise)\n" +
   			                "B = INPUT 2 (PRIORITY 1)          M = NA (PATTERN) \n"	+		                
-  			                "C = INPUT 3 (PRIORITY 2)          N = INPUT 13 (CRUISE)\n"	+		                
+  			                "C = INPUT 3 (PRIORITY 2)          N = INPUT 13 (AF)\n"	+		                
   			                "D = INPUT 4 (PRIORITY 3)          O = INPUT 14 (TURN L)\n"	+		                
   			                "E = INPUT 5 (TRAFFIC LEFT)       P = INPUT 15 (TURN R)\n"	+		                
  			                "F = INPUT 6 (TRAFFIC RIGHT)     Q = INPUT 16 (TAIL)\n" +			                
