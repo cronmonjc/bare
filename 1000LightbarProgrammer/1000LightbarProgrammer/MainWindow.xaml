@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Window
 	x:Class="LightbarProg.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="1000 Lightbar Programming Utility"
@@ -94,6 +94,9 @@
 						UseLayoutRounding="False"
 						Grid.Row="1"
 						MouseLeftButtonUp="WriteBar" />
+					<CheckBox x:Name="facDefault" Content="Force Factory Defaults" HorizontalAlignment="Left" Margin="10,52,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+					<CheckBox x:Name="owDefault" Content="Overwrite Defaults" HorizontalAlignment="Left" Margin="10,72,0,0" Grid.Row="1" VerticalAlignment="Top"/>
+					
 					<TextBlock
 						TextAlignment="Center"
 						TextWrapping="WrapWithOverflow"

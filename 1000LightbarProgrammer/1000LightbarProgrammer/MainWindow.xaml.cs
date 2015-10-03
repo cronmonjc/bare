@@ -24,6 +24,13 @@ namespace LightbarProg {
         /// </summary>
         public MainWindow() {
             InitializeComponent();
+            
+            
+            
+            if(File.Exists("internal.txt")){
+               	owDefault.IsChecked = true;			// force defaults over write if file exists
+               	owDefault.IsEnabled = false;        // force unchangeable      	
+               }
 
 
             #region Make a new Timer to test for connection every second
@@ -351,6 +358,15 @@ namespace LightbarProg {
         private void WriteBar(object sender, MouseButtonEventArgs e) {
             Device dev = TryGetDevice();  // Try to get a handle on the MCP2210 on the CAN Breakout Box
 
+			if(facDefault.IsChecked.Value) {
+			    byte[] xferBuffer = new byte[] { 4, 0, 0, 0 };
+			    dev.XferSize = 4;
+			    byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
+			    // perform checks on rxBuffer – ie if(rxBuffer[2] != 4) MessageBox.Show(this, “Problem!”...
+			    return;
+			}
+            
+            
             #region No Device found, let user know and stop now
             if(dev == null || !dev.Connected) {
                 MessageBox.Show(this, "No bar was found.  Are you certain that one is connected?", "No Bar Connected", MessageBoxButton.OK, MessageBoxImage.Stop, MessageBoxResult.OK);
@@ -381,6 +397,10 @@ namespace LightbarProg {
                 
                 // Prepare a buffer of bytes to send
                 byte[] xferBuffer = new byte[768];
+                
+                if(owDefault.IsChecked.Value == true){				// send command to write to defaults as well james
+                	xferBuffer[765] = 1;
+                }
 
                 using(MemoryStream xferBufferStream = new MemoryStream(xferBuffer))
                 using(BarWriter writer = new BarWriter(xferBufferStream)) {
