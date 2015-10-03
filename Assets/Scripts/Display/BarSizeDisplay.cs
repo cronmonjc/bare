@@ -37,8 +37,12 @@ public class BarSizeDisplay : MonoBehaviour {
     /// Update is called once each frame
     /// </summary>
     void Update() {
+		SetSize(); 			//<-- added by jjc 10-3-15
         if(priceText != null && (priceText.enabled ^ CameraControl.ShowPricing)) {
             priceText.enabled = CameraControl.ShowPricing;
         }
     }
+
+	//void Update() { SetSize(); }
+
 }

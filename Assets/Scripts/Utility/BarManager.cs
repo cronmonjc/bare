@@ -616,6 +616,7 @@ public class BarManager : MonoBehaviour {
             if(!sliding) {
                 SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to; // Size wasn't set by sliding, set the slider to the proper value
                 SizeSlider.value = to;
+				foreach (BarSizeDisplay bsd in FindObjectsOfType<BarSizeDisplay>()) bsd.SetSize();
             } else if(ErrorLogging.logInput) {
                 ErrorLogging.LogInput("Set Size to " + to);
             }
