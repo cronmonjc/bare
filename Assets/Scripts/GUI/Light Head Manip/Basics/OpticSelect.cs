@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
@@ -82,7 +82,7 @@ public class OpticSelect : MonoBehaviour {
                 GameObject newbie = GameObject.Instantiate(optionPrefab) as GameObject;
                 newbie.transform.SetParent(menu, false);
                 newbie.transform.localScale = Vector3.one;
-                newbie.GetComponent<LightOptionElement>().optNode = ln.optics["Block Off"];
+				newbie.GetComponent<LightOptionElement>().optNode = ln.optics["dont use"];
                 newbie.GetComponent<LightOptionElement>().optSel = this;
             } 
             #endregion
@@ -98,7 +98,7 @@ public class OpticSelect : MonoBehaviour {
             #endregion
             if(!showBO && !showEmi) {
                 for(int i = 0; i < keysArray.Length; i++) {
-                    if(keysArray[i] == "Block Off" || keysArray[i] == "Emitter") {
+					if(keysArray[i] == "dont use" || keysArray[i] == "Emitter") {
                         continue;
                     }
                     if(ln.optics[keysArray[i]].dual && !showDual) {

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using fNbt;
@@ -797,7 +797,7 @@ public class LightHead : MonoBehaviour {
             case 1:
                 switch(lhd.funcs[0]) { // Only one function, apply optic and style fitting the function
                     case BasicFunction.BLOCK_OFF:
-                        SetOptic("Block Off");
+					SetOptic("dont use");				// tempr remove of block off
                         return;
                     case BasicFunction.EMITTER:
                         SetOptic("Emitter");
@@ -884,7 +884,7 @@ public class LightHead : MonoBehaviour {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) { // If we're setting the optic (rather than removing one) and we're applying a default style...
-                if(lhd.optic.name == "Block Off") {
+				if(lhd.optic.name == "dont use") {// temp remove block off
                     SetStyle("No Logo");
                 } else {
                     List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
@@ -931,7 +931,7 @@ public class LightHead : MonoBehaviour {
         } else {
             lhd.style = null;
         }
-        m_hasRealHead = (lhd.style != null && !lhd.optic.name.Equals("Block Off", System.StringComparison.CurrentCultureIgnoreCase));
+		m_hasRealHead = (lhd.style != null && !lhd.optic.name.Equals("dont use", System.StringComparison.CurrentCultureIgnoreCase));
 
         if(lhd.style != null && lhd.style.isDualColor && lhd.funcs.Contains(BasicFunction.CAL_STEADY)) {
             NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");

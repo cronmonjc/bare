@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
@@ -151,7 +151,7 @@ public class LightOptionElement : MonoBehaviour, IPointerClickHandler {
                     name = "Traffic Director";
                     break;
                 case BasicFunction.BLOCK_OFF:
-                    name = "Block Off";
+				name = "dont use";
                     break;
                 default:
                     throw new System.ArgumentException();
