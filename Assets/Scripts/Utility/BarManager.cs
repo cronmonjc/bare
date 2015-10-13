@@ -739,7 +739,22 @@ public class BarManager : MonoBehaviour {
 
         yield return StartCoroutine(RefreshAllLabels()); // Refresh the labels
 
-        patts.Get<NbtCompound>("traf").Get<NbtShort>("er1").Value = (short)(td == TDOption.NONE ? 0 : 1020);  // Enable the heads for traffic
+        NbtShort enTag = patts.Get<NbtCompound>("traf").Get<NbtShort>("er1");
+
+        switch (td) { // Enable the heads for traffic
+            case TDOption.NONE:
+                enTag.Value = 0;
+                break;
+            case TDOption.SM_SIX:
+            case TDOption.LG_SIX:
+                enTag.Value = 504;
+                break;
+            case TDOption.LG_SEVEN:
+            case TDOption.SM_EIGHT:
+            case TDOption.LG_EIGHT:
+                enTag.Value = 1020;
+                break;
+        }
         patts.Get<NbtCompound>("traf").Get<NbtShort>("patt").Value = 7; // Default pattern: Snake
 
         yield return null;
