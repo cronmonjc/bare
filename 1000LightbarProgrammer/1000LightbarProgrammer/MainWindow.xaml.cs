@@ -18,7 +18,10 @@ namespace LightbarProg {
         /// The reference to the MCP2210 wrapper
         /// </summary>
         private Device d;
-
+		private byte feedback_reg = 0;				// added jjc 10-9-15 for pass/fail feedback
+		private bool writing = false;				// added jjc 10-9-15 for pass/fail feedback
+		private bool feedback_ready = false;				// added jjc 10-9-15 for pass/fail feedback
+		
         /// <summary>
         /// Initializes a new instance of the window.
         /// </summary>
@@ -31,6 +34,8 @@ namespace LightbarProg {
                	owDefault.IsChecked = true;			// force defaults over write if file exists
                	owDefault.IsEnabled = false;        // force unchangeable      	
                }
+
+
 
 
             #region Make a new Timer to test for connection every second
@@ -48,10 +53,33 @@ namespace LightbarProg {
                     dev.XferSize = 10;
                     byte[] rxBuff = dev.SpiTransfer(txBuff);
                     
+                      feedback_reg =  (byte)((rxBuff[4] >> 6) & 3);		// if byte 4 buppter two bits = 3  succesfull transmisstion
+                    								//							  = 1|2 failure
+                    								//							  = 0 working   
+                    								
+                    if(writing){
+                    	if(feedback_reg == 1 || feedback_reg == 2){
+   	                   		input.Content = string.Format("{0} {1} {2} {3} !  ERROR  !",
+	                                                  Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
+	                                                  Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));                 										
+                    	}
+                    	else{
+	                   		input.Content = string.Format("{0} {1} {2} {3} !Processing!",
+	                                                  Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
+	                                                  Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));
+                    	}
+                    	
+                    } else{
                     input.Content = string.Format("MSB {0} {1} {2} {3} LSB",
                                                   Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
                                                   Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));
+                    }
                     
+
+                    								
+
+            	
+
                 } else {
                     connLbl.Content = "Disconnected";
                     connImg.Source = ((Image)this.Resources["disconn"]).Source;
@@ -305,7 +333,7 @@ namespace LightbarProg {
 
                     val = reader.ReadShort();
                     if(val != 0) {
-                        patt.Add(new NbtShort("prog", val)); // Preset program number
+                        patt.Add(new NbtByte("prog", (byte)val)); // Preset program number
                     }
 
                     int[] mapping = patt.Get<NbtIntArray>("map").Value; // Then read out the input map.
@@ -356,16 +384,11 @@ namespace LightbarProg {
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="MouseButtonEventArgs"/> instance containing the event data.</param>
         private void WriteBar(object sender, MouseButtonEventArgs e) {
+        	
+        	if(writing) return; 			// only write once
+        	
             Device dev = TryGetDevice();  // Try to get a handle on the MCP2210 on the CAN Breakout Box
 
-			if(facDefault.IsChecked.Value) {
-			    byte[] xferBuffer = new byte[] { 4, 0, 0, 0 };
-			    dev.XferSize = 4;
-			    byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
-			    // perform checks on rxBuffer – ie if(rxBuffer[2] != 4) MessageBox.Show(this, “Problem!”...
-			    return;
-			}
-            
             
             #region No Device found, let user know and stop now
             if(dev == null || !dev.Connected) {
@@ -373,6 +396,15 @@ namespace LightbarProg {
                 return;
             }
             #endregion
+            
+			if(facDefault.IsChecked.Value) {									// added JJC 10-7-15 
+			    byte[] xferBuffer = new byte[] { 4, 0, 0, 0 };					// send a command to re-set bar defaults 0x40
+			    dev.XferSize = 4;
+			    byte[] rxBuffer = dev.SpiTransfer(xferBuffer);
+			    // perform checks on rxBuffer – ie if(rxBuffer[2] != 4) MessageBox.Show(this, “Problem!”...
+			    return;
+			}            
+            
             #region No input file, let user know and stop now
             if(String.IsNullOrEmpty(WriteBox.Text)) {
                 MessageBox.Show(this, "Please specify a source file.", "No Source Designated", MessageBoxButton.OK, MessageBoxImage.Stop, MessageBoxResult.OK);
@@ -402,6 +434,9 @@ namespace LightbarProg {
                 	xferBuffer[765] = 1;
                 }
 
+                writing = true ;	// writing data  jjc 
+                feedback_ready = false;// writing data  jjc
+                                 
                 using(MemoryStream xferBufferStream = new MemoryStream(xferBuffer))
                 using(BarWriter writer = new BarWriter(xferBufferStream)) {
                     writer.Write(new byte[] { 2, 0 }); // Write command
@@ -523,9 +558,41 @@ namespace LightbarProg {
                         lower++;
                     }
                 } 
+                
+                
+            if(writing){
+	            #region Make a new Timer to test to check for process complete          
+				System.Windows.Threading.DispatcherTimer feedbackTimer = new System.Windows.Threading.DispatcherTimer();
+				feedbackTimer.Tick += delegate(object sent, EventArgs ea) {
+					
+					 if(feedback_reg == 0)        		// If feedback is not zero once data may be left over from the last transmission
+            			feedback_ready = true;			// if feedback is zero then we can start checking for a pass or fail.	
+            									// feedback_ready cleared when writing set
+            									
+           			if ((feedback_reg == 3) && feedback_ready) {
+					    writing = false; // Return the bottom ticker to original state  					
+				        feedbackTimer.Stop(); // Stop checking, we don’t care about the value anymore
+				        MessageBox.Show(this, "Write operation successful.", "Complete", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
+				   
+            		} else if((feedback_reg == 2) && feedback_ready) {
+				        writing = false;						
+				        feedbackTimer.Stop();
+				        MessageBox.Show(this, "Fail Message Two.", "Fail", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
+            			} else if((feedback_reg == 1) && feedback_ready) {
+				        writing = false;						
+				        feedbackTimer.Stop();
+				        MessageBox.Show(this, "Fail Message One.", "Fail", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
+				    }
+				    // Do nothing if zero
+				};
+				feedbackTimer.Interval = new TimeSpan(0, 0, 1); // Every second
+				feedbackTimer.Start();
+				#endregion                    								
+            }                
+                
                 #endregion
 
-                MessageBox.Show(this, "Write operation complete.", "Complete", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
+  //              MessageBox.Show(this, "Write operation complete.", "Complete", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
                 return;
             } catch(ArgumentException) {
                 MessageBox.Show(this, "Please don't use any invalid characters in the path.", "Invalid Source Designated", MessageBoxButton.OK, MessageBoxImage.Stop, MessageBoxResult.OK);
@@ -732,10 +799,10 @@ namespace LightbarProg {
         /// <returns>The integer that was read.</returns>
         public int ReadInt() {
             int rtn = 0;
-            rtn |= (byte)(ReadByte() << 24);
-            rtn |= (byte)(ReadByte() << 16);
-            rtn |= (byte)(ReadByte() << 8);
-            rtn |= (byte)ReadByte();
+            rtn |= (int)(((int)ReadByte()) << 24);
+            rtn |= (int)(((int)ReadByte()) << 16);
+            rtn |= (int)(((int)ReadByte()) << 8);
+            rtn |= (int)ReadByte();
             return rtn;
         }
 
