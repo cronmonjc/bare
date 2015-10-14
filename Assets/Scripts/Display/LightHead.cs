@@ -595,15 +595,16 @@ public class LightHead : MonoBehaviour {
         // Get the Bits refreshed
         yield return BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
 
-        foreach (string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
-            NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(alpha);
-            string tag = "e" + (isRear ? "r" : "f");
+        if(func == BasicFunction.EMITTER)
+            foreach (string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
+                NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(alpha);
+                string tag = "e" + (isRear ? "r" : "f");
 
-            if (cmpd.Contains(tag + "1")) {
-                cmpd.Get<NbtShort>(tag + "1").DisableBit(Bit);
-                cmpd.Get<NbtShort>(tag + "2").DisableBit(Bit);
+                if (cmpd.Contains(tag + "1")) {
+                    cmpd.Get<NbtShort>(tag + "1").DisableBit(Bit);
+                    cmpd.Get<NbtShort>(tag + "2").DisableBit(Bit);
+                }
             }
-        }
 
         // Enable the bytes
         switch(func) { // Automatically enable heads for certain functions
