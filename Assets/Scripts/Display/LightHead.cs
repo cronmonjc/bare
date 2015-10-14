@@ -640,7 +640,7 @@ public class LightHead : MonoBehaviour {
                         break;
                 }
                 if(cmpd != null) {
-                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + (lhd.style.isDualColor ? "2" : "1")).EnableBit(Bit);
                 }
                 break;
             default:
