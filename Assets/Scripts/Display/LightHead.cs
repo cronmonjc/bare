@@ -595,27 +595,34 @@ public class LightHead : MonoBehaviour {
         // Get the Bits refreshed
         yield return BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
 
+        if(func == BasicFunction.EMITTER)
+            foreach (string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
+                NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(alpha);
+                string tag = "e" + (isRear ? "r" : "f");
+
+                if (cmpd.Contains(tag + "1")) {
+                    cmpd.Get<NbtShort>(tag + "1").DisableBit(Bit);
+                    cmpd.Get<NbtShort>(tag + "2").DisableBit(Bit);
+                }
+            }
+
         // Enable the bytes
         switch(func) { // Automatically enable heads for certain functions
             case BasicFunction.STT:
                 NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
                 taiCmpd.Get<NbtShort>("er1").EnableBit(Bit);
-                taiCmpd.Get<NbtShort>("er2").DisableBit(Bit);
                 break;
             case BasicFunction.CRUISE:
                 NbtCompound cruCmpd = BarManager.inst.patts.Get<NbtCompound>("cru");
                 cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
-                cruCmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
                 break;
             case BasicFunction.EMITTER:
                 NbtCompound emiCmpd = BarManager.inst.patts.Get<NbtCompound>("emi");
                 emiCmpd.Get<NbtShort>("ef1").EnableBit(Bit);
-                emiCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
                 break;
             case BasicFunction.CAL_STEADY:
                 NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
                 calCmpd.Get<NbtShort>("ef1").EnableBit(Bit);
-                calCmpd.Get<NbtShort>("ef2").DisableBit(Bit);
                 break;
             case BasicFunction.STEADY:
                 NbtCompound cmpd = null;
@@ -634,8 +641,7 @@ public class LightHead : MonoBehaviour {
                         break;
                 }
                 if(cmpd != null) {
-                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").EnableBit(Bit);
-                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                    cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + (lhd.style.isDualColor ? "2" : "1")).EnableBit(Bit);
                 }
                 break;
             default:
