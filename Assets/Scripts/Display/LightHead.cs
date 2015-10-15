@@ -906,6 +906,17 @@ public class LightHead : MonoBehaviour {
                     } else {
                         SetStyle("");
                     }
+
+                    if (lhd.funcs.Contains(BasicFunction.STEADY) && lhd.optic.dual) { // We're applying a dual-color optic on a head with Steady Burn enabled, apply default programming
+                        NbtCompound pat;
+                        if (loc == Location.ALLEY)
+                            pat = BarManager.inst.patts.Get<NbtCompound>((Bit == 12 ? "l" : "r") + "all");
+                        else
+                            pat = BarManager.inst.patts.Get<NbtCompound>("td");
+
+                        pat.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
+                        pat.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").EnableBit(Bit);
+                    }
                 }
             } else {
                 SetStyle("");
