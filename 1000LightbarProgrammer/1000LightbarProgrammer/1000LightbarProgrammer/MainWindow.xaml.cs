@@ -53,32 +53,49 @@ namespace LightbarProg {
                     dev.XferSize = 10;
                     byte[] rxBuff = dev.SpiTransfer(txBuff);
                     
-                      feedback_reg =  (byte)((rxBuff[4] >> 6) & 3);		// if byte 4 buppter two bits = 3  succesfull transmisstion
-                    								//							  = 1|2 failure
-                    								//							  = 0 working   
-                    								
                     if(writing){
-                    	if(feedback_reg == 1 || feedback_reg == 2){
-   	                   		input.Content = string.Format("{0} {1} {2} {3} !  ERROR  !",
-	                                                  Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
-	                                                  Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));                 										
-                    	}
-                    	else{
-	                   		input.Content = string.Format("{0} {1} {2} {3} !Processing!",
-	                                                  Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
-	                                                  Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));
-                    	}
-                    	
+                    input.Content = string.Format("{0} {1} {2} {3} !Processing!",
+                                                  Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
+                                                  Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));
                     } else{
                     input.Content = string.Format("MSB {0} {1} {2} {3} LSB",
                                                   Convert.ToString(rxBuff[4], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[5], 2).PadLeft(8, '0'),
                                                   Convert.ToString(rxBuff[2], 2).PadLeft(8, '0'), Convert.ToString(rxBuff[3], 2).PadLeft(8, '0'));
                     }
                     
-
+                    feedback_reg =  (byte)((rxBuff[4] >> 6) & 3);		// if byte 4 buppter two bits = 3  succesfull transmisstion
+                    								//							  = 1|2 failure
+                    								//							  = 0 working
                     								
-
+            if(feedback_reg == 0)        		// If feedback is not zero once data may be left over from the last transmission
+            	feedback_ready = true;			// if feedback is zero then we can start checking for a pass or fail.	
+            									// feedback_ready cleared when writing set
             	
+            if(writing && feedback_ready){
+	            #region Make a new Timer to test to check for process complete          
+				System.Windows.Threading.DispatcherTimer feedbackTimer = new System.Windows.Threading.DispatcherTimer();
+				feedbackTimer.Tick += delegate(object sent, EventArgs ea) {
+				    if (feedback_reg == 3) {
+					    writing = false; // Return the bottom ticker to original state  					
+				        feedbackTimer.Stop(); // Stop checking, we don’t care about the value anymore
+				        MessageBox.Show(this, "Write operation successful.", "Complete", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
+				   
+				    } else if(feedback_reg == 2) {
+				        writing = false;						
+				        feedbackTimer.Stop();
+				        MessageBox.Show(this, "Fail Message Two.", "Fail", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
+				    } else if(feedback_reg == 1) {
+				        writing = false;						
+				        feedbackTimer.Stop();
+				        MessageBox.Show(this, "Fail Message One.", "Fail", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
+				    }
+				    // Do nothing if zero
+				};
+				feedbackTimer.Interval = new TimeSpan(0, 0, 1); // Every second
+				feedbackTimer.Start();
+				#endregion                    								
+            }
+                    								
 
                 } else {
                     connLbl.Content = "Disconnected";
@@ -333,7 +350,7 @@ namespace LightbarProg {
 
                     val = reader.ReadShort();
                     if(val != 0) {
-                        patt.Add(new NbtByte("prog", (byte)val)); // Preset program number
+                        patt.Add(new NbtShort("prog", val)); // Preset program number
                     }
 
                     int[] mapping = patt.Get<NbtIntArray>("map").Value; // Then read out the input map.
@@ -342,16 +359,9 @@ namespace LightbarProg {
                     }
                 } 
                 #endregion
-                
 
                 file.SaveToFile(path, NbtCompression.None); // Save file
-                if(rxBuffer[2] == 0 && rxBuffer[3] == 255 && rxBuffer[4] == 0 && rxBuffer[5] == 255  && rxBuffer[6] == 0 && rxBuffer[7] == 255 && rxBuffer[8] == 0 && rxBuffer[9] == 255 )
-                	MessageBox.Show(this, "Error bar is not ready – try again in a little bit", "Bar Error", MessageBoxButton.OK, MessageBoxImage.Stop, MessageBoxResult.OK);
-                else
-                	MessageBox.Show(this, "Received data", "Success", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
-                
-                
-//                MessageBox.Show(this, "Read operation completed.", "Done", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
+                MessageBox.Show(this, "Read operation completed.", "Done", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
                 return;
             } catch(ArgumentException) {
                 MessageBox.Show(this, "Please don't use any invalid characters in the path.", "Invalid Destination Designated", MessageBoxButton.OK, MessageBoxImage.Stop, MessageBoxResult.OK);
@@ -565,38 +575,6 @@ namespace LightbarProg {
                         lower++;
                     }
                 } 
-                
-                
-            if(writing){
-	            #region Make a new Timer to test to check for process complete          
-				System.Windows.Threading.DispatcherTimer feedbackTimer = new System.Windows.Threading.DispatcherTimer();
-				feedbackTimer.Tick += delegate(object sent, EventArgs ea) {
-					
-					 if(feedback_reg == 0)        		// If feedback is not zero once data may be left over from the last transmission
-            			feedback_ready = true;			// if feedback is zero then we can start checking for a pass or fail.	
-            									// feedback_ready cleared when writing set
-            									
-           			if ((feedback_reg == 3) && feedback_ready) {
-					    writing = false; // Return the bottom ticker to original state  					
-				        feedbackTimer.Stop(); // Stop checking, we don’t care about the value anymore
-				        MessageBox.Show(this, "Write operation successful.", "Complete", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
-				   
-            		} else if((feedback_reg == 2) && feedback_ready) {
-				        writing = false;						
-				        feedbackTimer.Stop();
-				        MessageBox.Show(this, "Fail Message Two.", "Fail", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
-            			} else if((feedback_reg == 1) && feedback_ready) {
-				        writing = false;						
-				        feedbackTimer.Stop();
-				        MessageBox.Show(this, "Fail Message One.", "Fail", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK);
-				    }
-				    // Do nothing if zero
-				};
-				feedbackTimer.Interval = new TimeSpan(0, 0, 1); // Every second
-				feedbackTimer.Start();
-				#endregion                    								
-            }                
-                
                 #endregion
 
   //              MessageBox.Show(this, "Write operation complete.", "Complete", MessageBoxButton.OK, MessageBoxImage.None, MessageBoxResult.OK); // Transfer completed
