@@ -39,7 +39,18 @@ public class DebugOrthoGet : MonoBehaviour {
     void Update() {
 
         float aspRatio = ((Screen.width * 1f) / (Screen.height * 1f));
-        cam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+        cam.orthographicSize = (aspRatio > 5.17f ? 1.44f : (7.70737f * Mathf.Pow(aspRatio, -1.02095f)));
+
+        //if (aspRatio > 5.17f) cam.orthographicSize = 1.44f;
+        //else {
+        //    Vector3 tlVec = cam.WorldToScreenPoint(tl.position);
+
+        //    if (tlVec.x < 4) cam.orthographicSize += 0.01f;
+        //    else if (tlVec.x < 5.25) cam.orthographicSize += 0.001f;
+        //    else if (tlVec.x > 7) cam.orthographicSize -= 0.01f;
+        //    else if (tlVec.x > 5.75) cam.orthographicSize -= 0.001f;
+        //}
+
         
     }
 
@@ -49,10 +60,10 @@ public class DebugOrthoGet : MonoBehaviour {
     void OnGUI() {
         GUILayout.Box("OS=" + cam.orthographicSize.ToString("0.000") + (fixing ? "...?" : ""));
         float aspRatio = ((Screen.width * 1f) / (Screen.height * 1f));
-        if(aspRatio > 3.97f) {
-            GUILayout.Box("COS=1.985*");
+        if(aspRatio > 5.17f) {
+            GUILayout.Box("COS=1.44*");
         } else {
-            GUILayout.Box("COS=" + (7.86225f * Mathf.Pow(aspRatio, -0.99787f)));
+            GUILayout.Box("COS=" + (7.70737f * Mathf.Pow(aspRatio, -1.02095f)));
         }
         GUILayout.Box("Size=" + Screen.width + "w*" + Screen.height + "h - AR" + aspRatio.ToString("0.000"));
 

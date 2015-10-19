@@ -171,7 +171,7 @@ public class CameraControl : MonoBehaviour {
         myCam = GetComponent<Camera>();
         myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 52f); // Make sure the Camera's rendering to the right location on the screen
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
-        myCam.orthographicSize = partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.88f * Mathf.Pow(aspRatio, -0.99787f))); // Adjust the orthographic size to fit within the area it's given
+        myCam.orthographicSize = partialOrtho = (aspRatio > 5.17f ? 1.44f : (7.70737f * Mathf.Pow(aspRatio, -1.02095f))); // Adjust the orthographic size to fit within the area it's given
 
         RefreshOnSelect.Invoke();
     }
@@ -183,7 +183,7 @@ public class CameraControl : MonoBehaviour {
         if(lip.state == LightInteractionPanel.ShowState.FUNCASSIGN) return; // If we're trying to reset view where it doesn't quite make sense, cancel
         transform.position = new Vector3(0, 0, -10); // Reset panning
         float aspRatio = (myCam.pixelWidth * 1.0f) / (myCam.pixelHeight * 1.0f);
-        partialOrtho = (aspRatio > 3.97f ? 1.985f : (7.88f * Mathf.Pow(aspRatio, -0.99787f))); // Reset zoom
+        partialOrtho = (aspRatio > 5.17f ? 1.44f : (7.70737f * Mathf.Pow(aspRatio, -1.02095f))); // Reset zoom
     }
 
     /// <summary>
@@ -259,7 +259,7 @@ public class CameraControl : MonoBehaviour {
                 transform.position = new Vector3(0, 0, -10); // Reset panning
                 myCam.pixelRect = new Rect(0, 0, Screen.width, Screen.height); // Cam takes whole screen
                 float aspRatio = (Screen.width * 1.0f) / (Screen.height * 1.0f);
-                myCam.orthographicSize = (aspRatio > 3.97f ? 1.985f : (7.88f * Mathf.Pow(aspRatio, -0.99787f))); // Adjust ortho size
+                myCam.orthographicSize = (aspRatio > 5.17f ? 1.44f : (7.70737f * Mathf.Pow(aspRatio, -1.02095f))); // Adjust ortho size
             } else {
                 myCam.pixelRect = new Rect(0, Screen.height * 0.6f, Screen.width, Screen.height * 0.4f - 52f); // Cam sits in its portion of the screen
 
