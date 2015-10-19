@@ -609,7 +609,7 @@ public class LightHead : MonoBehaviour {
         // Enable the bytes
         switch(func) { // Automatically enable heads for certain functions
             case BasicFunction.STT:
-                NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 5 ? "l" : "r") + "tai");
+                NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((Bit < 6 ? "l" : "r") + "tai");
                 taiCmpd.Get<NbtShort>("er1").EnableBit(Bit);
                 break;
             case BasicFunction.CRUISE:
