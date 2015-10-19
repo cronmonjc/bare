@@ -688,7 +688,9 @@ public class BarManager : MonoBehaviour {
 
                 foreach(RaycastHit hit in hits) {
                     LightHead lh = hit.transform.GetComponent<LightHead>(); // Nab the light head from the hit
-                    lh.lhd.funcs.Clear(); // Clear that sucker's functions out
+                    foreach(BasicFunction f in new List<BasicFunction>(lh.lhd.funcs)) { // Clear that sucker's functions out
+                        lh.RemoveBasicFunction(f);
+                    }
                     lh.shouldBeTD = true; // This head should be traffic director
                     lh.AddBasicFunction(BasicFunction.TRAFFIC, false); // Apply Traffic Basic Func
                     lh.AddBasicFunction(BasicFunction.FLASHING); // Apply Flashing Basic Func
@@ -707,7 +709,9 @@ public class BarManager : MonoBehaviour {
                     if(BarSize == 4 && hit.transform.GetPath().Contains("RO")) continue; // If we're looking at a 4-size bar, don't do the two end heads
                     LightHead lh = hit.transform.GetComponent<LightHead>(); // Nab the light head from the hit
                     if(lh.isSmall) continue; // If the head's small (ie with 3-size bar in center), skip
-                    lh.lhd.funcs.Clear(); // Clear that sucker's functions out
+                    foreach(BasicFunction f in new List<BasicFunction>(lh.lhd.funcs)) { // Clear that sucker's functions out
+                        lh.RemoveBasicFunction(f);
+                    }
                     lh.shouldBeTD = true; // This head should be traffic director
                     lh.AddBasicFunction(BasicFunction.TRAFFIC, false); // Apply Traffic Basic Func
                     lh.AddBasicFunction(BasicFunction.FLASHING); // Apply Flashing Basic Func
@@ -728,7 +732,9 @@ public class BarManager : MonoBehaviour {
 
                 foreach(RaycastHit hit in hits) {
                     LightHead lh = hit.transform.GetComponent<LightHead>(); // Nab the light head from the hit
-                    lh.lhd.funcs.Clear(); // Clear that sucker's functions out
+                    foreach(BasicFunction f in new List<BasicFunction>(lh.lhd.funcs)) { // Clear that sucker's functions out
+                        lh.RemoveBasicFunction(f);
+                    }
                     lh.shouldBeTD = true; // This head should be traffic director
                     lh.AddBasicFunction(BasicFunction.TRAFFIC, false); // Apply Traffic Basic Func
                     lh.AddBasicFunction(BasicFunction.FLASHING); // Apply Flashing Basic Func
