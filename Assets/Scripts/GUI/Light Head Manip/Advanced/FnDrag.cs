@@ -67,7 +67,7 @@ public class FnDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
                 t = "Turn Right";
                 break;
             case AdvFunction.TAIL:
-                t = "Brake Lights";
+                t = "Tail Lights";
                 break;
             case AdvFunction.T13:
                 t = "California T13 Steady";

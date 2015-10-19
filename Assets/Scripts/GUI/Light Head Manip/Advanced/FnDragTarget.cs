@@ -206,7 +206,7 @@ public class FnDragTarget : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
                 display.text = "Turn Right";
                 break;
             case 0x10000: // TAIL
-                display.text = "Brake Lights";
+                display.text = "Tail Lights";
                 break;
             case 0x20000: // T13
                 display.text = "California T13 Steady";
