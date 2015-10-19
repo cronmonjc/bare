@@ -163,7 +163,7 @@ public class FunctionEditPane : MonoBehaviour {
                 funcName.text = "Turn Right";
                 break;
             case AdvFunction.TAIL:
-                funcName.text = "Brake Lights";
+                funcName.text = "Tail Lights";
                 break;
             case AdvFunction.T13:
                 funcName.text = "California T13 Steady";
