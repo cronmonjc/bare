@@ -577,7 +577,7 @@ public class LightHead : MonoBehaviour {
         if(((func == BasicFunction.TRAFFIC && shouldBeTD) || CapableBasicFunctions.Contains(func)) && !lhd.funcs.Contains(func)) {  // If it's capable of adding the function and it doesn't have it yet...
             lhd.funcs.Add(func); // Add the function
             TestSingleDual(); // Check for ability to take single/dual heads
-            
+
             // Refresh bits before modifying programming bytes
             StartCoroutine(RefreshBitsThenEnableBytes(func));
 
@@ -596,11 +596,11 @@ public class LightHead : MonoBehaviour {
         yield return BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
 
         if(func == BasicFunction.EMITTER)
-            foreach (string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
+            foreach(string alpha in new string[] { "td", "lall", "rall", "ltai", "rtai", "cru", "cal", "emi", "l1", "l2", "l3", "l4", "l5", "tdp", "icl", "afl", "dcw", "dim", "traf" }) {
                 NbtCompound cmpd = BarManager.inst.patts.Get<NbtCompound>(alpha);
                 string tag = "e" + (isRear ? "r" : "f");
 
-                if (cmpd.Contains(tag + "1")) {
+                if(cmpd.Contains(tag + "1")) {
                     cmpd.Get<NbtShort>(tag + "1").DisableBit(Bit);
                     cmpd.Get<NbtShort>(tag + "2").DisableBit(Bit);
                 }
@@ -643,6 +643,15 @@ public class LightHead : MonoBehaviour {
                 if(cmpd != null) {
                     cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + (lhd.style.isDualColor ? "2" : "1")).EnableBit(Bit);
                 }
+
+                if(!lhd.funcs.Contains(BasicFunction.FLASHING)) {
+                    foreach(AdvFunction f in LightDict.flashingFuncs) {
+                        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(Bit < 5, f));
+
+                        patt.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(Bit);
+                        patt.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(Bit);
+                    }
+                }
                 break;
             default:
                 break;
@@ -684,8 +693,8 @@ public class LightHead : MonoBehaviour {
         // Get the Bits refreshed
         yield return BarManager.inst.StartCoroutine(BarManager.inst.RefreshBitsIEnum());
 
-        // Enable the bytes
-        switch(func) { // Automatically enable heads for certain functions
+        // Disable the bytes
+        switch(func) { // Automatically disable heads for certain functions
             case BasicFunction.STT:
                 NbtCompound taiCmpd = BarManager.inst.patts.Get<NbtCompound>((theBit < 5 ? "l" : "r") + "tai");
                 taiCmpd.Get<NbtShort>("er1").DisableBit(theBit);
@@ -725,6 +734,16 @@ public class LightHead : MonoBehaviour {
                 if(cmpd != null) {
                     cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(theBit);
                     cmpd.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(theBit);
+                }
+                break;
+            case BasicFunction.FLASHING:
+                if(lhd.funcs.Contains(BasicFunction.STEADY)) {
+                    foreach(AdvFunction f in LightDict.flashingFuncs) {
+                        NbtCompound patt = BarManager.inst.patts.Get<NbtCompound>(BarManager.GetFnString(theBit < 5, f));
+
+                        patt.Get<NbtShort>("e" + (isRear ? "r" : "f") + "1").DisableBit(theBit);
+                        patt.Get<NbtShort>("e" + (isRear ? "r" : "f") + "2").DisableBit(theBit);
+                    }
                 }
                 break;
             default:
@@ -803,7 +822,7 @@ public class LightHead : MonoBehaviour {
             case 1:
                 switch(lhd.funcs[0]) { // Only one function, apply optic and style fitting the function
                     case BasicFunction.BLOCK_OFF:
-					SetOptic("dont use");				// tempr remove of block off
+                        SetOptic("dont use");				// tempr remove of block off
                         return;
                     case BasicFunction.EMITTER:
                         SetOptic("Emitter");
@@ -890,7 +909,7 @@ public class LightHead : MonoBehaviour {
         if(newOptic.Length > 0) {
             lhd.optic = LightDict.inst.FetchOptic(loc, newOptic);
             if(doDefault && lhd.optic != null) { // If we're setting the optic (rather than removing one) and we're applying a default style...
-				if(lhd.optic.name == "dont use") {// temp remove block off
+                if(lhd.optic.name == "dont use") {// temp remove block off
                     SetStyle("No Logo");
                 } else {
                     List<StyleNode> styles = new List<StyleNode>(lhd.optic.styles.Values);
@@ -907,9 +926,9 @@ public class LightHead : MonoBehaviour {
                         SetStyle("");
                     }
 
-                    if (lhd.funcs.Contains(BasicFunction.STEADY) && lhd.optic.dual) { // We're applying a dual-color optic on a head with Steady Burn enabled, apply default programming
+                    if(lhd.funcs.Contains(BasicFunction.STEADY) && lhd.optic.dual) { // We're applying a dual-color optic on a head with Steady Burn enabled, apply default programming
                         NbtCompound pat;
-                        if (loc == Location.ALLEY)
+                        if(loc == Location.ALLEY)
                             pat = BarManager.inst.patts.Get<NbtCompound>((Bit == 12 ? "l" : "r") + "all");
                         else
                             pat = BarManager.inst.patts.Get<NbtCompound>("td");
@@ -948,7 +967,7 @@ public class LightHead : MonoBehaviour {
         } else {
             lhd.style = null;
         }
-		m_hasRealHead = (lhd.style != null && !lhd.optic.name.Equals("dont use", System.StringComparison.CurrentCultureIgnoreCase));
+        m_hasRealHead = (lhd.style != null && !lhd.optic.name.Equals("dont use", System.StringComparison.CurrentCultureIgnoreCase));
 
         if(lhd.style != null && lhd.style.isDualColor && lhd.funcs.Contains(BasicFunction.CAL_STEADY)) {
             NbtCompound calCmpd = BarManager.inst.patts.Get<NbtCompound>("cal");
@@ -998,7 +1017,7 @@ public class LightHead : MonoBehaviour {
             }
         }
         Gizmos.color = Color.white;
-    } 
+    }
 #endif
 
     /// <summary>
