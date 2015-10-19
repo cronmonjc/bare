@@ -49,7 +49,7 @@ public class TDPulldown : PulldownItem {
 
         switch((TDOption)number) {
             case TDOption.LG_SIX:
-                b.interactable = BarManager.inst.BarSize > 1;
+                b.interactable = BarManager.inst.BarSize > 1 && BarManager.inst.BarSize != 3;
                 text.color = b.interactable ? textEnabled : textDisabled;
                 break;
             case TDOption.LG_SEVEN:
