@@ -3204,7 +3204,7 @@ public class PDFExportJob : ThreadedJob {
             case 0x8000: // TURN_RIGHT
                 return "Turn Right";
             case 0x10000: // TAIL
-                return "Brake Lights";
+                return "Tail Lights";
             case 0x20000: // T13
                 return "California T13 Steady";
             case 0x40000: // PRIO4
