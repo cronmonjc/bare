@@ -413,12 +413,12 @@ public class BOMCables : MonoBehaviour {
         #region Set information on each of the CableObjects
         // Single Left
         singleL.quantity = singleLCount;
-        singleL.text = (useLong ? internLongPrefix : internShortPrefix) + "SL -- Internal Control Cable - Single Color, Left";
+        singleL.text = (useLong ? internLongPrefix : internShortPrefix) + "L -- Internal Control Cable - Single Color, Left";
         totalCost += singleL.cost = singleLCount * (useLong ? intSingL : intSingS);
 
         // Single Right
         singleR.quantity = singleRCount;
-        singleR.text = internShortPrefix + "SR -- Internal Control Cable - Single Color, Right";
+        singleR.text = internShortPrefix + "R -- Internal Control Cable - Single Color, Right";
         totalCost += singleR.cost = singleRCount * intSingS;
 
         // Dual Left
@@ -616,7 +616,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("" + singleLCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString((useLong ? internLongPrefix : internShortPrefix) + "SL", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString((useLong ? internLongPrefix : internShortPrefix) + "L", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString("Internal Control Cable - Single Color, Left", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
@@ -624,7 +624,7 @@ public class BOMCables : MonoBehaviour {
             tf.Alignment = XParagraphAlignment.Center;
             tf.DrawString("" + singleRCount, courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
             tf.Alignment = XParagraphAlignment.Left;
-            tf.DrawString(internShortPrefix + "SR", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+            tf.DrawString(internShortPrefix + "R", courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
             tf.DrawString("Internal Control Cable - Single Color, Right", caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
             top += 0.15;
         }
