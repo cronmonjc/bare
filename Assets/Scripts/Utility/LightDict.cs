@@ -1051,7 +1051,7 @@ public class DCCirclePattern : Pattern {
     /// </summary>
     public DCCirclePattern() {
         name = "DC Circle";
-        id = 34;
+        id = 36;					// was 34 changed JJC 11-3-15
         t0 = 5;
         t1 = t2 = t3 = 0;
     }
@@ -1160,7 +1160,7 @@ public class DCDoubleRotatorPattern : Pattern {
     /// </summary>
     public DCDoubleRotatorPattern() {
         name = "DC Double Rotator";
-        id = 35;
+        id = 37;					// was 35 changed jjc 11-3-15
         t0 = 5;
         t1 = t2 = t3 = 0;
     }

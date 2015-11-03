@@ -1,0 +1,44 @@
+Initialize engine version: 5.1.1f1 (2046fc06d4d8)
+GfxDevice: creating device client; threaded=1
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.0]
+    Renderer: AMD Radeon HD 6570 (ID=0x6759)
+    Vendor:   ATI
+    VRAM:     1011 MB
+Begin MonoManager ReloadAssembly
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\I18N.dll (this message is harmless)
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\I18N.West.dll (this message is harmless)
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\Assembly-CSharp.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\Assembly-CSharp.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.UI.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.UI.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.Networking.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.Analytics.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\UnityEngine.Analytics.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\I18N.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\I18N.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\I18N.West.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\I18N.West.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\PdfSharp.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\PdfSharp.dll into Unity Child Domain
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\PdfSharp.dll (this message is harmless)
+Loading U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\PdfSharp.dll into Unity Child Domain
+- Completed reload, in  1.458 seconds
+<RI> Initializing input.
+XInput1_3.dll not found. Trying XInput9_1_0.dll instead...
+<RI> Input initialized.
+desktop: 1680x1050 60Hz; virtual: 3360x1050 at 0,0
+<RI> Initialized touch support.
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\System.Core.dll (this message is harmless)
+Platform assembly: U:\Personal_Folders\Z-Community\Custom Lightbar Design Kit\Custom Phazer\PhaserConfig_2_Data\Managed\System.dll (this message is harmless)
+Setting up 1 worker threads for Enlighten.
+  Thread -> id: 1a1c -> priority: 1 
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 2.366597 ms
+
+Unloading 6 unused Assets to reduce memory usage. Loaded Objects now: 7199.
+Total: 4.233512 ms (FindLiveObjects: 0.498399 ms CreateObjectMapping: 0.367225 ms MarkObjects: 3.336457 ms  DeleteObjects: 0.030789 ms)
+
