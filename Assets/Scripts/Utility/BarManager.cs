@@ -2430,7 +2430,7 @@ public class PDFExportJob : ThreadedJob {
 
         #region Write Mounting Bracket
         top += 0.1;
-        tf.DrawString("Mounting Bracket", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
+        tf.DrawString("Gutter Bracket", caliSm, XBrushes.Black, new XRect(1.4, (top - 0.01), 2.5, 0.10));
         if(CameraControl.ShowPricing)
             tf.DrawString("$" + (LightDict.inst.bracketPrice * 0.01f).ToString("F2"), courierSm, XBrushes.Black, new XRect(3.625, top, 1.0, 0.10));
         #endregion
