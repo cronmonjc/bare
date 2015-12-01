@@ -777,524 +777,526 @@ public class BarManager : MonoBehaviour {
     /// Coroutine.  Applies new bits to all of the heads.
     /// </summary>
     public IEnumerator RefreshBitsIEnum() {
-        RefreshingBits = true; // Tell rest of application that bits are being refreshed
+        if (!RefreshingBits) { // Provided a request for refreshing bits isn't already being worked on...
+            RefreshingBits = true; // Tell rest of application that bits are being refreshed
 
-        Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>(); // Cache paths so we aren't fetching them a billion times, and for easier reference
-        foreach(LightHead alpha in allHeads) {
-            alpha.myBit = 255; // Clear out whatever bit it already has
-            alpha.FarWire = false;
-            headDict[alpha.Path] = alpha; // Cache path
-        }
-
-
-        yield return new WaitForEndOfFrame(); // Wait for the dust to settle
-        yield return new WaitForEndOfFrame();
-
-        #region Test for Staggered Output
-        bool staggCenter = (AlternateOutputs.isOn) && (BarSize >= 2 && BarSize <= 4); // Test if we should apply staggered outputs
-        if(staggCenter) {
-            StyleNode node;
-
-            switch(BarSize) {
-                case 2:
-                    staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
-
-                    node = headDict["/Bar/DF/F/DS/L"].lhd.style; // Check if colors are same
-
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DF/F/DS/R"].lhd.style);
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/R"].lhd.style);
-                    break;
-                case 3:
-                    staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/DS/R"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
-
-                    staggCenter &= !(headDict["/Bar/DF/F/DS/L"].hasRealHead || headDict["/Bar/PF/F/DS/R"].hasRealHead); // Only allow alternate numbering if the two far center smalls aren't using real otpics
-
-                    node = headDict["/Bar/DF/F/DS/R"].lhd.style; // Check if colors are same
-
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/DS/L"].lhd.style);
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/DS/R"].lhd.style);
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
-                    break;
-                case 4:
-                    staggCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy); // Check if the sizes are compatible
-                    staggCenter &= (headDict["/Bar/DN/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/L"].gameObject.activeInHierarchy);
-
-                    node = headDict["/Bar/DF/F/L"].lhd.style; // Check if colors are same
-
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/L"].lhd.style);
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PN/F/L"].lhd.style);
-                    if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/L"].lhd.style);
-                    break;
-                default:
-                    break;
+            Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>(); // Cache paths so we aren't fetching them a billion times, and for easier reference
+            foreach(LightHead alpha in allHeads) {
+                alpha.myBit = 255; // Clear out whatever bit it already has
+                alpha.FarWire = false;
+                headDict[alpha.Path] = alpha; // Cache path
             }
-        }
-        #endregion
 
-        #region Assign the more static bits
-        foreach(LightHead alpha in allHeads) {
-            if(!alpha.gameObject.activeInHierarchy) continue; // Inactive head = no bit
-            if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) { // Corners always 0 or 11
-                if(alpha.transform.position.x < 0) {
-                    alpha.myBit = 0;
-                } else {
-                    alpha.myBit = 11;
-                }
-            } else if(alpha.loc == Location.ALLEY) { // Alleys always 12 or 13
-                if(alpha.transform.position.x < 0) {
-                    alpha.myBit = 12;
-                } else {
-                    alpha.myBit = 13;
-                }
-            } else {
-                if(BarSize > 1 && alpha.transform.position.y < 0) continue; // Size 0 and 1 have static rears.  2 thru 4 do not.
-                string[] path = alpha.Path.Split('/'); // Get path and split
 
-                switch(path[2]) {
-                    case "DE":
-                        switch(path[3]) {
-                            #region /Bar/DE/FO
-                            case "FO":
-                                if(alpha.isSmall) {
-                                    if(path[5] == "L") // /Bar/DE/FO/DS/L always 1
-                                        alpha.myBit = 1;
-                                    else {
-                                        if(alpha.lhd.style == headDict["/Bar/DE/FO/DS/L"].lhd.style) {
-                                            alpha.myBit = 1; // /Bar/DE/FO/DS/R 1 if it matches left style
-                                        } else {
-                                            alpha.myBit = 4; // /Bar/DE/FO/DS/R 4 if it doesn't match
-                                        }
-                                    }
-                                } else {
-                                    alpha.myBit = 1; // /Bar/DE/FO/L always 1
-                                }
-                                break;
-                            #endregion
-                            #region /Bar/DE/FI
-                            case "FI":
-                                if(alpha.isSmall) {
-                                    if(path[5] == "R") // /Bar/DE/FI/DS/R
-                                        if(BarSize == 0)
-                                            alpha.myBit = 5; // Head bit 5 if size 0 to avoid unnecessary splitter
-                                        else 
-                                            alpha.myBit = 4; // Head bit 4 on other sizes
-                                    else
-                                        if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style)
-                                            alpha.myBit = 4; // /Bar/DE/FI/DS/L 4 if it matches right style
-                                        else
-                                            alpha.myBit = 1; // /Bar/DE/FI/DS/L 1 if it doesn't match
-                                } else {
-                                    alpha.myBit = 4; // /Bar/DE/FI/L always 4
-                                }
-                                break;
-                            #endregion
-                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break; // Size 0 and 1
-                            case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
-                            default: break;
-                        }
-                        break;
-                    case "DF":
-                        switch(path[3]) {
-                            #region /Bar/DF/F
-                            case "F":
-                                if(BarSize == 2) {
-                                    if(alpha.isSmall) {
-                                        alpha.FarWire = path[5] == "L"; // Far wire flag set when necessary
-                                        if(!alpha.FarWire) { // Right head
-                                            if(!staggCenter && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
-                                                alpha.myBit = 5; // No staggered output and matching style = /Bar/DF/F/DS/R is 5
-                                            } else {
-                                                alpha.myBit = 6; // Staggered output or no matching style = /Bar/DF/F/DS/R is 6
-                                            }
-                                        } else { // Left head
-                                            alpha.myBit = 5;
-                                        }
-                                    } else {
-                                        alpha.myBit = 5; // /Bar/DF/F/L is 5
-                                        alpha.FarWire = true;
-                                    }
-                                } else {
-                                    alpha.myBit = 5; // /Bar/DF/F/L is 5, no matter the size
-                                    alpha.FarWire = true;
-                                }
-                                break;
-                            #endregion
-                            default: break;
-                        }
-                        break;
-                    case "DN":
-                        switch(path[3]) {
-                            #region /Bar/DN/F
-                            case "F":
-                                if(BarSize == 4) {
-                                    if(!staggCenter && ((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style))) {
-                                        // No staggered output, and /Bar/DN/F/* matches the color of /Bar/DF/F/* (no matter the size)
-                                        alpha.myBit = 5;
-                                    } else {
-                                        alpha.myBit = 6;
-                                    }
-                                } else {
-                                    alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
-                                    alpha.FarWire = (BarSize == 1); // Use far wire only on size 1; forced two shorts on size 1 bars
-                                }
+            yield return new WaitForEndOfFrame(); // Wait for the dust to settle
+            yield return new WaitForEndOfFrame();
 
-                                break;
-                            #endregion
-                            case "R": alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break; // Size 1 only
-                            default: break;
-                        }
+            #region Test for Staggered Output
+            bool staggCenter = (AlternateOutputs.isOn) && (BarSize >= 2 && BarSize <= 4); // Test if we should apply staggered outputs
+            if(staggCenter) {
+                StyleNode node;
+
+                switch(BarSize) {
+                    case 2:
+                        staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
+
+                        node = headDict["/Bar/DF/F/DS/L"].lhd.style; // Check if colors are same
+
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/DF/F/DS/R"].lhd.style);
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/R"].lhd.style);
                         break;
-                    case "PN":
-                        switch(path[3]) {
-                            #region /Bar/PN/F
-                            case "F":
-                                if(BarSize == 4) {
-                                    if(!staggCenter && ((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style))) {
-                                        // No staggered output, and /Bar/PN/F/* matches the color of /Bar/PF/F/* (no matter the size)
-                                        alpha.myBit = 6;
-                                    } else {
-                                        alpha.myBit = 5;
-                                    }
-                                } else {
-                                    alpha.myBit = 6;
-                                }
-                                break;
-                            #endregion
-                            default: break;
-                        }
+                    case 3:
+                        staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/DS/R"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
+
+                        staggCenter &= !(headDict["/Bar/DF/F/DS/L"].hasRealHead || headDict["/Bar/PF/F/DS/R"].hasRealHead); // Only allow alternate numbering if the two far center smalls aren't using real otpics
+
+                        node = headDict["/Bar/DF/F/DS/R"].lhd.style; // Check if colors are same
+
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/DS/L"].lhd.style);
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/DS/R"].lhd.style);
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/DS/L"].lhd.style);
                         break;
-                    case "PF":
-                        switch(path[3]) {
-                            #region /Bar/PF/F
-                            case "F":
-                                if(BarSize == 2) {
-                                    if(alpha.isSmall) {
-                                        alpha.FarWire = path[5] == "R"; // Far wire flag set when necessary
-                                        if(!alpha.FarWire) { // Left head
-                                            if(!staggCenter && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
-                                                alpha.myBit = 6; // No staggered output and matching style = /Bar/PF/F/DS/L is 6
-                                            } else {
-                                                alpha.myBit = 5; // Staggered output or no matching style = /Bar/PF/F/DS/L is 5
-                                            }
-                                        } else {
-                                            alpha.myBit = 6;
-                                        }
-                                    } else {
-                                        alpha.myBit = 6; // /Bar/PF/F/L is 6
-                                        alpha.FarWire = true;
-                                    }
-                                } else {
-                                    alpha.myBit = 6; // /Bar/PF/F/L is 6, no matter the size
-                                    alpha.FarWire = true;
-                                }
-                                break;
-                            #endregion
-                            default: break;
-                        }
-                        break;
-                    case "PE":
-                        switch(path[3]) {
-                            #region /Bar/PE/FO
-                            case "FO":
-                                if(alpha.isSmall) {
-                                    if(path[5] == "R") // /Bar/PE/FO/DS/R always 10
-                                        alpha.myBit = 10;
-                                    else {
-                                        if(alpha.lhd.style == headDict["/Bar/PE/FO/DS/R"].lhd.style) {
-                                            alpha.myBit = 10; // /Bar/PE/FO/DS/L 10 if it matches right style
-                                        } else {
-                                            alpha.myBit = 7; // /Bar/PE/FO/DS/L 7 if it doesn't match
-                                        }
-                                    }
-                                } else {
-                                    alpha.myBit = 10; // /Bar/PE/FO/L always 10
-                                }
-                                break;
-                            #endregion
-                            #region /Bar/PE/FI
-                            case "FI":
-                                if(alpha.isSmall) {
-                                    if(path[5] == "L") // /Bar/PE/FI/DS/L
-                                        if(BarSize == 0)
-                                            alpha.myBit = 6; // Head bit 6 if size 0 to avoid unnecessary splitter
-                                        else
-                                            alpha.myBit = 7; // Head bit 7 on other sizes
-                                    else
-                                        if(alpha.lhd.style == headDict["/Bar/PE/FI/DS/L"].lhd.style)
-                                            alpha.myBit = 7; // /Bar/PE/FI/DS/R 7 if it matches left style
-                                        else
-                                            alpha.myBit = 10; // /Bar/PE/FI/DS/R 10 if it doesn't match
-                                } else {
-                                    alpha.myBit = 7; // /Bar/PE/FI/L always 7
-                                }
-                                break;
-                            #endregion
-                            case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break; // Size 0 and 1
-                            case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
-                            default: break;
-                        }
+                    case 4:
+                        staggCenter &= (headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy); // Check if the sizes are compatible
+                        staggCenter &= (headDict["/Bar/DN/F/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/L"].gameObject.activeInHierarchy);
+
+                        node = headDict["/Bar/DF/F/L"].lhd.style; // Check if colors are same
+
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/DN/F/L"].lhd.style);
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/PN/F/L"].lhd.style);
+                        if(staggCenter) staggCenter &= (node == headDict["/Bar/PF/F/L"].lhd.style);
                         break;
                     default:
                         break;
                 }
             }
-        }
-        #endregion
-
-        #region Dynamic rears
-        if(BarSize > 1) {
-            List<LightHead> heads = new List<LightHead>(10); // Ready some variables
-            List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0))); // Raycast from rear center toward driver
-            RaycastHit far; LightHead farHead;
-
-            #region Give driver-far head bit 2 if large
-            if(td == TDOption.NONE) {
-                far = test[0]; // Find farthest head
-                foreach(RaycastHit alpha in test) {
-                    if(far.transform != alpha.transform && far.distance < alpha.distance)
-                        far = alpha;
-                }
-
-                farHead = far.transform.GetComponent<LightHead>();
-                if(!farHead.isSmall) {
-                    farHead.myBit = 2; // Make farthest head 2 if large
-                }
-                test.Remove(far); // Remove from list, stop processing it
-            }
             #endregion
 
-            byte bit = 5; // Start at bit 5
-            #region Test for center-straddling head
-            RaycastHit center;
-            if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) { // If there's a (long) head dead center
-                //(  note: RaycastHit List test won't have this head, Physics.RaycastAll only tracks what Colliders it *enters*, not exits  )
-                LightHead alpha = center.transform.GetComponent<LightHead>();
-                if(alpha.hasRealHead) { // If it uses a real head
-                    alpha.myBit = 5; // Give it bit 5
-                    bit = 4; // Start at 4
-                } else {
-                    alpha.myBit = 255; // Take its bit away
-                }
-            }
-            #endregion
-
-            #region Remove undefined / Block Off heads
-            bool cont = true;
-            while(cont && test.Count > 0) {
-                for(int i = 0; i < test.Count; i++) {
-                    LightHead testHead = test[i].transform.GetComponent<LightHead>();
-                    if(!testHead.hasRealHead) {
-                        testHead.myBit = 255;
-                        test.RemoveAt(i);
-                        break; // Need to break, else we'll get a ConcurrentModificationException
+            #region Assign the more static bits
+            foreach(LightHead alpha in allHeads) {
+                if(!alpha.gameObject.activeInHierarchy) continue; // Inactive head = no bit
+                if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) { // Corners always 0 or 11
+                    if(alpha.transform.position.x < 0) {
+                        alpha.myBit = 0;
+                    } else {
+                        alpha.myBit = 11;
                     }
-                    if(i == test.Count - 1) {
-                        cont = false;
-                        break;
-                    }
-                }
-            }
-            #endregion
-
-            #region Compile List of ordered LightHeads
-            while(test.Count > 0) {
-                center = test[0];
-                for(int i = 1; i < test.Count; i++) {
-                    if(test[i].point.x > center.point.x) {
-                        center = test[i];
-                    }
-                }
-                test.Remove(center);
-                heads.Add(center.transform.GetComponent<LightHead>());
-            }
-            #endregion
-
-            #region Assign bits
-            for(int i = 0; i < heads.Count; i++) {
-                if(!heads[i].hasRealHead) { // Extra catch for undefined heads
-                    heads[i].myBit = 255;
-                    continue;
-                }
-                if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
-                    heads[i].myBit = bit--;
-                } else if(bit == 1) { // Down to last bit, remaining heads get it
-                    heads[i].myBit = 1;
-                    if(heads[i].lhd.style.isDualColor) { // Bit 1 is a single-color-only output.  Drop any that have duals
-                        heads[i].SetOptic("");
-                        heads[i].useDual = false;
+                } else if(alpha.loc == Location.ALLEY) { // Alleys always 12 or 13
+                    if(alpha.transform.position.x < 0) {
+                        alpha.myBit = 12;
+                    } else {
+                        alpha.myBit = 13;
                     }
                 } else {
-                    if(heads.Count - i > bit) { // More heads left than remaining bits to give
-                        if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
-                            heads[i].myBit = bit--; // Don't share
-                        } else {
-                            heads[i].myBit = bit; // Share
-                            heads[++i].myBit = bit--;
+                    if(BarSize > 1 && alpha.transform.position.y < 0) continue; // Size 0 and 1 have static rears.  2 thru 4 do not.
+                    string[] path = alpha.Path.Split('/'); // Get path and split
+
+                    switch(path[2]) {
+                        case "DE":
+                            switch(path[3]) {
+                                #region /Bar/DE/FO
+                                case "FO":
+                                    if(alpha.isSmall) {
+                                        if(path[5] == "L") // /Bar/DE/FO/DS/L always 1
+                                            alpha.myBit = 1;
+                                        else {
+                                            if(alpha.lhd.style == headDict["/Bar/DE/FO/DS/L"].lhd.style) {
+                                                alpha.myBit = 1; // /Bar/DE/FO/DS/R 1 if it matches left style
+                                            } else {
+                                                alpha.myBit = 4; // /Bar/DE/FO/DS/R 4 if it doesn't match
+                                            }
+                                        }
+                                    } else {
+                                        alpha.myBit = 1; // /Bar/DE/FO/L always 1
+                                    }
+                                    break;
+                                #endregion
+                                #region /Bar/DE/FI
+                                case "FI":
+                                    if(alpha.isSmall) {
+                                        if(path[5] == "R") // /Bar/DE/FI/DS/R
+                                            if(BarSize == 0)
+                                                alpha.myBit = 5; // Head bit 5 if size 0 to avoid unnecessary splitter
+                                            else 
+                                                alpha.myBit = 4; // Head bit 4 on other sizes
+                                        else
+                                            if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style)
+                                                alpha.myBit = 4; // /Bar/DE/FI/DS/L 4 if it matches right style
+                                            else
+                                                alpha.myBit = 1; // /Bar/DE/FI/DS/L 1 if it doesn't match
+                                    } else {
+                                        alpha.myBit = 4; // /Bar/DE/FI/L always 4
+                                    }
+                                    break;
+                                #endregion
+                                case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 2 : 3) - BarSize) : 2); break; // Size 0 and 1
+                                case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 4 : 5) - BarSize) : 4); break;
+                                default: break;
+                            }
+                            break;
+                        case "DF":
+                            switch(path[3]) {
+                                #region /Bar/DF/F
+                                case "F":
+                                    if(BarSize == 2) {
+                                        if(alpha.isSmall) {
+                                            alpha.FarWire = path[5] == "L"; // Far wire flag set when necessary
+                                            if(!alpha.FarWire) { // Right head
+                                                if(!staggCenter && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style) {
+                                                    alpha.myBit = 5; // No staggered output and matching style = /Bar/DF/F/DS/R is 5
+                                                } else {
+                                                    alpha.myBit = 6; // Staggered output or no matching style = /Bar/DF/F/DS/R is 6
+                                                }
+                                            } else { // Left head
+                                                alpha.myBit = 5;
+                                            }
+                                        } else {
+                                            alpha.myBit = 5; // /Bar/DF/F/L is 5
+                                            alpha.FarWire = true;
+                                        }
+                                    } else {
+                                        alpha.myBit = 5; // /Bar/DF/F/L is 5, no matter the size
+                                        alpha.FarWire = true;
+                                    }
+                                    break;
+                                #endregion
+                                default: break;
+                            }
+                            break;
+                        case "DN":
+                            switch(path[3]) {
+                                #region /Bar/DN/F
+                                case "F":
+                                    if(BarSize == 4) {
+                                        if(!staggCenter && ((headDict["/Bar/DF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/L"].lhd.style) || (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/DF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/DF/F/DS/R"].lhd.style))) {
+                                            // No staggered output, and /Bar/DN/F/* matches the color of /Bar/DF/F/* (no matter the size)
+                                            alpha.myBit = 5;
+                                        } else {
+                                            alpha.myBit = 6;
+                                        }
+                                    } else {
+                                        alpha.myBit = (byte)(alpha.transform.position.x > 0 ? 6 : 5);
+                                        alpha.FarWire = (BarSize == 1); // Use far wire only on size 1; forced two shorts on size 1 bars
+                                    }
+
+                                    break;
+                                #endregion
+                                case "R": alpha.myBit = (byte)(path[path.Length - 1] == "L" ? 5 : 6); break; // Size 1 only
+                                default: break;
+                            }
+                            break;
+                        case "PN":
+                            switch(path[3]) {
+                                #region /Bar/PN/F
+                                case "F":
+                                    if(BarSize == 4) {
+                                        if(!staggCenter && ((headDict["/Bar/PF/F/L"].gameObject.activeInHierarchy && alpha.lhd.style == headDict["/Bar/PF/F/L"].lhd.style) || (alpha.lhd.style == headDict["/Bar/PF/F/DS/L"].lhd.style && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style))) {
+                                            // No staggered output, and /Bar/PN/F/* matches the color of /Bar/PF/F/* (no matter the size)
+                                            alpha.myBit = 6;
+                                        } else {
+                                            alpha.myBit = 5;
+                                        }
+                                    } else {
+                                        alpha.myBit = 6;
+                                    }
+                                    break;
+                                #endregion
+                                default: break;
+                            }
+                            break;
+                        case "PF":
+                            switch(path[3]) {
+                                #region /Bar/PF/F
+                                case "F":
+                                    if(BarSize == 2) {
+                                        if(alpha.isSmall) {
+                                            alpha.FarWire = path[5] == "R"; // Far wire flag set when necessary
+                                            if(!alpha.FarWire) { // Left head
+                                                if(!staggCenter && alpha.lhd.style == headDict["/Bar/PF/F/DS/R"].lhd.style) {
+                                                    alpha.myBit = 6; // No staggered output and matching style = /Bar/PF/F/DS/L is 6
+                                                } else {
+                                                    alpha.myBit = 5; // Staggered output or no matching style = /Bar/PF/F/DS/L is 5
+                                                }
+                                            } else {
+                                                alpha.myBit = 6;
+                                            }
+                                        } else {
+                                            alpha.myBit = 6; // /Bar/PF/F/L is 6
+                                            alpha.FarWire = true;
+                                        }
+                                    } else {
+                                        alpha.myBit = 6; // /Bar/PF/F/L is 6, no matter the size
+                                        alpha.FarWire = true;
+                                    }
+                                    break;
+                                #endregion
+                                default: break;
+                            }
+                            break;
+                        case "PE":
+                            switch(path[3]) {
+                                #region /Bar/PE/FO
+                                case "FO":
+                                    if(alpha.isSmall) {
+                                        if(path[5] == "R") // /Bar/PE/FO/DS/R always 10
+                                            alpha.myBit = 10;
+                                        else {
+                                            if(alpha.lhd.style == headDict["/Bar/PE/FO/DS/R"].lhd.style) {
+                                                alpha.myBit = 10; // /Bar/PE/FO/DS/L 10 if it matches right style
+                                            } else {
+                                                alpha.myBit = 7; // /Bar/PE/FO/DS/L 7 if it doesn't match
+                                            }
+                                        }
+                                    } else {
+                                        alpha.myBit = 10; // /Bar/PE/FO/L always 10
+                                    }
+                                    break;
+                                #endregion
+                                #region /Bar/PE/FI
+                                case "FI":
+                                    if(alpha.isSmall) {
+                                        if(path[5] == "L") // /Bar/PE/FI/DS/L
+                                            if(BarSize == 0)
+                                                alpha.myBit = 6; // Head bit 6 if size 0 to avoid unnecessary splitter
+                                            else
+                                                alpha.myBit = 7; // Head bit 7 on other sizes
+                                        else
+                                            if(alpha.lhd.style == headDict["/Bar/PE/FI/DS/L"].lhd.style)
+                                                alpha.myBit = 7; // /Bar/PE/FI/DS/R 7 if it matches left style
+                                            else
+                                                alpha.myBit = 10; // /Bar/PE/FI/DS/R 10 if it doesn't match
+                                    } else {
+                                        alpha.myBit = 7; // /Bar/PE/FI/L always 7
+                                    }
+                                    break;
+                                #endregion
+                                case "RO": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 8 : 9) + BarSize) : 9); break; // Size 0 and 1
+                                case "RI": alpha.myBit = (byte)(alpha.isSmall ? ((path[5] == "L" ? 6 : 7) + BarSize) : 7); break;
+                                default: break;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            #endregion
+
+            #region Dynamic rears
+            if(BarSize > 1) {
+                List<LightHead> heads = new List<LightHead>(10); // Ready some variables
+                List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0))); // Raycast from rear center toward driver
+                RaycastHit far; LightHead farHead;
+
+                #region Give driver-far head bit 2 if large
+                if(td == TDOption.NONE) {
+                    far = test[0]; // Find farthest head
+                    foreach(RaycastHit alpha in test) {
+                        if(far.transform != alpha.transform && far.distance < alpha.distance)
+                            far = alpha;
+                    }
+
+                    farHead = far.transform.GetComponent<LightHead>();
+                    if(!farHead.isSmall) {
+                        farHead.myBit = 2; // Make farthest head 2 if large
+                        test.Remove(far); // Remove from list, stop processing it
+                    }
+                }
+                #endregion
+
+                byte bit = 5; // Start at bit 5
+                #region Test for center-straddling head
+                RaycastHit center;
+                if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1), out center)) { // If there's a (long) head dead center
+                    //(  note: RaycastHit List test won't have this head, Physics.RaycastAll only tracks what Colliders it *enters*, not exits  )
+                    LightHead alpha = center.transform.GetComponent<LightHead>();
+                    if(alpha.hasRealHead) { // If it uses a real head
+                        alpha.myBit = 5; // Give it bit 5
+                        bit = 4; // Start at 4
+                    } else {
+                        alpha.myBit = 255; // Take its bit away
+                    }
+                }
+                #endregion
+
+                #region Remove undefined / Block Off heads
+                bool cont = true;
+                while(cont && test.Count > 0) {
+                    for(int i = 0; i < test.Count; i++) {
+                        LightHead testHead = test[i].transform.GetComponent<LightHead>();
+                        if(!testHead.hasRealHead) {
+                            testHead.myBit = 255;
+                            test.RemoveAt(i);
+                            break; // Need to break, else we'll get a ConcurrentModificationException
+                        }
+                        if(i == test.Count - 1) {
+                            cont = false;
+                            break;
+                        }
+                    }
+                }
+                #endregion
+
+                #region Compile List of ordered LightHeads
+                while(test.Count > 0) {
+                    center = test[0];
+                    for(int i = 1; i < test.Count; i++) {
+                        if(test[i].point.x > center.point.x) {
+                            center = test[i];
+                        }
+                    }
+                    test.Remove(center);
+                    heads.Add(center.transform.GetComponent<LightHead>());
+                }
+                #endregion
+
+                #region Assign bits
+                for(int i = 0; i < heads.Count; i++) {
+                    if(!heads[i].hasRealHead) { // Extra catch for undefined heads
+                        heads[i].myBit = 255;
+                        continue;
+                    }
+                    if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
+                        heads[i].myBit = bit--;
+                    } else if(bit == 1) { // Down to last bit, remaining heads get it
+                        heads[i].myBit = 1;
+                        if(heads[i].lhd.style.isDualColor) { // Bit 1 is a single-color-only output.  Drop any that have duals
+                            heads[i].SetOptic("");
+                            heads[i].useDual = false;
                         }
                     } else {
-                        heads[i].myBit = bit--; // Enough bits left to give remaining heads their own
-                    }
-                }
-            }
-            #endregion
-
-            #region Cleanup
-            if(bit == 1) {
-                test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(-1f, 0)));
-                if(test.Count > 0) { // Have undefined heads to the driver-side
-                    foreach(RaycastHit hit in test) {
-                        hit.transform.GetComponent<LightHead>().myBit = 1; // Give 'em a bit anyway
-                    }
-                }
-            }
-            #endregion
-
-
-
-            heads.Clear(); // Reprep for passenger side
-            test.Clear();
-            test.AddRange(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(1f, 0)));
-            #region Give passenger-far head bit 9 if large
-            if(td == TDOption.NONE) {
-                far = test[0]; // Find farthest head
-                foreach(RaycastHit alpha in test) {
-                    if(far.transform != alpha.transform && far.distance < alpha.distance)
-                        far = alpha;
-                }
-
-                farHead = far.transform.GetComponent<LightHead>();
-                if(!farHead.isSmall) {
-                    farHead.myBit = 9; // Make farthest head 9 if large
-                }
-                test.Remove(far); // Remove from list, stop processing it
-            }
-            #endregion
-
-            bit = 6; // Start at bit 6
-            #region Test for center-straddling head
-            if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1))) {
-                bit = 7; // The head already has a bit (5) - just skip to next one
-            }
-            #endregion
-
-            #region Remove undefined / Block Off heads
-            cont = true;
-            while(cont && test.Count > 0) {
-                for(int i = 0; i < test.Count; i++) {
-                    LightHead testHead = test[i].transform.GetComponent<LightHead>();
-                    if(!testHead.hasRealHead) {
-                        testHead.myBit = 255;
-                        test.RemoveAt(i);
-                        break; // Need to break, else we'll get a ConcurrentModificationException
-                    }
-                    if(i == test.Count - 1) {
-                        cont = false;
-                        break;
-                    }
-                }
-            }
-            #endregion
-
-            #region Compile List of ordered LightHeads
-            while(test.Count > 0) {
-                center = test[0];
-                for(int i = 1; i < test.Count; i++) {
-                    if(test[i].point.x < center.point.x) {
-                        center = test[i];
-                    }
-                }
-                test.Remove(center);
-                heads.Add(center.transform.GetComponent<LightHead>());
-            }
-            #endregion
-
-            #region Assign bits
-            for(int i = 0; i < heads.Count; i++) {
-                if(!heads[i].hasRealHead) { // Extra catch for undefined heads
-                    heads[i].myBit = 255;
-                    continue;
-                }
-                if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
-                    heads[i].myBit = bit++;
-                } else if(bit == 10) { // Down to last bit, remaining heads get it
-                    heads[i].myBit = 10;
-                    if(heads[i].lhd.style.isDualColor) { // Bit 10 is a single-color-only output.  Drop any that have duals
-                        heads[i].SetOptic("");
-                        heads[i].useDual = false;
-                    }
-                } else {
-                    if(heads.Count - i > (11 - bit)) { // More heads left than remaining bits to give
-                        if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
-                            heads[i].myBit = bit++; // Don't share
+                        if(heads.Count - i > bit) { // More heads left than remaining bits to give
+                            if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
+                                heads[i].myBit = bit--; // Don't share
+                            } else {
+                                heads[i].myBit = bit; // Share
+                                heads[++i].myBit = bit--;
+                            }
                         } else {
-                            heads[i].myBit = bit; // Share
-                            heads[++i].myBit = bit++;
+                            heads[i].myBit = bit--; // Enough bits left to give remaining heads their own
+                        }
+                    }
+                }
+                #endregion
+
+                #region Cleanup
+                if(bit == 1) {
+                    test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(-1f, 0)));
+                    if(test.Count > 0) { // Have undefined heads to the driver-side
+                        foreach(RaycastHit hit in test) {
+                            hit.transform.GetComponent<LightHead>().myBit = 1; // Give 'em a bit anyway
+                        }
+                    }
+                }
+                #endregion
+
+
+
+                heads.Clear(); // Reprep for passenger side
+                test.Clear();
+                test.AddRange(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(1f, 0)));
+                #region Give passenger-far head bit 9 if large
+                if(td == TDOption.NONE) {
+                    far = test[0]; // Find farthest head
+                    foreach(RaycastHit alpha in test) {
+                        if(far.transform != alpha.transform && far.distance < alpha.distance)
+                            far = alpha;
+                    }
+
+                    farHead = far.transform.GetComponent<LightHead>();
+                    if(!farHead.isSmall) {
+                        farHead.myBit = 9; // Make farthest head 9 if large
+                        test.Remove(far); // Remove from list, stop processing it
+                    }
+                }
+                #endregion
+
+                bit = 6; // Start at bit 6
+                #region Test for center-straddling head
+                if(Physics.Raycast(new Vector3(0, 0), new Vector3(0, -1))) {
+                    bit = 7; // The head already has a bit (5) - just skip to next one
+                }
+                #endregion
+
+                #region Remove undefined / Block Off heads
+                cont = true;
+                while(cont && test.Count > 0) {
+                    for(int i = 0; i < test.Count; i++) {
+                        LightHead testHead = test[i].transform.GetComponent<LightHead>();
+                        if(!testHead.hasRealHead) {
+                            testHead.myBit = 255;
+                            test.RemoveAt(i);
+                            break; // Need to break, else we'll get a ConcurrentModificationException
+                        }
+                        if(i == test.Count - 1) {
+                            cont = false;
+                            break;
+                        }
+                    }
+                }
+                #endregion
+
+                #region Compile List of ordered LightHeads
+                while(test.Count > 0) {
+                    center = test[0];
+                    for(int i = 1; i < test.Count; i++) {
+                        if(test[i].point.x < center.point.x) {
+                            center = test[i];
+                        }
+                    }
+                    test.Remove(center);
+                    heads.Add(center.transform.GetComponent<LightHead>());
+                }
+                #endregion
+
+                #region Assign bits
+                for(int i = 0; i < heads.Count; i++) {
+                    if(!heads[i].hasRealHead) { // Extra catch for undefined heads
+                        heads[i].myBit = 255;
+                        continue;
+                    }
+                    if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
+                        heads[i].myBit = bit++;
+                    } else if(bit == 10) { // Down to last bit, remaining heads get it
+                        heads[i].myBit = 10;
+                        if(heads[i].lhd.style.isDualColor) { // Bit 10 is a single-color-only output.  Drop any that have duals
+                            heads[i].SetOptic("");
+                            heads[i].useDual = false;
                         }
                     } else {
-                        heads[i].myBit = bit++; // Enough bits left to give remaining heads their own
+                        if(heads.Count - i > (11 - bit)) { // More heads left than remaining bits to give
+                            if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
+                                heads[i].myBit = bit++; // Don't share
+                            } else {
+                                heads[i].myBit = bit; // Share
+                                heads[++i].myBit = bit++;
+                            }
+                        } else {
+                            heads[i].myBit = bit++; // Enough bits left to give remaining heads their own
+                        }
                     }
                 }
+                #endregion
+
+                #region Cleanup
+                if(bit == 10) {
+                    test.Clear();
+                    test.AddRange(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
+                    if(test.Count > 0) { // Have undefined heads to the passenger-side
+                        foreach(RaycastHit hit in test) {
+                            hit.transform.GetComponent<LightHead>().myBit = 10; // Give 'em a bit anyway
+                        }
+                    }
+                }
+                #endregion
+
+                LightHead centermost;
+
+                #region Switch outputs around for staggers
+                if(BarSize == 2) {
+                    test.Clear();
+                    test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
+                    if(test.Count == 12) { // If there's 12 heads in rear (aka all small)
+                        centermost = headDict["/Bar/DF/R/DS/R"];
+                        if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) { // Stagger if rears don't match
+                            centermost.myBit = 6;
+                        }
+                        centermost = headDict["/Bar/PF/R/DS/L"];
+                        if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
+                            centermost.myBit = 5;
+                        }
+                    }
+                } else if(BarSize == 4) {
+                    test.Clear();
+                    test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
+                    if(test.Count == 16) { // If there's 16 heads in rear (aka all small)
+                        centermost = headDict["/Bar/DF/R/DS/R"];
+                        if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) { // Stagger if rears don't match
+                            centermost.myBit = 5;
+                        }
+                        centermost = headDict["/Bar/DN/R/DS/L"];
+                        if(centermost.lhd.style != headDict["/Bar/DN/R/DS/R"].lhd.style) {
+                            centermost.myBit = 4;
+                        }
+                        centermost = headDict["/Bar/PN/R/DS/R"];
+                        if(centermost.lhd.style != headDict["/Bar/PN/R/DS/L"].lhd.style) {
+                            centermost.myBit = 7;
+                        }
+                        centermost = headDict["/Bar/PF/R/DS/L"];
+                        if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
+                            centermost.myBit = 6;
+                        }
+                    }
+                }
+                #endregion
             }
             #endregion
 
-            #region Cleanup
-            if(bit == 10) {
-                test.Clear();
-                test.AddRange(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
-                if(test.Count > 0) { // Have undefined heads to the passenger-side
-                    foreach(RaycastHit hit in test) {
-                        hit.transform.GetComponent<LightHead>().myBit = 10; // Give 'em a bit anyway
-                    }
-                }
-            }
-            #endregion
 
-            LightHead centermost;
-
-            #region Switch outputs around for staggers
-            if(BarSize == 2) {
-                test.Clear();
-                test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
-                if(test.Count == 12) { // If there's 12 heads in rear (aka all small)
-                    centermost = headDict["/Bar/DF/R/DS/R"];
-                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) { // Stagger if rears don't match
-                        centermost.myBit = 6;
-                    }
-                    centermost = headDict["/Bar/PF/R/DS/L"];
-                    if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
-                        centermost.myBit = 5;
-                    }
-                }
-            } else if(BarSize == 4) {
-                test.Clear();
-                test.AddRange(Physics.RaycastAll(new Vector3(-10f, -1.25f), new Vector3(1f, 0f)));
-                if(test.Count == 16) { // If there's 16 heads in rear (aka all small)
-                    centermost = headDict["/Bar/DF/R/DS/R"];
-                    if(centermost.lhd.style != headDict["/Bar/DF/R/DS/L"].lhd.style) { // Stagger if rears don't match
-                        centermost.myBit = 5;
-                    }
-                    centermost = headDict["/Bar/DN/R/DS/L"];
-                    if(centermost.lhd.style != headDict["/Bar/DN/R/DS/R"].lhd.style) {
-                        centermost.myBit = 4;
-                    }
-                    centermost = headDict["/Bar/PN/R/DS/R"];
-                    if(centermost.lhd.style != headDict["/Bar/PN/R/DS/L"].lhd.style) {
-                        centermost.myBit = 7;
-                    }
-                    centermost = headDict["/Bar/PF/R/DS/L"];
-                    if(centermost.lhd.style != headDict["/Bar/PF/R/DS/R"].lhd.style) {
-                        centermost.myBit = 6;
-                    }
-                }
-            }
-            #endregion
+            RefreshingBits = false;
+            yield return StartCoroutine(RefreshAllLabels()); // Refresh Labels
         }
-        #endregion
-
-
-        RefreshingBits = false;
-        yield return StartCoroutine(RefreshAllLabels()); // Refresh Labels
         yield return null;
     }
 

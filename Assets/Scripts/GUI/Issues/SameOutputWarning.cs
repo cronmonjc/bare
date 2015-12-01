@@ -48,6 +48,7 @@ public class SameOutputWarning : IssueChecker {
             if(alpha.gameObject.activeInHierarchy && alpha.hasRealHead) { // If we're dealing with a real head...
                 if(alpha.Bit == 255) {
                     Debug.LogWarning("An attempt was made to check LightHead " + alpha.transform.GetPath() + " for Same Output but that head has no bit assigned!", alpha);
+                    continue;
                 }
                 if(alpha.myLabel != null) {
                     alpha.myLabel.DispError = false; // Clear out icons first...
