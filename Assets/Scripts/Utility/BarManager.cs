@@ -809,7 +809,7 @@ public class BarManager : MonoBehaviour {
                     case 3:
                         staggCenter &= (headDict["/Bar/DF/F/DS/L"].gameObject.activeInHierarchy) && (headDict["/Bar/PN/F/DS/R"].gameObject.activeInHierarchy) && (headDict["/Bar/PF/F/DS/R"].gameObject.activeInHierarchy); // Check if the sizes are compatible
 
-                        staggCenter &= !(headDict["/Bar/DF/F/DS/L"].hasRealHead || headDict["/Bar/PF/F/DS/R"].hasRealHead); // Only allow alternate numbering if the two far center smalls aren't using real otpics
+                        staggCenter &= !(headDict["/Bar/DF/F/DS/L"].hasRealHead || headDict["/Bar/PF/F/DS/R"].hasRealHead); // Only allow alternate numbering if the two far center smalls aren't using real optics
 
                         node = headDict["/Bar/DF/F/DS/R"].lhd.style; // Check if colors are same
 
@@ -1412,8 +1412,9 @@ public class BarManager : MonoBehaviour {
 
             if(savePDF) {
                 Directory.CreateDirectory(filename);
-                file.SaveToFile(filename + "\\Bar Savefile.bar.nbt", NbtCompression.None); // Save file
-                StartCoroutine(SavePDF(filename + "\\Bar Information.pdf")); // Save PDF too, if needed
+                string[] filenamebits = filename.Split('\\','/');
+                file.SaveToFile(filename + "\\" + filenamebits[filenamebits.Length - 1] + ".bar.nbt", NbtCompression.None); // Save file
+                StartCoroutine(SavePDF(filename + "\\" + filenamebits[filenamebits.Length - 1] + ".pdf")); // Save PDF too, if needed
             } else {
                 file.SaveToFile(filename + ".bar.nbt", NbtCompression.None); // Save file
             }
