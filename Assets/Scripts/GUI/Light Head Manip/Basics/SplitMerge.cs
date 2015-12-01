@@ -30,7 +30,7 @@ public class SplitMerge : MonoBehaviour {
                 continue;
             }
 
-            if((IsMerge && !soc.ShowLong) || (!IsMerge && soc.ShowLong)) {
+            if ((IsMerge && !soc.ShowLong && soc.canLong[BarManager.inst.BarSize]) || (!IsMerge && soc.ShowLong && soc.canShort[BarManager.inst.BarSize])) {
                 GetComponent<Button>().interactable = true;
                 return;
             }
