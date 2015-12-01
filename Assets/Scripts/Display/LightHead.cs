@@ -345,7 +345,7 @@ public class LightHead : MonoBehaviour {
             }
 
             rtn.Add(BasicFunction.CRUISE);
-            rtn.Add(BasicFunction.BLOCK_OFF);
+            //rtn.Add(BasicFunction.BLOCK_OFF);
             return rtn;
         }
     }
