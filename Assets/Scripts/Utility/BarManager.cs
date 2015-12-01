@@ -616,7 +616,7 @@ public class BarManager : MonoBehaviour {
             if(!sliding) {
                 SizeSlider.GetComponent<SliderSnap>().lastWholeVal = to; // Size wasn't set by sliding, set the slider to the proper value
                 SizeSlider.value = to;
-				foreach (BarSizeDisplay bsd in FindObjectsOfType<BarSizeDisplay>()) bsd.SetSize();
+                foreach(BarSizeDisplay bsd in FindObjectsOfType<BarSizeDisplay>()) bsd.SetSize();
             } else if(ErrorLogging.logInput) {
                 ErrorLogging.LogInput("Set Size to " + to);
             }
@@ -747,7 +747,7 @@ public class BarManager : MonoBehaviour {
 
         NbtShort enTag = patts.Get<NbtCompound>("traf").Get<NbtShort>("er1");
 
-        switch (td) { // Enable the heads for traffic
+        switch(td) { // Enable the heads for traffic
             case TDOption.NONE:
                 enTag.Value = 0;
                 break;
@@ -767,7 +767,7 @@ public class BarManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Refreshes the bits.  Called by the staggered head toggle.
+    /// Refreshes the bits.  Called by the staggered head toggle and Style Select.
     /// </summary>
     public void RefreshBits() {
         StartCoroutine(RefreshBitsIEnum());
@@ -777,7 +777,7 @@ public class BarManager : MonoBehaviour {
     /// Coroutine.  Applies new bits to all of the heads.
     /// </summary>
     public IEnumerator RefreshBitsIEnum() {
-        if (!RefreshingBits) { // Provided a request for refreshing bits isn't already being worked on...
+        if(!RefreshingBits) { // Provided a request for refreshing bits isn't already being worked on...
             RefreshingBits = true; // Tell rest of application that bits are being refreshed
 
             Dictionary<string, LightHead> headDict = new Dictionary<string, LightHead>(); // Cache paths so we aren't fetching them a billion times, and for easier reference
@@ -878,7 +878,7 @@ public class BarManager : MonoBehaviour {
                                         if(path[5] == "R") // /Bar/DE/FI/DS/R
                                             if(BarSize == 0)
                                                 alpha.myBit = 5; // Head bit 5 if size 0 to avoid unnecessary splitter
-                                            else 
+                                            else
                                                 alpha.myBit = 4; // Head bit 4 on other sizes
                                         else
                                             if(alpha.lhd.style == headDict["/Bar/DE/FI/DS/R"].lhd.style)
@@ -1046,11 +1046,11 @@ public class BarManager : MonoBehaviour {
             #region Dynamic rears
             if(BarSize > 1) {
                 List<LightHead> heads = new List<LightHead>(10); // Ready some variables
-                List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(-1f, 0))); // Raycast from rear center toward driver
-                RaycastHit far; LightHead farHead;
+                List<RaycastHit> test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(0, -1.0f), new Vector3(-1f, 0))); // Raycast from rear center toward driver
+                //RaycastHit far; LightHead farHead;
 
                 #region Give driver-far head bit 2 if large
-                if(td == TDOption.NONE) {
+                /*if(td == TDOption.NONE) {
                     far = test[0]; // Find farthest head
                     foreach(RaycastHit alpha in test) {
                         if(far.transform != alpha.transform && far.distance < alpha.distance)
@@ -1062,7 +1062,7 @@ public class BarManager : MonoBehaviour {
                         farHead.myBit = 2; // Make farthest head 2 if large
                         test.Remove(far); // Remove from list, stop processing it
                     }
-                }
+                }*/
                 #endregion
 
                 byte bit = 5; // Start at bit 5
@@ -1112,42 +1112,51 @@ public class BarManager : MonoBehaviour {
                 #endregion
 
                 #region Assign bits
-                for(int i = 0; i < heads.Count; i++) {
-                    if(!heads[i].hasRealHead) { // Extra catch for undefined heads
-                        heads[i].myBit = 255;
-                        continue;
+                if((bit == 5 && heads.Count <= 4) || (bit == 4 && heads.Count < 4)) {
+                    bit = 2; // Start at 2
+                    for(int i = heads.Count - 1; i >= 0; i--) {  // Assign bits from the outermost head in
+                        heads[i].myBit = bit++;
                     }
-                    if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
-                        heads[i].myBit = bit--;
-                    } else if(bit == 1) { // Down to last bit, remaining heads get it
-                        heads[i].myBit = 1;
-                        if(heads[i].lhd.style.isDualColor) { // Bit 1 is a single-color-only output.  Drop any that have duals
-                            heads[i].SetOptic("");
-                            heads[i].useDual = false;
+                    bit = 1; // Assign bit to 1 to allow for assigning heads out from outermost head
+                } else {
+                    for(int i = 0; i < heads.Count; i++) {
+                        if(!heads[i].hasRealHead) { // Extra catch for undefined heads
+                            heads[i].myBit = 255;
+                            continue;
                         }
-                    } else {
-                        if(heads.Count - i > bit) { // More heads left than remaining bits to give
-                            if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
-                                heads[i].myBit = bit--; // Don't share
-                            } else {
-                                heads[i].myBit = bit; // Share
-                                heads[++i].myBit = bit--;
+                        if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
+                            heads[i].myBit = bit--;
+                        } else if(bit == 1) { // Down to last bit, remaining heads get it
+                            heads[i].myBit = 1;
+                            if(heads[i].lhd.style.isDualColor) { // Bit 1 is a single-color-only output.  Drop any that have duals
+                                heads[i].SetOptic("");
+                                heads[i].useDual = false;
                             }
                         } else {
-                            heads[i].myBit = bit--; // Enough bits left to give remaining heads their own
+                            if(heads.Count - i > bit) { // More heads left than remaining bits to give
+                                if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
+                                    heads[i].myBit = bit--; // Don't share
+                                } else {
+                                    heads[i].myBit = bit; // Share
+                                    heads[++i].myBit = bit--;
+                                }
+                            } else {
+                                heads[i].myBit = bit--; // Enough bits left to give remaining heads their own
+                            }
                         }
                     }
                 }
                 #endregion
 
                 #region Cleanup
-                if(bit == 1) {
-                    test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(-1f, 0)));
+                if(heads.Count > 1 && bit == 1) {
+                    test = new List<RaycastHit>(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.0f), new Vector3(-1f, 0)));
                     if(test.Count > 0) { // Have undefined heads to the driver-side
                         foreach(RaycastHit hit in test) {
                             hit.transform.GetComponent<LightHead>().myBit = 1; // Give 'em a bit anyway
                         }
                     }
+                    if(headDict["/Bar/DE/RC/L"].myBit == 1) headDict["/Bar/DE/RC/L"].myBit = 0;  // Force corner to bit 0 if undefined
                 }
                 #endregion
 
@@ -1155,9 +1164,9 @@ public class BarManager : MonoBehaviour {
 
                 heads.Clear(); // Reprep for passenger side
                 test.Clear();
-                test.AddRange(Physics.RaycastAll(new Vector3(0, -1.25f), new Vector3(1f, 0)));
+                test.AddRange(Physics.RaycastAll(new Vector3(0, -1.0f), new Vector3(1f, 0)));
                 #region Give passenger-far head bit 9 if large
-                if(td == TDOption.NONE) {
+                /*if(td == TDOption.NONE) {
                     far = test[0]; // Find farthest head
                     foreach(RaycastHit alpha in test) {
                         if(far.transform != alpha.transform && far.distance < alpha.distance)
@@ -1169,7 +1178,7 @@ public class BarManager : MonoBehaviour {
                         farHead.myBit = 9; // Make farthest head 9 if large
                         test.Remove(far); // Remove from list, stop processing it
                     }
-                }
+                }*/
                 #endregion
 
                 bit = 6; // Start at bit 6
@@ -1211,43 +1220,53 @@ public class BarManager : MonoBehaviour {
                 #endregion
 
                 #region Assign bits
-                for(int i = 0; i < heads.Count; i++) {
-                    if(!heads[i].hasRealHead) { // Extra catch for undefined heads
-                        heads[i].myBit = 255;
-                        continue;
+
+                if(heads.Count <= 4) {
+                    bit = 9; // Start at 9
+                    for(int i = heads.Count - 1; i >= 0; i--) {  // Assign bits from the outermost head in
+                        heads[i].myBit = bit--;
                     }
-                    if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
-                        heads[i].myBit = bit++;
-                    } else if(bit == 10) { // Down to last bit, remaining heads get it
-                        heads[i].myBit = 10;
-                        if(heads[i].lhd.style.isDualColor) { // Bit 10 is a single-color-only output.  Drop any that have duals
-                            heads[i].SetOptic("");
-                            heads[i].useDual = false;
+                    bit = 10; // Assign bit to 10 to allow for assigning heads out from outermost head
+                } else {
+                    for(int i = 0; i < heads.Count; i++) {
+                        if(!heads[i].hasRealHead) { // Extra catch for undefined heads
+                            heads[i].myBit = 255;
+                            continue;
                         }
-                    } else {
-                        if(heads.Count - i > (11 - bit)) { // More heads left than remaining bits to give
-                            if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
-                                heads[i].myBit = bit++; // Don't share
-                            } else {
-                                heads[i].myBit = bit; // Share
-                                heads[++i].myBit = bit++;
+                        if(heads[i].shouldBeTD) { // Head should be a traffic head, always give it its own bit
+                            heads[i].myBit = bit++;
+                        } else if(bit == 10) { // Down to last bit, remaining heads get it
+                            heads[i].myBit = 10;
+                            if(heads[i].lhd.style.isDualColor) { // Bit 10 is a single-color-only output.  Drop any that have duals
+                                heads[i].SetOptic("");
+                                heads[i].useDual = false;
                             }
                         } else {
-                            heads[i].myBit = bit++; // Enough bits left to give remaining heads their own
+                            if(heads.Count - i > (11 - bit)) { // More heads left than remaining bits to give
+                                if(heads[i].isSmall ^ heads[i + 1].isSmall) { // If sizes don't match
+                                    heads[i].myBit = bit++; // Don't share
+                                } else {
+                                    heads[i].myBit = bit; // Share
+                                    heads[++i].myBit = bit++;
+                                }
+                            } else {
+                                heads[i].myBit = bit++; // Enough bits left to give remaining heads their own
+                            }
                         }
                     }
                 }
                 #endregion
 
                 #region Cleanup
-                if(bit == 10) {
+                if(heads.Count > 1 && bit == 10) {
                     test.Clear();
-                    test.AddRange(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.25f), new Vector3(1f, 0)));
+                    test.AddRange(Physics.RaycastAll(new Vector3(heads[heads.Count - 1].transform.position.x, -1.0f), new Vector3(1f, 0)));
                     if(test.Count > 0) { // Have undefined heads to the passenger-side
                         foreach(RaycastHit hit in test) {
                             hit.transform.GetComponent<LightHead>().myBit = 10; // Give 'em a bit anyway
                         }
                     }
+                    if(headDict["/Bar/PE/RC/L"].myBit == 10) headDict["/Bar/PE/RC/L"].myBit = 11;  // Force corner to bit 11 if undefined
                 }
                 #endregion
 
@@ -1318,7 +1337,7 @@ public class BarManager : MonoBehaviour {
         }
         if(filename.EndsWith(".pdf")) {
             filename = filename.Substring(0, filename.Length - 4);
-        } 
+        }
         #endregion
 
         try {
@@ -1332,7 +1351,7 @@ public class BarManager : MonoBehaviour {
             opts.Add(new NbtByte("cabt", (byte)cableType));
             opts.Add(new NbtByte("cabl", (byte)cableLength));
             opts.Add(new NbtByte("mkit", (byte)mountingKit));
-            root.Add(opts); 
+            root.Add(opts);
             #endregion
 
             #region Stash order information (cust name, order num, notes)
@@ -1340,7 +1359,7 @@ public class BarManager : MonoBehaviour {
             order.Add(new NbtString("name", custName.text));
             order.Add(new NbtString("num", orderNum.text));
             order.Add(new NbtString("note", notes.text));
-            root.Add(order); 
+            root.Add(order);
             #endregion
 
             #region Stash light head information
@@ -1362,7 +1381,7 @@ public class BarManager : MonoBehaviour {
 
                 lightList.Add(lightCmpd);
             }
-            root.Add(lightList); 
+            root.Add(lightList);
             #endregion
 
             root.Add(patts.Clone()); // Stash pattern information as a clone (otherwise pattern tag might have two parents)
@@ -1375,7 +1394,7 @@ public class BarManager : MonoBehaviour {
                 socCmpd.Add(new NbtByte("isLg", soc.ShowLong ? (byte)1 : (byte)0));
                 socList.Add(socCmpd);
             }
-            root.Add(socList); 
+            root.Add(socList);
             #endregion
 
             #region Stash Lens information
@@ -1386,7 +1405,7 @@ public class BarManager : MonoBehaviour {
                 segCmpd.Add(new NbtString("part", seg.lens.partSuffix));
                 lensList.Add(segCmpd);
             }
-            root.Add(lensList); 
+            root.Add(lensList);
             #endregion
 
             NbtFile file = new NbtFile(root); // Create file to save
@@ -1444,7 +1463,7 @@ public class BarManager : MonoBehaviour {
         NbtCompound order = root.Get<NbtCompound>("ordr");
         custName.text = order["name"].StringValue;
         orderNum.text = order["num"].StringValue;
-        notes.text = order["note"].StringValue; 
+        notes.text = order["note"].StringValue;
         #endregion
 
         NbtList lightList = (NbtList)root["lite"]; // Extracting other information before applying
@@ -1459,7 +1478,7 @@ public class BarManager : MonoBehaviour {
         }
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true)) { // Cache path of all SOCs
             socs[soc.transform.GetPath()] = soc;
-        } 
+        }
         #endregion
         List<NbtTag> stts = new List<NbtTag>(); // Prepare list of Stop Tail Turns (need to be applied last)
         #region Light head application
@@ -1494,7 +1513,7 @@ public class BarManager : MonoBehaviour {
             }
 
             lh.TestSingleDual(); // Double-check single/dual
-        } 
+        }
         #endregion
 
         #region Extract pattern information
@@ -1505,7 +1524,7 @@ public class BarManager : MonoBehaviour {
         TDCyclesSliders tdcs = GameObject.Find("UI/Canvas/LightInteractionPanel/Panes/FuncEdit/TrafficOpts").GetComponent<TDCyclesSliders>();
         tdcs.FetchTags();
         tdcs.Refresh();
-        FnDragTarget.inputMap = patts.Get<NbtIntArray>("map"); 
+        FnDragTarget.inputMap = patts.Get<NbtIntArray>("map");
         #endregion
 
         #region SOC information application
@@ -1513,7 +1532,7 @@ public class BarManager : MonoBehaviour {
             NbtCompound socCmpd = alpha as NbtCompound;
             SizeOptionControl soc = socs[socCmpd["path"].StringValue];
             soc.ShowLong = (socCmpd["isLg"].ByteValue == 1);
-        } 
+        }
         #endregion
 
         // Refresh bits again, because we've now applied almost everything and just want to make sure STTs stick
@@ -1545,7 +1564,7 @@ public class BarManager : MonoBehaviour {
 
             // Refresh bits a third time, because we applied more heads
             yield return StartCoroutine(RefreshBitsIEnum());
-        } 
+        }
         #endregion
 
         #region Apply lenses
@@ -1562,7 +1581,7 @@ public class BarManager : MonoBehaviour {
                     break;
                 }
             }
-        } 
+        }
         #endregion
 
         FindObjectOfType<CameraControl>().RefreshOnSelect.Invoke(); // Have CameraControl refresh things
@@ -1572,7 +1591,7 @@ public class BarManager : MonoBehaviour {
             TitleText.inst.currFile = "";
         } else {
             TitleText.inst.currFile = filename;
-        } 
+        }
         #endregion
     }
 
@@ -1609,7 +1628,7 @@ public class BarManager : MonoBehaviour {
         } catch(IOException) {
             ErrorText.inst.DispError("Problem saving the PDF.  Do you still have it open?");
             attempt = false;
-        } 
+        }
         #endregion
 
         if(attempt) {
@@ -1617,7 +1636,7 @@ public class BarManager : MonoBehaviour {
             progressStuff.Shown = false;
             progressStuff.Progress = 0;
             CameraControl.ShowWhole = true;
-            CanvasDisabler.CanvasEnabled = false; 
+            CanvasDisabler.CanvasEnabled = false;
             #endregion
 
             #region Capture rectangle
@@ -1636,7 +1655,7 @@ public class BarManager : MonoBehaviour {
                 }
             }
 
-            Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y); 
+            Rect capRect = new Rect(tl.x, br.y, br.x - tl.x, tl.y - br.y);
             #endregion
 
             // Capture images
@@ -1685,7 +1704,7 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\desc.png", FileMode.OpenOrCreate)) { // Open a fresh file to dump image in
             byte[] imgbytes = tex.EncodeToPNG(); // Encode image
             imgOut.Write(imgbytes, 0, imgbytes.Length); // Dump
-        } 
+        }
         #endregion
 
         #region Capture bit image
@@ -1704,7 +1723,7 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\bits.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        } 
+        }
         #endregion
 
         #region Capture part number image
@@ -1723,7 +1742,7 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\part.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        } 
+        }
         #endregion
 
         #region Capture wiring image
@@ -1745,7 +1764,7 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\wire.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        } 
+        }
         #endregion
 
         #region Capture colorless wiring image
@@ -1769,7 +1788,7 @@ public class BarManager : MonoBehaviour {
         using(FileStream imgOut = new FileStream("tempgen\\wireClrless.png", FileMode.OpenOrCreate)) {
             byte[] imgbytes = tex.EncodeToPNG();
             imgOut.Write(imgbytes, 0, imgbytes.Length);
-        } 
+        }
         #endregion
 
         #region Reset
@@ -1782,7 +1801,7 @@ public class BarManager : MonoBehaviour {
         }
         foreach(LensLabel alpha in FindObjectsOfType<LensLabel>()) {
             alpha.Refresh();
-        } 
+        }
         #endregion
 
     }
@@ -1799,11 +1818,11 @@ public class BarManager : MonoBehaviour {
                 lh.myLabel.DispError = false;
                 lh.myLabel.Refresh();
             }
-        } 
+        }
         #endregion
         #region Make heads long
         foreach(SizeOptionControl soc in transform.GetComponentsInChildren<SizeOptionControl>(true))
-            soc.ShowLong = true; 
+            soc.ShowLong = true;
         #endregion
         #region Default lenses
         foreach(Lens opt in LightDict.inst.lenses) {
@@ -1812,7 +1831,7 @@ public class BarManager : MonoBehaviour {
                     seg.lens = opt;
                 }
             }
-        } 
+        }
         #endregion
 
         TitleText.inst.currFile = ""; // Clear out Title Text
@@ -2578,12 +2597,12 @@ public class PDFExportJob : ThreadedJob {
 
         #region Circuit, Gutter Mount Bracket, and Mounting Kit
         double top = 3.5;
-		tf.Alignment = XParagraphAlignment.Center;
-		tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
-		tf.Alignment = XParagraphAlignment.Left;
-		tf.DrawString(BarModel, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
-		tf.DrawString("Bar Base - " + BarWidth, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
-		top += 0.15;
+        tf.Alignment = XParagraphAlignment.Center;
+        tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
+        tf.Alignment = XParagraphAlignment.Left;
+        tf.DrawString(BarModel, courier, XBrushes.Black, new XRect(1.5, top, 1.0, 0.2));
+        tf.DrawString("Bar Base - " + BarWidth, caliSm, XBrushes.Black, new XRect(3.0, top, 4.0, 0.2));
+        top += 0.15;
         tf.Alignment = XParagraphAlignment.Center;
         tf.DrawString("1", courier, XBrushes.Black, new XRect(0.5, top, 1.0, 0.2));
         tf.Alignment = XParagraphAlignment.Left;

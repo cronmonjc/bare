@@ -132,5 +132,6 @@ public class StyleSelect : MonoBehaviour {
         }
         FindObjectOfType<AdvPattDisp>().Refresh();
         FindObjectOfType<AltNumberingHide>().Refresh();
+        FindObjectOfType<OpticSelect>().Refresh(); // Because bit probably changed (as did single/dual compatibility)
     }
 }

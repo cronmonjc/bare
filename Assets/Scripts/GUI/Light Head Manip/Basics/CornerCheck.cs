@@ -27,9 +27,9 @@ public class CornerCheck : MonoBehaviour {
             if(alpha.loc == Location.FRONT_CORNER || alpha.loc == Location.REAR_CORNER) {
                 CornerLong.SetActive(true);
             }
-            if(alpha.loc == Location.REAR_CORNER) {
-                RearCorner.SetActive(true);
-            }
+            //if(alpha.loc == Location.REAR_CORNER) {
+            //    RearCorner.SetActive(true);
+            //}
         }
     }
 }

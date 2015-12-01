@@ -55,6 +55,7 @@ public class OpticSelect : MonoBehaviour {
         foreach(LightHead alpha in BarManager.inst.allHeads) {
             if(alpha.gameObject.activeInHierarchy && alpha.Selected) {
                 selected.Add(alpha);
+                alpha.TestSingleDual();
                 showLong &= !alpha.isSmall;
                 showShort &= alpha.isSmall;
                 showDual &= alpha.useDual;
@@ -131,6 +132,28 @@ public class OpticSelect : MonoBehaviour {
         nohead.transform.localScale = Vector3.one;
         nohead.GetComponent<LightOptionElement>().optNode = null;
         nohead.GetComponent<LightOptionElement>().optSel = this; 
+        #endregion
+
+        #region Create notification that dual-color heads can't be used if that's the case
+        if (!showDual) {
+            for (byte i = 0; i < selected.Count; i++) {
+                if (selected[i].isRear && (selected[i].Bit == 0 || selected[i].Bit == 1 || selected[i].Bit == 10 || selected[i].Bit == 11)) {
+                    GameObject go = new GameObject("Spacer");
+                    go.AddComponent<LayoutElement>().preferredHeight = 10f;
+                    go.transform.SetParent(menu, false);
+                    go.transform.localScale = Vector3.one;
+                    go = new GameObject("Warning");
+                    Text goText = go.AddComponent<Text>();
+                    goText.text = "There aren't enough dual-color outputs to give all of the selected head(s) a dual-color head.  Please reconfigure your bar to free up the necessary outputs if you need dual-color here.";
+                    goText.font = transform.FindChild("Label").GetComponent<Text>().font;
+                    goText.color = Color.black;
+                    goText.alignment = TextAnchor.UpperCenter;
+                    go.transform.SetParent(menu, false);
+                    go.transform.localScale = Vector3.one;
+                    break;
+                }
+            }
+        }
         #endregion
 
         #region Figure out which optic is used by all heads (or equivalents)

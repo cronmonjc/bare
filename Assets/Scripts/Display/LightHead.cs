@@ -775,6 +775,7 @@ public class LightHead : MonoBehaviour {
             return;
         }
 
+        if((useSingle || useDual) && Bit == 255) return; // Do nothing if this bit's currently not set but already has single or dual compatibility
         useSingle = useDual = false;
         switch(lhd.funcs.Count) {
             case 0: // No functions: single never, dual never
@@ -812,7 +813,7 @@ public class LightHead : MonoBehaviour {
                 useDual = true;
                 break;
         }
-        useDual &= !(isRear && (Bit == 1 || Bit == 10));
+        useDual &= !(isRear && (Bit < 2 || Bit > 9));
     }
 
     /// <summary>
