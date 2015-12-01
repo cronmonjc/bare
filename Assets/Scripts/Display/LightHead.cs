@@ -225,6 +225,12 @@ public class LightHead : MonoBehaviour {
         }
     }
 
+    public bool isFar {
+        get {
+            return (isRear) && (Bit == 1 || Bit == 10);
+        }
+    }
+
     /// <summary>
     /// This head's cache variable for patterns, to prevent having to fetch it multiple times over
     /// </summary>
@@ -550,7 +556,7 @@ public class LightHead : MonoBehaviour {
             } else if(path.Contains("I")) {
                 tagname = tagname + "inb";
             } else if(path.Contains("O")) {
-                if(loc == Location.FAR_REAR)
+                if(isFar)
                     tagname = tagname + "far";
                 else
                     tagname = tagname + "oub";

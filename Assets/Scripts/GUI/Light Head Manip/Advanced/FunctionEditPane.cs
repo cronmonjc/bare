@@ -303,7 +303,7 @@ public class FunctionEditPane : MonoBehaviour {
             } else if(path.Contains("I")) {
                 tagname = tagname + "inb";
             } else if(path.Contains("O")) {
-                if(alpha.loc == Location.FAR_REAR)
+                if(alpha.isFar)
                     tagname = tagname + "far";
                 else
                     tagname = tagname + "oub";
@@ -343,7 +343,7 @@ public class FunctionEditPane : MonoBehaviour {
             } else if(path.Contains("I")) {
                 tagname = tagname + "inb";
             } else if(path.Contains("O")) {
-                if(alpha.loc == Location.FAR_REAR)
+                if(alpha.isFar)
                     tagname = tagname + "far";
                 else
                     tagname = tagname + "oub";
